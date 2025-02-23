@@ -72,6 +72,7 @@ const DashboardSidebar = ({role}) => {
         justifyContent: "space-between",
         height: "100vh",
         overflowY: "auto",
+        overflowX: "hidden",
         p: 6
       }}
     >

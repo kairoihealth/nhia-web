@@ -21,7 +21,8 @@ const DashboardLayout = ({ children, role }) => {
           width: "269px",
           height: "auto",
           zIndex: 1000,
-          overflowY: "auto"
+          overflowY: "auto",
+
         }}
       >
         <DashboardSidebar role={role} />
