@@ -5,62 +5,15 @@ import ArrowRightAltTwoToneIcon from "@mui/icons-material/ArrowRightAltTwoTone";
 import { useNavigate } from "react-router-dom";
 import { frequencyOfComplaints } from "../../../mock/dashboard";
 import PieChart from "../../../shared/PieChart";
-import { barData, lineData, pieData } from "../../../mock/chartData";
+import { barData, lineData, pieColor, pieData } from "../../../mock/chartData";
 import BarChart from "../../../shared/BarChart";
 import LineChart from "../../../shared/LineChart";
+import { barOptions, lineOptions, options } from "../../../utils/config";
 
 const Dashboard = () => {
   const navigate = useNavigate();
 
-  const options = {
-    plugins: {
-      legend: {
-        display: false,
-        position: "top"
-      }
-    }
-  };
-
-  const barOptions = {
-    responsive: true,
-  plugins: {
-    legend: {
-      display: false,
-      position: 'top',
-    },
-    tooltip: {
-      enabled: true,
-    },
-  },
-  scales: {
-    y: {
-      beginAtZero: true,
-    },
-  }
-  };
-
-  const lineOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: false,
-        position: 'top',
-      },
-      tooltip: {
-        enabled: true,
-      },
-    },
-    scales: {
-      x: {
-        beginAtZero: false, // Start the x-axis at the first label
-      },
-      y: {
-        beginAtZero: true, // Start the y-axis at zero
-      },
-    },
-  };
-
-  const columns = [ 
+  const columns = [
     // { label: "ID", field: "id", align: "center" },
     {
       label: "Date",
@@ -204,12 +157,40 @@ const Dashboard = () => {
                   options={options}
                 />
               </Box>
+              <Box sx={{ display: "flex" }}>
+                {pieColor.map((t) => (
+                  <Box
+                    key={t.id}
+                    sx={{ display: "flex", alignItems: "center" }}
+                  >
+                    <Box
+                      sx={{
+                        width: "8px",
+                        height: "8px",
+                        backgroundColor: t.color,
+                        borderRadius: "50%",
+                        margin: "0 8px"
+                      }}
+                    />
+                    <Typography
+                      sx={{
+                        fontSize: "12px",
+                        fontWeight: 500,
+                        lineHeight: "16px",
+                        color: "#475467"
+                      }}
+                    >
+                      {t.title}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
             </Card>
             <Card
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                gap: .2,
+                gap: 0.2,
                 p: 1,
                 alignItems: "flex-start",
                 borderRadius: "12px",
@@ -224,13 +205,13 @@ const Dashboard = () => {
                   fontWeight: 500,
                   lineHeight: "28px",
                   color: "#475467",
-                  p:1
+                  p: 1
                 }}
                 gutterBottom
               >
                 Complaint Volume
               </Typography>
-              <Box sx={{ display: "flex", alignItems: "flex-start"}}>
+              <Box sx={{ display: "flex", alignItems: "flex-start" }}>
                 <BarChart
                   title="Bar Chart Example"
                   data={barData}
@@ -382,7 +363,7 @@ const Dashboard = () => {
             sx={{
               display: "flex",
               flexDirection: "column",
-              gap: .5,
+              gap: 0.5,
               p: 2,
               alignItems: "flex-start",
               borderRadius: "12px",
@@ -397,18 +378,18 @@ const Dashboard = () => {
                 fontWeight: 500,
                 lineHeight: "28px",
                 color: "#101828",
-                px:1
+                px: 1
               }}
             >
               Complaint Trend
             </Typography>
-            <Box sx={{ display: "flex", alignItems: "flex-start"}}>
-                <LineChart
-                  title="Line Chart Example"
-                  data={lineData}
-                  options={lineOptions}
-                />
-              </Box>
+            <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+              <LineChart
+                title="Line Chart Example"
+                data={lineData}
+                options={lineOptions}
+              />
+            </Box>
           </Card>
         </Box>
       </Box>
