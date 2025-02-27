@@ -7,7 +7,7 @@ import {
   Button
   // Link
 } from "@mui/material";
-import Logo from "../../../assets/nhia-logo.png";
+import Logo from "../assets/nhia-logo.png";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -20,7 +20,7 @@ const textFieldStyles = {
     mb: 3
   }
 };
-const ProvidersForgotPassword = () => {
+const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
 
@@ -38,6 +38,11 @@ const ProvidersForgotPassword = () => {
 
   return (
     <>
+      {/* <Helmet>
+        <title>Forgot Password</title>
+        <meta name="Forgot Password" content=" " />
+        <link rel="canonical" href="/hmo-forgot-password" />
+      </Helmet> */}
       <Box
         sx={{
           display: "flex",
@@ -131,7 +136,7 @@ const ProvidersForgotPassword = () => {
               {/* <Typography variant="body2" align="center">
                 Do not have an account?&nbsp;
                 <Link
-                  href="/providers-register-page"
+                  href="/hmo-register-page"
                   underline="hover"
                   color="#038F3E"
                 >
@@ -146,4 +151,4 @@ const ProvidersForgotPassword = () => {
   );
 };
 
-export default ProvidersForgotPassword;
+export default ForgotPassword;

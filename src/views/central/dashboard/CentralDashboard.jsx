@@ -3,10 +3,20 @@ import ReusableTable from "../../../shared/Table";
 import ArrowRightAltTwoToneIcon from "@mui/icons-material/ArrowRightAltTwoTone";
 import { useNavigate } from "react-router-dom";
 import { frequencyOfComplaints } from "../../../mock/dashboard";
+import LineChart from "../../../shared/LineChart";
+import {
+  barData,
+  lineData,
+  pieCentralColor,
+  pieCentralData
+} from "../../../mock/chartData";
+import { barOptions, lineOptions, options } from "../../../utils/config";
+import BarChart from "../../../shared/BarChart";
+import PieChart from "../../../shared/PieChart";
 
 const CentralDashboard = () => {
-    const navigate = useNavigate();
-  
+  const navigate = useNavigate();
+
   const columns = [
     // { label: "ID", field: "id", align: "center" },
     {
@@ -68,7 +78,7 @@ const CentralDashboard = () => {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "flex-start",
-          mt:2,
+          mt: 2,
           gap: 4,
           px: 4
         }}
@@ -124,7 +134,7 @@ const CentralDashboard = () => {
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                gap: 4,
+                gap: 0.5,
                 p: 2,
                 alignItems: "flex-start",
                 borderRadius: "12px",
@@ -144,13 +154,48 @@ const CentralDashboard = () => {
               >
                 Complaints Status
               </Typography>
+              <Box sx={{ display: "flex", alignItems: "center", px: 10 }}>
+                <PieChart
+                  title="Pie Chart Example"
+                  data={pieCentralData}
+                  options={options}
+                />
+              </Box>
+              <Box sx={{ display: "flex", px: 4 }}>
+                {pieCentralColor.map((t) => (
+                  <Box
+                    key={t.id}
+                    sx={{ display: "flex", alignItems: "center" }}
+                  >
+                    <Box
+                      sx={{
+                        width: "8px",
+                        height: "8px",
+                        backgroundColor: t.color,
+                        borderRadius: "50%",
+                        margin: "0 8px"
+                      }}
+                    />
+                    <Typography
+                      sx={{
+                        fontSize: "12px",
+                        fontWeight: 500,
+                        lineHeight: "16px",
+                        color: "#475467"
+                      }}
+                    >
+                      {t.title}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
             </Card>
             <Card
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                gap: 4,
-                p: 2,
+                gap: 0.2,
+                p: 1,
                 alignItems: "flex-start",
                 borderRadius: "12px",
                 backgroundColor: "#FFFFFF",
@@ -163,18 +208,26 @@ const CentralDashboard = () => {
                   fontSize: "18px",
                   fontWeight: 500,
                   lineHeight: "28px",
-                  color: "#475467"
+                  color: "#475467",
+                  p: 1
                 }}
                 gutterBottom
               >
-                Category of Complaints
+                Regional Complaints
               </Typography>
+              <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+                <BarChart
+                  title="Bar Chart Example"
+                  data={barData}
+                  options={barOptions}
+                />
+              </Box>
             </Card>
             <Card
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                gap: 4,
+                gap: 2,
                 p: 2,
                 alignItems: "flex-start",
                 borderRadius: "12px",
@@ -192,40 +245,72 @@ const CentralDashboard = () => {
                 }}
                 gutterBottom
               >
-                New Complaints
+                Escalated Complaints
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: "48px",
+                  fontWeight: 600,
+                  lineHeight: "72px",
+                  color: "#20201E"
+                }}
+              >
+                40
+              </Typography>
+              <Typography
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.5,
+                  fontSize: "14px",
+                  fontWeight: 500,
+                  lineHeight: "18.9px",
+                  color: "#071C42",
+                  textDecoration: "underline",
+                  cursor: "pointer"
+                }}
+                onClick={() => navigate("/central-complaints")}
+              >
+                View Complaints{" "}
+                <ArrowRightAltTwoToneIcon sx={{ color: "#071C42" }} />
               </Typography>
             </Card>
           </Box>
 
           {/* Escalated Complaints Table */}
-          <Box sx={{width: "100%"}}>
-          <Box sx={{ display: "flex", justifyContent: "space-between", px: 2 }}>
-          <Typography
-            sx={{
-              fontSize: "16px",
-              fontWeight: 500,
-              lineHeight: "21.6px",
-              color: "#038F3E",
-              mb: 2
-            }}
-          >
-            New Complaints
-          </Typography>
-          <Typography
-            sx={{
-              fontSize: "14px",
-              fontWeight: 500,
-              lineHeight: "18.9px",
-              color: "#071C42",
-              textDecoration: "underline",
-              cursor: "pointer"
+          <Box sx={{ width: "100%" }}>
+            <Box
+              sx={{ display: "flex", justifyContent: "space-between", px: 2 }}
+            >
+              <Typography
+                sx={{
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "21.6px",
+                  color: "#038F3E",
+                  mb: 2
                 }}
-                onClick={() => navigate("/hmo-complaints")}
-          >
-            View Complaints{" "}
-            <ArrowRightAltTwoToneIcon sx={{ color: "#038F3E" }} />
-          </Typography>
-        </Box>
+              >
+                New Complaints
+              </Typography>
+              <Typography
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.5,
+                  fontSize: "14px",
+                  fontWeight: 500,
+                  lineHeight: "18.9px",
+                  color: "#071C42",
+                  textDecoration: "underline",
+                  cursor: "pointer"
+                }}
+                onClick={() => navigate("/central-complaints")}
+              >
+                View Complaints{" "}
+                <ArrowRightAltTwoToneIcon sx={{ color: "#038F3E" }} />
+              </Typography>
+            </Box>
             <ReusableTable
               columns={columns}
               rows={rows}
@@ -312,7 +397,7 @@ const CentralDashboard = () => {
             sx={{
               display: "flex",
               flexDirection: "column",
-              gap: 4,
+              gap: 0.5,
               p: 2,
               alignItems: "flex-start",
               borderRadius: "12px",
@@ -331,9 +416,15 @@ const CentralDashboard = () => {
             >
               Complaint Trends
             </Typography>
+            <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+              <LineChart
+                title="Line Chart Example"
+                data={lineData}
+                options={lineOptions}
+              />
+            </Box>
           </Card>
         </Box>
-
       </Box>
     </Box>
   );

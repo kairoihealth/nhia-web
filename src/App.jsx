@@ -11,7 +11,7 @@ import FormPreview from "./views/enrolees/ComplaintForm/FormPreview";
 import HmoWelcomePage from "./views/hmo/auth/HmoWelcomePage";
 import HmoLoginPage from "./views/hmo/auth/HmoLoginPage";
 import HmoRegisterPage from "./views/hmo/auth/HmoRegisterPage";
-import HmoForgotPassword from "./views/hmo/auth/HmoForgotPassword";
+// import HmoForgotPassword from "./components/ForgotPassword";
 // import HmoResetPassword from "./views/hmo/auth/HmoResetPassword";
 import HmoDashboard from "./views/hmo/dashboard/HmoDashboard";
 import HmoComplaints from "./views/hmo/dashboard/HmoComplaints";
@@ -52,6 +52,8 @@ import CentralProfile from "./views/central/dashboard/CentralProfile";
 import CentralReports from "./views/central/dashboard/CentralReports";
 import CentralSettings from "./views/central/dashboard/CentralSettings";
 import CentralSingleComplaint from "./components/Central/CentralSingleComplaint";
+import ForgotPassword from "./components/ForgotPassword";
+import CentralAnalysis from "./views/central/dashboard/CentralAnalysis";
 
 function App() {
   return (
@@ -59,6 +61,7 @@ function App() {
       <Routes>
         <Route path="/" element={<AccountType />} />
         <Route path="/email-verification" element={<EmailVerification />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/******************Enrollee****************/}
         <Route
@@ -77,7 +80,6 @@ function App() {
         <Route path="/hmo-welcome-page" element={<HmoWelcomePage />} />
         <Route path="/hmo-login-page" element={<HmoLoginPage />} />
         <Route path="/hmo-register-page" element={<HmoRegisterPage />} />
-        <Route path="/hmo-forgot-password" element={<HmoForgotPassword />} />
         {/* <Route path="/hmo-reset-password" element={<HmoResetPassword />} /> */}
         <Route
           path="/hmo-dashboard/*"
@@ -302,6 +304,14 @@ function App() {
           element={
             <DashboardLayout role="central">
               <CentralDashboard />
+            </DashboardLayout>
+          }
+        />
+        <Route
+          path="/central-analysis"
+          element={
+            <DashboardLayout role="central">
+              <CentralAnalysis />
             </DashboardLayout>
           }
         />
