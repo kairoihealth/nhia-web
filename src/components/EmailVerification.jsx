@@ -2,7 +2,7 @@ import { useState } from "react";
 // import { Helmet } from "react-helmet-async";
 import {
   Box,
-  Container,
+  Container
   // Typography,
   // Button,
   // Link,
@@ -13,10 +13,18 @@ import EmailReceived from "../assets/mail-icon.png";
 import EmailVerified from "../assets/check-icon.png";
 import EmailReceivedSection from "./EmailReceivedSection";
 import EmailVerifiedSection from "./EmailVerifiedSection";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const EmailVerification = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [showVerification, setShowVerification] = useState(false);
   const [emailVerified, setEmailVerified] = useState(false);
+
+  const queryParams = new URLSearchParams(location.search);
+  const fromRoute = queryParams.get("from") || "unknown"; // Get the 'from' query parameter
+  const email = queryParams.get("email") || "";
+  const role = queryParams.get("role") || "";
 
   const handleVerifyEmail = () => {
     // Simulate email verification logic
@@ -27,9 +35,17 @@ const EmailVerification = () => {
     // Logic to resend email verification
   };
 
+  // const handleBackToLogin = () => {
+  //   setShowVerification(true);
+  //   setEmailVerified(false);
+  // };
   const handleBackToLogin = () => {
-    setShowVerification(true);
-    setEmailVerified(false);
+    navigate(
+      // fromRoute === "forgot-password"
+      // ?
+      "/forgot-password"
+      // : "/hmo-register-page"
+    );
   };
 
   const moveToNextInput = (event) => {
@@ -61,8 +77,8 @@ const EmailVerification = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "flex-start",
-          height: "100vh", 
-          backgroundColor: "#ffffff",
+          height: "100vh",
+          backgroundColor: "#ffffff"
         }}
       >
         <Container maxWidth="sm">
@@ -73,7 +89,7 @@ const EmailVerification = () => {
               textAlign: "center",
               width: "100%",
               maxWidth: 500,
-              borderRadius: "8px",
+              borderRadius: "8px"
               // boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
             }}
           >
@@ -82,13 +98,21 @@ const EmailVerification = () => {
               <img
                 src={EmailVerified}
                 alt="Email Verified"
-                style={{ margin: "auto", display: "block", marginBottom: "20px" }}
+                style={{
+                  margin: "auto",
+                  display: "block",
+                  marginBottom: "20px"
+                }}
               />
             ) : (
               <img
                 src={EmailReceived}
                 alt="Email Received"
-                style={{ margin: "auto", display: "block", marginBottom: "20px" }}
+                style={{
+                  margin: "auto",
+                  display: "block",
+                  marginBottom: "20px"
+                }}
               />
             )}
 
@@ -97,15 +121,23 @@ const EmailVerification = () => {
               <EmailVerifiedSection
                 handleResendEmail={handleResendEmail}
                 handleBackToLogin={handleBackToLogin}
+                email={email}
+                role={role}
+                // onContinueToDashboard={handleContinueToDashboard}
               />
             ) : (
               <EmailReceivedSection
                 showVerification={showVerification}
-                handleResendEmail={handleResendEmail}
+                // handleResendEmail={handleResendEmail}
+                handleResendEmail={() =>
+                  alert("Resending verification code...")
+                }
                 handleBackToLogin={handleBackToLogin}
                 setShowVerification={setShowVerification}
                 handleVerifyEmail={handleVerifyEmail}
                 moveToNextInput={moveToNextInput}
+                fromRoute={fromRoute} // Pass the route context
+                email={email}
               />
             )}
           </Box>

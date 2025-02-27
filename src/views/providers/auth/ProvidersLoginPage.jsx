@@ -23,9 +23,9 @@ const textFieldStyles = {
     border: "0.5px solid #DADADA",
     mb: 3,
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#038F3E", 
-    },
-  },
+      borderColor: "#038F3E"
+    }
+  }
 };
 const ProvidersLoginPage = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -84,7 +84,12 @@ const ProvidersLoginPage = () => {
               {/* Email Field */}
               <Box
                 flex={1}
-                sx={{ display: "flex", flexDirection: "column", alignItems: 'flex-start', gap: 1 }}
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  gap: 1
+                }}
               >
                 <Typography
                   sx={{
@@ -110,7 +115,12 @@ const ProvidersLoginPage = () => {
               {/* Password Field */}
               <Box
                 flex={1}
-                sx={{ display: "flex", flexDirection: "column", alignItems: 'flex-start', gap: 1 }}
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  gap: 1
+                }}
               >
                 <Typography
                   sx={{
@@ -124,37 +134,43 @@ const ProvidersLoginPage = () => {
                   <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
                 </Typography>
                 <OutlinedInput
-                        id="outlined-adornment-password"
-                        type={passwordVisible ? 'text' : 'password'}
-                        placeholder='Password'
-                        fullWidth
-                        endAdornment={
-                            <InputAdornment position="end">
-                                <IconButton
-                                    aria-label={
-                                        passwordVisible ? 'hide the password' : 'display the password'
-                                    }
-                                    onClick={togglePasswordVisibility}
-                                    edge="end"
-                                >
-                                    {passwordVisible ? <VisibilityOutlined /> : <VisibilityOffOutlined />}
-                                </IconButton>
-                            </InputAdornment>
+                  id="outlined-adornment-password"
+                  type={passwordVisible ? "text" : "password"}
+                  placeholder="Password"
+                  fullWidth
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label={
+                          passwordVisible
+                            ? "hide the password"
+                            : "display the password"
                         }
-                        // label="Password"
+                        onClick={togglePasswordVisibility}
+                        edge="end"
+                      >
+                        {passwordVisible ? (
+                          <VisibilityOutlined />
+                        ) : (
+                          <VisibilityOffOutlined />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  // label="Password"
                   sx={{
                     ...textFieldStyles,
                     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#038F3E", 
+                      borderColor: "#038F3E"
                     }
                   }}
-                    />
+                />
               </Box>
 
               {/* Forgot Password Link */}
               <Box sx={{ display: "flex", justifyContent: "flex-end", my: 3 }}>
                 <Link
-                  href="/hmo-forgot-password"
+                  href="/forgot-password"
                   underline="hover"
                   color="error.main"
                 >
@@ -167,20 +183,45 @@ const ProvidersLoginPage = () => {
                 variant="contained"
                 color="primary"
                 fullWidth
-                sx={{ width: '394px', height: '45px', borderRadius: '50px', backgroundColor: '#038F3E', color: '#FFFFFF', fontSize: '16px', fontWeight: 500, lineHeight: '24px', mb: 3, py: '12px', px: '8px', textTransform: 'capitalize' }}
+                sx={{
+                  width: "394px",
+                  height: "45px",
+                  borderRadius: "50px",
+                  backgroundColor: "#038F3E",
+                  color: "#FFFFFF",
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                  mb: 3,
+                  py: "12px",
+                  px: "8px",
+                  textTransform: "capitalize"
+                }}
                 href="/providers-dashboard"
               >
                 Login
               </Button>
 
               {/* Register Link */}
-              <Typography sx={{fontSize: '16px', fontWeight: 500, lineHeight: '21.6px', color: '#595959'}} align="center">
+              <Typography
+                sx={{
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "21.6px",
+                  color: "#595959"
+                }}
+                align="center"
+              >
                 Do not have an account?&nbsp;
                 <Link
                   href="/providers-register-page"
                   underline="hover"
                   color="#038F3E"
-                  sx={{fontSize: '16px', fontWeight: 500, lineHeight: '21.6px'}}
+                  sx={{
+                    fontSize: "16px",
+                    fontWeight: 500,
+                    lineHeight: "21.6px"
+                  }}
                 >
                   Register Here
                 </Link>
