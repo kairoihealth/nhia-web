@@ -12,6 +12,7 @@ import {
 } from "../../../mock/chartData";
 import LineChart from "../../../shared/LineChart";
 import { lineOptions, options } from "../../../utils/config";
+import GaugeChart from "../../../shared/SofaChart";
 
 const ProviderDashboard = () => {
   const navigate = useNavigate();
@@ -259,7 +260,7 @@ const ProviderDashboard = () => {
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                gap: 4,
+                gap: 0.5,
                 p: 2,
                 alignItems: "flex-start",
                 borderRadius: "12px",
@@ -279,6 +280,9 @@ const ProviderDashboard = () => {
               >
                 Compliance with Regulations
               </Typography>
+              <Box sx={{ display: "flex", alignItems: "center", px: 2 }}>
+                <GaugeChart value={70.1} />
+              </Box>
             </Card>
           </Box>
         </Box>

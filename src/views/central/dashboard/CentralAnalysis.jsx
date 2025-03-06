@@ -339,7 +339,7 @@ const CentralAnalysis = () => {
             Complaints Satisfaction
           </Typography>
           <Box sx={{ display: "flex", alignItems: "center", px: 16 }}>
-            <GaugeChart value={3.1} />
+            <GaugeChart value={30.1} />
           </Box>
         </Card>
       </Box>
