@@ -1,35 +1,44 @@
-import { PieChart, Pie, Cell, Line, ResponsiveContainer } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import PropTypes from "prop-types";
 import { Box, Typography } from "@mui/material";
 
-const GaugeChart = ({ value }) => {
-  // Define gauge colors (Red, Yellow, Green)
-  const COLORS = ["#E53935", "#FDD835", "#43A047"];
+const GaugeChart = ({ value, width = 250, height = 200 }) => {
+  const COLORS = ["#E53935", "#FDD835", "#43A047"]; // Red, Yellow, Green
 
-  // Segments for the gauge
+  // Define gauge segments: Low (0-40), Medium (40-70), High (70-100)
   const data = [
-    { value: 30 }, // Red
-    { value: 30 }, // Yellow
-    { value: 40 } // Green
+    { value: 55 }, // Red (0-55)
+    { value: 25 }, // Yellow (55-80)
+    { value: 20 } // Green (80-100)
   ];
 
-  // Convert satisfaction score (0-5) to a rotation degree (approximation)
-  const angle = ((value - 1) / 4) * 180 - 90;
+  // Chart dimensions
+  const chartWidth = 250;
+  const chartHeight = 200;
+  const centerX = chartWidth / 2;
+  const centerY = chartHeight / 2;
+
+  // Needle configuration
+  const needleLength = 35;
+  const angle = 180 + (value / 100) * 180;
+  const radians = (angle * Math.PI) / 180;
+
+  // Needle coordinates
+  const tipX = centerX + needleLength * Math.cos(radians);
+  const tipY = centerY + needleLength * Math.sin(radians);
 
   return (
-    <Box sx={{ textAlign: "center", width: 250, height: 200 }}>
-      <ResponsiveContainer width="100%" height={150}>
-        <PieChart>
+    <Box sx={{ textAlign: "center", width: width, height: height }}>
+      <ResponsiveContainer width="100%" height={120}>
+        <PieChart width={250} height={200}>
           <Pie
             data={data}
-            cx="50%"
-            cy="100%"
+            cx={centerX}
+            cy={centerY}
             startAngle={180}
             endAngle={0}
-            innerRadius={60}
+            innerRadius={50}
             outerRadius={80}
-            fill="#8884d8"
-            // paddingAngle={5}
             dataKey="value"
           >
             {data.map((_, index) => (
@@ -37,15 +46,21 @@ const GaugeChart = ({ value }) => {
             ))}
           </Pie>
 
-          {/* Needle */}
-          <Line
-            x1="50%"
-            y1="100%"
-            x2={`${50 + 40 * Math.cos((angle * Math.PI) / 180)}%`}
-            y2={`${100 + 40 * Math.sin((angle * Math.PI) / 180)}%`}
-            stroke="black"
-            strokeWidth={2}
-          />
+          <g>
+            {/* Needle line */}
+            <line
+              x1={centerX}
+              y1={centerY}
+              x2={tipX}
+              y2={tipY}
+              stroke="#212121"
+              strokeWidth={3}
+              strokeLinecap="round"
+            />
+
+            {/* Center pivot */}
+            <circle cx={centerX} cy={centerY} r={4} fill="#212121" />
+          </g>
         </PieChart>
       </ResponsiveContainer>
 
@@ -59,5 +74,7 @@ const GaugeChart = ({ value }) => {
 export default GaugeChart;
 
 GaugeChart.propTypes = {
-  value: PropTypes.number.isRequired
+  value: PropTypes.number.isRequired,
+  width: PropTypes.number,
+  height: PropTypes.number
 };

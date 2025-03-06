@@ -9,6 +9,7 @@ import { barData, lineData, pieColor, pieData } from "../../../mock/chartData";
 import BarChart from "../../../shared/BarChart";
 import LineChart from "../../../shared/LineChart";
 import { barOptions, lineOptions, options } from "../../../utils/config";
+import GaugeChart from "../../../shared/SofaChart";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -223,7 +224,7 @@ const Dashboard = () => {
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                gap: 4,
+                gap: 0.5,
                 p: 2,
                 alignItems: "flex-start",
                 borderRadius: "12px",
@@ -243,6 +244,9 @@ const Dashboard = () => {
               >
                 Compliance with Regulations
               </Typography>
+              <Box sx={{ display: "flex", alignItems: "center", px: 2 }}>
+                <GaugeChart value={50.1} />
+              </Box>
             </Card>
           </Box>
 
