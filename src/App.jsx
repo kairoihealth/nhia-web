@@ -7,7 +7,7 @@ import EnroleesWelcomePage from "./views/enrolees/EnroleesWelcomePage";
 import FirstForm from "./views/enrolees/ComplaintForm/FirstForm";
 import SecondForm from "./views/enrolees/ComplaintForm/SecondForm";
 import FormPreview from "./views/enrolees/ComplaintForm/FormPreview";
-// import ReviewForm from "./views/enrolees/ComplaintReview/ReviewForm";
+import ReviewForm from "./views/enrolees/ComplaintReview/ReviewForm";
 import HmoWelcomePage from "./views/hmo/auth/HmoWelcomePage";
 import HmoLoginPage from "./views/hmo/auth/HmoLoginPage";
 import HmoRegisterPage from "./views/hmo/auth/HmoRegisterPage";
@@ -54,6 +54,8 @@ import CentralSettings from "./views/central/dashboard/CentralSettings";
 import CentralSingleComplaint from "./components/Central/CentralSingleComplaint";
 import ForgotPassword from "./components/ForgotPassword";
 import CentralAnalysis from "./views/central/dashboard/CentralAnalysis";
+import RegionalStats from "./views/central/dashboard/RegionalStats";
+import RegionStatesById from "./views/central/dashboard/RegionStatesById";
 
 function App() {
   return (
@@ -74,7 +76,7 @@ function App() {
           element={<SecondForm />}
         />
         <Route path="/enrollee-form-preview" element={<FormPreview />} />
-        {/* <Route path="/enrollee-complaint-review" element={<ReviewForm />} /> */}
+        <Route path="/enrollee-complaint-review" element={<ReviewForm />} />
 
         {/*******************HMO*****************/}
         <Route path="/hmo-welcome-page" element={<HmoWelcomePage />} />
@@ -312,6 +314,22 @@ function App() {
           element={
             <DashboardLayout role="central">
               <CentralAnalysis />
+            </DashboardLayout>
+          }
+        />
+        <Route
+          path="/central-regional-stats"
+          element={
+            <DashboardLayout role="central">
+              <RegionalStats />
+            </DashboardLayout>
+          }
+        />
+        <Route
+          path="/central-regional-stats/:id"
+          element={
+            <DashboardLayout role="central">
+              <RegionStatesById />
             </DashboardLayout>
           }
         />

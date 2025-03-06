@@ -1,47 +1,47 @@
 export const options = {
-    plugins: {
-      legend: {
-        display: false,
-        position: "top"
-      }
-    }
-  };
-
- export const barOptions = {
-    responsive: true,
   plugins: {
     legend: {
       display: false,
-      position: 'top',
+      position: "top"
+    }
+  }
+};
+
+export const barOptions = {
+  responsive: true,
+  plugins: {
+    legend: {
+      display: false,
+      position: "top"
     },
     tooltip: {
-      enabled: true,
-    },
+      enabled: true
+    }
   },
   scales: {
     y: {
-      beginAtZero: true,
-    },
+      beginAtZero: true
+    }
   }
-  };
+};
 
 export const lineOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: false,
-        position: 'top',
-      },
-      tooltip: {
-        enabled: true,
-      },
+  responsive: true,
+  plugins: {
+    legend: {
+      display: false,
+      position: "top"
     },
-    scales: {
-      x: {
-        beginAtZero: false, 
-      },
-      y: {
-        beginAtZero: true, 
-      },
+    tooltip: {
+      enabled: true
+    }
+  },
+  scales: {
+    x: {
+      beginAtZero: false
     },
-  };
+    y: {
+      beginAtZero: true
+    }
+  }
+};

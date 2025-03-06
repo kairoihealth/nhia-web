@@ -264,6 +264,8 @@ const Dashboard = () => {
               </Typography>
               <Typography
                 sx={{
+                  display: "flex",
+                  alignItem: "center",
                   fontSize: "14px",
                   fontWeight: 500,
                   lineHeight: "18.9px",
