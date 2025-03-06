@@ -3,23 +3,23 @@ import PropTypes from "prop-types";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 
-const PieChart = ({ data, options }) => {
+const PieChart = ({ data, options, width = "130px", height = "120px" }) => {
   ChartJS.register(ArcElement, Tooltip, Legend);
 
   return (
     <Box
       sx={{
-        width: "130px", 
-        height: "130px",
-        position: "relative", 
+        width: width,
+        height: height,
+        position: "relative"
       }}
     >
       <Pie
         data={data}
         options={{
-          ...options, 
-          maintainAspectRatio: false, 
-          responsive: true, 
+          ...options,
+          maintainAspectRatio: false,
+          responsive: true
         }}
       />
     </Box>
@@ -29,6 +29,8 @@ const PieChart = ({ data, options }) => {
 export default PieChart;
 
 PieChart.propTypes = {
-  data: PropTypes.object.isRequired, 
+  data: PropTypes.object.isRequired,
   options: PropTypes.object,
+  width: PropTypes.string,
+  height: PropTypes.string
 };

@@ -1,90 +1,262 @@
-// // import { Helmet } from "react-helmet-async";
-// import Logo from "../../../assets/nhia-logo.png";
-// import KairoiLogo from "../../../assets/kairoi-logo.png";
-// import { Form, Row, Col, Button } from "react-bootstrap";
-// import { FiArrowLeft } from "react-icons/fi";
+import {
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Link
+  //   Stack,
+} from "@mui/material";
+import Logo from "../../../assets/nhia-logo.png";
+import KairoiLogo from "../../../assets/kairoi-logo.png";
+import { FiArrowLeft } from "react-icons/fi";
 
-// const ReviewForm = () => {
-//   return (
-//     <>
-//       {/* <Helmet>
-//         <title>Complaint Review</title>
-//         <meta name="Complaint Review" content=" " />
-//         <link rel="canonical" href="/" />
-//       </Helmet> */}
-//       <Row className="m-0 p-0 main">
-//         <Col
-//           style={{
-//             backgroundColor: "#038F3E",
-//             color: "#fff",
-//           }}
-//         >
-//           <div
-//             className="d-flex flex-column justify-content-between p-5"
-//             style={{ minHeight: "100vh" }}
-//           >
-//             <div>
-//               <img src={Logo} alt="Logo" className="img" />
-//             </div>
-//             <div>
-//               <h1 className="mt-5">
-//                 Welcome to NHIA Complaint Management System
-//               </h1>
-//               <p className="mt-3">
-//                 Welcome aboard! Your complaints fuel our quest for service
-//                 perfection.
-//               </p>
-//             </div>
-//             <div className="d-flex justify-content-between mt-5">
-//               <span></span>
-//               <span className="d-flex">
-//                 <p>Powered by</p>
-//                 <img src={KairoiLogo} alt="KairoiLogo" className="" />
-//               </span>
-//             </div>
-//           </div>
-//         </Col>
-//         <Col className="d-flex flex-column justify-content-between py-4 h-100">
-//           <div>
-//             <a href="/enrolees-welcome-page" className="accent-color"> <FiArrowLeft className="mx-2" />
-//               Back
-//             </a>
-//             <h4
-//               className="accent-color mx-3 mt-5"
-//               style={{ textAlign: "left" }}
-//             >
-//               Review of existing complaint or request
-//             </h4>
-//             <p className="secondary-color mx-3">
-//               Track and manage your coplaints on the Kairoi CMS platform at your
-//               fingertips.
-//             </p>
-//             <div className="d-flex">
-//               <div className="card w-100 mx-3 p-2 my-4">
-//                 <Form.Group controlId="formComplaintNumber">
-//                   <Form.Label className="">
-//                     Input your complaint number to get an update
-//                   </Form.Label>
-//                   <Form.Control
-//                     type="text"
-//                     placeholder="ENF-"
-//                     className=""
-//                     required
-//                   />
-//                 </Form.Group>
-//                 <p className="mt-2">Sample: ENF-HMO/26/211024/1</p>
-//               </div>
-//             </div>
-//             <div className="d-flex justify-content-center">
-//               <Button className="primary-btn mt-3 w-50" href="/">
-//                 Review Status
-//               </Button>
-//             </div>
-//           </div>
-//         </Col>
-//       </Row>
-//     </>
-//   );
-// };
+const textFieldStyles = {
+  "& .MuiOutlinedInput-root": {
+    borderRadius: "8px",
+    backgroundColor: "#F5F5F5",
+    color: "#737373",
+    border: "0.5px solid #DADADA",
+    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+      borderColor: "#038F3E"
+    }
+  }
+};
 
-// export default ReviewForm;
+const ReviewForm = () => {
+  return (
+    <Box
+      sx={{
+        display: { xs: "column", md: "flex" },
+        height: "100vh",
+        m: 0,
+        p: 0
+      }}
+    >
+      {/* Left Column */}
+      <Box
+        sx={{
+          width: { xs: "100%", md: "50%" },
+          backgroundColor: "#038F3E",
+          color: "#fff",
+          p: 5,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: { xs: "center", md: "space-between" },
+          alignItems: { xs: "center", md: "flex-start" },
+          position: "relative",
+          height: { xs: "auto", md: "100vh" }
+        }}
+      >
+        <Box>
+          <Box
+            component="img"
+            src={Logo}
+            alt="Logo"
+            sx={{ width: { xs: "70px", md: "100px" } }}
+          />
+        </Box>
+        <Box
+          sx={{
+            width: { xs: "100%", md: "80%" },
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center"
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: { xs: "32px", md: "58px" },
+              fontWeight: 600,
+              lineHeight: { xs: "43.2px", md: "68.3px" },
+              mt: { xs: 2, md: 5 },
+              textAlign: { xs: "center", md: "left" },
+              width: { xs: "357px", md: "90%" }
+            }}
+          >
+            Welcome to NHIA Complaint Management System
+          </Typography>
+          <Typography
+            sx={{
+              fontSize: { xs: "20px", md: "24px" },
+              fontWeight: 400,
+              lineHeight: { xs: "27px", md: "32.4px" },
+              mt: 3,
+              textAlign: { xs: "center", md: "left" },
+              width: { xs: "90%", md: "90%" }
+            }}
+          >
+            Welcome aboard! Your complaints fuel our quest for service
+            perfection.
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            display: { xs: "none", md: "flex" },
+            justifyContent: "flex-end",
+            alignItems: "flex-end",
+            mt: 5
+          }}
+        >
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: "20px",
+              right: "20px",
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "center"
+            }}
+          >
+            <Typography
+              sx={{ fontSize: "16px", fontWeight: 500, lineHeight: "32.4px" }}
+            >
+              Powered by
+            </Typography>
+            <Box
+              component="img"
+              src={KairoiLogo}
+              alt="KairoiLogo"
+              sx={{ width: "70px" }}
+            />
+          </Box>
+        </Box>
+      </Box>
+
+      {/* Right Column */}
+      <Box
+        sx={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          // justifyContent: "space-between",
+          py: { xs: 4, md: 4 },
+          px: { xs: 3, md: 6 },
+          backgroundColor: "#FAFAFA"
+        }}
+      >
+        {/* Back Button */}
+        <Link
+          href="/enrollees-welcome-page"
+          underline="none"
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            mb: { xs: 2, md: 10 },
+            gap: 1,
+            color: "#000000",
+            "&:hover": { color: "#027A3B" }
+          }}
+        >
+          <FiArrowLeft sx={{ mr: 1 }} />
+          <Typography
+            sx={{
+              fontSize: "16px",
+              fontWeight: 600,
+              lineHeight: "24px",
+              color: "#038F3E"
+            }}
+          >
+            Back
+          </Typography>
+        </Link>
+
+        {/* Title */}
+        <Typography
+          sx={{
+            fontSize: "32px",
+            fontWeight: 500,
+            lineHeight: "43.2px",
+            textAlign: "left",
+            color: "#038F3E",
+            mb: 3
+          }}
+        >
+          Review of existing complaint or request
+        </Typography>
+
+        {/* Subtitle */}
+        <Typography
+          sx={{
+            width: { xs: "100%", md: "90%" },
+            color: "#595959",
+            fontSize: "18px",
+            fontWeight: 400,
+            lineHeight: "24.3px",
+            mb: { xs: 4, md: 10 }
+          }}
+        >
+          Track and manage your complaints on the Kairoi CMS platform at your
+          fingertips.
+        </Typography>
+
+        {/* Complaint Number Input */}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            width: { xs: "100%", md: "80%" },
+            gap: 1
+          }}
+        >
+          <Box
+            flex={1}
+            sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+          >
+            <Typography
+              sx={{
+                color: "#595959",
+                fontSize: "16px",
+                fontWeight: 500,
+                lineHeight: "24px"
+              }}
+            >
+              Input your complaint number to get an update
+            </Typography>
+            <TextField
+              variant="outlined"
+              fullWidth
+              placeholder="KAI-"
+              // required
+              sx={textFieldStyles}
+            />
+          </Box>
+
+          {/* Sample Format */}
+          <Typography
+            sx={{
+              color: "#595959",
+              fontSize: "16px",
+              fontWeight: 400,
+              lineHeight: "21.6px"
+            }}
+          >
+            Sample: KAI-HMO/26/211024/1
+          </Typography>
+        </Box>
+
+        {/* Review Status Button */}
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}>
+          <Button
+            variant="contained"
+            href="/"
+            sx={{
+              width: "300px",
+              height: "48px",
+              backgroundColor: "#038F3E",
+              color: "#FFFFFF",
+              textTransform: "capitalize",
+              borderRadius: "8px",
+              fontSize: "16px",
+              fontWeight: 500,
+              "&:hover": { backgroundColor: "#027A3B" }
+            }}
+          >
+            Review Status
+          </Button>
+        </Box>
+      </Box>
+    </Box>
+  );
+};
+
+export default ReviewForm;
