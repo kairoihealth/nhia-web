@@ -1,16 +1,16 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Outlet } from "react-router-dom";
 // import 'bootstrap/dist/css/bootstrap.min.css';
 // import "./custom.css";
 import DashboardLayout from "./shared/DashboardLayout";
-import AccountType from "./views/auth/AccountType";
+// import AccountType from "./views/auth/AccountType";
 import EnroleesWelcomePage from "./views/enrolees/EnroleesWelcomePage";
 import FirstForm from "./views/enrolees/ComplaintForm/FirstForm";
 import SecondForm from "./views/enrolees/ComplaintForm/SecondForm";
 import FormPreview from "./views/enrolees/ComplaintForm/FormPreview";
 import ReviewForm from "./views/enrolees/ComplaintReview/ReviewForm";
-import HmoWelcomePage from "./views/hmo/auth/HmoWelcomePage";
-import HmoLoginPage from "./views/hmo/auth/HmoLoginPage";
-import HmoRegisterPage from "./views/hmo/auth/HmoRegisterPage";
+// import HmoWelcomePage from "./views/hmo/auth/HmoWelcomePage";
+// import HmoLoginPage from "./views/hmo/auth/HmoLoginPage";
+// import HmoRegisterPage from "./views/hmo/auth/HmoRegisterPage";
 // import HmoForgotPassword from "./components/ForgotPassword";
 // import HmoResetPassword from "./views/hmo/auth/HmoResetPassword";
 import HmoDashboard from "./views/hmo/dashboard/HmoDashboard";
@@ -20,9 +20,9 @@ import HmoComplaintsThread from "./components/HMO/HmoComplaintsThread";
 import HmoReports from "./views/hmo/dashboard/HmoReports";
 import HmoProfile from "./views/hmo/dashboard/HmoProfile";
 import HmoSettings from "./views/hmo/dashboard/HmoSettings";
-import ProvidersWelcomePage from "./views/providers/auth/ProvidersWelcomePage";
-import ProvidersLoginPage from "./views/providers/auth/ProvidersLoginPage";
-import ProvidersRegisterPage from "./views/providers/auth/ProvidersRegisterPage";
+// import ProvidersWelcomePage from "./views/providers/auth/ProvidersWelcomePage";
+// import ProvidersLoginPage from "./views/providers/auth/ProvidersLoginPage";
+// import ProvidersRegisterPage from "./views/providers/auth/ProvidersRegisterPage";
 // import ProvidersForgotPassword from "./views/providers/auth/ProvidersForgotPassword";
 // import ProvidersResetPassword from "./views/providers/auth/ProvidersResetPassword";
 import EmailVerification from "./components/EmailVerification";
@@ -31,9 +31,9 @@ import ProviderComplaints from "./views/providers/dashboard/ProvidersComplaints"
 import ProvidersReport from "./views/providers/dashboard/ProvidersReport";
 import ProvidersProfile from "./views/providers/dashboard/ProvidersProfile";
 import ProvidersSettings from "./views/providers/dashboard/ProvidersSettings";
-import StateWelcomePage from "./views/state/auth/StateWelcomePage";
-import StateRegisterPage from "./views/state/auth/StateRegisterPage";
-import StateLoginPage from "./views/state/auth/StateLoginPage";
+// import StateWelcomePage from "./views/state/auth/StateWelcomePage";
+// import StateRegisterPage from "./views/state/auth/StateRegisterPage";
+// import StateLoginPage from "./views/state/auth/StateLoginPage";
 import StateDashboard from "./views/state/dashboard/StateDashboard";
 import StateComplaints from "./views/state/dashboard/StateComplaints";
 import StateReports from "./views/state/dashboard/StateReport";
@@ -56,12 +56,18 @@ import ForgotPassword from "./components/ForgotPassword";
 import CentralAnalysis from "./views/central/dashboard/CentralAnalysis";
 import RegionalStats from "./views/central/dashboard/RegionalStats";
 import RegionStatesById from "./views/central/dashboard/RegionStatesById";
+import OnboardingView from "./views/auth/Onboarding";
+import LoginPage from "./views/auth/LoginPage";
+import StateInviteByCentral from "./views/central/dashboard/StateInviteByCentral";
+import StateInvitationForm from "./views/central/dashboard/StateInvitationForm";
 
 function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<AccountType />} />
+        {/* <Route path="/" element={<AccountType />} /> */}
+        <Route path="/" element={<OnboardingView />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/email-verification" element={<EmailVerification />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
@@ -79,9 +85,9 @@ function App() {
         <Route path="/enrollee-complaint-review" element={<ReviewForm />} />
 
         {/*******************HMO*****************/}
-        <Route path="/hmo-welcome-page" element={<HmoWelcomePage />} />
-        <Route path="/hmo-login-page" element={<HmoLoginPage />} />
-        <Route path="/hmo-register-page" element={<HmoRegisterPage />} />
+        {/* <Route path="/hmo-welcome-page" element={<HmoWelcomePage />} />
+        <Route path="/hmo-login-page" element={<HmoLoginPage />} /> */}
+        {/* <Route path="/hmo-register-page" element={<HmoRegisterPage />} /> */}
         {/* <Route path="/hmo-reset-password" element={<HmoResetPassword />} /> */}
         <Route
           path="/hmo-dashboard/*"
@@ -149,7 +155,7 @@ function App() {
         />
 
         {/*****************Providers********************/}
-        <Route
+        {/* <Route
           path="/providers-welcome-page"
           element={<ProvidersWelcomePage />}
         />
@@ -157,7 +163,7 @@ function App() {
         <Route
           path="/providers-register-page"
           element={<ProvidersRegisterPage />}
-        />
+        /> */}
         {/* <Route
           path="/providers-forgot-password"
           element={<ProvidersForgotPassword />}
@@ -232,9 +238,9 @@ function App() {
         />
 
         {/*********************State********************/}
-        <Route path="/state-welcome-page" element={<StateWelcomePage />} />
+        {/* <Route path="/state-welcome-page" element={<StateWelcomePage />} />
         <Route path="/state-login-page" element={<StateLoginPage />} />
-        <Route path="/state-register-page" element={<StateRegisterPage />} />
+        <Route path="/state-register-page" element={<StateRegisterPage />} /> */}
         <Route
           path="/state-dashboard"
           element={
@@ -326,7 +332,7 @@ function App() {
           }
         />
         <Route
-          path="/central-regional-stats/:id"
+          path="/central-regional-stats/:slug"
           element={
             <DashboardLayout role="central">
               <RegionStatesById />
@@ -349,6 +355,17 @@ function App() {
             </DashboardLayout>
           }
         />
+        <Route
+          path="/central-state-invite"
+          element={
+            <DashboardLayout role="central">
+              <Outlet />
+            </DashboardLayout>
+          }
+        >
+          <Route index element={<StateInviteByCentral />} />
+          <Route path="add-user" element={<StateInvitationForm />} />
+        </Route>
         <Route
           path="/central-profile"
           element={

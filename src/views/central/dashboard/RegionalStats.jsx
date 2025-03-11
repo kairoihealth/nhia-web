@@ -4,12 +4,12 @@ import ArrowBackIosOutlinedIcon from "@mui/icons-material/ArrowBackIosOutlined";
 import ArrowForwardIosOutlinedIcon from "@mui/icons-material/ArrowForwardIosOutlined";
 
 const regionData = [
-  { id: 1, region: "North West" },
-  { id: 2, region: "North Central" },
-  { id: 3, region: "North East" },
-  { id: 4, region: "South West" },
-  { id: 5, region: "South South" },
-  { id: 6, region: "South East" }
+  { id: 1, region: "North West", slug: "north-west" },
+  { id: 2, region: "North Central", slug: "north-central" },
+  { id: 3, region: "North East", slug: "north-east" },
+  { id: 4, region: "South West", slug: "south-west" },
+  { id: 5, region: "South South", slug: "south-south" },
+  { id: 6, region: "South East", slug: "south-east" }
 ];
 
 const RegionalStats = () => {
@@ -76,7 +76,7 @@ const RegionalStats = () => {
                 gap: 0.5,
                 cursor: "pointer"
               }}
-              onClick={() => navigate(`/central-regional-stats/${region.id}`)}
+              onClick={() => navigate(`/central-regional-stats/${region.slug}`)}
             >
               <Typography
                 sx={{

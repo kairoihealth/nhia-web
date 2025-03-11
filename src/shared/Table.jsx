@@ -22,7 +22,8 @@ const ReusableTable = ({
   showStatus = false,
   pagination = false,
   headerBackgroundColor = "#038F3E",
-  actionButtonText = "View Complaint"
+  actionButtonText = "View Complaint",
+  statusLabel = "Complaint Status"
 }) => {
   const [page, setPage] = useState(1);
   const rowsPerPage = 10;
@@ -99,7 +100,7 @@ const ReusableTable = ({
                   color: "#FFFFFF"
                 }}
               >
-                Complaint Status
+                {statusLabel}
               </TableCell>
             )}
           </TableRow>
@@ -168,13 +169,15 @@ const ReusableTable = ({
                       backgroundColor:
                         row.status === "Pending"
                           ? "#FFF3E7"
-                          : row.status === "Resolved"
+                          : row.status === "Resolved" ||
+                            row.status === "Request sent"
                           ? "#D6EBFF"
                           : "#E8F8EE",
                       color:
                         row.status === "Pending"
                           ? "#EDB378"
-                          : row.status === "Resolved"
+                          : row.status === "Resolved" ||
+                            row.status === "Request sent"
                           ? "#4B95DD"
                           : "#096F35"
                     }}
@@ -265,7 +268,8 @@ ReusableTable.propTypes = {
   showStatus: PropTypes.bool,
   pagination: PropTypes.bool,
   headerBackgroundColor: PropTypes.string,
-  actionButtonText: PropTypes.string
+  actionButtonText: PropTypes.string,
+  statusLabel: PropTypes.string
 };
 
 ReusableTable.defaultProps = {
@@ -273,7 +277,8 @@ ReusableTable.defaultProps = {
   showStatus: false,
   pagination: false,
   headerBackgroundColor: "#038F3E",
-  actionButtonText: "View Complaint"
+  actionButtonText: "View Complaint",
+  statusLabel: "Complaint status"
 };
 
 export default ReusableTable;

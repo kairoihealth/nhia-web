@@ -21,12 +21,12 @@ const FormPreview = () => {
     { id: 1, name: "testing 1", icon: hospital1, type: "image" },
     { id: 2, name: "testing 2", icon: hospital2, type: "image" },
     { id: 3, name: "testing 3", icon: hospital3, type: "image" }
-    ]);
-  
-    const handleDeleteFile = (fileId) => {
-      setFiles((prevFiles) => prevFiles.filter((file) => file.id !== fileId));
-    };
-  
+  ]);
+
+  const handleDeleteFile = (fileId) => {
+    setFiles((prevFiles) => prevFiles.filter((file) => file.id !== fileId));
+  };
+
   return (
     <>
       {/* <Helmet>
@@ -36,8 +36,8 @@ const FormPreview = () => {
       </Helmet> */}
       <Box
         sx={{
-          backgroundColor: { xs: "#FFFFFF", md: "#038F3E" },
-          height: "100%"
+          backgroundColor: { xs: "#FFFFFF", md: "#038F3E" }
+          // height: "100%"
         }}
       >
         <Box
@@ -446,7 +446,7 @@ const FormPreview = () => {
                         No attachments available.
                       </Typography>
                     )}
-                                      </Box>
+                  </Box>
                 </Box>
                 <Box
                   sx={{

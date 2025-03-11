@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import PropTypes from "prop-types";
 import {
   Box,
@@ -8,47 +8,115 @@ import {
   IconButton,
   Typography
 } from "@mui/material";
-import { FiMenu, FiLogOut, FiX, FiUser, FiSettings, FiHome } from "react-icons/fi";
+import {
+  FiMenu,
+  FiLogOut,
+  FiX,
+  FiUser,
+  FiSettings,
+  FiHome
+} from "react-icons/fi";
 import Logo from "../assets/nhia-logo.png";
 import { TbReportAnalytics } from "react-icons/tb";
+import { LuCross } from "react-icons/lu";
 import { FaRegComment } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 
 const menuData = {
   hmo: [
     { id: 1, label: "Dashboard", icon: <FiHome />, link: "/hmo-dashboard" },
-    { id: 2, label: "Complaints", icon: <FaRegComment />, link: "/hmo-complaints" },
-    { id: 3, label: "Reports", icon: <TbReportAnalytics />, link: "/hmo-reports" },
+    {
+      id: 2,
+      label: "Complaints",
+      icon: <FaRegComment />,
+      link: "/hmo-complaints"
+    },
+    {
+      id: 3,
+      label: "Reports",
+      icon: <TbReportAnalytics />,
+      link: "/hmo-reports"
+    },
     { id: 4, label: "Profile", icon: <FiUser />, link: "/hmo-profile" },
-    { id: 5, label: "Settings", icon: <FiSettings />, link: "/hmo-settings" },
+    { id: 5, label: "Settings", icon: <FiSettings />, link: "/hmo-settings" }
   ],
   provider: [
-    { id: 1, label: "Dashboard", icon: <FiHome />, link: "/providers-dashboard" },
-    { id: 2, label: "Complaints", icon: <FaRegComment />, link: "/providers-complaints" },
-    { id: 3, label: "Reports", icon: <TbReportAnalytics />, link: "/providers-reports" },
+    {
+      id: 1,
+      label: "Dashboard",
+      icon: <FiHome />,
+      link: "/providers-dashboard"
+    },
+    {
+      id: 2,
+      label: "Complaints",
+      icon: <FaRegComment />,
+      link: "/providers-complaints"
+    },
+    {
+      id: 3,
+      label: "Reports",
+      icon: <TbReportAnalytics />,
+      link: "/providers-reports"
+    },
     { id: 4, label: "Profile", icon: <FiUser />, link: "/providers-profile" },
-    { id: 5, label: "Settings", icon: <FiSettings />, link: "/providers-settings" },
+    {
+      id: 5,
+      label: "Settings",
+      icon: <FiSettings />,
+      link: "/providers-settings"
+    }
   ],
   state: [
     { id: 1, label: "Dashboard", icon: <FiHome />, link: "/state-dashboard" },
-    { id: 2, label: "Complaints", icon: <FaRegComment />, link: "/state-complaints" },
-    { id: 3, label: "Reports", icon: <TbReportAnalytics />, link: "/state-reports" },
+    {
+      id: 2,
+      label: "Complaints",
+      icon: <FaRegComment />,
+      link: "/state-complaints"
+    },
+    {
+      id: 3,
+      label: "Reports",
+      icon: <TbReportAnalytics />,
+      link: "/state-reports"
+    },
     { id: 4, label: "Profile", icon: <FiUser />, link: "/state-profile" },
-    { id: 5, label: "Settings", icon: <FiSettings />, link: "/state-settings" },
+    { id: 5, label: "Settings", icon: <FiSettings />, link: "/state-settings" }
   ],
   central: [
     { id: 1, label: "Dashboard", icon: <FiHome />, link: "/central-dashboard" },
     { id: 1, label: "Analysis", icon: <FiHome />, link: "/central-analysis" },
-    { id: 2, label: "Complaints", icon: <FaRegComment />, link: "/central-complaints" },
-    { id: 3, label: "Reports", icon: <TbReportAnalytics />, link: "/central-reports" },
-    { id: 4, label: "Profile", icon: <FiUser />, link: "/central-profile" },
-    { id: 5, label: "Settings", icon: <FiSettings />, link: "/central-settings" },
-  ],
+    {
+      id: 2,
+      label: "Complaints",
+      icon: <FaRegComment />,
+      link: "/central-complaints"
+    },
+    {
+      id: 3,
+      label: "Reports",
+      icon: <TbReportAnalytics />,
+      link: "/central-reports"
+    },
+    {
+      id: 4,
+      label: "State Invites",
+      icon: <LuCross />,
+      link: "/central-state-invite"
+    },
+    { id: 5, label: "Profile", icon: <FiUser />, link: "/central-profile" },
+    {
+      id: 6,
+      label: "Settings",
+      icon: <FiSettings />,
+      link: "/central-settings"
+    }
+  ]
 };
 
-const DashboardSidebar = ({role}) => {
+const DashboardSidebar = ({ role }) => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
- 
 
   const handleMobileMenuToggle = () => {
     setShowMobileMenu(!showMobileMenu);
@@ -111,7 +179,7 @@ const DashboardSidebar = ({role}) => {
               style={({ isActive }) => ({
                 width: "223px",
                 textDecoration: "none",
-                color: isActive ? "#038F3E" : "#FFFFFF", 
+                color: isActive ? "#038F3E" : "#FFFFFF",
                 backgroundColor: isActive ? "#FFFFFF" : "transparent",
                 borderTopLeftRadius: "20px",
                 borderBottomLeftRadius: "20px",

@@ -4,7 +4,7 @@ import ArrowBackIosOutlinedIcon from "@mui/icons-material/ArrowBackIosOutlined";
 import ArrowForwardIosOutlinedIcon from "@mui/icons-material/ArrowForwardIosOutlined";
 
 const stateData = {
-  1: [
+  "north-west": [
     { name: "Kano", topPerformer: true, worstPerformer: false },
     { name: "Kaduna", topPerformer: false, worstPerformer: true },
     { name: "Katsina", topPerformer: false, worstPerformer: false },
@@ -13,7 +13,7 @@ const stateData = {
     { name: "Zamfara", topPerformer: false, worstPerformer: false },
     { name: "Jigawa", topPerformer: false, worstPerformer: false }
   ],
-  2: [
+  "north-central": [
     { name: "Benue", topPerformer: false, worstPerformer: true },
     { name: "Kogi", topPerformer: false, worstPerformer: false },
     { name: "Kwara", topPerformer: true, worstPerformer: false },
@@ -22,7 +22,7 @@ const stateData = {
     { name: "Plateau", topPerformer: false, worstPerformer: false },
     { name: "FCT", topPerformer: false, worstPerformer: false }
   ],
-  3: [
+  "north-east": [
     { name: "Adamawa", topPerformer: true, worstPerformer: false },
     { name: "Bauchi", topPerformer: false, worstPerformer: true },
     { name: "Borno", topPerformer: false, worstPerformer: false },
@@ -30,7 +30,7 @@ const stateData = {
     { name: "Taraba", topPerformer: false, worstPerformer: false },
     { name: "Yobe", topPerformer: false, worstPerformer: false }
   ],
-  4: [
+  "south-west": [
     { name: "Ekiti", topPerformer: false, worstPerformer: false },
     { name: "Lagos", topPerformer: true, worstPerformer: false },
     { name: "Ogun", topPerformer: false, worstPerformer: false },
@@ -38,7 +38,7 @@ const stateData = {
     { name: "Osun", topPerformer: false, worstPerformer: false },
     { name: "Oyo", topPerformer: false, worstPerformer: false }
   ],
-  5: [
+  "south-south": [
     { name: "Akwa Ibom", topPerformer: false, worstPerformer: false },
     { name: "Bayelsa", topPerformer: false, worstPerformer: true },
     { name: "Cross River", topPerformer: false, worstPerformer: false },
@@ -46,7 +46,7 @@ const stateData = {
     { name: "Edo", topPerformer: true, worstPerformer: false },
     { name: "Rivers", topPerformer: false, worstPerformer: false }
   ],
-  6: [
+  "south-east": [
     { name: "Abia", topPerformer: true, worstPerformer: false },
     { name: "Anambra", topPerformer: false, worstPerformer: false },
     { name: "Ebonyi", topPerformer: false, worstPerformer: true },
@@ -56,19 +56,55 @@ const stateData = {
 };
 
 const regionData = [
-  { id: 1, region: "North West", total: "500", unresolved: "100" },
-  { id: 2, region: "North Central", total: "50", unresolved: "10" },
-  { id: 3, region: "North East", total: "100", unresolved: "20" },
-  { id: 4, region: "South West", total: "200", unresolved: "40" },
-  { id: 5, region: "South South", total: "350", unresolved: "70" },
-  { id: 6, region: "South East", total: "400", unresolved: "80" }
+  {
+    id: 1,
+    region: "North West",
+    slug: "north-west",
+    total: "500",
+    unresolved: "100"
+  },
+  {
+    id: 2,
+    region: "North Central",
+    slug: "north-central",
+    total: "50",
+    unresolved: "10"
+  },
+  {
+    id: 3,
+    region: "North East",
+    slug: "north-east",
+    total: "100",
+    unresolved: "20"
+  },
+  {
+    id: 4,
+    region: "South West",
+    slug: "south-west",
+    total: "200",
+    unresolved: "40"
+  },
+  {
+    id: 5,
+    region: "South South",
+    slug: "south-south",
+    total: "350",
+    unresolved: "70"
+  },
+  {
+    id: 6,
+    region: "South East",
+    slug: "south-east",
+    total: "400",
+    unresolved: "80"
+  }
 ];
 
 const RegionStatesById = () => {
-  const { id } = useParams();
+  const { slug } = useParams();
   const navigate = useNavigate();
-  const regionId = Number(id);
-  const region = regionData.find((r) => r.id === regionId);
+  const regionId = slug;
+  const region = regionData.find((r) => r.slug === regionId);
   const states = stateData[regionId] || [];
   const getTopPerformer = () => {
     const topPerformers = states.filter((state) => state.topPerformer);
