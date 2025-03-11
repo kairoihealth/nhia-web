@@ -4,40 +4,40 @@ import { useNavigate } from "react-router-dom";
 import SearchFilter from "../../../shared/SearchAndFilter";
 import { useState } from "react";
 
-const StateInviteByCentral = () => {
+const InvitationsByState = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [filter, setFilter] = useState("states");
+  const [filter, setFilter] = useState("hcf");
 
   const filterOptions = [
-    { value: "states", label: "States" },
-    { value: "regions", label: "Regions" }
+    { value: "hcf", label: "Providers" },
+    { value: "hmo", label: "HMO" }
   ];
 
   const handleAddUser = () => {
-    navigate(`add-user`);
+    navigate(`add-policy-user`);
   };
 
-  const stateData = [
+  const typeData = [
     {
       date: "02/04/2023",
       name: "Adebayo Adekunle",
       id: "11023",
-      location: "Ondo State",
+      type: "HCF",
       status: "Active"
     },
     {
       date: "02/04/2023",
       name: "Adebayo Adekunle",
       id: "11023",
-      location: "Lagos State",
+      type: "HMO",
       status: "Active"
     },
     {
       date: "02/04/2023",
       name: "Adebayo Adekunle",
       id: "11023",
-      location: "Kaduna State",
+      type: "HMO",
       status: "Request sent"
     }
   ];
@@ -48,14 +48,13 @@ const StateInviteByCentral = () => {
       { label: "Name", field: "name", align: "center" },
       { label: "Date added", field: "date", align: "center" },
       { label: "ID", field: "id", align: "center" },
-      { label: "Location", field: "location", align: "center" }
-      //   { label: "Status", field: "priority", align: "center" }
+      { label: "Type", field: "type", align: "center" }
     ];
   };
 
   // Render Table Rows
   const renderTableRows = () => {
-    const data = stateData;
+    const data = typeData;
     return data.map((t) => ({
       ...t,
       status: t.status
@@ -91,7 +90,7 @@ const StateInviteByCentral = () => {
             }}
             gutterBottom
           >
-            State Invites
+            Providers & HMO
           </Typography>
           <Button
             variant="contained"
@@ -117,7 +116,7 @@ const StateInviteByCentral = () => {
         {/* Search and Sort */}
         <Box sx={{ py: 4 }}>
           <SearchFilter
-            placeholder="Search states"
+            placeholder="Search providers/HMO's"
             searchValue={searchTerm}
             width={"482px"}
             onSearchChange={(e) => setSearchTerm(e.target.value)}
@@ -143,4 +142,4 @@ const StateInviteByCentral = () => {
   );
 };
 
-export default StateInviteByCentral;
+export default InvitationsByState;

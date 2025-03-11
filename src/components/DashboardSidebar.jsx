@@ -81,8 +81,14 @@ const menuData = {
       icon: <TbReportAnalytics />,
       link: "/state-reports"
     },
-    { id: 4, label: "Profile", icon: <FiUser />, link: "/state-profile" },
-    { id: 5, label: "Settings", icon: <FiSettings />, link: "/state-settings" }
+    {
+      id: 4,
+      label: "Providers & HMO",
+      icon: <LuCross />,
+      link: "/state-invitations"
+    },
+    { id: 5, label: "Profile", icon: <FiUser />, link: "/state-profile" },
+    { id: 6, label: "Settings", icon: <FiSettings />, link: "/state-settings" }
   ],
   central: [
     { id: 1, label: "Dashboard", icon: <FiHome />, link: "/central-dashboard" },

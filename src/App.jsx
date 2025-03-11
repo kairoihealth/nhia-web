@@ -60,6 +60,8 @@ import OnboardingView from "./views/auth/Onboarding";
 import LoginPage from "./views/auth/LoginPage";
 import StateInviteByCentral from "./views/central/dashboard/StateInviteByCentral";
 import StateInvitationForm from "./views/central/dashboard/StateInvitationForm";
+import InvitationsByState from "./views/state/dashboard/StateInvitaions";
+import InvitationForm from "./views/state/dashboard/InvitationForm";
 
 function App() {
   return (
@@ -265,6 +267,17 @@ function App() {
             </DashboardLayout>
           }
         />
+        <Route
+          path="/state-invitations"
+          element={
+            <DashboardLayout role="state">
+              <Outlet />
+            </DashboardLayout>
+          }
+        >
+          <Route index element={<InvitationsByState />} />
+          <Route path="add-policy-user" element={<InvitationForm />} />
+        </Route>
         <Route
           path="/state-profile"
           element={

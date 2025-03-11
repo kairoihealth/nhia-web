@@ -1,6 +1,7 @@
 import { Modal, Box, Typography } from "@mui/material";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+// import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PropTypes from "prop-types";
+import success from "../assets/success.png";
 
 const SuccessModal = ({ open, onClose, recipient, message, title }) => {
   return (
@@ -20,7 +21,12 @@ const SuccessModal = ({ open, onClose, recipient, message, title }) => {
           textAlign: "center"
         }}
       >
-        <CheckCircleIcon sx={{ fontSize: 50, color: "#038F3E" }} />
+        {/* <CheckCircleIcon sx={{ fontSize: 50, color: "#038F3E" }} /> */}
+        <img
+          src={success}
+          alt="Success"
+          style={{ width: "98px", height: "98px" }}
+        />
         <Typography
           sx={{
             fontSize: "32px",
