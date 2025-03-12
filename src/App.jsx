@@ -62,6 +62,7 @@ import StateInviteByCentral from "./views/central/dashboard/StateInviteByCentral
 import StateInvitationForm from "./views/central/dashboard/StateInvitationForm";
 import InvitationsByState from "./views/state/dashboard/StateInvitaions";
 import InvitationForm from "./views/state/dashboard/InvitationForm";
+import RegStateInfo from "./views/central/dashboard/RegStateInfo";
 
 function App() {
   return (
@@ -349,6 +350,14 @@ function App() {
           element={
             <DashboardLayout role="central">
               <RegionStatesById />
+            </DashboardLayout>
+          }
+        />
+        <Route
+          path="/central-regional-stats/:slug/:stateId"
+          element={
+            <DashboardLayout role="central">
+              <RegStateInfo />
             </DashboardLayout>
           }
         />
