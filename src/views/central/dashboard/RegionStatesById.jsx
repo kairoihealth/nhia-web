@@ -2,9 +2,20 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Box, Typography, Card } from "@mui/material";
 import ArrowBackIosOutlinedIcon from "@mui/icons-material/ArrowBackIosOutlined";
 import ArrowForwardIosOutlinedIcon from "@mui/icons-material/ArrowForwardIosOutlined";
+import PieChart from "../../../shared/PieChart";
+import {
+  regComplaintData,
+  pieColor,
+  pieData,
+  lineData
+} from "../../../mock/chartData";
+import { barOptions, lineOptions, options } from "../../../utils/config";
+import BarChart from "../../../shared/BarChart";
+import GaugeChart from "../../../shared/SofaChart";
+import LineChart from "../../../shared/LineChart";
 
 const stateData = {
-  1: [
+  "north-west": [
     { name: "Kano", topPerformer: true, worstPerformer: false },
     { name: "Kaduna", topPerformer: false, worstPerformer: true },
     { name: "Katsina", topPerformer: false, worstPerformer: false },
@@ -13,7 +24,7 @@ const stateData = {
     { name: "Zamfara", topPerformer: false, worstPerformer: false },
     { name: "Jigawa", topPerformer: false, worstPerformer: false }
   ],
-  2: [
+  "north-central": [
     { name: "Benue", topPerformer: false, worstPerformer: true },
     { name: "Kogi", topPerformer: false, worstPerformer: false },
     { name: "Kwara", topPerformer: true, worstPerformer: false },
@@ -22,7 +33,7 @@ const stateData = {
     { name: "Plateau", topPerformer: false, worstPerformer: false },
     { name: "FCT", topPerformer: false, worstPerformer: false }
   ],
-  3: [
+  "north-east": [
     { name: "Adamawa", topPerformer: true, worstPerformer: false },
     { name: "Bauchi", topPerformer: false, worstPerformer: true },
     { name: "Borno", topPerformer: false, worstPerformer: false },
@@ -30,7 +41,7 @@ const stateData = {
     { name: "Taraba", topPerformer: false, worstPerformer: false },
     { name: "Yobe", topPerformer: false, worstPerformer: false }
   ],
-  4: [
+  "south-west": [
     { name: "Ekiti", topPerformer: false, worstPerformer: false },
     { name: "Lagos", topPerformer: true, worstPerformer: false },
     { name: "Ogun", topPerformer: false, worstPerformer: false },
@@ -38,7 +49,7 @@ const stateData = {
     { name: "Osun", topPerformer: false, worstPerformer: false },
     { name: "Oyo", topPerformer: false, worstPerformer: false }
   ],
-  5: [
+  "south-south": [
     { name: "Akwa Ibom", topPerformer: false, worstPerformer: false },
     { name: "Bayelsa", topPerformer: false, worstPerformer: true },
     { name: "Cross River", topPerformer: false, worstPerformer: false },
@@ -46,7 +57,7 @@ const stateData = {
     { name: "Edo", topPerformer: true, worstPerformer: false },
     { name: "Rivers", topPerformer: false, worstPerformer: false }
   ],
-  6: [
+  "south-east": [
     { name: "Abia", topPerformer: true, worstPerformer: false },
     { name: "Anambra", topPerformer: false, worstPerformer: false },
     { name: "Ebonyi", topPerformer: false, worstPerformer: true },
@@ -56,19 +67,55 @@ const stateData = {
 };
 
 const regionData = [
-  { id: 1, region: "North West", total: "500", unresolved: "100" },
-  { id: 2, region: "North Central", total: "50", unresolved: "10" },
-  { id: 3, region: "North East", total: "100", unresolved: "20" },
-  { id: 4, region: "South West", total: "200", unresolved: "40" },
-  { id: 5, region: "South South", total: "350", unresolved: "70" },
-  { id: 6, region: "South East", total: "400", unresolved: "80" }
+  {
+    id: 1,
+    region: "North West",
+    slug: "north-west",
+    total: "500",
+    unresolved: "100"
+  },
+  {
+    id: 2,
+    region: "North Central",
+    slug: "north-central",
+    total: "50",
+    unresolved: "10"
+  },
+  {
+    id: 3,
+    region: "North East",
+    slug: "north-east",
+    total: "100",
+    unresolved: "20"
+  },
+  {
+    id: 4,
+    region: "South West",
+    slug: "south-west",
+    total: "200",
+    unresolved: "40"
+  },
+  {
+    id: 5,
+    region: "South South",
+    slug: "south-south",
+    total: "350",
+    unresolved: "70"
+  },
+  {
+    id: 6,
+    region: "South East",
+    slug: "south-east",
+    total: "400",
+    unresolved: "80"
+  }
 ];
 
 const RegionStatesById = () => {
-  const { id } = useParams();
+  const { slug } = useParams();
   const navigate = useNavigate();
-  const regionId = Number(id);
-  const region = regionData.find((r) => r.id === regionId);
+  const regionId = slug;
+  const region = regionData.find((r) => r.slug === regionId);
   const states = stateData[regionId] || [];
   const getTopPerformer = () => {
     const topPerformers = states.filter((state) => state.topPerformer);
@@ -132,7 +179,13 @@ const RegionStatesById = () => {
                 gap: 0.5,
                 cursor: "pointer"
               }}
-              onClick={() => {}}
+              onClick={() =>
+                navigate(
+                  `/central-regional-stats/${slug}/${state.name
+                    .toLowerCase()
+                    .replace(/ /g, "-")}`
+                )
+              }
             >
               <Typography
                 sx={{
@@ -152,8 +205,8 @@ const RegionStatesById = () => {
         ))}
       </Box>
 
-      <Box sx={{ display: "flex", gap: 2, p: 2, mt: 2 }}>
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 4, width: "75%" }}>
+      <Box sx={{ display: "flex", gap: 1, p: 2, mt: 2 }}>
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 4, width: "65%" }}>
           <Card
             sx={{
               display: "flex",
@@ -194,27 +247,91 @@ const RegionStatesById = () => {
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
-              gap: 3,
+              gap: 0.5,
               p: 2,
               borderRadius: "12px",
               backgroundColor: "#FFFFFF",
               width: "313px",
               height: "209px"
             }}
-          ></Card>
+          >
+            <Typography
+              sx={{
+                fontSize: "18px",
+                fontWeight: 500,
+                lineHeight: "28px",
+                color: "#475467"
+              }}
+              gutterBottom
+            >
+              Complaint Status
+            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", px: 10 }}>
+              <PieChart
+                title="Pie Chart Example"
+                data={pieData}
+                options={options}
+              />
+            </Box>
+            <Box sx={{ display: "flex" }}>
+              {pieColor.map((t) => (
+                <Box key={t.id} sx={{ display: "flex", alignItems: "center" }}>
+                  <Box
+                    sx={{
+                      width: "8px",
+                      height: "8px",
+                      backgroundColor: t.color,
+                      borderRadius: "50%",
+                      margin: "0 8px"
+                    }}
+                  />
+                  <Typography
+                    sx={{
+                      fontSize: "12px",
+                      fontWeight: 500,
+                      lineHeight: "16px",
+                      color: "#475467"
+                    }}
+                  >
+                    {t.title}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          </Card>
           <Card
             sx={{
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
-              gap: 3,
-              p: 2,
+              gap: 0.2,
+              p: 1,
               borderRadius: "12px",
               backgroundColor: "#FFFFFF",
               width: "313px",
               height: "209px"
             }}
-          ></Card>
+          >
+            <Typography
+              sx={{
+                fontSize: "18px",
+                fontWeight: 500,
+                lineHeight: "28px",
+                color: "#475467",
+                p: 1
+              }}
+              gutterBottom
+            >
+              Top Complaint Category
+            </Typography>
+            <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+              <BarChart
+                title="Bar Chart Example"
+                data={regComplaintData}
+                options={barOptions}
+              />
+            </Box>
+          </Card>
           <Card
             sx={{
               display: "flex",
@@ -341,8 +458,73 @@ const RegionStatesById = () => {
             </Typography>
           </Card>
         </Box>
-        <Box sx={{ display: "flex", flexDirection: "column", width: "25%" }}>
-          B
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 4,
+            width: "35%"
+          }}
+        >
+          <Card
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              gap: 0.5,
+              p: 2,
+              borderRadius: "12px",
+              backgroundColor: "#FFFFFF",
+              width: "360px",
+              height: "313px"
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: "18px",
+                fontWeight: 500,
+                lineHeight: "28px",
+                color: "#101828"
+              }}
+            >
+              Complaints Trends
+            </Typography>
+            <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+              <LineChart
+                title="Line Chart Example"
+                data={lineData}
+                options={lineOptions}
+              />
+            </Box>
+          </Card>
+          <Card
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              gap: 3,
+              p: 2,
+              borderRadius: "12px",
+              backgroundColor: "#FFFFFF",
+              width: "361px",
+              height: "273.65px"
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: "18px",
+                fontWeight: 500,
+                lineHeight: "28px",
+                color: "#475467"
+              }}
+              gutterBottom
+            >
+              Complaints Satisfaction
+            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", px: 5 }}>
+              <GaugeChart value={70.1} />
+            </Box>
+          </Card>
         </Box>
       </Box>
     </Box>

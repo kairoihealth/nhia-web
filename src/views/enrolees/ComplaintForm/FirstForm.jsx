@@ -19,9 +19,9 @@ const textFieldStyles = {
     color: "#737373",
     border: "0.5px solid #DADADA",
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-            borderColor: "#038F3E", 
-    },
-  },
+      borderColor: "#038F3E"
+    }
+  }
 };
 
 const formControlStyles = {
@@ -45,8 +45,8 @@ const selectStyles = {
   fontSize: "16px",
   outline: "none",
   "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#038F3E", // Green border color
-}
+    borderColor: "#038F3E" // Green border color
+  }
 };
 
 const FirstForm = () => {
@@ -59,8 +59,8 @@ const FirstForm = () => {
       </Helmet> */}
       <Box
         sx={{
-          backgroundColor: { xs: "#FFFFFF", md: "#038F3E" },
-          height: "100%"
+          backgroundColor: { xs: "#FFFFFF", md: "#038F3E" }
+          // height: "100%"
         }}
       >
         {/* <Container> */}
@@ -87,9 +87,18 @@ const FirstForm = () => {
                 alt="Logo"
                 style={{ display: "block", margin: "0 auto" }}
               />
-             <Typography align="center" sx={{ fontSize: "20px", fontWeight: 500, lineHeight: "27px", color: "#038F3E", margin: "1rem 0" }}>
-                  Complaint Form
-                </Typography>
+              <Typography
+                align="center"
+                sx={{
+                  fontSize: "20px",
+                  fontWeight: 500,
+                  lineHeight: "27px",
+                  color: "#038F3E",
+                  margin: "1rem 0"
+                }}
+              >
+                Complaint Form
+              </Typography>
               <Typography
                 sx={{
                   fontSize: "20px",
@@ -266,7 +275,7 @@ const FirstForm = () => {
                     </Typography>
                     <FormControl fullWidth>
                       <PhoneInput
-                        country={"ng"}          
+                        country={"ng"}
                         inputStyle={formControlStyles}
                       />
                     </FormControl>
@@ -321,9 +330,10 @@ const FirstForm = () => {
                       </span>
                     </Typography>
                     <FormControl fullWidth>
-                      <PhoneInput country={"ng"}
+                      <PhoneInput
+                        country={"ng"}
                         inputStyle={formControlStyles}
-                        />
+                      />
                     </FormControl>
                   </Box>
                 </Box>
