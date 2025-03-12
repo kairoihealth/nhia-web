@@ -2,6 +2,17 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Box, Typography, Card } from "@mui/material";
 import ArrowBackIosOutlinedIcon from "@mui/icons-material/ArrowBackIosOutlined";
 import ArrowForwardIosOutlinedIcon from "@mui/icons-material/ArrowForwardIosOutlined";
+import PieChart from "../../../shared/PieChart";
+import {
+  regComplaintData,
+  pieColor,
+  pieData,
+  lineData
+} from "../../../mock/chartData";
+import { barOptions, lineOptions, options } from "../../../utils/config";
+import BarChart from "../../../shared/BarChart";
+import GaugeChart from "../../../shared/SofaChart";
+import LineChart from "../../../shared/LineChart";
 
 const stateData = {
   "north-west": [
@@ -168,7 +179,13 @@ const RegionStatesById = () => {
                 gap: 0.5,
                 cursor: "pointer"
               }}
-              onClick={() => {}}
+              onClick={() =>
+                navigate(
+                  `/central-regional-stats/${slug}/${state.name
+                    .toLowerCase()
+                    .replace(/ /g, "-")}`
+                )
+              }
             >
               <Typography
                 sx={{
@@ -188,8 +205,8 @@ const RegionStatesById = () => {
         ))}
       </Box>
 
-      <Box sx={{ display: "flex", gap: 2, p: 2, mt: 2 }}>
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 4, width: "75%" }}>
+      <Box sx={{ display: "flex", gap: 1, p: 2, mt: 2 }}>
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 4, width: "65%" }}>
           <Card
             sx={{
               display: "flex",
@@ -230,27 +247,91 @@ const RegionStatesById = () => {
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
-              gap: 3,
+              gap: 0.5,
               p: 2,
               borderRadius: "12px",
               backgroundColor: "#FFFFFF",
               width: "313px",
               height: "209px"
             }}
-          ></Card>
+          >
+            <Typography
+              sx={{
+                fontSize: "18px",
+                fontWeight: 500,
+                lineHeight: "28px",
+                color: "#475467"
+              }}
+              gutterBottom
+            >
+              Complaint Status
+            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", px: 10 }}>
+              <PieChart
+                title="Pie Chart Example"
+                data={pieData}
+                options={options}
+              />
+            </Box>
+            <Box sx={{ display: "flex" }}>
+              {pieColor.map((t) => (
+                <Box key={t.id} sx={{ display: "flex", alignItems: "center" }}>
+                  <Box
+                    sx={{
+                      width: "8px",
+                      height: "8px",
+                      backgroundColor: t.color,
+                      borderRadius: "50%",
+                      margin: "0 8px"
+                    }}
+                  />
+                  <Typography
+                    sx={{
+                      fontSize: "12px",
+                      fontWeight: 500,
+                      lineHeight: "16px",
+                      color: "#475467"
+                    }}
+                  >
+                    {t.title}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          </Card>
           <Card
             sx={{
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
-              gap: 3,
-              p: 2,
+              gap: 0.2,
+              p: 1,
               borderRadius: "12px",
               backgroundColor: "#FFFFFF",
               width: "313px",
               height: "209px"
             }}
-          ></Card>
+          >
+            <Typography
+              sx={{
+                fontSize: "18px",
+                fontWeight: 500,
+                lineHeight: "28px",
+                color: "#475467",
+                p: 1
+              }}
+              gutterBottom
+            >
+              Top Complaint Category
+            </Typography>
+            <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+              <BarChart
+                title="Bar Chart Example"
+                data={regComplaintData}
+                options={barOptions}
+              />
+            </Box>
+          </Card>
           <Card
             sx={{
               display: "flex",
@@ -377,8 +458,73 @@ const RegionStatesById = () => {
             </Typography>
           </Card>
         </Box>
-        <Box sx={{ display: "flex", flexDirection: "column", width: "25%" }}>
-          B
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 4,
+            width: "35%"
+          }}
+        >
+          <Card
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              gap: 0.5,
+              p: 2,
+              borderRadius: "12px",
+              backgroundColor: "#FFFFFF",
+              width: "360px",
+              height: "313px"
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: "18px",
+                fontWeight: 500,
+                lineHeight: "28px",
+                color: "#101828"
+              }}
+            >
+              Complaints Trends
+            </Typography>
+            <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+              <LineChart
+                title="Line Chart Example"
+                data={lineData}
+                options={lineOptions}
+              />
+            </Box>
+          </Card>
+          <Card
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              gap: 3,
+              p: 2,
+              borderRadius: "12px",
+              backgroundColor: "#FFFFFF",
+              width: "361px",
+              height: "273.65px"
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: "18px",
+                fontWeight: 500,
+                lineHeight: "28px",
+                color: "#475467"
+              }}
+              gutterBottom
+            >
+              Complaints Satisfaction
+            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", px: 5 }}>
+              <GaugeChart value={70.1} />
+            </Box>
+          </Card>
         </Box>
       </Box>
     </Box>

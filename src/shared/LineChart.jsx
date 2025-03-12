@@ -1,25 +1,39 @@
-import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend } from 'chart.js';
+import {
+  Chart as ChartJS,
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Tooltip,
+  Legend
+} from "chart.js";
 import { Box } from "@mui/material";
 import PropTypes from "prop-types";
 import { Line } from "react-chartjs-2";
 
-
-const LineChart = ({ data, options }) => {
-    ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend);
+const LineChart = ({ data, options, width = "325px", height = "250px" }) => {
+  ChartJS.register(
+    LineElement,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    Tooltip,
+    Legend
+  );
   return (
     <Box
       sx={{
-        width: "325px", 
-        height: '250px', 
-        position: "relative", 
+        width: width,
+        height: height,
+        position: "relative"
       }}
     >
       <Line
         data={data}
         options={{
-          ...options, 
-          maintainAspectRatio: false, 
-          responsive: true, 
+          ...options,
+          maintainAspectRatio: false,
+          responsive: true
         }}
       />
     </Box>
@@ -29,6 +43,8 @@ const LineChart = ({ data, options }) => {
 export default LineChart;
 
 LineChart.propTypes = {
-  data: PropTypes.object.isRequired, 
+  data: PropTypes.object.isRequired,
   options: PropTypes.object,
+  width: PropTypes.string,
+  height: PropTypes.string
 };

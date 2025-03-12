@@ -34,7 +34,7 @@ export const lineData = {
   datasets: [
     {
       label: "Trend",
-      data: [65, 59, 80, 81, 56, 55, 40],
+      data: [65, 59, 100, 81, 56, 55, 40],
       fill: false,
       borderColor: "#18A0FB",
       tension: 0.1
@@ -231,6 +231,21 @@ export const centralBarData = {
     {
       label: "Volume",
       data: [65, 59, 80, 81, 56, 55, 40, 30],
+      backgroundColor: ["#20201E"],
+      borderColor: ["#20201E"],
+      borderWidth: 1,
+      barThickness: 15,
+      borderRadius: 4
+    }
+  ]
+};
+
+export const regComplaintData = {
+  labels: ["Billing", "Care", "Services", "Com", "Cov", "Others"],
+  datasets: [
+    {
+      label: "Volume",
+      data: [65, 59, 80, 81, 56, 55, 40],
       backgroundColor: ["#20201E"],
       borderColor: ["#20201E"],
       borderWidth: 1,
