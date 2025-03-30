@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Container,
@@ -12,7 +13,7 @@ import {
 } from "@mui/material";
 import Logo from "../../assets/nhia-logo.png";
 import { VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
-// import { useNavigate } from "react-router-dom";
+import { mockLogin } from "../../mock/mockAuth";
 
 const textFieldStyles = {
   "& .MuiOutlinedInput-root": {
@@ -27,40 +28,27 @@ const textFieldStyles = {
   }
 };
 const LoginPage = () => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
 
-  // const handleLogin = async (credentials) => {
-  //     try {
-  //       // Simulate API call to get user role
-  //       const response = await fakeLoginAPI(credentials);
-  //       const { role } = response.data;
+  const handleLogin = (e) => {
+    e.preventDefault();
+    const role = mockLogin(email, password);
+    console.log(role);
 
-  //       // Redirect based on role
-  //       switch (role) {
-  //         case "hmo":
-  //           navigate("/hmo-dashboard");
-  //           break;
-  //         case "provider":
-  //           navigate("/providers-dashboard");
-  //           break;
-  //         case "state":
-  //           navigate("/state-dashboard");
-  //           break;
-  //         case "central":
-  //           navigate("/central-dashboard");
-  //           break;
-  //         default:
-  //           throw new Error("Unknown role");
-  //       }
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
+    if (role) {
+      navigate(`/${role}/dashboard`); // Redirect to user's dashboard
+    } else {
+      setError("Invalid credentials! Please try again.");
+    }
+  };
 
   return (
     <>
@@ -132,6 +120,8 @@ const LoginPage = () => {
                   placeholder="example@example.com"
                   required
                   sx={textFieldStyles}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </Box>
 
@@ -158,9 +148,12 @@ const LoginPage = () => {
                 </Typography>
                 <OutlinedInput
                   id="outlined-adornment-password"
+                  name="password"
                   type={passwordVisible ? "text" : "password"}
                   placeholder="Password"
                   fullWidth
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   endAdornment={
                     <InputAdornment position="end">
                       <IconButton
@@ -204,13 +197,12 @@ const LoginPage = () => {
               {/* Login Button */}
               <Button
                 variant="contained"
-                color="primary"
                 fullWidth
                 sx={{
                   width: "394px",
                   height: "45px",
                   borderRadius: "50px",
-                  backgroundColor: "#038F3E",
+                  backgroundColor: email && password ? "#038F3E" : "grey",
                   color: "#FFFFFF",
                   fontSize: "16px",
                   fontWeight: 500,
@@ -220,10 +212,13 @@ const LoginPage = () => {
                   px: "8px",
                   textTransform: "capitalize"
                 }}
-                // onClick={handleLogin}
+                disabled={!email || !password}
+                onClick={handleLogin}
               >
                 Login
               </Button>
+
+              {error && <p style={{ color: "red" }}>{error}</p>}
             </Box>
           </Box>
         </Container>

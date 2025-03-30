@@ -18,7 +18,11 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import DeleteOutlineTwoToneIcon from "@mui/icons-material/DeleteOutlineTwoTone";
-import { hmoAdmin, hmoAdminLevel, hmoAdminLevelPermissions } from "../../../mock/hmoAdmins";
+import {
+  hmoAdmin,
+  hmoAdminLevel,
+  hmoAdminLevelPermissions
+} from "../../../mock/hmoAdmins";
 
 const textFieldStyles = {
   "& .MuiOutlinedInput-root": {
@@ -45,7 +49,7 @@ const selectStyles = {
   }
 };
 
-const Settings = () => {
+const HmoSettings = () => {
   const [activeTab, setActiveTab] = useState("add");
 
   const handleTabClick = (tab) => {
@@ -853,22 +857,22 @@ const ManageAdminRoles = () => {
               >
                 {selectedLevel ? "Back" : "Admin level name"}
               </Typography>
-              </Box>
-              {!newLevel && (
-            <Box sx={{ display: "flex", gap: 0.5, cursor: "pointer" }}>
-              <DeleteOutlineTwoToneIcon sx={{ color: "#EB001B" }} />
-              <Typography
-                sx={{
-                  fontSize: "16px",
-                  fontWeight: 500,
-                  lineHeight: "28px",
-                  color: "#EB001B"
-                }}
-              >
-                Delete Admin level
-              </Typography>
             </Box>
-              )}
+            {!newLevel && (
+              <Box sx={{ display: "flex", gap: 0.5, cursor: "pointer" }}>
+                <DeleteOutlineTwoToneIcon sx={{ color: "#EB001B" }} />
+                <Typography
+                  sx={{
+                    fontSize: "16px",
+                    fontWeight: 500,
+                    lineHeight: "28px",
+                    color: "#EB001B"
+                  }}
+                >
+                  Delete Admin level
+                </Typography>
+              </Box>
+            )}
           </Box>
 
           {/* add level */}
@@ -986,4 +990,4 @@ const ManageAdminRoles = () => {
   );
 };
 
-export default Settings;
+export default HmoSettings;

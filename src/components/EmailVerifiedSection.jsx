@@ -27,7 +27,7 @@ const EmailVerifiedSection = () => {
   // };
 
   const handleLogin = () => {
-    navigate("/login-page");
+    navigate("/login");
   };
   return (
     <>
