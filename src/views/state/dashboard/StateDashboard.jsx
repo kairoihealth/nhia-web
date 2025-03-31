@@ -296,7 +296,7 @@ const StateDashboard = () => {
                   textDecoration: "underline",
                   cursor: "pointer"
                 }}
-                onClick={() => navigate("/state-complaints")}
+                onClick={() => navigate("/state/complaints")}
               >
                 Respond to Complaints{" "}
                 <ArrowRightAltTwoToneIcon sx={{ color: "#071C42" }} />
@@ -332,7 +332,7 @@ const StateDashboard = () => {
                   textDecoration: "underline",
                   cursor: "pointer"
                 }}
-                onClick={() => navigate("/state-complaints")}
+                onClick={() => navigate("/state/complaints")}
               >
                 View Complaints{" "}
                 <ArrowRightAltTwoToneIcon sx={{ color: "#038F3E" }} />

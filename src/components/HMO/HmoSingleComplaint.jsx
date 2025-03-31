@@ -8,8 +8,8 @@ const HmoSingleComplaint = () => {
   console.log(data.complaint.id);
 
   const handleCompliant = () => {
-    navigate(`/hmo-complaint/${data?.complaint.complaint_no}/thread`);
-  }
+    navigate(`/hmo/complaint/${data?.complaint.complaint_no}/thread`);
+  };
 
   return (
     <Box>
@@ -308,7 +308,7 @@ const HmoSingleComplaint = () => {
         </Box>
 
         {/*Button*/}
-        <Box sx={{display: "flex", justifyContent: "center"}}>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
           <Button
             variant="contained"
             sx={{
@@ -317,7 +317,7 @@ const HmoSingleComplaint = () => {
               color: "#FFFFFF",
               fontWeight: 500,
               fontSize: "16px",
-                        lineHeight: "24px",
+              lineHeight: "24px",
               textTransform: "capitalize",
               padding: "12px 24px",
               borderRadius: "8px",

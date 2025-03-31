@@ -377,7 +377,7 @@ const ProviderDashboard = () => {
               textDecoration: "underline",
               cursor: "pointer"
             }}
-            onClick={() => navigate("/providers-complaints")}
+            onClick={() => navigate("/provider/complaints")}
           >
             View Complaints{" "}
             <ArrowRightAltTwoToneIcon sx={{ color: "#038F3E" }} />

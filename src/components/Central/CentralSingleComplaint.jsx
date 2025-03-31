@@ -8,8 +8,8 @@ const CentralSingleComplaint = () => {
   console.log(data.complaint.id);
 
   const handleCompliant = () => {
-    navigate(`/central-complaint/${data?.complaint.complaint_no}/thread`);
-  }
+    navigate(`/central/complaint/${data?.complaint.complaint_no}/thread`);
+  };
 
   return (
     <Box>
@@ -338,7 +338,7 @@ const CentralSingleComplaint = () => {
                   width: "60%"
                 }}
               >
-                Name of Respondent 
+                Name of Respondent
               </Typography>
               <Typography
                 sx={{
@@ -356,7 +356,7 @@ const CentralSingleComplaint = () => {
         </Box>
 
         {/*Button*/}
-        <Box sx={{display: "flex", justifyContent: "center"}}>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
           <Button
             variant="contained"
             sx={{
@@ -365,7 +365,7 @@ const CentralSingleComplaint = () => {
               color: "#FFFFFF",
               fontWeight: 500,
               fontSize: "16px",
-                        lineHeight: "24px",
+              lineHeight: "24px",
               textTransform: "capitalize",
               padding: "12px 24px",
               borderRadius: "8px",
