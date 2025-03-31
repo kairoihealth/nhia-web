@@ -9,6 +9,7 @@ import HMORoutes from "./views/hmo/routes";
 import StateRoutes from "./views/state/routes";
 import ProviderRoutes from "./views/providers/routes";
 import CentralRoutes from "./views/central/routes";
+import OnboardingView from "./views/auth/Onboarding";
 // import NotFound from "./components/NotFound";
 
 const getUserRole = () => localStorage.getItem("userRole");
@@ -18,18 +19,15 @@ function App() {
 
   return (
     <Routes>
+      <Route path="/" element={<OnboardingView />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/email-verification" element={<EmailVerification />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
-
-      {userRole === "enrollee" && (
-        <Route path="enrollee/*" element={<EnrolleeRoutes />} />
-      )}
+      <Route path="enrollee/*" element={<EnrolleeRoutes />} />
 
       {/* Protect all dashboard routes */}
       <Route element={<ProtectedRoute />}>
         <Route path="/" element={<DashboardLayout role={userRole} />}>
-          <Route path="enrollee/*" element={<EnrolleeRoutes />} />
           <Route path="hmo/*" element={<HMORoutes />} />
           <Route path="state/*" element={<StateRoutes />} />
           <Route path="provider/*" element={<ProviderRoutes />} />
