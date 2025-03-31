@@ -38,3 +38,4 @@ build.zip
 .env.development
 .env.production
 .env
+.qodo

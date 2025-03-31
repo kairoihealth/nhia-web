@@ -71,7 +71,7 @@ const HmoComplaintsThread = () => {
   const [isResponse] = useState(true);
 
   const handleReply = () => {
-    navigate(`/hmo-complaint/${id}/reply`, { state: { data } });
+    navigate(`/hmo/complaint/${id}/reply`, { state: { data } });
   };
 
   return (

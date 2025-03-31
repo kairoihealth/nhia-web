@@ -52,9 +52,9 @@ const hmoData = [
 const StateReplyComplaint = () => {
   const navigate = useNavigate();
   const location = useLocation();
-    const { data } = location.state || {};
-    const [selectedHMO, setSelectedHMO] = useState(null);
-  const [attachments, setAttachments] = useState([]); 
+  const { data } = location.state || {};
+  const [selectedHMO, setSelectedHMO] = useState(null);
+  const [attachments, setAttachments] = useState([]);
 
   // Function to handle file selection
   const handleFileChange = (event) => {
@@ -93,7 +93,7 @@ const StateReplyComplaint = () => {
   };
 
   const handleSubmit = () => {
-    navigate(`/state-complaint/${data.id}/thread`);
+    navigate(`/state/complaint/${data.id}/thread`);
   };
 
   return (
@@ -167,21 +167,21 @@ const StateReplyComplaint = () => {
         </Box>
 
         {/*Reply*/}
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 3, p: 5 }}>
-              {selectedHMO && (
-        <Typography
-          variant="subtitle1"
-          sx={{
-            fontSize: "20px",
-            fontWeight: 600,
-            lineHeight: "24px",
-            color: "#111827",
-            mb: 2,
-          }}
-        >
-          Complainant: {selectedHMO.name}
-        </Typography>
-      )}
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 3, p: 5 }}>
+          {selectedHMO && (
+            <Typography
+              variant="subtitle1"
+              sx={{
+                fontSize: "20px",
+                fontWeight: 600,
+                lineHeight: "24px",
+                color: "#111827",
+                mb: 2
+              }}
+            >
+              Complainant: {selectedHMO.name}
+            </Typography>
+          )}
           <Typography
             sx={{
               fontSize: "16px",
@@ -196,16 +196,16 @@ const StateReplyComplaint = () => {
             freeSolo
             id="free-solo-2-demo"
             disableClearable
-                      options={hmoData.map((option) => option.title)}
-                      onChange={(event, newValue) => {
-                        if (newValue) {
-                          // Find the selected HMO by title
-                          const selected = hmoData.find((hmo) => hmo.title === newValue);
-                          setSelectedHMO(selected || null); 
-                        } else {
-                          setSelectedHMO(null); 
-                        }
-                      }}
+            options={hmoData.map((option) => option.title)}
+            onChange={(event, newValue) => {
+              if (newValue) {
+                // Find the selected HMO by title
+                const selected = hmoData.find((hmo) => hmo.title === newValue);
+                setSelectedHMO(selected || null);
+              } else {
+                setSelectedHMO(null);
+              }
+            }}
             renderInput={(params) => (
               <TextField
                 {...params}

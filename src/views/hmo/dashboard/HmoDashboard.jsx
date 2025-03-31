@@ -277,7 +277,7 @@ const Dashboard = () => {
                   textDecoration: "underline",
                   cursor: "pointer"
                 }}
-                onClick={() => navigate("/hmo-complaints")}
+                onClick={() => navigate("/hmo/complaints")}
               >
                 View Complaints{" "}
                 <ArrowRightAltTwoToneIcon sx={{ color: "#038F3E" }} />

@@ -24,105 +24,107 @@ import { NavLink } from "react-router-dom";
 
 const menuData = {
   hmo: [
-    { id: 1, label: "Dashboard", icon: <FiHome />, link: "/hmo-dashboard" },
+    { id: 1, label: "Dashboard", icon: <FiHome />, link: "/hmo/dashboard" },
     {
       id: 2,
       label: "Complaints",
       icon: <FaRegComment />,
-      link: "/hmo-complaints"
+      link: "/hmo/complaints"
     },
     {
       id: 3,
       label: "Reports",
       icon: <TbReportAnalytics />,
-      link: "/hmo-reports"
+      link: "/hmo/reports"
     },
-    { id: 4, label: "Profile", icon: <FiUser />, link: "/hmo-profile" },
-    { id: 5, label: "Settings", icon: <FiSettings />, link: "/hmo-settings" }
+    { id: 4, label: "Profile", icon: <FiUser />, link: "/hmo/profile" },
+    { id: 5, label: "Settings", icon: <FiSettings />, link: "/hmo/settings" }
   ],
   provider: [
     {
       id: 1,
       label: "Dashboard",
       icon: <FiHome />,
-      link: "/providers-dashboard"
+      link: "/provider/dashboard"
     },
     {
       id: 2,
       label: "Complaints",
       icon: <FaRegComment />,
-      link: "/providers-complaints"
+      link: "/provider/complaints"
     },
     {
       id: 3,
       label: "Reports",
       icon: <TbReportAnalytics />,
-      link: "/providers-reports"
+      link: "/provider/reports"
     },
-    { id: 4, label: "Profile", icon: <FiUser />, link: "/providers-profile" },
+    { id: 4, label: "Profile", icon: <FiUser />, link: "/provider/profile" },
     {
       id: 5,
       label: "Settings",
       icon: <FiSettings />,
-      link: "/providers-settings"
+      link: "/provider/settings"
     }
   ],
   state: [
-    { id: 1, label: "Dashboard", icon: <FiHome />, link: "/state-dashboard" },
+    { id: 1, label: "Dashboard", icon: <FiHome />, link: "/state/dashboard" },
     {
       id: 2,
       label: "Complaints",
       icon: <FaRegComment />,
-      link: "/state-complaints"
+      link: "/state/complaints"
     },
     {
       id: 3,
       label: "Reports",
       icon: <TbReportAnalytics />,
-      link: "/state-reports"
+      link: "/state/reports"
     },
     {
       id: 4,
       label: "Providers & HMO",
       icon: <LuCross />,
-      link: "/state-invitations"
+      link: "/state/invitations"
     },
-    { id: 5, label: "Profile", icon: <FiUser />, link: "/state-profile" },
-    { id: 6, label: "Settings", icon: <FiSettings />, link: "/state-settings" }
+    { id: 5, label: "Profile", icon: <FiUser />, link: "/state/profile" },
+    { id: 6, label: "Settings", icon: <FiSettings />, link: "/state/settings" }
   ],
   central: [
-    { id: 1, label: "Dashboard", icon: <FiHome />, link: "/central-dashboard" },
-    { id: 1, label: "Analysis", icon: <FiHome />, link: "/central-analysis" },
+    { id: 1, label: "Dashboard", icon: <FiHome />, link: "/central/dashboard" },
+    { id: 1, label: "Analysis", icon: <FiHome />, link: "/central/analysis" },
     {
       id: 2,
       label: "Complaints",
       icon: <FaRegComment />,
-      link: "/central-complaints"
+      link: "/central/complaints"
     },
     {
       id: 3,
       label: "Reports",
       icon: <TbReportAnalytics />,
-      link: "/central-reports"
+      link: "/central/reports"
     },
     {
       id: 4,
       label: "State Invites",
       icon: <LuCross />,
-      link: "/central-state-invite"
+      link: "/central/state/invite"
     },
-    { id: 5, label: "Profile", icon: <FiUser />, link: "/central-profile" },
+    { id: 5, label: "Profile", icon: <FiUser />, link: "/central/profile" },
     {
       id: 6,
       label: "Settings",
       icon: <FiSettings />,
-      link: "/central-settings"
+      link: "/central/settings"
     }
   ]
 };
 
-const DashboardSidebar = ({ role }) => {
+const DashboardSidebar = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const role = localStorage.getItem("userRole");
+  // const menuItems = menuData[role] || [];
 
   const handleMobileMenuToggle = () => {
     setShowMobileMenu(!showMobileMenu);
@@ -178,38 +180,44 @@ const DashboardSidebar = ({ role }) => {
             cursor: "pointer"
           }}
         >
-          {menuData[role]?.map((item) => (
-            <NavLink
-              key={item.id}
-              to={item.link}
-              style={({ isActive }) => ({
-                width: "223px",
-                textDecoration: "none",
-                color: isActive ? "#038F3E" : "#FFFFFF",
-                backgroundColor: isActive ? "#FFFFFF" : "transparent",
-                borderTopLeftRadius: "20px",
-                borderBottomLeftRadius: "20px",
-                padding: "12px 20px",
-                display: "flex",
-                alignItems: "flex-end"
-              })}
-            >
-              {({ isActive }) => (
-                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                  {item.icon}
-                  <Typography
-                    sx={{
-                      fontSize: "16px",
-                      fontWeight: isActive ? 600 : 500,
-                      lineHeight: "21.6px"
-                    }}
-                  >
-                    {item.label}
-                  </Typography>
-                </Box>
-              )}
-            </NavLink>
-          ))}
+          {menuData[role]?.length > 0 ? (
+            menuData[role].map((item) => (
+              <NavLink
+                key={item.id}
+                to={item.link}
+                style={({ isActive }) => ({
+                  width: "223px",
+                  textDecoration: "none",
+                  color: isActive ? "#038F3E" : "#FFFFFF",
+                  backgroundColor: isActive ? "#FFFFFF" : "transparent",
+                  borderTopLeftRadius: "20px",
+                  borderBottomLeftRadius: "20px",
+                  padding: "12px 20px",
+                  display: "flex",
+                  alignItems: "flex-end"
+                })}
+              >
+                {({ isActive }) => (
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                    {item.icon}
+                    <Typography
+                      sx={{
+                        fontSize: "16px",
+                        fontWeight: isActive ? 600 : 500,
+                        lineHeight: "21.6px"
+                      }}
+                    >
+                      {item.label}
+                    </Typography>
+                  </Box>
+                )}
+              </NavLink>
+            ))
+          ) : (
+            <Typography sx={{ color: "white", textAlign: "center" }}>
+              Role not recognized
+            </Typography>
+          )}
         </Box>
       </Box>
 
@@ -223,7 +231,16 @@ const DashboardSidebar = ({ role }) => {
           cursor: "pointer"
         }}
       >
-        <ListItem button onClick={logout}>
+        <ListItem
+          component="button"
+          onClick={logout}
+          sx={{
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            color: "#ffffff"
+          }}
+        >
           <ListItemIcon>
             <FiLogOut style={{ color: "#ffffff" }} />
           </ListItemIcon>

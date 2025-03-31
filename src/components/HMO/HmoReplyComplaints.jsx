@@ -43,7 +43,7 @@ const multiLineStyles = {
   }
 };
 const HmoReplyComplaints = () => {
-const navigate = useNavigate();
+  const navigate = useNavigate();
   const location = useLocation();
   const { data } = location.state || {};
   const [attachments, setAttachments] = useState([]); // State to store selected files
@@ -82,11 +82,11 @@ const navigate = useNavigate();
     setAttachments((prevAttachments) =>
       prevAttachments.filter((_, i) => i !== index)
     );
-    };
-    
-    const handleSubmit = () => {
-        navigate(`/hmo-complaint/${data.id}/thread`)
-    }
+  };
+
+  const handleSubmit = () => {
+    navigate(`/hmo/complaint/${data.id}/thread`);
+  };
 
   return (
     <Box sx={{ display: "flex", p: 4 }}>
