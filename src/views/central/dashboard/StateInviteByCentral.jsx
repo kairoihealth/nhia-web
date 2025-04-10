@@ -1,8 +1,10 @@
-import { Box, Typography, Button } from "@mui/material";
+import { Box, Typography, Button, CircularProgress } from "@mui/material";
 import ReusableTable from "../../../shared/Table";
 import { useNavigate } from "react-router-dom";
 import SearchFilter from "../../../shared/SearchAndFilter";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getUsers } from "../../../services/central";
 
 const StateInviteByCentral = () => {
   const navigate = useNavigate();
@@ -14,53 +16,71 @@ const StateInviteByCentral = () => {
     { value: "regions", label: "Regions" }
   ];
 
+  const {
+    data: users,
+    isLoading,
+    isError,
+    error
+  } = useQuery({
+    queryKey: ["users"],
+    queryFn: () => getUsers({ page: 1, pageSize: 10 })
+  });
+
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh"
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          color: "red"
+        }}
+      >
+        <Typography>Error: {error.message}</Typography>
+      </Box>
+    );
+  }
+
   const handleAddUser = () => {
     navigate(`add-user`);
   };
-
-  const stateData = [
-    {
-      date: "02/04/2023",
-      name: "Adebayo Adekunle",
-      id: "11023",
-      location: "Ondo State",
-      status: "Active"
-    },
-    {
-      date: "02/04/2023",
-      name: "Adebayo Adekunle",
-      id: "11023",
-      location: "Lagos State",
-      status: "Active"
-    },
-    {
-      date: "02/04/2023",
-      name: "Adebayo Adekunle",
-      id: "11023",
-      location: "Kaduna State",
-      status: "Request sent"
-    }
-  ];
 
   // Define table columns dynamically based on activeTab
   const getColumns = () => {
     return [
       { label: "Name", field: "name", align: "center" },
-      { label: "Date added", field: "date", align: "center" },
-      { label: "ID", field: "id", align: "center" },
-      { label: "Location", field: "location", align: "center" }
-      //   { label: "Status", field: "priority", align: "center" }
+      { label: "Date added", field: "created_at", align: "center" },
+      { label: "Email", field: "email", align: "center" },
+      { label: "Location", field: "state", align: "center" }
     ];
   };
 
-  // Render Table Rows
-  const renderTableRows = () => {
-    const data = stateData;
-    return data.map((t) => ({
-      ...t,
-      status: t.status
-    }));
-  };
+  const transformedRows =
+    users?.results?.map((user) => ({
+      name: `${user.firstname || ""} ${user.lastname || ""}`.trim(),
+      created_at: new Date(user.created_at).toLocaleDateString(),
+      id: user.id,
+      email: user.email,
+      state: user.state
+    })) || [];
+
+  // console.log("Transformed Rows (Before Render):", transformedRows);
 
   return (
     <Box>
@@ -130,8 +150,7 @@ const StateInviteByCentral = () => {
         {/* Table */}
         <ReusableTable
           columns={getColumns()}
-          rows={renderTableRows()}
-          //   onViewClick={handleViewComplaint}
+          rows={transformedRows}
           showActions={false}
           showStatus={true}
           statusLabel={"Status"}

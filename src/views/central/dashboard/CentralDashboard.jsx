@@ -269,7 +269,7 @@ const CentralDashboard = () => {
                   textDecoration: "underline",
                   cursor: "pointer"
                 }}
-                onClick={() => navigate("/central/complaints")}
+                onClick={() => navigate("/admin/complaints")}
               >
                 View Complaints{" "}
                 <ArrowRightAltTwoToneIcon sx={{ color: "#071C42" }} />
@@ -305,7 +305,7 @@ const CentralDashboard = () => {
                   textDecoration: "underline",
                   cursor: "pointer"
                 }}
-                onClick={() => navigate("/central/complaints")}
+                onClick={() => navigate("/admin/complaints")}
               >
                 View Complaints{" "}
                 <ArrowRightAltTwoToneIcon sx={{ color: "#038F3E" }} />

@@ -23,9 +23,15 @@
 import { Navigate, Outlet } from "react-router-dom";
 
 const ProtectedRoute = () => {
-  const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
+  const userRole = localStorage.getItem("userRole");
 
-  return isAuthenticated ? <Outlet /> : <Navigate to="/login" />;
+  if (!userRole) {
+    // Redirect to login if not authenticated
+    return <Navigate to="/login" replace />;
+  }
+
+  // Render the Outlet (or children) if authenticated
+  return <Outlet />;
 };
 
 export default ProtectedRoute;

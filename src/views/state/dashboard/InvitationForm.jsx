@@ -1,14 +1,12 @@
-import {
-  Box,
-  Button,
-  FormControl,
-  MenuItem,
-  Select,
-  TextField,
-  Typography
-} from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import SuccessModal from "../../../shared/SuccessModal";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import ReactSelect from "react-select";
+import { selectStyles } from "../../../utils/style";
+import { useQuery } from "@tanstack/react-query";
+import { getAllHmo, getAllProviders } from "../../../services/settings";
+import { useHandleError } from "../../../hooks/useToastHandler";
+import { inviteStateUser } from "../../../services/central";
 
 const textFieldStyles = {
   "& .MuiOutlinedInput-root": {
@@ -22,23 +20,89 @@ const textFieldStyles = {
   }
 };
 
-const selectStyles = {
-  width: "100%",
-  borderRadius: "8px",
-  backgroundColor: "#F5F5F5",
-  color: "#737373",
-  border: "0.5px solid #DADADA",
-  fontSize: "16px",
-  outline: "none",
-  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-    borderColor: "#038F3E"
-  }
-};
+const accountType = [
+  { id: "HMO", label: "Hmo", value: "HMO" },
+  { id: "Provider", label: "Provider", value: "Provider" }
+];
 const InvitationForm = () => {
+  const handleError = useHandleError();
+  const [email, setEmail] = useState("");
+  const [selectedType, setSelectedType] = useState("");
+  const [selectedHmo, setSelectedHmo] = useState("");
+  const [selectedProvider, setSelectedProvider] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
 
-  const handleSubmit = () => {
-    setModalOpen(true);
+  const hmosQueryKey = useMemo(() => ["hmos"], []);
+  const { data: hmosData } = useQuery({
+    queryKey: hmosQueryKey,
+    queryFn: () => getAllHmo({ page: 1, pageSize: 100 })
+  });
+
+  const hmos = useMemo(
+    () =>
+      hmosData?.results?.map((hmo) => ({
+        value: hmo.id,
+        label: hmo.name
+      })) || [],
+    [hmosData]
+  );
+
+  const providersQueryKey = useMemo(() => ["providers"], []);
+  const { data: providersData } = useQuery({
+    queryKey: providersQueryKey,
+    queryFn: () => getAllProviders({ page: 1, pageSize: 100 })
+  });
+
+  const providers = useMemo(
+    () =>
+      providersData?.results?.map((provider) => ({
+        value: provider.id,
+        label: provider.name
+      })) || [],
+    [providersData]
+  );
+
+  const handleEmailChange = (event) => {
+    setEmail(event.target.value);
+  };
+
+  const handleTypeChange = (selectedOption) => {
+    setSelectedType(selectedOption);
+  };
+
+  const handleHmoChange = (selectedOption) => {
+    setSelectedHmo(selectedOption);
+  };
+
+  const handleProviderChange = (selectedOption) => {
+    setSelectedProvider(selectedOption);
+  };
+  const handleSubmit = async () => {
+    try {
+      // if (!email || !selectedType || !selectedHmo || !selectedProvider) {
+      //   handleError("Please fill in all required fields.");
+      //   return;
+      // }
+
+      const payload = {
+        email: email,
+        role: selectedType.value === "HMO" ? "HMO" : "Provider",
+        ...(selectedType.value === "HMO" && { hmo: selectedHmo.value }),
+        ...(selectedType.value === "Provider" && {
+          provider: selectedProvider.value
+        })
+      };
+
+      await inviteStateUser(payload);
+      setModalOpen(true);
+      // Optionally reset form fields after successful submission
+      setEmail("");
+      setSelectedType(null);
+      setSelectedHmo(null);
+      setSelectedProvider(null);
+    } catch (error) {
+      handleError("Failed to send invitation:", error);
+    }
   };
 
   return (
@@ -82,6 +146,8 @@ const InvitationForm = () => {
             required
             placeholder="enter@gmail.com"
             sx={textFieldStyles}
+            value={email}
+            onChange={handleEmailChange}
           />
         </Box>
 
@@ -97,45 +163,65 @@ const InvitationForm = () => {
             Select account type
             <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
           </Typography>
-          <FormControl fullWidth variant="outlined">
-            <Select sx={selectStyles}>
-              <MenuItem
-                value=""
-                sx={{
-                  fontSize: "16px",
-                  fontWeight: 500,
-                  color: "#737373"
-                }}
-              >
-                Select the account type to create
-              </MenuItem>
-              <MenuItem value="lagos">Lagos</MenuItem>
-              <MenuItem value="kano">Kano</MenuItem>
-              <MenuItem value="abuja">Abuja</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
 
-        <Box flex={1} sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-          <Typography
-            sx={{
-              color: "#595959",
-              fontSize: "16px",
-              fontWeight: 500,
-              lineHeight: "24px"
-            }}
-          >
-            HMO/Providers Name
-            <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
-          </Typography>
-          <TextField
-            fullWidth
-            variant="outlined"
-            required
-            placeholder="Enter HMO/Providers Name"
-            sx={textFieldStyles}
+          <ReactSelect
+            styles={selectStyles}
+            value={selectedType}
+            onChange={handleTypeChange}
+            options={accountType}
+            placeholder="Select Account Type"
           />
         </Box>
+
+        {selectedType?.value === "HMO" ? (
+          <Box
+            flex={1}
+            sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+          >
+            <Typography
+              sx={{
+                color: "#595959",
+                fontSize: "16px",
+                fontWeight: 500,
+                lineHeight: "24px"
+              }}
+            >
+              HMO Name
+              <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
+            </Typography>
+            <ReactSelect
+              styles={selectStyles}
+              value={selectedHmo}
+              onChange={handleHmoChange}
+              options={hmos}
+              placeholder="Select HMO"
+            />
+          </Box>
+        ) : (
+          <Box
+            flex={1}
+            sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+          >
+            <Typography
+              sx={{
+                color: "#595959",
+                fontSize: "16px",
+                fontWeight: 500,
+                lineHeight: "24px"
+              }}
+            >
+              Providers Name
+              <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
+            </Typography>
+            <ReactSelect
+              styles={selectStyles}
+              value={selectedProvider}
+              onChange={handleProviderChange}
+              options={providers}
+              placeholder="Select Provider"
+            />
+          </Box>
+        )}
 
         {/* Button */}
         <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
@@ -168,7 +254,7 @@ const InvitationForm = () => {
         onClose={() => setModalOpen(false)}
         title="Invite Sent"
         message="You have successfully sent an invite to"
-        recipient="Federal Medical Center, UYO."
+        recipient={`${email}`}
       />
     </Box>
   );

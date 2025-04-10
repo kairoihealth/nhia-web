@@ -325,9 +325,6 @@ const FirstForm = () => {
                       }}
                     >
                       Alternative Phone Number
-                      <span style={{ color: "#099243", marginLeft: "6px" }}>
-                        *
-                      </span>
                     </Typography>
                     <FormControl fullWidth>
                       <PhoneInput
@@ -378,7 +375,7 @@ const FirstForm = () => {
                       </Select>
                     </FormControl>
                   </Box>
-                  <Box
+                  {/* <Box
                     flex={1}
                     sx={{ display: "flex", flexDirection: "column", gap: 1 }}
                   >
@@ -395,14 +392,24 @@ const FirstForm = () => {
                         *
                       </span>
                     </Typography>
-                    <TextField
-                      fullWidth
-                      variant="outlined"
-                      required
-                      placeholder="enter HMO/Providers name"
-                      sx={textFieldStyles}
-                    />
-                  </Box>
+                    <FormControl fullWidth variant="outlined">
+                      <Select sx={selectStyles}>
+                        <MenuItem
+                          value=""
+                          sx={{
+                            fontSize: "16px",
+                            fontWeight: 500,
+                            color: "#737373"
+                          }}
+                        >
+                          Select option
+                        </MenuItem>
+                        <MenuItem value="hmo">HMO</MenuItem>
+                        <MenuItem value="provider">Providers</MenuItem>
+                        <MenuItem value="nhia">NHIA</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Box> */}
                 </Box>
                 <Box
                   sx={{

@@ -1,16 +1,59 @@
-import { Box, Typography, Button } from "@mui/material";
+import { Box, Typography, Button, CircularProgress } from "@mui/material";
 import ReusableTable from "../../../shared/Table";
 import { useNavigate } from "react-router-dom";
 import SearchFilter from "../../../shared/SearchAndFilter";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getUsers } from "../../../services/central";
 
 const InvitationsByState = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [filter, setFilter] = useState("hcf");
+  const [filter, setFilter] = useState("providers");
+
+  const {
+    data: users,
+    isLoading,
+    isError,
+    error
+  } = useQuery({
+    queryKey: ["users"],
+    queryFn: () => getUsers({ page: 1, pageSize: 10 })
+  });
+
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh"
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          color: "red"
+        }}
+      >
+        <Typography>Error: {error.message}</Typography>
+      </Box>
+    );
+  }
 
   const filterOptions = [
-    { value: "hcf", label: "Providers" },
+    { value: "providers", label: "Providers" },
     { value: "hmo", label: "HMO" }
   ];
 
@@ -18,48 +61,25 @@ const InvitationsByState = () => {
     navigate(`add-policy-user`);
   };
 
-  const typeData = [
-    {
-      date: "02/04/2023",
-      name: "Adebayo Adekunle",
-      id: "11023",
-      type: "HCF",
-      status: "Active"
-    },
-    {
-      date: "02/04/2023",
-      name: "Adebayo Adekunle",
-      id: "11023",
-      type: "HMO",
-      status: "Active"
-    },
-    {
-      date: "02/04/2023",
-      name: "Adebayo Adekunle",
-      id: "11023",
-      type: "HMO",
-      status: "Request sent"
-    }
-  ];
-
   // Define table columns dynamically based on activeTab
   const getColumns = () => {
     return [
       { label: "Name", field: "name", align: "center" },
       { label: "Date added", field: "date", align: "center" },
-      { label: "ID", field: "id", align: "center" },
+      // { label: "ID", field: "id", align: "center" },
+      { label: "Email", field: "email", align: "center" },
       { label: "Type", field: "type", align: "center" }
     ];
   };
 
-  // Render Table Rows
-  const renderTableRows = () => {
-    const data = typeData;
-    return data.map((t) => ({
-      ...t,
-      status: t.status
-    }));
-  };
+  const transformedRows =
+    users?.results?.map((user) => ({
+      name: `${user.firstname || ""} ${user.lastname || ""}`.trim(),
+      created_at: new Date(user.created_at).toLocaleDateString(),
+      id: user.id,
+      email: user.email,
+      type: user.state
+    })) || [];
 
   return (
     <Box>
@@ -129,7 +149,7 @@ const InvitationsByState = () => {
         {/* Table */}
         <ReusableTable
           columns={getColumns()}
-          rows={renderTableRows()}
+          rows={transformedRows}
           //   onViewClick={handleViewComplaint}
           showActions={false}
           showStatus={true}

@@ -24,7 +24,7 @@ const CentralComplaints = () => {
   };
 
   const handleViewComplaint = (row) => {
-    navigate(`/central/complaint/${row.complaint_no}`, {
+    navigate(`/admin/complaint/${row.complaint_no}`, {
       state: { complaint: row }
     });
   };

@@ -8,7 +8,7 @@ const CentralSingleComplaint = () => {
   console.log(data.complaint.id);
 
   const handleCompliant = () => {
-    navigate(`/central/complaint/${data?.complaint.complaint_no}/thread`);
+    navigate(`/admin/complaint/${data?.complaint.complaint_no}/thread`);
   };
 
   return (

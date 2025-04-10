@@ -23,7 +23,7 @@ import { FaRegComment } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 
 const menuData = {
-  hmo: [
+  HMO: [
     { id: 1, label: "Dashboard", icon: <FiHome />, link: "/hmo/dashboard" },
     {
       id: 2,
@@ -40,7 +40,7 @@ const menuData = {
     { id: 4, label: "Profile", icon: <FiUser />, link: "/hmo/profile" },
     { id: 5, label: "Settings", icon: <FiSettings />, link: "/hmo/settings" }
   ],
-  provider: [
+  Provider: [
     {
       id: 1,
       label: "Dashboard",
@@ -67,56 +67,66 @@ const menuData = {
       link: "/provider/settings"
     }
   ],
-  state: [
-    { id: 1, label: "Dashboard", icon: <FiHome />, link: "/state/dashboard" },
+  StateAdmin: [
+    {
+      id: 1,
+      label: "Dashboard",
+      icon: <FiHome />,
+      link: "/stateadmin/dashboard"
+    },
     {
       id: 2,
       label: "Complaints",
       icon: <FaRegComment />,
-      link: "/state/complaints"
+      link: "/stateadmin/complaints"
     },
     {
       id: 3,
       label: "Reports",
       icon: <TbReportAnalytics />,
-      link: "/state/reports"
+      link: "/stateadmin/reports"
     },
     {
       id: 4,
       label: "Providers & HMO",
       icon: <LuCross />,
-      link: "/state/invitations"
+      link: "/stateadmin/invitations"
     },
-    { id: 5, label: "Profile", icon: <FiUser />, link: "/state/profile" },
-    { id: 6, label: "Settings", icon: <FiSettings />, link: "/state/settings" }
+    { id: 5, label: "Profile", icon: <FiUser />, link: "/stateadmin/profile" },
+    {
+      id: 6,
+      label: "Settings",
+      icon: <FiSettings />,
+      link: "/stateadmin/settings"
+    }
   ],
-  central: [
-    { id: 1, label: "Dashboard", icon: <FiHome />, link: "/central/dashboard" },
-    { id: 1, label: "Analysis", icon: <FiHome />, link: "/central/analysis" },
+  Admin: [
+    { id: 1, label: "Dashboard", icon: <FiHome />, link: "/admin/dashboard" },
+    { id: 1, label: "Analysis", icon: <FiHome />, link: "/admin/analysis" },
     {
       id: 2,
       label: "Complaints",
       icon: <FaRegComment />,
-      link: "/central/complaints"
+      link: "/admin/complaints"
     },
     {
       id: 3,
       label: "Reports",
       icon: <TbReportAnalytics />,
-      link: "/central/reports"
+      link: "/admin/reports"
     },
     {
       id: 4,
       label: "State Invites",
       icon: <LuCross />,
-      link: "/central/state/invite"
+      link: "/admin/state/invite"
     },
-    { id: 5, label: "Profile", icon: <FiUser />, link: "/central/profile" },
+    { id: 5, label: "Profile", icon: <FiUser />, link: "/admin/profile" },
     {
       id: 6,
       label: "Settings",
       icon: <FiSettings />,
-      link: "/central/settings"
+      link: "/admin/settings"
     }
   ]
 };

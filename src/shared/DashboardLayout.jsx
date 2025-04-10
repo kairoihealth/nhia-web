@@ -4,9 +4,10 @@ import DashboardSidebar from "../components/DashboardSidebar";
 import DashboardTopbar from "../components/DashboardTopbar";
 import { Outlet } from "react-router-dom";
 
-const DashboardLayout = ({ role }) => {
+const DashboardLayout = ({ username, role }) => {
   // Retrieve role dynamically if not passed as a prop
   const userRole = role || localStorage.getItem("userRole");
+  const fullname = username || localStorage.getItem("fullname");
 
   return (
     <Box
@@ -54,7 +55,7 @@ const DashboardLayout = ({ role }) => {
             justifyContent: "space-between"
           }}
         >
-          <DashboardTopbar role={userRole} />
+          <DashboardTopbar username={fullname} role={userRole} />
         </Box>
 
         {/* Children (Content) */}
@@ -76,7 +77,8 @@ const DashboardLayout = ({ role }) => {
 
 DashboardLayout.propTypes = {
   children: PropTypes.node,
-  role: PropTypes.string
+  role: PropTypes.string,
+  username: PropTypes.string
 };
 
 export default DashboardLayout;

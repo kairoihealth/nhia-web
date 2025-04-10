@@ -13,7 +13,10 @@ import {
 } from "@mui/material";
 import Logo from "../../assets/nhia-logo.png";
 import { VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
-import { mockLogin } from "../../mock/mockAuth";
+// import { mockLogin } from "../../mock/mockAuth";
+import { userLogin } from "../../services/auth/auth";
+import { jwtDecode } from "jwt-decode";
+import { useHandleError } from "../../hooks/useToastHandler";
 
 const textFieldStyles = {
   "& .MuiOutlinedInput-root": {
@@ -29,6 +32,7 @@ const textFieldStyles = {
 };
 const LoginPage = () => {
   const navigate = useNavigate();
+  const handleError = useHandleError();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -38,15 +42,34 @@ const LoginPage = () => {
     setPasswordVisible(!passwordVisible);
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    const role = mockLogin(email, password);
-    console.log(role);
+    setError("");
 
-    if (role) {
-      navigate(`/${role}/dashboard`); // Redirect to user's dashboard
-    } else {
-      setError("Invalid credentials! Please try again.");
+    try {
+      const response = await userLogin(email, password);
+      const accessToken = response.data.access;
+
+      // Decode the access token
+      const decodedToken = jwtDecode(accessToken);
+      // console.log("Decoded Token:", decodedToken);
+
+      const role = decodedToken.role;
+      const username = decodedToken.name;
+      // console.log("Role:", role);
+      // Assuming role is in response.data.role
+      localStorage.setItem("userRole", role);
+      localStorage.setItem("access_token", accessToken);
+      localStorage.setItem("fullname", username);
+      // console.log("Token stored:", accessToken);
+      // console.log("LocalStorage after login:", localStorage);
+      navigate(`/${role.toLowerCase()}/dashboard`);
+    } catch (err) {
+      if (err.response && err.response.data && err.response.data.message) {
+        handleError(err.response.data.message);
+      } else {
+        setError("Invalid credentials! Please try again.");
+      }
     }
   };
 
