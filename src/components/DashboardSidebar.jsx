@@ -13,7 +13,7 @@ import {
   FiLogOut,
   FiX,
   FiUser,
-  FiSettings,
+  // FiSettings,
   FiHome
 } from "react-icons/fi";
 import Logo from "../assets/nhia-logo.png";
@@ -37,8 +37,8 @@ const menuData = {
       icon: <TbReportAnalytics />,
       link: "/hmo/reports"
     },
-    { id: 4, label: "Profile", icon: <FiUser />, link: "/hmo/profile" },
-    { id: 5, label: "Settings", icon: <FiSettings />, link: "/hmo/settings" }
+    { id: 4, label: "Profile", icon: <FiUser />, link: "/hmo/profile" }
+    // { id: 5, label: "Settings", icon: <FiSettings />, link: "/hmo/settings" }
   ],
   Provider: [
     {
@@ -59,13 +59,13 @@ const menuData = {
       icon: <TbReportAnalytics />,
       link: "/provider/reports"
     },
-    { id: 4, label: "Profile", icon: <FiUser />, link: "/provider/profile" },
-    {
-      id: 5,
-      label: "Settings",
-      icon: <FiSettings />,
-      link: "/provider/settings"
-    }
+    { id: 4, label: "Profile", icon: <FiUser />, link: "/provider/profile" }
+    // {
+    //   id: 5,
+    //   label: "Settings",
+    //   icon: <FiSettings />,
+    //   link: "/provider/settings"
+    // }
   ],
   StateAdmin: [
     {
@@ -92,13 +92,13 @@ const menuData = {
       icon: <LuCross />,
       link: "/stateadmin/invitations"
     },
-    { id: 5, label: "Profile", icon: <FiUser />, link: "/stateadmin/profile" },
-    {
-      id: 6,
-      label: "Settings",
-      icon: <FiSettings />,
-      link: "/stateadmin/settings"
-    }
+    { id: 5, label: "Profile", icon: <FiUser />, link: "/stateadmin/profile" }
+    // {
+    //   id: 6,
+    //   label: "Settings",
+    //   icon: <FiSettings />,
+    //   link: "/stateadmin/settings"
+    // }
   ],
   Admin: [
     { id: 1, label: "Dashboard", icon: <FiHome />, link: "/admin/dashboard" },
@@ -121,13 +121,13 @@ const menuData = {
       icon: <LuCross />,
       link: "/admin/state/invite"
     },
-    { id: 5, label: "Profile", icon: <FiUser />, link: "/admin/profile" },
-    {
-      id: 6,
-      label: "Settings",
-      icon: <FiSettings />,
-      link: "/admin/settings"
-    }
+    { id: 5, label: "Profile", icon: <FiUser />, link: "/admin/profile" }
+    // {
+    //   id: 6,
+    //   label: "Settings",
+    //   icon: <FiSettings />,
+    //   link: "/admin/settings"
+    // }
   ]
 };
 

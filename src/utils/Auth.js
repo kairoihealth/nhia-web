@@ -1,4 +1,4 @@
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from "jwt-decode";
 
 export default class Auth {
   static isAuthenticated() {
@@ -6,31 +6,34 @@ export default class Auth {
 
     if (decodedToken) {
       const { exp } = decodedToken;
-      const currentTime = Date.now() / 1000;
+      const currentTime = Math.floor(Date.now() / 1000);
       return exp > currentTime;
     }
     return false;
   }
 
   static setToken(token) {
-    localStorage.setItem('token', token);
+    localStorage.setItem("token", token);
   }
 
   static getToken() {
-    return localStorage.getItem('token');
+    return localStorage.getItem("token");
   }
 
   static removeToken() {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
   }
 
-  static getDecodedJwt(payload) {
+  static getDecodedJwt() {
     const token = this.getToken();
-    const t = token || payload;
-    let decoded;
-    if (payload || token) {
-      decoded = jwtDecode(t);
+    if (token) {
+      try {
+        return jwtDecode(token);
+      } catch (error) {
+        console.error("Error decoding JWT:", error);
+        return null; // Return null if decoding fails
+      }
     }
-    return decoded;
+    return null;
   }
 }

@@ -77,7 +77,8 @@ const StateInviteByCentral = () => {
       created_at: new Date(user.created_at).toLocaleDateString(),
       id: user.id,
       email: user.email,
-      state: user.state
+      state: user?.state?.name,
+      status: user.verified === true ? "active" : "pending"
     })) || [];
 
   // console.log("Transformed Rows (Before Render):", transformedRows);

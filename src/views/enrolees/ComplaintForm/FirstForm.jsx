@@ -1,69 +1,132 @@
-// import { Helmet } from "react-helmet-async";
 import Logo from "../../../assets/nhia-logo.png";
-import {
-  Box,
-  TextField,
-  Button,
-  Select,
-  MenuItem,
-  FormControl,
-  Typography
-} from "@mui/material";
+import { Box, TextField, Button, FormControl, Typography } from "@mui/material";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import PropTypes from "prop-types";
+import ReactSelect from "react-select";
+import {
+  formControlStyles,
+  selectStyles,
+  textFieldStyles
+} from "../../../utils/style";
+import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getAllHmo, getAllProviders } from "../../../services/settings";
 
-const textFieldStyles = {
-  "& .MuiOutlinedInput-root": {
-    borderRadius: "8px",
-    backgroundColor: "#F5F5F5",
-    color: "#737373",
-    border: "0.5px solid #DADADA",
-    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#038F3E"
+const option = [
+  { value: "HMO", label: "Hmo" },
+  { value: "Provider", label: "Provider" }
+];
+
+const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
+  const [errors, setErrors] = useState({});
+  const [selectedHmo, setSelectedHmo] = useState(null);
+  const [selectedProvider, setSelectedProvider] = useState(null);
+
+  const hmosQueryKey = useMemo(() => ["hmos"], []);
+  const { data: hmosData } = useQuery({
+    queryKey: hmosQueryKey,
+    queryFn: () => getAllHmo({ page: 1, pageSize: 100 })
+  });
+
+  const hmos = useMemo(
+    () =>
+      hmosData?.results?.map((hmo) => ({
+        value: hmo.id,
+        label: hmo.name
+      })) || [],
+    [hmosData]
+  );
+
+  const providersQueryKey = useMemo(() => ["providers"], []);
+  const { data: providersData } = useQuery({
+    queryKey: providersQueryKey,
+    queryFn: () => getAllProviders({ page: 1, pageSize: 100 })
+  });
+
+  const providers = useMemo(
+    () =>
+      providersData?.results?.map((provider) => ({
+        value: provider.id,
+        label: provider.name
+      })) || [],
+    [providersData]
+  );
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFirstInfo({ ...firstInfo, [name]: value });
+  };
+
+  const handlePhoneChange = (value) => {
+    setFirstInfo({ ...firstInfo, phone: value });
+  };
+
+  const handleAltPhoneChange = (value) => {
+    setFirstInfo({ ...firstInfo, altPhone: value });
+  };
+
+  const handleComplaintChange = (selectedOption) => {
+    const value = selectedOption?.value || "";
+
+    setFirstInfo((prev) => ({
+      ...prev,
+      complaint: value
+    }));
+
+    // Clear dependent selections
+    setSelectedHmo(null);
+    setSelectedProvider(null);
+  };
+
+  const handleHmoChange = (selectedOption) => {
+    setSelectedHmo(selectedOption);
+  };
+
+  const handleProviderChange = (selectedOption) => {
+    setSelectedProvider(selectedOption);
+  };
+
+  const validateFields = () => {
+    const newErrors = {};
+
+    if (!firstInfo.firstName?.trim())
+      newErrors.firstName = "First name is required.";
+    if (!firstInfo.lastName?.trim())
+      newErrors.lastName = "Last name is required.";
+    if (!firstInfo.middleName?.trim())
+      newErrors.middleName = "Middle name is required.";
+    if (!firstInfo.contactAddress?.trim())
+      newErrors.contactAddress = "Contact address is required.";
+    if (!firstInfo.email?.trim()) newErrors.email = "Email is required.";
+    if (!firstInfo.phone?.trim()) newErrors.phone = "Phone number is required.";
+    if (!firstInfo.nhiaNo?.trim())
+      newErrors.nhiaNo = "NHIA number is required.";
+    if (!firstInfo.complaint)
+      newErrors.complaint = "Please select a complaint option.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleNext = () => {
+    if (validateFields()) {
+      setFirstInfo((prev) => ({
+        ...prev,
+        hmoId: selectedHmo?.value || null,
+        providerId: selectedProvider?.value || null
+      }));
+      onNext();
     }
-  }
-};
+  };
 
-const formControlStyles = {
-  width: "100%",
-  height: "55px",
-  borderRadius: "8px",
-  backgroundColor: "#F5F5F5",
-  color: "#737373",
-  border: "0.5px solid #DADADA",
-  paddingY: "34px",
-  fontSize: "16px",
-  outline: "none"
-};
-
-const selectStyles = {
-  width: "100%",
-  borderRadius: "8px",
-  backgroundColor: "#F5F5F5",
-  color: "#737373",
-  border: "0.5px solid #DADADA",
-  fontSize: "16px",
-  outline: "none",
-  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-    borderColor: "#038F3E" // Green border color
-  }
-};
-
-const FirstForm = () => {
   return (
     <>
-      {/* <Helmet>
-        <title>Enrolee Complaint Form</title>
-        <meta name="Enrolee Complaint Form" content=" " />
-        <link rel="canonical" href="/" />
-      </Helmet> */}
       <Box
         sx={{
           backgroundColor: { xs: "#FFFFFF", md: "#038F3E" }
-          // height: "100%"
         }}
       >
-        {/* <Container> */}
         <Box
           sx={{
             display: { xs: "grid", md: "flex" },
@@ -134,11 +197,16 @@ const FirstForm = () => {
                       </span>
                     </Typography>
                     <TextField
+                      name="firstName"
                       fullWidth
                       variant="outlined"
                       required
                       placeholder="enter first name"
                       sx={textFieldStyles}
+                      value={firstInfo.firstName}
+                      onChange={handleInputChange}
+                      error={!!errors.firstName}
+                      helperText={errors.firstName}
                     />
                   </Box>
                   <Box
@@ -159,11 +227,16 @@ const FirstForm = () => {
                       </span>
                     </Typography>
                     <TextField
+                      name="lastName"
                       fullWidth
                       variant="outlined"
                       required
                       placeholder="enter last name"
                       sx={textFieldStyles}
+                      value={firstInfo.lastName}
+                      onChange={handleInputChange}
+                      error={!!errors.lastName}
+                      helperText={errors.lastName}
                     />
                   </Box>
                 </Box>
@@ -191,11 +264,16 @@ const FirstForm = () => {
                       </span>
                     </Typography>
                     <TextField
+                      name="middleName"
                       fullWidth
                       variant="outlined"
                       required
                       placeholder="enter middle name"
                       sx={textFieldStyles}
+                      value={firstInfo.middleName}
+                      onChange={handleInputChange}
+                      error={!!errors.middleName}
+                      helperText={errors.middleName}
                     />
                   </Box>
                   <Box
@@ -216,11 +294,16 @@ const FirstForm = () => {
                       </span>
                     </Typography>
                     <TextField
+                      name="contactAddress"
                       fullWidth
                       variant="outlined"
                       required
                       placeholder="e.g H23 dolphin estate"
                       sx={textFieldStyles}
+                      value={firstInfo.contactAddress}
+                      onChange={handleInputChange}
+                      error={!!errors.contactAddress}
+                      helperText={errors.contactAddress}
                     />
                   </Box>
                 </Box>
@@ -248,12 +331,17 @@ const FirstForm = () => {
                       </span>
                     </Typography>
                     <TextField
+                      name="email"
                       fullWidth
                       variant="outlined"
                       required
                       type="email"
                       placeholder="example@example.com"
                       sx={textFieldStyles}
+                      value={firstInfo.email}
+                      onChange={handleInputChange}
+                      error={!!errors.email}
+                      helperText={errors.email}
                     />
                   </Box>
                   <Box
@@ -277,7 +365,23 @@ const FirstForm = () => {
                       <PhoneInput
                         country={"ng"}
                         inputStyle={formControlStyles}
+                        inputProps={{
+                          label: "Phone Number",
+                          variant: "outlined",
+                          margin: "normal",
+                          fullWidth: true
+                        }}
+                        value={firstInfo.phone || ""}
+                        onChange={handlePhoneChange}
+                        error={!!errors.phone}
                       />
+                      {errors.phone && (
+                        <Typography
+                          sx={{ color: "red", fontSize: "13px", mt: 0.5 }}
+                        >
+                          {errors.phone}
+                        </Typography>
+                      )}
                     </FormControl>
                   </Box>
                 </Box>
@@ -305,11 +409,16 @@ const FirstForm = () => {
                       </span>
                     </Typography>
                     <TextField
+                      name="nhiaNo"
                       fullWidth
                       variant="outlined"
                       required
                       placeholder="enter NHIA number"
                       sx={textFieldStyles}
+                      value={firstInfo.nhiaNo}
+                      onChange={handleInputChange}
+                      error={!!errors.nhiaNo}
+                      helperText={errors.nhiaNo}
                     />
                   </Box>
                   <Box
@@ -330,6 +439,14 @@ const FirstForm = () => {
                       <PhoneInput
                         country={"ng"}
                         inputStyle={formControlStyles}
+                        inputProps={{
+                          label: "Alternative Phone Number",
+                          variant: "outlined",
+                          margin: "normal",
+                          fullWidth: true
+                        }}
+                        value={firstInfo.altPhone || ""}
+                        onChange={handleAltPhoneChange}
                       />
                     </FormControl>
                   </Box>
@@ -357,27 +474,34 @@ const FirstForm = () => {
                         *
                       </span>
                     </Typography>
-                    <FormControl fullWidth variant="outlined">
-                      <Select sx={selectStyles}>
-                        <MenuItem
-                          value=""
-                          sx={{
-                            fontSize: "16px",
-                            fontWeight: 500,
-                            color: "#737373"
-                          }}
-                        >
-                          Select option
-                        </MenuItem>
-                        <MenuItem value="hmo">HMO</MenuItem>
-                        <MenuItem value="provider">Providers</MenuItem>
-                        <MenuItem value="nhia">NHIA</MenuItem>
-                      </Select>
-                    </FormControl>
+                    <ReactSelect
+                      styles={selectStyles}
+                      value={option.find(
+                        (opt) => opt.value === firstInfo.complaint
+                      )}
+                      onChange={handleComplaintChange}
+                      options={option}
+                      placeholder="Select Option"
+                    />
+                    {errors.complaint && (
+                      <Typography
+                        sx={{ color: "red", fontSize: "13px", mt: 0.5 }}
+                      >
+                        {errors.complaint}
+                      </Typography>
+                    )}
                   </Box>
-                  {/* <Box
+                </Box>
+
+                {firstInfo.complaint === "HMO" ? (
+                  <Box
                     flex={1}
-                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 1,
+                      my: 1
+                    }}
                   >
                     <Typography
                       sx={{
@@ -387,84 +511,142 @@ const FirstForm = () => {
                         lineHeight: "24px"
                       }}
                     >
-                      Name of respondent
+                      HMO Name
                       <span style={{ color: "#099243", marginLeft: "6px" }}>
                         *
                       </span>
                     </Typography>
-                    <FormControl fullWidth variant="outlined">
-                      <Select sx={selectStyles}>
-                        <MenuItem
-                          value=""
-                          sx={{
-                            fontSize: "16px",
-                            fontWeight: 500,
-                            color: "#737373"
-                          }}
+                    <Box>
+                      <ReactSelect
+                        styles={selectStyles}
+                        value={selectedHmo}
+                        onChange={handleHmoChange}
+                        options={hmos}
+                        placeholder="Select HMO"
+                      />
+                      {errors.hmo && (
+                        <Typography
+                          sx={{ color: "red", fontSize: "13px", mt: 0.5 }}
                         >
-                          Select option
-                        </MenuItem>
-                        <MenuItem value="hmo">HMO</MenuItem>
-                        <MenuItem value="provider">Providers</MenuItem>
-                        <MenuItem value="nhia">NHIA</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Box> */}
-                </Box>
+                          {errors.hmo}
+                        </Typography>
+                      )}
+                    </Box>
+                  </Box>
+                ) : firstInfo.complaint === "Provider" ? (
+                  <Box
+                    flex={1}
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 1,
+                      my: 1
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        color: "#595959",
+                        fontSize: "16px",
+                        fontWeight: 500,
+                        lineHeight: "24px"
+                      }}
+                    >
+                      Providers Name
+                      <span style={{ color: "#099243", marginLeft: "6px" }}>
+                        *
+                      </span>
+                    </Typography>
+                    <Box>
+                      <ReactSelect
+                        styles={selectStyles}
+                        value={selectedProvider}
+                        onChange={handleProviderChange}
+                        options={providers}
+                        placeholder="Select Provider"
+                      />
+                      {errors.provider && (
+                        <Typography
+                          sx={{ color: "red", fontSize: "13px", mt: 0.5 }}
+                        >
+                          {errors.provider}
+                        </Typography>
+                      )}
+                    </Box>
+                  </Box>
+                ) : null}
                 <Box
                   sx={{
-                    display: { xs: "grid", md: "flex" },
-                    justifyContent: { xs: "center", md: "flex-end" },
-                    gap: 2,
-                    mt: 4
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "flex-end",
+                    alignItems: "flex-end"
                   }}
                 >
-                  <Button
-                    variant="outlined"
+                  <Box
                     sx={{
-                      width: "270px",
-                      height: "48px",
-                      borderRadius: "16px",
-                      py: 1.5,
-                      fontSize: { xs: "14px", md: "16px" },
-                      fontWeight: 500,
-                      lineHeight: "24px",
-                      textTransform: "capitalize",
-                      borderColor: "#038F3E",
-                      color: "#038F3E",
-                      "&:hover": { borderColor: "#038F3E" }
+                      display: { xs: "grid", md: "flex" },
+                      justifyContent: { xs: "center", md: "flex-end" },
+                      gap: 2,
+                      mt: 4
                     }}
-                    href="/account-type"
                   >
-                    Back
-                  </Button>
-                  <Button
-                    variant="contained"
-                    sx={{
-                      width: "270px",
-                      height: "48px",
-                      borderRadius: "16px",
-                      py: 1.5,
-                      fontSize: { xs: "14px", md: "16px" },
-                      fontWeight: 500,
-                      lineHeight: "24px",
-                      textTransform: "capitalize",
-                      backgroundColor: "#038F3E",
-                      "&:hover": { backgroundColor: "#038F3E" }
-                    }}
-                    href="/enrollee-complaint-second-form"
-                  >
-                    Save & Continue
-                  </Button>
+                    <Button
+                      variant="outlined"
+                      sx={{
+                        width: "270px",
+                        height: "48px",
+                        borderRadius: "16px",
+                        py: 1.5,
+                        fontSize: { xs: "14px", md: "16px" },
+                        fontWeight: 500,
+                        lineHeight: "24px",
+                        textTransform: "capitalize",
+                        borderColor: "#038F3E",
+                        color: "#038F3E",
+                        "&:hover": { borderColor: "#038F3E" }
+                      }}
+                      // href="/account-type"
+                      onClick={onBack}
+                    >
+                      Back
+                    </Button>
+                    <Button
+                      variant="contained"
+                      sx={{
+                        width: "270px",
+                        height: "48px",
+                        borderRadius: "16px",
+                        py: 1.5,
+                        fontSize: { xs: "14px", md: "16px" },
+                        fontWeight: 500,
+                        lineHeight: "24px",
+                        textTransform: "capitalize",
+                        backgroundColor: "#038F3E",
+                        "&:hover": { backgroundColor: "#038F3E" }
+                      }}
+                      // href="/enrollee-complaint-second-form"
+                      onClick={handleNext}
+                    >
+                      Save & Continue
+                    </Button>
+                  </Box>
+                  <Box sx={{ width: "20%", my: 2 }}>{btn}</Box>
                 </Box>
               </form>
             </Box>
           </Box>
         </Box>
-        {/* </Container> */}
       </Box>
     </>
   );
 };
 
 export default FirstForm;
+
+FirstForm.propTypes = {
+  firstInfo: PropTypes.object,
+  setFirstInfo: PropTypes.func.isRequired,
+  onNext: PropTypes.func,
+  onBack: PropTypes.func,
+  btn: PropTypes.any
+};

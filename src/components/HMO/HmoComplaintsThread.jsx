@@ -7,13 +7,15 @@ import {
   IconButton,
   Typography
 } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import hospital1 from "../../assets/hospital1.png";
 import hospital2 from "../../assets/hospital2.png";
 import hospital3 from "../../assets/hospital3.png";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getComplaintResponses } from "../../services/general";
 
 const data = {
   id: 1,
@@ -64,14 +66,24 @@ const repsonseData = [
   }
 ];
 const HmoComplaintsThread = () => {
-  const { id } = useParams();
-  console.log(id, "checking...");
+  const location = useLocation();
+  const slug = location?.state.thread;
   const navigate = useNavigate();
 
   const [isResponse] = useState(true);
 
+  const {
+    data: response
+    //  isLoading,
+    //  isError,
+    //  error
+  } = useQuery({
+    queryKey: ["complaints", slug],
+    queryFn: () => getComplaintResponses(slug)
+  });
+
   const handleReply = () => {
-    navigate(`/hmo/complaint/${id}/reply`, { state: { data } });
+    navigate(`/hmo/complaint/${slug?.case_id}/reply`, { state: { data } });
   };
 
   return (
@@ -100,7 +112,7 @@ const HmoComplaintsThread = () => {
                 color: "#111827"
               }}
             >
-              {data.complaint_no} - Access to services
+              {response?.case_id} - Access to services
             </Typography>
             <Box
               sx={{
@@ -304,7 +316,7 @@ const HmoComplaintsThread = () => {
         <Box sx={{ width: "987px", textAlign: "center", my: 2 }}>
           <Divider
             sx={{
-              borderBottom: "1px dashed #737373"
+              borderBottom: "1px dashed #000000"
             }}
           />
         </Box>
@@ -579,7 +591,7 @@ const HmoComplaintsThread = () => {
                 <Box sx={{ width: "987px", textAlign: "center", my: 2 }}>
                   <Divider
                     sx={{
-                      borderBottom: "1px dashed #737373"
+                      borderBottom: "1px dashed #000000"
                     }}
                   />
                 </Box>

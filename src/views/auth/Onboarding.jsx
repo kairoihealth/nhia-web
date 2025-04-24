@@ -1,22 +1,61 @@
-import {
-  Box,
-  Typography,
-  Button,
-  Select,
-  MenuItem,
-  FormControl,
-  Link
-} from "@mui/material";
+import { Box, Typography, Button, Link } from "@mui/material";
 import Logo from "../../assets/nhia-logo.png";
 import KairoiLogo from "../../assets/kairoi-logo.png";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { getStates } from "../../services/settings";
+import ReactSelect from "react-select";
+import { selectStyles } from "../../utils/style";
+import { useMemo, useState } from "react";
+import PropTypes from "prop-types";
 
-const OnboardingView = () => {
+const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
   const navigate = useNavigate();
+  const [errors, setErrors] = useState({});
+
+  const { data } = useQuery({
+    queryKey: ["states"],
+    queryFn: () => getStates()
+  });
+
+  const states = useMemo(
+    () =>
+      data?.results?.map((t) => ({
+        value: t.id,
+        label: t.name
+      })) || [],
+    [data]
+  );
+
+  const handleStateChange = (selectedOption) => {
+    setStateInfo(selectedOption?.value);
+    setErrors((prev) => ({ ...prev, state: "" }));
+  };
+
+  const selectedState = useMemo(() => {
+    const foundState =
+      states.find((state) => state.value === stateInfo) || null;
+    return foundState;
+  }, [stateInfo, states]);
+
+  const handleValidateAndNext = () => {
+    const newErrors = {};
+
+    if (!stateInfo) {
+      newErrors.state = "Please select a state.";
+    }
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length === 0) {
+      onNext();
+    }
+  };
 
   const handleClick = () => {
     navigate("/login");
   };
+
   return (
     <>
       <Box sx={{ display: { xs: "grid", md: "flex" }, height: "100vh" }}>
@@ -173,21 +212,20 @@ const OnboardingView = () => {
             >
               What state did the incident you want to report happen?
             </Typography>
-
-            <FormControl sx={{ width: { xs: "100%", md: "80%" }, mb: 3 }}>
-              <Select
-                defaultValue=""
-                displayEmpty
-                inputProps={{ "aria-label": "Select state" }}
-                sx={{ backgroundColor: "white" }}
-              >
-                <MenuItem value="" disabled>
-                  Select state
-                </MenuItem>
-                <MenuItem value="Lagos">Lagos</MenuItem>
-                <MenuItem value="Kaduna">Kaduna</MenuItem>
-              </Select>
-            </FormControl>
+            <Box>
+              <ReactSelect
+                styles={selectStyles}
+                value={selectedState}
+                onChange={handleStateChange}
+                options={states}
+                placeholder="Select State"
+              />
+              {errors.state && (
+                <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
+                  {errors.state}
+                </Typography>
+              )}
+            </Box>
 
             <Link
               href="/enrollee-complaint-review"
@@ -196,7 +234,8 @@ const OnboardingView = () => {
                 fontWeight: 500,
                 lineHeight: { xs: "21.6px", md: "27px" },
                 color: "#038F3E",
-                textDecoration: "none"
+                textDecoration: "none",
+                my: 2
                 // '&:hover': { textDecoration: 'underline' }
               }}
             >
@@ -206,13 +245,21 @@ const OnboardingView = () => {
 
           <Box
             sx={{
-              display: { xs: "grid", md: "flex" },
-              justifyContent: { xs: "center", md: "flex-end" },
-              gap: 2,
-              mb: { xs: 2, md: 6 }
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-end",
+              alignItems: "flex-end"
             }}
           >
-            <Button
+            <Box
+              sx={{
+                display: { xs: "grid", md: "flex" },
+                justifyContent: { xs: "center", md: "flex-end" },
+                gap: 2,
+                mb: { xs: 2, md: 6 }
+              }}
+            >
+              {/* <Button
               variant="outlined"
               href="/"
               sx={{
@@ -230,25 +277,28 @@ const OnboardingView = () => {
               }}
             >
               Back
-            </Button>
-            <Button
-              variant="contained"
-              href="/enrollee-complaint-first-form"
-              sx={{
-                width: "270px",
-                height: "48px",
-                borderRadius: "16px",
-                py: 1.5,
-                fontSize: { xs: "14px", md: "16px" },
-                fontWeight: 500,
-                lineHeight: "24px",
-                textTransform: "capitalize",
-                backgroundColor: "#038F3E",
-                "&:hover": { backgroundColor: "#038F3E" }
-              }}
-            >
-              Save & Continue
-            </Button>
+            </Button> */}
+              <Button
+                variant="contained"
+                sx={{
+                  width: "270px",
+                  height: "48px",
+                  borderRadius: "16px",
+                  py: 1.5,
+                  fontSize: { xs: "14px", md: "16px" },
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                  textTransform: "capitalize",
+                  backgroundColor: "#038F3E",
+                  "&:hover": { backgroundColor: "#038F3E" }
+                }}
+                onClick={handleValidateAndNext}
+              >
+                Save & Continue
+              </Button>
+            </Box>
+
+            <Box sx={{ width: "20%" }}>{btn}</Box>
           </Box>
         </Box>
       </Box>
@@ -257,3 +307,10 @@ const OnboardingView = () => {
 };
 
 export default OnboardingView;
+
+OnboardingView.propTypes = {
+  stateInfo: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  setStateInfo: PropTypes.func.isRequired,
+  onNext: PropTypes.func,
+  btn: PropTypes.any
+};

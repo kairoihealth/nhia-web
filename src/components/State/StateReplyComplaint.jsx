@@ -1,5 +1,5 @@
 import {
-  Autocomplete,
+  // Autocomplete,
   Box,
   Button,
   Card,
@@ -10,74 +10,73 @@ import {
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import AttachmentOutlinedIcon from "@mui/icons-material/AttachmentOutlined";
-import { useState } from "react";
+import {
+  // useMemo,
+  useState
+} from "react";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useQuery } from "@tanstack/react-query";
+import {
+  getComplaintResponses,
+  getSingleComplaint,
+  respondToComplaint
+} from "../../services/general";
+import {
+  multiLineStyles
+  // textFieldStyles
+} from "../../utils/style";
+import { useHandleError } from "../../hooks/useToastHandler";
+import { convertToBase64 } from "../../utils/convertTobase64";
+// import { convertFileToBase64 } from "../../utils/convertTobase64";
+// import { getAllHmo } from "../../services/settings";
 
-const textFieldStyles = {
-  "& .MuiOutlinedInput-root": {
-    borderRadius: "8px",
-    backgroundColor: "#F5F5F5",
-    color: "#737373",
-    border: "0.5px solid #DADADA",
-    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#038F3E"
-    }
-  }
-};
-
-const multiLineStyles = {
-  "& .MuiOutlinedInput-root": {
-    height: "204px",
-    borderRadius: "8px",
-    color: "#737373",
-    "& .MuiOutlinedInput-input": {
-      paddingTop: 0,
-      paddingBottom: "16px",
-      marginTop: 0,
-      alignSelf: "flex-start"
-    },
-    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#038F3E"
-    }
-  }
-};
-
-const hmoData = [
-  { id: 1, title: "HMO1", name: "Ayo" },
-  { id: 2, title: "HMO2", name: "Tolu" },
-  { id: 3, title: "HMO3", name: "Bayo" }
-];
 const StateReplyComplaint = () => {
+  const handleError = useHandleError();
   const navigate = useNavigate();
   const location = useLocation();
-  const { data } = location.state || {};
-  const [selectedHMO, setSelectedHMO] = useState(null);
+  const slug = location?.state.thread;
+  // const [selectedHMO, setSelectedHMO] = useState("");
   const [attachments, setAttachments] = useState([]);
+  const [respond, setRespond] = useState("");
+
+  const {
+    data: complaint
+    //  isLoading,
+    //  isError,
+    //  error
+  } = useQuery({
+    queryKey: ["complaints", slug],
+    queryFn: () => getSingleComplaint(slug)
+  });
+
+  const hmoName = complaint?.hmo.name;
+
+  const {
+    data: response
+    //  isLoading,
+    //  isError,
+    //  error
+  } = useQuery({
+    queryKey: ["complaints", slug],
+    queryFn: () => getComplaintResponses(slug)
+  });
 
   // Function to handle file selection
-  const handleFileChange = (event) => {
-    const selectedFiles = Array.from(event.target.files);
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
 
-    // Check if the total number of attachments exceeds 5
-    if (attachments.length + selectedFiles.length > 5) {
-      alert("You can only add up to 5 attachments.");
-      return;
-    }
-
-    // Update the attachments state
-    setAttachments((prevAttachments) => [
-      ...prevAttachments,
-      ...selectedFiles.map((file) => ({
+    setAttachments((prev) => {
+      const newFiles = files.map((file) => ({
+        file: file,
+        preview: URL.createObjectURL(file),
         name: file.name,
-        size: file.size,
-        type: file.type,
-        preview: file.type.startsWith("image/")
-          ? URL.createObjectURL(file)
-          : null // Create preview for images
-      }))
-    ]);
+        type: file.type
+      }));
+
+      return [...prev, ...newFiles].slice(0, 5);
+    });
   };
 
   // Function to trigger the file input
@@ -92,8 +91,81 @@ const StateReplyComplaint = () => {
     );
   };
 
-  const handleSubmit = () => {
-    navigate(`/state/complaint/${data.id}/thread`);
+  const handleSubmit = async () => {
+    try {
+      // console.log("Attachments:", attachments);
+      const formData = new FormData();
+      // const docsArray = [];
+
+      // attachments.forEach((attachment) => {
+      //   docsArray.push({ document: attachment.file }); // Directly include the File object
+      // });
+
+      // await Promise.all(
+      //   attachments.map(async (attachment, index) => {
+      //     return new Promise((resolve, reject) => {
+      //       const reader = new FileReader();
+      //       reader.onload = () => {
+      //         const base64String = reader.result.split(",")[1];
+      //         docsArray.push({ document: base64String });
+      //         console.log(
+      //           `Attachment ${index + 1} Base64:`,
+      //           base64String ? base64String.substring(0, 50) + "..." : null
+      //         ); // Log a snippet
+      //         resolve();
+      //       };
+      //       reader.onerror = (error) => {
+      //         console.error(`Error reading attachment ${index + 1}:`, error);
+      //         reject(error);
+      //       };
+      //       reader.readAsDataURL(attachment.file); // Read the file as a data URL (base64)
+      //     });
+      //   })
+      // );
+
+      // console.log(attachments, "attach");
+      //  const documents = [];
+
+      // Convert files to base64
+      //  for (const attachment of attachments) {
+      //    const base64String = await convertFileToBase64(attachment.file);
+      //    documents.push({ document: base64String });
+      //  }
+
+      //  formData.append("docs", JSON.stringify(documents));
+
+      const docs = await Promise.all(
+        attachments.map(async (attachment) => {
+          const base64 = await convertToBase64(attachment.file);
+          return { document: base64 };
+        })
+      );
+      // Append other fields to FormData
+      formData.append("complaint", complaint?.id);
+      formData.append("hmo_name", hmoName);
+      formData.append(
+        "hmo_address",
+        complaint?.hmo?.address || "Unknown Address"
+      );
+      formData.append("response", respond);
+      // attachments.forEach((attachment) => {
+      //   formData.append(
+      //     "docs[]",
+      //     JSON.stringify({ document: attachment.file.name })
+      //   );
+      // });
+
+      formData.append("docs", JSON.stringify(docs));
+
+      await respondToComplaint(formData);
+      setRespond("");
+      setAttachments({});
+      if (response?.id) {
+        navigate(`/state/complaint/${response?.case_id}/thread`);
+      }
+    } catch (error) {
+      handleError("Failed to send response:", error);
+    }
   };
 
   return (
@@ -102,7 +174,7 @@ const StateReplyComplaint = () => {
         sx={{
           display: "flex",
           flexDirection: "column",
-          width: "1034px",
+          width: "90%",
           height: "auto"
         }}
       >
@@ -126,7 +198,7 @@ const StateReplyComplaint = () => {
               color: "#FFFFFF"
             }}
           >
-            {data.id} - Access to services
+            {complaint?.case_id} - Access to services
           </Typography>
         </Box>
 
@@ -161,14 +233,14 @@ const StateReplyComplaint = () => {
                 mt: 2
               }}
             >
-              {data.complaint}
+              {complaint?.description}
             </Box>
           </Box>
         </Box>
 
         {/*Reply*/}
         <Box sx={{ display: "flex", flexDirection: "column", gap: 3, p: 5 }}>
-          {selectedHMO && (
+          {/* {selectedHMO && (
             <Typography
               variant="subtitle1"
               sx={{
@@ -179,9 +251,9 @@ const StateReplyComplaint = () => {
                 mb: 2
               }}
             >
-              Complainant: {selectedHMO.name}
+              Complainant: {selectedHMO?.name}
             </Typography>
-          )}
+          )} */}
           <Typography
             sx={{
               fontSize: "16px",
@@ -192,15 +264,20 @@ const StateReplyComplaint = () => {
           >
             Message Respondent
           </Typography>
-          <Autocomplete
+
+          {/* <Autocomplete
             freeSolo
             id="free-solo-2-demo"
             disableClearable
-            options={hmoData.map((option) => option.title)}
-            onChange={(event, newValue) => {
+            sx={{
+              position: "relative",
+              zIndex: 9999
+            }}
+            options={hmos.map((option) => option?.label)}
+            inputValue={selectedHMO}
+            onInputChange={(event, newValue) => {
               if (newValue) {
-                // Find the selected HMO by title
-                const selected = hmoData.find((hmo) => hmo.title === newValue);
+                const selected = hmos.find((hmo) => hmo?.label === newValue);
                 setSelectedHMO(selected || null);
               } else {
                 setSelectedHMO(null);
@@ -209,8 +286,7 @@ const StateReplyComplaint = () => {
             renderInput={(params) => (
               <TextField
                 {...params}
-                // label="Search input"
-                placeholder="Send reponse to..."
+                placeholder="Send response to..."
                 sx={textFieldStyles}
                 slotProps={{
                   input: {
@@ -220,7 +296,7 @@ const StateReplyComplaint = () => {
                 }}
               />
             )}
-          />
+          /> */}
 
           {/*Input fields*/}
 
@@ -235,6 +311,8 @@ const StateReplyComplaint = () => {
               slotProps={{
                 style: { textAlign: "start" }
               }}
+              value={respond}
+              onChange={(e) => setRespond(e.target.value)}
             />
           </Box>
 
@@ -258,15 +336,15 @@ const StateReplyComplaint = () => {
               onClick={handleAddAttachmentClick}
             >
               {/* Attachment Limit Alert */}
-              {attachments.length >= 5 && (
+              {attachments?.length >= 5 && (
                 <Typography variant="caption" sx={{ color: "#FF0000", mt: 1 }}>
                   Maximum attachment limit reached (5).
                 </Typography>
               )}
-              {attachments.length > 0 && (
+              {attachments?.length > 0 && (
                 <Box sx={{ width: "523px", my: 2 }}>
                   <Box sx={{ display: "flex", gap: 1 }}>
-                    {attachments.map((attachment, index) => (
+                    {attachments?.map((file, index) => (
                       <Card
                         key={index}
                         sx={{
@@ -276,12 +354,11 @@ const StateReplyComplaint = () => {
                           overflow: "hidden"
                         }}
                       >
-                        {/* Image Preview */}
-                        {attachment.preview ? (
+                        {file?.type?.startsWith("image") ? (
                           <CardMedia
                             component="img"
-                            image={attachment.preview}
-                            alt={attachment.name}
+                            image={file?.preview}
+                            alt={file?.name}
                             sx={{
                               width: "100%",
                               height: "100px",
@@ -304,17 +381,17 @@ const StateReplyComplaint = () => {
                               width: "119.34px"
                             }}
                           >
-                            {attachment.type.includes("pdf") ? (
+                            {file?.type?.includes("pdf") ? (
                               <PictureAsPdfIcon
                                 sx={{ color: "#FF7F50", mb: 1 }}
                               />
-                            ) : attachment.type.includes("word") ||
-                              attachment.type.includes("docx") ? (
+                            ) : file?.type?.includes("word") ||
+                              file?.type?.includes("docx") ? (
                               <InsertDriveFileIcon
                                 sx={{ color: "#1E90FF", mb: 1 }}
                               />
-                            ) : attachment.type.includes("excel") ||
-                              attachment.type.includes("xlsx") ? (
+                            ) : file?.type?.includes("excel") ||
+                              file?.type?.includes("xlsx") ? (
                               <InsertDriveFileIcon
                                 sx={{ color: "#32CD32", mb: 1 }}
                               />
@@ -336,7 +413,7 @@ const StateReplyComplaint = () => {
                                 color: "#595959"
                               }}
                             >
-                              {attachment.name.slice(0, 12)}
+                              {file?.name?.slice(0, 12)}
                             </Typography>
                           </Box>
                         )}

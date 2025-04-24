@@ -166,20 +166,23 @@ const ReusableTable = ({
                       fontWeight: 400,
                       lineHeight: "21.6px",
                       borderRadius: "8px",
+                      textTransform: "capitalize",
                       backgroundColor:
-                        row.status === "Pending"
+                        row.status === "pending"
                           ? "#FFF3E7"
-                          : row.status === "Resolved" ||
-                            row.status === "Request sent"
+                          : row.status === "closed"
                           ? "#D6EBFF"
-                          : "#E8F8EE",
+                          : row.status === "active"
+                          ? "#E8F8EE"
+                          : "#FFF3E7",
                       color:
-                        row.status === "Pending"
+                        row.status === "pending"
                           ? "#EDB378"
-                          : row.status === "Resolved" ||
-                            row.status === "Request sent"
+                          : row.status === "closed"
                           ? "#4B95DD"
-                          : "#096F35"
+                          : row.status === "active"
+                          ? "#096F35"
+                          : "red"
                     }}
                   >
                     &bull; {row.status || "N/A"}

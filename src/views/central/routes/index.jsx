@@ -9,7 +9,7 @@ import CentralReports from "../dashboard/CentralReports";
 import StateInviteByCentral from "../dashboard/StateInviteByCentral";
 import StateInvitationForm from "../dashboard/StateInvitationForm";
 import CentralProfile from "../dashboard/CentralProfile";
-import CentralSettings from "../dashboard/CentralSettings";
+// import CentralSettings from "../dashboard/CentralSettings";
 import CentralSingleComplaint from "../../../components/Central/CentralSingleComplaint";
 
 const CentralRoutes = () => {
@@ -31,7 +31,7 @@ const CentralRoutes = () => {
           <Route path="add-user" element={<StateInvitationForm />} />
         </Route>
         <Route path="profile" element={<CentralProfile />} />
-        <Route path="settings" element={<CentralSettings />} />
+        {/* <Route path="settings" element={<CentralSettings />} /> */}
         <Route path="complaint/:id" element={<CentralSingleComplaint />} />
       </Route>
     </Routes>

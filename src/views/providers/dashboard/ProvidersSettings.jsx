@@ -18,13 +18,17 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import DeleteOutlineTwoToneIcon from "@mui/icons-material/DeleteOutlineTwoTone";
-import { hmoAdmin, hmoAdminLevel, hmoAdminLevelPermissions } from "../../../mock/hmoAdmins";
+import {
+  hmoAdmin,
+  hmoAdminLevel,
+  hmoAdminLevelPermissions
+} from "../../../mock/hmoAdmins";
 
 const textFieldStyles = {
   "& .MuiOutlinedInput-root": {
     borderRadius: "8px",
     backgroundColor: "#F5F5F5",
-    color: "#737373",
+    color: "#000000",
     border: "0.5px solid #DADADA",
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
       borderColor: "#038F3E"
@@ -36,7 +40,7 @@ const selectStyles = {
   width: "100%",
   borderRadius: "8px",
   backgroundColor: "#F5F5F5",
-  color: "#737373",
+  color: "#000000",
   border: "0.5px solid #DADADA",
   fontSize: "16px",
   outline: "none",
@@ -386,7 +390,7 @@ const AddAdminForm = () => {
                 sx={{
                   fontSize: "16px",
                   fontWeight: 500,
-                  color: "#737373"
+                  color: "#000000"
                 }}
               >
                 Select option
@@ -689,7 +693,7 @@ const EditAdminForm = () => {
                   sx={{
                     fontSize: "16px",
                     fontWeight: 500,
-                    color: "#737373"
+                    color: "#000000"
                   }}
                 >
                   Select option
@@ -853,22 +857,22 @@ const ManageAdminRoles = () => {
               >
                 {selectedLevel ? "Back" : "Admin level name"}
               </Typography>
-              </Box>
-              {!newLevel && (
-            <Box sx={{ display: "flex", gap: 0.5, cursor: "pointer" }}>
-              <DeleteOutlineTwoToneIcon sx={{ color: "#EB001B" }} />
-              <Typography
-                sx={{
-                  fontSize: "16px",
-                  fontWeight: 500,
-                  lineHeight: "28px",
-                  color: "#EB001B"
-                }}
-              >
-                Delete Admin level
-              </Typography>
             </Box>
-              )}
+            {!newLevel && (
+              <Box sx={{ display: "flex", gap: 0.5, cursor: "pointer" }}>
+                <DeleteOutlineTwoToneIcon sx={{ color: "#EB001B" }} />
+                <Typography
+                  sx={{
+                    fontSize: "16px",
+                    fontWeight: 500,
+                    lineHeight: "28px",
+                    color: "#EB001B"
+                  }}
+                >
+                  Delete Admin level
+                </Typography>
+              </Box>
+            )}
           </Box>
 
           {/* add level */}

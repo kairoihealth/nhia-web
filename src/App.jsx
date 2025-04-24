@@ -5,17 +5,18 @@ import EmailVerification from "./components/EmailVerification";
 import ForgotPassword from "./components/ForgotPassword";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import DashboardLayout from "./shared/DashboardLayout";
-import EnrolleeRoutes from "./views/enrolees/routes";
+// import EnrolleeRoutes from "./views/enrolees/routes";
 import HMORoutes from "./views/hmo/routes";
 import StateRoutes from "./views/state/routes";
 import ProviderRoutes from "./views/providers/routes";
 import CentralRoutes from "./views/central/routes";
-import OnboardingView from "./views/auth/Onboarding";
-import FirstForm from "./views/enrolees/ComplaintForm/FirstForm";
-import SecondForm from "./views/enrolees/ComplaintForm/SecondForm";
-import FormPreview from "./views/enrolees/ComplaintForm/FormPreview";
-import ReviewForm from "./views/enrolees/ComplaintReview/ReviewForm";
+// import OnboardingView from "./views/auth/Onboarding";
+// import FirstForm from "./views/enrolees/ComplaintForm/FirstForm";
+// import SecondForm from "./views/enrolees/ComplaintForm/SecondForm";
+// import FormPreview from "./views/enrolees/ComplaintForm/FormPreview";
+// import ReviewForm from "./views/enrolees/ComplaintReview/ReviewForm";
 import ErrorPage from "./shared/ErrorPage";
+import Enrollee from "./views/auth/Enrollee";
 // import NotFound from "./components/NotFound";
 
 const getUserRole = () => localStorage.getItem("userRole");
@@ -27,18 +28,18 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<OnboardingView />} />
+      <Route path="/" element={<Enrollee />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/account-setup" element={<AccountSetup />} />
       <Route path="/email-verification" element={<EmailVerification />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
 
       {/*Enrollee routes*/}
-      <Route path="enrollee/*" element={<EnrolleeRoutes />} />
-      <Route path="/enrollee-complaint-first-form" element={<FirstForm />} />
+      {/* <Route path="enrollee/*" element={<EnrolleeRoutes />} /> */}
+      {/* <Route path="/enrollee-complaint-first-form" element={<FirstForm />} />
       <Route path="/enrollee-complaint-second-form" element={<SecondForm />} />
       <Route path="/enrollee-form-preview" element={<FormPreview />} />
-      <Route path="/enrollee-complaint-review" element={<ReviewForm />} />
+      <Route path="/enrollee-complaint-review" element={<ReviewForm />} /> */}
 
       {/* Protect all dashboard routes */}
       <Route element={<ProtectedRoute />}>

@@ -275,7 +275,7 @@ const RegStateInfo = () => {
                         fontSize: "14px",
                         fontWeight: 400,
                         lineHeight: "16.94px",
-                        color: "#737373"
+                        color: "#000000"
                       }}
                     >
                       {t.number} Complaints
@@ -285,7 +285,7 @@ const RegStateInfo = () => {
                         fontSize: "14px",
                         fontWeight: 400,
                         lineHeight: "16.94px",
-                        color: "#737373"
+                        color: "#000000"
                       }}
                     >
                       &bull; {t.reason}

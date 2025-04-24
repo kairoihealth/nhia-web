@@ -18,7 +18,7 @@ const textFieldStyles = {
   "& .MuiOutlinedInput-root": {
     borderRadius: "8px",
     backgroundColor: "#F5F5F5",
-    color: "#737373",
+    color: "#000000",
     border: "0.5px solid #DADADA",
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
       borderColor: "#038F3E"
@@ -30,7 +30,7 @@ const multiLineStyles = {
   "& .MuiOutlinedInput-root": {
     height: "204px",
     borderRadius: "8px",
-    color: "#737373",
+    color: "#000000",
     "& .MuiOutlinedInput-input": {
       paddingTop: 0,
       paddingBottom: "16px",

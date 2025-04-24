@@ -23,13 +23,13 @@ const textFieldStyles = {
   "& .MuiOutlinedInput-root": {
     borderRadius: "8px",
     backgroundColor: "#F5F5F5",
-    color: "#737373",
+    color: "#000000",
     border: "0.5px solid #DADADA",
     mb: 3,
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#038F3E", 
-    },
-  },
+      borderColor: "#038F3E"
+    }
+  }
 };
 
 const formControlStyles = {
@@ -37,21 +37,21 @@ const formControlStyles = {
   height: "55px",
   borderRadius: "8px",
   backgroundColor: "#F5F5F5",
-  color: "#737373",
+  color: "#000000",
   border: "0.5px solid #DADADA",
   paddingY: "34px",
   fontSize: "16px",
-  outline: "none",
+  outline: "none"
 };
 const ProvidersRegisterPage = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    password: '',
-    confirmPassword: '',
- })
+    fullName: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: ""
+  });
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
@@ -64,9 +64,8 @@ const ProvidersRegisterPage = () => {
   };
 
   const handleChange = (e) => {
-    setFormData({...formData, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -192,40 +191,40 @@ const ProvidersRegisterPage = () => {
 
               {/* Phone Number Field */}
               <Box
-                    flex={1}
+                flex={1}
                 sx={{
-                  display: "flex", flexDirection: "column",
+                  display: "flex",
+                  flexDirection: "column",
                   alignItems: "flex-start",
-                  gap: 1, mb: 3
+                  gap: 1,
+                  mb: 3
                 }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: "16px",
-                        fontWeight: 500,
-                        lineHeight: "24px"
-                      }}
-                    >
-                      Official Phone Number
-                      <span style={{ color: "#099243", marginLeft: "6px" }}>
-                        *
-                      </span>
-                    </Typography>
-                    <FormControl fullWidth>
-                      <PhoneInput
-                        country={"ng"}          
+              >
+                <Typography
+                  sx={{
+                    color: "#595959",
+                    fontSize: "16px",
+                    fontWeight: 500,
+                    lineHeight: "24px"
+                  }}
+                >
+                  Official Phone Number
+                  <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
+                </Typography>
+                <FormControl fullWidth>
+                  <PhoneInput
+                    country={"ng"}
                     // inputStyle={formControlStyles}
                     inputStyle={{
                       ...formControlStyles,
                       "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "#038F3E", 
+                        borderColor: "#038F3E"
                       }
                     }}
                     onChange={handleChange}
-                      />
-                    </FormControl>
-                  </Box>
+                  />
+                </FormControl>
+              </Box>
 
               {/* Password Field */}
               <Box
@@ -276,7 +275,7 @@ const ProvidersRegisterPage = () => {
                   sx={{
                     ...textFieldStyles,
                     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#038F3E", 
+                      borderColor: "#038F3E"
                     }
                   }}
                   onChange={handleChange}
@@ -333,7 +332,7 @@ const ProvidersRegisterPage = () => {
                   sx={{
                     ...textFieldStyles,
                     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#038F3E", 
+                      borderColor: "#038F3E"
                     }
                   }}
                   onChange={handleChange}
@@ -345,7 +344,20 @@ const ProvidersRegisterPage = () => {
                 variant="contained"
                 color="primary"
                 fullWidth
-                sx={{ width: '347px', height: '45px', borderRadius: '50px', backgroundColor: '#038F3E', color: '#FFFFFF', fontSize: '16px', fontWeight: 500, lineHeight: '24px', my: 3, py: '12px', px: '8px', textTransform: 'capitalize' }}
+                sx={{
+                  width: "347px",
+                  height: "45px",
+                  borderRadius: "50px",
+                  backgroundColor: "#038F3E",
+                  color: "#FFFFFF",
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                  my: 3,
+                  py: "12px",
+                  px: "8px",
+                  textTransform: "capitalize"
+                }}
                 type="submit"
                 onClick={handleSubmit}
               >

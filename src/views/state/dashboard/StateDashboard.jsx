@@ -13,62 +13,43 @@ import {
 } from "../../../mock/chartData";
 import { lineOptions, options } from "../../../utils/config";
 import LineChart from "../../../shared/LineChart";
+import { useQuery } from "@tanstack/react-query";
+import { getNewComplaints } from "../../../services/general";
 
 const StateDashboard = () => {
   const navigate = useNavigate();
+
+  const { data: complaints } = useQuery({
+    queryKey: ["new-complaints"],
+    queryFn: () => getNewComplaints({ page: 1, pageSize: 5, status: "pending" })
+  });
 
   const columns = [
     // { label: "ID", field: "id", align: "center" },
     {
       label: "Date",
-      field: "date",
+      field: "created_at",
       format: (value) => new Date(value).toLocaleDateString()
     },
     { label: "Complainant", field: "name" },
-    { label: "Complaint No", field: "number" },
-    { label: "Complaint Category", field: "category" }
+    { label: "Complaint No", field: "complaint_no" },
+    { label: "Complaint Category", field: "complaint_against" }
   ];
 
-  const rows = [
-    {
-      id: 1,
-      name: "John Doe",
-      number: "11023",
-      date: "2023-10-01",
-      category: "HMO"
-    },
-    {
-      id: 2,
-      name: "John Doe",
-      number: "11023",
-      date: "2023-10-01",
-      category: "HMO"
-    },
-    {
-      id: 3,
-      name: "John Doe",
-      number: "11023",
-      date: "2023-10-01",
-      category: "HMO"
-    },
-    {
-      id: 4,
-      name: "John Doe",
-      number: "11023",
-      date: "2023-10-01",
-      category: "HMO"
-    },
-    {
-      id: 5,
-      name: "John Doe",
-      number: "11023",
-      date: "2023-10-01",
-      category: "HMO"
-    }
-  ];
+  const transformedRows =
+    complaints?.results?.map((user) => ({
+      created_at: new Date(user.created_at).toLocaleDateString(),
+      name: `${user.firstname || ""} ${user.lastname || ""}`.trim(),
+      complaint_no: user.case_id,
+      complaint_against: user.complaint_against,
+      id: user.id,
+      status: user.status
+    })) || [];
 
-  const handleViewClick = (row) => {
-    alert("View clicked for:", row);
+  const handleViewComplaint = (row) => {
+    navigate(`/stateadmin/complaint/${row.complaint_no}`, {
+      state: { complaint: row?.id }
+    });
   };
 
   return (
@@ -332,7 +313,7 @@ const StateDashboard = () => {
                   textDecoration: "underline",
                   cursor: "pointer"
                 }}
-                onClick={() => navigate("/state/complaints")}
+                onClick={() => navigate("/stateadmin/complaints")}
               >
                 View Complaints{" "}
                 <ArrowRightAltTwoToneIcon sx={{ color: "#038F3E" }} />
@@ -340,8 +321,8 @@ const StateDashboard = () => {
             </Box>
             <ReusableTable
               columns={columns}
-              rows={rows}
-              onViewClick={handleViewClick}
+              rows={transformedRows}
+              onViewClick={handleViewComplaint}
               showActions={false}
               showStatus={false}
             />
@@ -401,7 +382,7 @@ const StateDashboard = () => {
                       fontSize: "14px",
                       fontWeight: 400,
                       lineHeight: "16.94px",
-                      color: "#737373"
+                      color: "#000000"
                     }}
                   >
                     {t.number} Complaints
@@ -411,7 +392,7 @@ const StateDashboard = () => {
                       fontSize: "14px",
                       fontWeight: 400,
                       lineHeight: "16.94px",
-                      color: "#737373"
+                      color: "#000000"
                     }}
                   >
                     &bull; {t.reason}

@@ -1,43 +1,10 @@
-import { useToast } from "../contexts/ToastProvider";
-import PropTypes from "prop-types";
-
-const getErrors = (errors) => {
-  const messages = [];
-
-  if (errors) {
-    Object.keys(errors).forEach((key) => {
-      const keyErrors = errors[key];
-      if (keyErrors) {
-        keyErrors.forEach((error) => {
-          messages.push(error);
-        });
-      }
-    });
-  }
-
-  return messages;
-};
-
-export const ErrorHandler = ({ errors }) => {
-  const errorMessages = getErrors(errors);
-
-  if (errorMessages.length === 0) {
-    return null; // Or you could return <p>No errors to display.</p>;
-  }
-
-  return (
-    <ul>
-      {errorMessages.map((message, index) => (
-        <li key={index}>{message}</li>
-      ))}
-    </ul>
-  );
-};
+import { useToast } from "./useToast";
 
 export const useHandleSuccess = () => {
   const { showToast } = useToast();
 
   const handleSuccess = (response, status = true) => {
+    console.log("handleSuccess called with:", { response, status });
     showToast(response, status ? "success" : "error");
   };
 
@@ -88,8 +55,4 @@ export const useResponseHandler = () => {
   };
 
   return handleResponse;
-};
-
-ErrorHandler.propTypes = {
-  errors: PropTypes.shape({}).isRequired
 };

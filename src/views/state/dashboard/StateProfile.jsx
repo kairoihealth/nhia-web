@@ -20,7 +20,7 @@ const textFieldStyles = {
   "& .MuiOutlinedInput-root": {
     borderRadius: "8px",
     backgroundColor: "#F5F5F5",
-    color: "#737373",
+    color: "#000000",
     border: "0.5px solid #DADADA",
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
       borderColor: "#038F3E"
@@ -33,7 +33,7 @@ const formControlStyles = {
   height: "55px",
   borderRadius: "8px",
   backgroundColor: "#F5F5F5",
-  color: "#737373",
+  color: "#000000",
   border: "0.5px solid #DADADA",
   paddingY: "34px",
   fontSize: "16px",
@@ -545,7 +545,7 @@ const StateProfile = () => {
                         defaultChecked={permission.checked}
                         sx={{
                           "&.Mui-checked, &.MuiCheckbox-indeterminate": {
-                            color: "#000000" 
+                            color: "#000000"
                           },
                           color: "#000000"
                         }}

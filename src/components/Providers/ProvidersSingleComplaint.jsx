@@ -1,14 +1,27 @@
 import { Box, Button, Typography } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
+import { getSingleComplaint } from "../../services/general";
 
 const ProvidersSingleComplaint = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const data = location?.state;
-  console.log(data.complaint.id);
+  const slug = location?.state.complaint;
+
+  const {
+    data: complaint
+    //  isLoading,
+    //  isError,
+    //  error
+  } = useQuery({
+    queryKey: ["complaints", slug],
+    queryFn: () => getSingleComplaint(slug)
+  });
 
   const handleCompliant = () => {
-    navigate(`/provider/complaint/${data?.complaint.complaint_no}/thread`);
+    navigate(`/provider/complaint/${complaint?.case_id}/thread`, {
+      state: { thread: complaint?.id }
+    });
   };
 
   return (
@@ -35,7 +48,7 @@ const ProvidersSingleComplaint = () => {
               color: "#111827"
             }}
           >
-            KH/023/45 - Access to services
+            {complaint?.case_id || ""} - {complaint?.complaint_type || ""}
           </Typography>
         </Box>
 
@@ -83,7 +96,7 @@ const ProvidersSingleComplaint = () => {
                   width: "60%"
                 }}
               >
-                Gabriella
+                {complaint?.firstname || "-"} {complaint?.lastname || "-"}
               </Typography>
             </Box>
             <Box flex={1} sx={{ display: "flex", gap: 2 }}>
@@ -107,7 +120,7 @@ const ProvidersSingleComplaint = () => {
                   width: "60%"
                 }}
               >
-                H23 dolphin estate
+                {complaint?.contact_address || "--"}
               </Typography>
             </Box>
             <Box flex={1} sx={{ display: "flex", gap: 2 }}>
@@ -131,7 +144,7 @@ const ProvidersSingleComplaint = () => {
                   width: "60%"
                 }}
               >
-                Gabriella@gmail.com
+                {complaint?.email || "--"}
               </Typography>
             </Box>
             <Box flex={1} sx={{ display: "flex", gap: 2 }}>
@@ -155,7 +168,7 @@ const ProvidersSingleComplaint = () => {
                   width: "60%"
                 }}
               >
-                1234567890000
+                {complaint?.phone || "--"}
               </Typography>
             </Box>
             <Box flex={1} sx={{ display: "flex", gap: 2 }}>
@@ -179,7 +192,7 @@ const ProvidersSingleComplaint = () => {
                   width: "60%"
                 }}
               >
-                enter NHIA number/code
+                {complaint?.hmo?.name || "--"}
               </Typography>
             </Box>
           </Box>
@@ -229,7 +242,8 @@ const ProvidersSingleComplaint = () => {
                   width: "60%"
                 }}
               >
-                12/04/2024
+                {new Date(complaint?.incident_date).toLocaleDateString() ||
+                  "--"}
               </Typography>
             </Box>
             <Box flex={1} sx={{ display: "flex", gap: 2 }}>
@@ -253,7 +267,7 @@ const ProvidersSingleComplaint = () => {
                   width: "60%"
                 }}
               >
-                11:56AM
+                {complaint?.incident_time || "--"}
               </Typography>
             </Box>
             <Box flex={1} sx={{ display: "flex", gap: 2 }}>
@@ -277,7 +291,7 @@ const ProvidersSingleComplaint = () => {
                   width: "60%"
                 }}
               >
-                14/04/2024
+                {new Date(complaint?.created_at).toLocaleDateString() || "--"}
               </Typography>
             </Box>
             <Box flex={1} sx={{ display: "flex", gap: 2 }}>
@@ -301,7 +315,7 @@ const ProvidersSingleComplaint = () => {
                   width: "60%"
                 }}
               >
-                Family Plan
+                {complaint?.nhia_programme || "--"}
               </Typography>
             </Box>
           </Box>
