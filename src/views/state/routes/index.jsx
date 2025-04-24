@@ -5,7 +5,7 @@ import StateReports from "../dashboard/StateReport";
 import InvitationsByState from "../dashboard/StateInvitaions";
 import InvitationForm from "../dashboard/InvitationForm";
 import StateProfile from "../dashboard/StateProfile";
-import StateSettings from "../dashboard/StateSettings";
+// import StateSettings from "../dashboard/StateSettings";
 import StateSingleComplaint from "../../../components/State/StateSingleComplaint";
 import StateComplaintThread from "../../../components/State/StateComplaintThread";
 import StateReplyComplaint from "../../../components/State/StateReplyComplaint";
@@ -25,7 +25,7 @@ const StateRoutes = () => {
         </Route>
 
         <Route path="profile" element={<StateProfile />} />
-        <Route path="settings" element={<StateSettings />} />
+        {/* <Route path="settings" element={<StateSettings />} /> */}
         <Route path="complaint/:id" element={<StateSingleComplaint />} />
         <Route path="complaint/:id/thread" element={<StateComplaintThread />} />
         <Route path="complaint/:id/reply" element={<StateReplyComplaint />} />

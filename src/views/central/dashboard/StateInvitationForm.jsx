@@ -9,23 +9,12 @@ import SuccessModal from "../../../shared/SuccessModal";
 import { useMemo, useState } from "react";
 import { getRegions, getStatesByRegion } from "../../../services/settings";
 import ReactSelect from "react-select";
-import { selectStyles } from "../../../utils/style";
+import { selectStyles, textFieldStyles } from "../../../utils/style";
 import { useHandleError } from "../../../hooks/useToastHandler";
 // import useAuth from "../../../hooks/useAuth";
 import { inviteStateUser } from "../../../services/central";
 import { useQuery } from "@tanstack/react-query";
 
-const textFieldStyles = {
-  "& .MuiOutlinedInput-root": {
-    borderRadius: "8px",
-    backgroundColor: "#F5F5F5",
-    color: "#737373",
-    border: "0.5px solid #DADADA",
-    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#038F3E"
-    }
-  }
-};
 const StateInvitationForm = () => {
   const handleError = useHandleError();
   // const { user } = useAuth();
@@ -33,6 +22,7 @@ const StateInvitationForm = () => {
   const [selectedRegion, setSelectedRegion] = useState("");
   const [selectedState, setSelectedState] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const regionsQueryKey = useMemo(() => ["regions"], []);
   const { data: regionsData, isLoading: regionsLoading } = useQuery({
@@ -88,10 +78,20 @@ const StateInvitationForm = () => {
     setEmail(event.target.value);
   };
 
+  const validateFields = () => {
+    const newErrors = {};
+
+    if (!email?.trim()) newErrors.email = "Email is required.";
+    if (!selectedRegion) newErrors.region = "Region is required.";
+    if (!selectedState) newErrors.state = "State is required.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async () => {
     try {
-      if (!email || !selectedState) {
-        handleError("Please fill in all required fields.");
+      if (!validateFields()) {
         return;
       }
 
@@ -155,6 +155,8 @@ const StateInvitationForm = () => {
             sx={textFieldStyles}
             value={email}
             onChange={handleEmailChange}
+            error={!!errors.email}
+            helperText={errors.email}
           />
         </Box>
 
@@ -173,13 +175,20 @@ const StateInvitationForm = () => {
           {regionsLoading ? (
             <CircularProgress size={24} />
           ) : (
-            <ReactSelect
-              styles={selectStyles}
-              value={selectedRegion}
-              onChange={handleRegionChange}
-              options={regions}
-              placeholder="Select Region"
-            />
+            <Box>
+              <ReactSelect
+                styles={selectStyles}
+                value={selectedRegion}
+                onChange={handleRegionChange}
+                options={regions}
+                placeholder="Select Region"
+              />
+              {errors.region && (
+                <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
+                  {errors.region}
+                </Typography>
+              )}
+            </Box>
           )}
         </Box>
 
@@ -198,14 +207,21 @@ const StateInvitationForm = () => {
           {statesLoading ? (
             <CircularProgress size={24} />
           ) : (
-            <ReactSelect
-              styles={selectStyles}
-              value={selectedState}
-              onChange={handleStateChange}
-              options={states}
-              placeholder="Select State"
-              isDisabled={!selectedRegion}
-            />
+            <Box>
+              <ReactSelect
+                styles={selectStyles}
+                value={selectedState}
+                onChange={handleStateChange}
+                options={states}
+                placeholder="Select State"
+                isDisabled={!selectedRegion}
+              />
+              {errors.state && (
+                <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
+                  {errors.state}
+                </Typography>
+              )}
+            </Box>
           )}
         </Box>
 

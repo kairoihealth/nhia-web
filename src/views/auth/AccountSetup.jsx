@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Container,
@@ -15,37 +15,16 @@ import Logo from "../../assets/nhia-logo.png";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useHandleError } from "../../hooks/useToastHandler";
 import { setUpAccount } from "../../services/auth/auth";
 import { validateAccountForm } from "../../utils/accountValidation";
+import { jwtDecode } from "jwt-decode";
+import { formControlStyles, textFieldStyles } from "../../utils/style";
 
-const textFieldStyles = {
-  "& .MuiOutlinedInput-root": {
-    borderRadius: "8px",
-    backgroundColor: "#F5F5F5",
-    color: "#737373",
-    border: "0.5px solid #DADADA",
-    mb: 3,
-    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#038F3E"
-    }
-  }
-};
-
-const formControlStyles = {
-  width: "100%",
-  height: "55px",
-  borderRadius: "8px",
-  backgroundColor: "#F5F5F5",
-  color: "#737373",
-  border: "0.5px solid #DADADA",
-  paddingY: "34px",
-  fontSize: "16px",
-  outline: "none"
-};
 const AccountSetup = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const handleError = useHandleError();
   const [formData, setFormData] = useState({
     firstName: "",
@@ -55,6 +34,7 @@ const AccountSetup = () => {
     password: "",
     confirmPassword: ""
   });
+  const [, setDecodedToken] = useState(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [errors, setErrors] = useState({});
@@ -71,6 +51,29 @@ const AccountSetup = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const token = searchParams.get("token");
+
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        setDecodedToken(decoded);
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          email: decoded.email || ""
+        }));
+      } catch (error) {
+        console.error("Error decoding token:", error);
+        handleError("Invalid or expired invitation link.", error);
+        navigate("/login");
+      }
+    } else {
+      handleError("No invitation link provided.", null);
+      navigate("/login");
+    }
+  }, [location, navigate, handleError]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -82,9 +85,10 @@ const AccountSetup = () => {
         return;
       }
 
+      const token = new URLSearchParams(location.search).get("token") || "";
+
       const payload = {
-        token:
-          "QF1d0S7P6LbC0Ul8dTaVW3cAn9y1nkcd8gmrALsZlspzmNKVo8AnyU9oSygagxOgrECwZv6F6vgIDFajYEBC6plOm75J8s44t37hH828SPxvUrN7dEYE5Il2ldx72ulbccl2cp8ocnaz5qpr174359",
+        token: token,
         email: formData.email,
         firstname: formData.firstName,
         lastname: formData.lastName,
@@ -156,7 +160,8 @@ const AccountSetup = () => {
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "flex-start",
-                  gap: 1
+                  gap: 1,
+                  my: 2
                 }}
               >
                 <Typography
@@ -180,7 +185,7 @@ const AccountSetup = () => {
                   onChange={handleChange}
                   value={formData.firstName}
                   error={!!errors.firstName}
-                  //   helperText={errors.firstName}
+                  helperText={errors.firstName}
                 />
               </Box>
 
@@ -214,7 +219,7 @@ const AccountSetup = () => {
                   onChange={handleChange}
                   value={formData.lastName}
                   error={!!errors.lastName}
-                  //   helperText={errors.lastName}
+                  helperText={errors.lastName}
                 />
               </Box>
 
@@ -225,7 +230,8 @@ const AccountSetup = () => {
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "flex-start",
-                  gap: 1
+                  gap: 1,
+                  my: 2
                 }}
               >
                 <Typography
@@ -248,7 +254,7 @@ const AccountSetup = () => {
                   sx={textFieldStyles}
                   onChange={handleChange}
                   error={!!errors.email}
-                  //   helperText={errors.email}
+                  helperText={errors.email}
                 />
               </Box>
 

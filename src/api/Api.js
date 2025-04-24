@@ -11,6 +11,7 @@ Api.interceptors.request.use(
       const token = Auth.getToken();
       if (token) {
         config.headers["Authorization"] = `Bearer ${token}`;
+        console.log("Adding token:", token);
       } else {
         console.warn("No token available.");
       }
@@ -18,7 +19,9 @@ Api.interceptors.request.use(
     // config.headers["Client-Authorization"] =
     //   import.meta.env.VITE_APP_CLIENT_KEY;
 
-    if (!config.headers["Content-Type"]) {
+    if (config.data instanceof FormData) {
+      config.headers["Content-Type"] = "multipart/form-data";
+    } else if (!config.headers["Content-Type"]) {
       config.headers["Content-Type"] = "application/json";
     }
     return config;
@@ -33,7 +36,10 @@ Api.interceptors.response.use(
     }
     return response;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    console.error("API Response Error:", error.response); // Log response error
+    return Promise.reject(error);
+  }
 );
 
 export default Api;

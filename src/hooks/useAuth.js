@@ -10,8 +10,8 @@ export default function useAuth() {
     return authenticatedUser;
   }, [authenticatedUser]);
 
-  console.log("Decoded User:", user);
-  console.log("Is Logged In:", isLoggedIn);
+  // console.log("Decoded User:", user);
+  // console.log("Is Logged In:", isLoggedIn);
 
   return {
     user,

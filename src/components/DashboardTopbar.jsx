@@ -9,7 +9,10 @@ import {
 import { FiBell } from "react-icons/fi";
 import SearchIcon from "@mui/icons-material/Search";
 
-const DashboardTopbar = ({ username, role }) => {
+const DashboardTopbar = ({
+  username
+  // role
+}) => {
   return (
     <Box
       sx={{
@@ -27,7 +30,8 @@ const DashboardTopbar = ({ username, role }) => {
     >
       {/* Welcome Message */}
       <Typography variant="h6" fontWeight="bold">
-        Welcome, {username} {role}
+        Welcome, {username}
+        {/* {role} */}
       </Typography>
 
       <Box sx={{ width: "603px" }}>

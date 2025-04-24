@@ -15,7 +15,7 @@ const DashboardLayout = ({ username, role }) => {
         display: "flex",
         backgroundColor: "#FAFAFA",
         height: "100vh",
-        width: "100vw",
+        width: "100%",
         overflow: "hidden"
       }}
     >
@@ -62,9 +62,10 @@ const DashboardLayout = ({ username, role }) => {
         <Box
           sx={{
             flexGrow: 1,
+            width: "100%",
             p: 2.5,
-            overflowY: "auto", // Enable scrolling for the main content area
-            height: "calc(100% - 64px)", // Subtract the topbar height
+            overflowY: "auto",
+            height: "calc(100% - 64px)",
             zIndex: 9999
           }}
         >

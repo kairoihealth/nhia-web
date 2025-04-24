@@ -2,23 +2,11 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import SuccessModal from "../../../shared/SuccessModal";
 import { useMemo, useState } from "react";
 import ReactSelect from "react-select";
-import { selectStyles } from "../../../utils/style";
+import { selectStyles, textFieldStyles } from "../../../utils/style";
 import { useQuery } from "@tanstack/react-query";
 import { getAllHmo, getAllProviders } from "../../../services/settings";
 import { useHandleError } from "../../../hooks/useToastHandler";
 import { inviteStateUser } from "../../../services/central";
-
-const textFieldStyles = {
-  "& .MuiOutlinedInput-root": {
-    borderRadius: "8px",
-    backgroundColor: "#F5F5F5",
-    color: "#737373",
-    border: "0.5px solid #DADADA",
-    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#038F3E"
-    }
-  }
-};
 
 const accountType = [
   { id: "HMO", label: "Hmo", value: "HMO" },
@@ -31,6 +19,7 @@ const InvitationForm = () => {
   const [selectedHmo, setSelectedHmo] = useState("");
   const [selectedProvider, setSelectedProvider] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const hmosQueryKey = useMemo(() => ["hmos"], []);
   const { data: hmosData } = useQuery({
@@ -77,13 +66,23 @@ const InvitationForm = () => {
   const handleProviderChange = (selectedOption) => {
     setSelectedProvider(selectedOption);
   };
+
+  const validateFields = () => {
+    const newErrors = {};
+
+    if (!email?.trim()) newErrors.email = "Email is required.";
+    if (!selectedType) newErrors.type = "Account type is required.";
+    if (!selectedHmo) newErrors.hmo = "Please select an HMO";
+    if (!selectedProvider) newErrors.provider = "Please select a Provider";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
   const handleSubmit = async () => {
     try {
-      // if (!email || !selectedType || !selectedHmo || !selectedProvider) {
-      //   handleError("Please fill in all required fields.");
-      //   return;
-      // }
-
+      if (!validateFields()) {
+        return;
+      }
       const payload = {
         email: email,
         role: selectedType.value === "HMO" ? "HMO" : "Provider",
@@ -148,6 +147,8 @@ const InvitationForm = () => {
             sx={textFieldStyles}
             value={email}
             onChange={handleEmailChange}
+            error={!!errors.email}
+            helperText={errors.email}
           />
         </Box>
 
@@ -164,13 +165,20 @@ const InvitationForm = () => {
             <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
           </Typography>
 
-          <ReactSelect
-            styles={selectStyles}
-            value={selectedType}
-            onChange={handleTypeChange}
-            options={accountType}
-            placeholder="Select Account Type"
-          />
+          <Box>
+            <ReactSelect
+              styles={selectStyles}
+              value={selectedType}
+              onChange={handleTypeChange}
+              options={accountType}
+              placeholder="Select Account Type"
+            />
+            {errors.type && (
+              <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
+                {errors.type}
+              </Typography>
+            )}
+          </Box>
         </Box>
 
         {selectedType?.value === "HMO" ? (
@@ -189,13 +197,20 @@ const InvitationForm = () => {
               HMO Name
               <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
             </Typography>
-            <ReactSelect
-              styles={selectStyles}
-              value={selectedHmo}
-              onChange={handleHmoChange}
-              options={hmos}
-              placeholder="Select HMO"
-            />
+            <Box>
+              <ReactSelect
+                styles={selectStyles}
+                value={selectedHmo}
+                onChange={handleHmoChange}
+                options={hmos}
+                placeholder="Select HMO"
+              />
+              {errors.hmo && (
+                <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
+                  {errors.hmo}
+                </Typography>
+              )}
+            </Box>
           </Box>
         ) : (
           <Box
@@ -213,13 +228,20 @@ const InvitationForm = () => {
               Providers Name
               <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
             </Typography>
-            <ReactSelect
-              styles={selectStyles}
-              value={selectedProvider}
-              onChange={handleProviderChange}
-              options={providers}
-              placeholder="Select Provider"
-            />
+            <Box>
+              <ReactSelect
+                styles={selectStyles}
+                value={selectedProvider}
+                onChange={handleProviderChange}
+                options={providers}
+                placeholder="Select Provider"
+              />
+              {errors.provider && (
+                <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
+                  {errors.provider}
+                </Typography>
+              )}
+            </Box>
           </Box>
         )}
 

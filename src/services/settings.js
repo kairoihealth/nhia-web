@@ -39,6 +39,15 @@ export const getStatesByRegion = async ({
     throw error;
   }
 };
+export const getStates = async () => {
+  try {
+    const response = await Api.get(e.GET_STATES);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch states:", error);
+    throw error;
+  }
+};
 
 export const getAllHmo = async ({ ordering, page, pageSize, search }) => {
   try {

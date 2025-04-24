@@ -1,8 +1,7 @@
-import { createContext, useContext, useState } from "react";
+import { useState } from "react";
 import { Snackbar, Alert } from "@mui/material";
 import PropTypes from "prop-types";
-
-const ToastContext = createContext(undefined);
+import { ToastContext } from "./ToastContext";
 
 export const ToastProvider = ({ children }) => {
   const [toast, setToast] = useState({
@@ -19,8 +18,16 @@ export const ToastProvider = ({ children }) => {
     setToast({ ...toast, open: false });
   };
 
+  const handleSuccess = (title, message) => {
+    showToast(`${title}: ${message}`, "success");
+  };
+
+  const handleError = (title, message) => {
+    showToast(`${title}: ${message}`, "error");
+  };
+
   return (
-    <ToastContext.Provider value={{ showToast }}>
+    <ToastContext.Provider value={{ showToast, handleSuccess, handleError }}>
       {children}
       <Snackbar
         open={toast.open}
@@ -38,14 +45,6 @@ export const ToastProvider = ({ children }) => {
       </Snackbar>
     </ToastContext.Provider>
   );
-};
-
-export const useToast = () => {
-  const context = useContext(ToastContext);
-  if (context === undefined) {
-    throw new Error("useToast must be used within a ToastProvider");
-  }
-  return context;
 };
 
 ToastProvider.propTypes = {

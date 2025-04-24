@@ -1,47 +1,36 @@
 import { jwtDecode } from "jwt-decode";
 
-const Auth = {
-  getToken: () => {
-    return localStorage.getItem("access_token");
-  },
+export default class Auth {
+  static isAuthenticated() {
+    const decodedToken = this.getDecodedJwt();
 
-  setToken: (token) => {
-    localStorage.setItem("access_token", token);
-  },
-
-  removeToken: () => {
-    localStorage.removeItem("access_token");
-  },
-
-  isAuthenticated: () => {
-    const token = Auth.getToken();
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        // Check for token expiration
-        if (decoded.exp > Date.now() / 1000) {
-          return true; // Token is valid
-        }
-      } catch (error) {
-        console.error("Error decoding token:", error);
-      }
+    if (decodedToken) {
+      const { exp } = decodedToken;
+      const currentTime = Date.now() / 1000;
+      return exp > currentTime;
     }
-    return false; // Token is missing or invalid
-  },
-
-  getDecodedJwt: () => {
-    const token = Auth.getToken();
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        return decoded;
-      } catch (error) {
-        console.error("Error decoding token:", error);
-        return null;
-      }
-    }
-    return null;
+    return false;
   }
-};
 
-export default Auth;
+  static setToken(token) {
+    localStorage.setItem("token", token);
+  }
+
+  static getToken() {
+    return localStorage.getItem("token");
+  }
+
+  static removeToken() {
+    localStorage.removeItem("token");
+  }
+
+  static getDecodedJwt(payload) {
+    const token = this.getToken();
+    const t = token || payload;
+    let decoded;
+    if (payload || token) {
+      decoded = jwtDecode(t);
+    }
+    return decoded;
+  }
+}

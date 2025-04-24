@@ -6,7 +6,7 @@ import theme from "./theme";
 import "./index.css";
 import App from "./App";
 import AppProvider from "./contexts/AppProvider";
-import { ToastProvider } from "./contexts/ToastProvider";
+import { ToastProvider } from "./contexts/ToastProvider"; // Ensure this import is correct
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
