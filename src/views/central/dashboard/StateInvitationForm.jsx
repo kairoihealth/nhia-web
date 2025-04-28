@@ -1,44 +1,115 @@
 import {
   Box,
   Button,
-  FormControl,
-  MenuItem,
-  Select,
+  CircularProgress,
   TextField,
   Typography
 } from "@mui/material";
 import SuccessModal from "../../../shared/SuccessModal";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { getRegions, getStatesByRegion } from "../../../services/settings";
+import ReactSelect from "react-select";
+import { selectStyles, textFieldStyles } from "../../../utils/style";
+import { useHandleError } from "../../../hooks/useToastHandler";
+// import useAuth from "../../../hooks/useAuth";
+import { inviteStateUser } from "../../../services/central";
+import { useQuery } from "@tanstack/react-query";
 
-const textFieldStyles = {
-  "& .MuiOutlinedInput-root": {
-    borderRadius: "8px",
-    backgroundColor: "#F5F5F5",
-    color: "#737373",
-    border: "0.5px solid #DADADA",
-    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#038F3E"
-    }
-  }
-};
-
-const selectStyles = {
-  width: "100%",
-  borderRadius: "8px",
-  backgroundColor: "#F5F5F5",
-  color: "#737373",
-  border: "0.5px solid #DADADA",
-  fontSize: "16px",
-  outline: "none",
-  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-    borderColor: "#038F3E"
-  }
-};
 const StateInvitationForm = () => {
+  const handleError = useHandleError();
+  // const { user } = useAuth();
+  const [email, setEmail] = useState("");
+  const [selectedRegion, setSelectedRegion] = useState("");
+  const [selectedState, setSelectedState] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [errors, setErrors] = useState({});
 
-  const handleSubmit = () => {
-    setModalOpen(true);
+  const regionsQueryKey = useMemo(() => ["regions"], []);
+  const { data: regionsData, isLoading: regionsLoading } = useQuery({
+    queryKey: regionsQueryKey,
+    queryFn: () => getRegions({ page: 1, pageSize: 100 })
+  });
+
+  const regions = useMemo(
+    () =>
+      regionsData?.results?.map((region) => ({
+        value: region.id,
+        label: region.name
+      })) || [],
+    [regionsData]
+  );
+
+  const statesQueryKey = useMemo(
+    () => ["states", selectedRegion?.value],
+    [selectedRegion?.value]
+  );
+  const { data: statesData, isLoading: statesLoading } = useQuery({
+    queryKey: statesQueryKey,
+    queryFn: () =>
+      selectedRegion
+        ? getStatesByRegion({
+            page: 1,
+            pageSize: 100,
+            region: selectedRegion.value
+          })
+        : null,
+    enabled: !!selectedRegion // Only run if selectedRegion exists
+  });
+
+  const states = useMemo(
+    () =>
+      statesData?.results?.map((state) => ({
+        value: state.id,
+        label: state.name
+      })) || [],
+    [statesData]
+  );
+
+  const handleRegionChange = (selectedOption) => {
+    setSelectedRegion(selectedOption);
+    setSelectedState(null);
+  };
+
+  const handleStateChange = (selectedOption) => {
+    setSelectedState(selectedOption);
+  };
+
+  const handleEmailChange = (event) => {
+    setEmail(event.target.value);
+  };
+
+  const validateFields = () => {
+    const newErrors = {};
+
+    if (!email?.trim()) newErrors.email = "Email is required.";
+    if (!selectedRegion) newErrors.region = "Region is required.";
+    if (!selectedState) newErrors.state = "State is required.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async () => {
+    try {
+      if (!validateFields()) {
+        return;
+      }
+
+      const payload = {
+        email: email,
+        role: "StateAdmin",
+        state: selectedState.value
+      };
+
+      await inviteStateUser(payload);
+      setModalOpen(true);
+      // Optionally reset form fields after successful submission
+      setEmail("");
+      setSelectedRegion(null);
+      setSelectedState(null);
+    } catch (error) {
+      handleError("Failed to send invitation:", error);
+    }
   };
 
   return (
@@ -82,38 +153,11 @@ const StateInvitationForm = () => {
             required
             placeholder="enter@gmail.com"
             sx={textFieldStyles}
+            value={email}
+            onChange={handleEmailChange}
+            error={!!errors.email}
+            helperText={errors.email}
           />
-        </Box>
-
-        <Box flex={1} sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-          <Typography
-            sx={{
-              color: "#595959",
-              fontSize: "16px",
-              fontWeight: 500,
-              lineHeight: "24px"
-            }}
-          >
-            State
-            <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
-          </Typography>
-          <FormControl fullWidth variant="outlined">
-            <Select sx={selectStyles}>
-              <MenuItem
-                value=""
-                sx={{
-                  fontSize: "16px",
-                  fontWeight: 500,
-                  color: "#737373"
-                }}
-              >
-                Select State
-              </MenuItem>
-              <MenuItem value="lagos">Lagos</MenuItem>
-              <MenuItem value="kano">Kano</MenuItem>
-              <MenuItem value="abuja">Abuja</MenuItem>
-            </Select>
-          </FormControl>
         </Box>
 
         <Box flex={1} sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
@@ -128,23 +172,57 @@ const StateInvitationForm = () => {
             Region
             <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
           </Typography>
-          <FormControl fullWidth variant="outlined">
-            <Select sx={selectStyles}>
-              <MenuItem
-                value=""
-                sx={{
-                  fontSize: "16px",
-                  fontWeight: 500,
-                  color: "#737373"
-                }}
-              >
-                Select Region
-              </MenuItem>
-              <MenuItem value="north-central">North Central</MenuItem>
-              <MenuItem value="north-east">North East</MenuItem>
-              <MenuItem value="north-west">North West</MenuItem>
-            </Select>
-          </FormControl>
+          {regionsLoading ? (
+            <CircularProgress size={24} />
+          ) : (
+            <Box>
+              <ReactSelect
+                styles={selectStyles}
+                value={selectedRegion}
+                onChange={handleRegionChange}
+                options={regions}
+                placeholder="Select Region"
+              />
+              {errors.region && (
+                <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
+                  {errors.region}
+                </Typography>
+              )}
+            </Box>
+          )}
+        </Box>
+
+        <Box flex={1} sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+          <Typography
+            sx={{
+              color: "#595959",
+              fontSize: "16px",
+              fontWeight: 500,
+              lineHeight: "24px"
+            }}
+          >
+            State
+            <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
+          </Typography>
+          {statesLoading ? (
+            <CircularProgress size={24} />
+          ) : (
+            <Box>
+              <ReactSelect
+                styles={selectStyles}
+                value={selectedState}
+                onChange={handleStateChange}
+                options={states}
+                placeholder="Select State"
+                isDisabled={!selectedRegion}
+              />
+              {errors.state && (
+                <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
+                  {errors.state}
+                </Typography>
+              )}
+            </Box>
+          )}
         </Box>
 
         {/* Button */}
@@ -178,7 +256,7 @@ const StateInvitationForm = () => {
         onClose={() => setModalOpen(false)}
         title="Invite Sent"
         message="You have successfully sent an invite to"
-        recipient="Federal Medical Center, UYO."
+        recipient={`${email}`}
       />
     </Box>
   );

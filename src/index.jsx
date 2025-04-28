@@ -5,14 +5,20 @@ import { ThemeProvider } from "@mui/material";
 import theme from "./theme";
 import "./index.css";
 import App from "./App";
+import AppProvider from "./contexts/AppProvider";
+import { ToastProvider } from "./contexts/ToastProvider"; // Ensure this import is correct
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <ThemeProvider theme={theme}>
-        <App />
-      </ThemeProvider>
-    </BrowserRouter>
+    <ThemeProvider theme={theme}>
+      <AppProvider>
+        <ToastProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </ToastProvider>
+      </AppProvider>
+    </ThemeProvider>
   </React.StrictMode>
 );

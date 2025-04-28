@@ -5,7 +5,7 @@ import success from "../assets/success.png";
 
 const SuccessModal = ({ open, onClose, recipient, message, title }) => {
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal open={open} onClose={onClose} sx={{ zIndex: 10000 }}>
       <Box
         sx={{
           position: "absolute",

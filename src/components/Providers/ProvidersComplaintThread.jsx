@@ -304,7 +304,7 @@ const ProvidersComplaintThread = () => {
         <Box sx={{ width: "987px", textAlign: "center", my: 2 }}>
           <Divider
             sx={{
-              borderBottom: "1px dashed #737373"
+              borderBottom: "1px dashed #000000"
             }}
           />
         </Box>
@@ -579,7 +579,7 @@ const ProvidersComplaintThread = () => {
                 <Box sx={{ width: "987px", textAlign: "center", my: 2 }}>
                   <Divider
                     sx={{
-                      borderBottom: "1px dashed #737373"
+                      borderBottom: "1px dashed #000000"
                     }}
                   />
                 </Box>

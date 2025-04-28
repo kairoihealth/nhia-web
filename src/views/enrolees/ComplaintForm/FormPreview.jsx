@@ -1,43 +1,32 @@
-// import { Helmet } from "react-helmet-async";
 import Logo from "../../../assets/nhia-logo.png";
 import {
   Box,
   Button,
   Card,
-  // CardContent,
   CardMedia,
   IconButton,
   Typography
 } from "@mui/material";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import DeleteIcon from "@mui/icons-material/Delete";
-import hospital1 from "../../../assets/hospital1.png";
-import hospital2 from "../../../assets/hospital2.png";
-import hospital3 from "../../../assets/hospital3.png";
 import { useState } from "react";
+import PropTypes from "prop-types";
 
-const FormPreview = () => {
-  const [files, setFiles] = useState([
-    { id: 1, name: "testing 1", icon: hospital1, type: "image" },
-    { id: 2, name: "testing 2", icon: hospital2, type: "image" },
-    { id: 3, name: "testing 3", icon: hospital3, type: "image" }
-  ]);
-
+const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
+  const [, setFiles] = useState(complaintInfo?.files || []);
   const handleDeleteFile = (fileId) => {
-    setFiles((prevFiles) => prevFiles.filter((file) => file.id !== fileId));
+    setFiles((prevFiles) => {
+      const updatedFiles = prevFiles.filter((file) => file.id !== fileId);
+      complaintInfo.files = updatedFiles;
+      return updatedFiles;
+    });
   };
 
   return (
     <>
-      {/* <Helmet>
-        <title>Form Preview</title>
-        <meta name="Form Preview" content=" " />
-        <link rel="canonical" href="/" />
-      </Helmet> */}
       <Box
         sx={{
           backgroundColor: { xs: "#FFFFFF", md: "#038F3E" }
-          // height: "100%"
         }}
       >
         <Box
@@ -45,16 +34,16 @@ const FormPreview = () => {
             display: { xs: "grid", md: "flex" },
             justifyContent: "center",
             alignItems: { xs: "flex-start", md: "center" },
-            pt: { xs: 0, md: 4 }
+            py: { xs: 0, md: 4 }
           }}
         >
           <Box>
             <Box
               sx={{
-                width: { xs: "400px", md: "1280px" },
+                width: { xs: "400px", md: "100%" },
                 backgroundColor: "#fff",
                 padding: "2rem",
-                margin: { xs: 0, md: "2rem" },
+                // margin: { xs: 0, md: "2rem" },
                 borderRadius: "8px",
                 px: { xs: 2, md: 16 }
               }}
@@ -89,7 +78,7 @@ const FormPreview = () => {
               </Typography>
               <Box
                 sx={{
-                  width: { xs: "100%", md: "40%" },
+                  width: { xs: "100%", md: "50%" },
                   height: "232px",
                   border: "0.5px solid #DADADA",
                   borderRadius: "8px",
@@ -119,7 +108,7 @@ const FormPreview = () => {
                         width: "60%"
                       }}
                     >
-                      Gabriella
+                      {firstInfo.firstName} {firstInfo.lastName}
                     </Typography>
                   </Box>
                   <Box flex={1} sx={{ display: "flex", gap: 2 }}>
@@ -143,7 +132,7 @@ const FormPreview = () => {
                         width: "60%"
                       }}
                     >
-                      e.g H 23 dolphin estate
+                      {firstInfo?.contactAddress}
                     </Typography>
                   </Box>
                   <Box flex={1} sx={{ display: "flex", gap: 2 }}>
@@ -167,7 +156,7 @@ const FormPreview = () => {
                         width: "60%"
                       }}
                     >
-                      Gabriellajames.@let.com
+                      {firstInfo.email}
                     </Typography>
                   </Box>
                   <Box flex={1} sx={{ display: "flex", gap: 2 }}>
@@ -191,7 +180,7 @@ const FormPreview = () => {
                         width: "60%"
                       }}
                     >
-                      +234 8176543210
+                      {firstInfo?.phone}
                     </Typography>
                   </Box>
                   <Box flex={1} sx={{ display: "flex", gap: 2 }}>
@@ -215,7 +204,7 @@ const FormPreview = () => {
                         width: "60%"
                       }}
                     >
-                      e.g H 23 dolphin estate
+                      {complaintInfo?.complaint}
                     </Typography>
                   </Box>
                 </Box>
@@ -263,7 +252,7 @@ const FormPreview = () => {
                         lineHeight: "24px"
                       }}
                     >
-                      12/04/2024
+                      {complaintInfo?.date}
                     </Typography>
                   </Box>
                   <Box
@@ -288,7 +277,7 @@ const FormPreview = () => {
                         lineHeight: "24px"
                       }}
                     >
-                      12:00PM
+                      {complaintInfo?.time}
                     </Typography>
                   </Box>
                 </Box>
@@ -300,7 +289,7 @@ const FormPreview = () => {
                     justifyContent: "center",
                     alignItems: "flex-start",
                     width: { xs: "100%", md: "1010px" },
-                    height: { xs: "auto", md: "393px" },
+                    height: { xs: "auto", md: "auto" },
                     border: "1px solid #D4D4D4B2",
                     borderRadius: "8px",
                     p: 2,
@@ -324,8 +313,8 @@ const FormPreview = () => {
                     <Box
                       sx={{
                         display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
+                        justifyContent: "flex-start",
+                        alignItems: "flex-start",
                         width: { xs: "100%", md: "972px" },
                         height: { xs: "auto", md: "149px" },
                         border: "1px solid #E4E4E7",
@@ -342,21 +331,17 @@ const FormPreview = () => {
                           color: "#1B1C1E"
                         }}
                       >
-                        Nibh tellus pulvinar feugiat aliquet tellus vulputate
-                        elementum. Neque eget nec nisi vel commodo. Mi netus ac
-                        arcu nec adipiscing aliquam fames a. Feugiat in maecenas
-                        tempor sapien. Sed integer euismod a vel. Habitasse
-                        tincidunt egestas dolor velit lacus. Quam est egestas
-                        egestas vitae eleifend erat. Massa cras morbi et
-                        sollicitudin tristique. Quis ipsum sollicitudin est
-                        turpis. Aliquam nulla faucibus massa amet. Et sit sed
-                        enim nunc aliquet donec est. Blandit mollis nisl mi
-                        lorem congue quam.
+                        {complaintInfo?.description}
                       </Typography>
                     </Box>
                   </Box>
                   <Box
-                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 1,
+                      pb: 2
+                    }}
                   >
                     <Typography
                       sx={{
@@ -368,26 +353,24 @@ const FormPreview = () => {
                     >
                       Attachments
                     </Typography>
-                    {Array.isArray(files) && files.length > 0 ? (
-                      <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-                        {files.map((file) => (
+                    {Array.isArray(complaintInfo?.files) &&
+                    complaintInfo.files.length > 0 ? (
+                      <Box sx={{ display: "flex", gap: 2 }}>
+                        {complaintInfo.files.map((file) => (
                           <Card
                             key={file.id}
                             sx={{
                               position: "relative",
-                              width: "149px",
+                              width: "100%",
                               borderRadius: 2,
                               overflow: "hidden"
                             }}
                           >
-                            {file.type === "image" ? (
+                            {file.type?.startsWith("image/") ? (
                               <CardMedia
                                 component="img"
-                                sx={{
-                                  width: "149px",
-                                  height: "101px"
-                                }}
-                                image={file.icon}
+                                sx={{ width: "100%", height: "101px", p: 1 }}
+                                image={file.preview || file.icon}
                                 alt={file.name}
                               />
                             ) : (
@@ -398,7 +381,8 @@ const FormPreview = () => {
                                   alignItems: "center",
                                   justifyContent: "center",
                                   height: 140,
-                                  backgroundColor: "#f5f5f5"
+                                  backgroundColor: "#f5f5f5",
+                                  p: 1
                                 }}
                               >
                                 <InsertDriveFileIcon
@@ -450,49 +434,61 @@ const FormPreview = () => {
                 </Box>
                 <Box
                   sx={{
-                    display: { xs: "grid", md: "flex" },
-                    justifyContent: { xs: "center", md: "flex-end" },
-                    gap: 2,
-                    my: 4
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "flex-end",
+                    alignItems: "flex-end"
                   }}
                 >
-                  <Button
-                    variant="outlined"
+                  <Box
                     sx={{
-                      width: "270px",
-                      height: "48px",
-                      borderRadius: "16px",
-                      py: 1.5,
-                      fontSize: { xs: "14px", md: "16px" },
-                      fontWeight: 500,
-                      lineHeight: "24px",
-                      textTransform: "capitalize",
-                      borderColor: "#038F3E",
-                      color: "#038F3E",
-                      "&:hover": { borderColor: "#038F3E" }
+                      display: { xs: "grid", md: "flex" },
+                      justifyContent: { xs: "center", md: "flex-end" },
+                      gap: 2,
+                      my: 4
                     }}
-                    href="/"
                   >
-                    Back
-                  </Button>
-                  <Button
-                    variant="contained"
-                    sx={{
-                      width: "270px",
-                      height: "48px",
-                      borderRadius: "16px",
-                      py: 1.5,
-                      fontSize: { xs: "14px", md: "16px" },
-                      fontWeight: 500,
-                      lineHeight: "24px",
-                      textTransform: "capitalize",
-                      backgroundColor: "#038F3E",
-                      "&:hover": { backgroundColor: "#038F3E" }
-                    }}
-                    href="/"
-                  >
-                    Submit
-                  </Button>
+                    <Button
+                      variant="outlined"
+                      sx={{
+                        width: "270px",
+                        height: "48px",
+                        borderRadius: "16px",
+                        py: 1.5,
+                        fontSize: { xs: "14px", md: "16px" },
+                        fontWeight: 500,
+                        lineHeight: "24px",
+                        textTransform: "capitalize",
+                        borderColor: "#038F3E",
+                        color: "#038F3E",
+                        "&:hover": { borderColor: "#038F3E" }
+                      }}
+                      // href="/"
+                      onClick={onBack}
+                    >
+                      Back
+                    </Button>
+                    <Button
+                      variant="contained"
+                      sx={{
+                        width: "270px",
+                        height: "48px",
+                        borderRadius: "16px",
+                        py: 1.5,
+                        fontSize: { xs: "14px", md: "16px" },
+                        fontWeight: 500,
+                        lineHeight: "24px",
+                        textTransform: "capitalize",
+                        backgroundColor: "#038F3E",
+                        "&:hover": { backgroundColor: "#038F3E" }
+                      }}
+                      // href="/"
+                      onClick={onSubmit}
+                    >
+                      Submit
+                    </Button>
+                  </Box>
+                  <Box sx={{ width: "20%" }}>{btn}</Box>
                 </Box>
               </Box>
             </Box>
@@ -504,3 +500,30 @@ const FormPreview = () => {
 };
 
 export default FormPreview;
+
+FormPreview.propTypes = {
+  firstInfo: PropTypes.shape({
+    firstName: PropTypes.string,
+    lastName: PropTypes.string,
+    contactAddress: PropTypes.string,
+    email: PropTypes.string,
+    phone: PropTypes.string
+  }),
+  complaintInfo: PropTypes.shape({
+    files: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string,
+        name: PropTypes.string,
+        type: PropTypes.string,
+        preview: PropTypes.string
+      })
+    ),
+    date: PropTypes.string,
+    time: PropTypes.string,
+    description: PropTypes.string,
+    complaint: PropTypes.string
+  }),
+  onSubmit: PropTypes.func,
+  onBack: PropTypes.func,
+  btn: PropTypes.any
+};

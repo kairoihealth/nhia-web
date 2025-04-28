@@ -1,225 +1,97 @@
 import { useState } from "react";
 // import { Helmet } from "react-helmet-async";
-import { Box, Typography, Stack } from "@mui/material";
+import { Box, Typography, Stack, CircularProgress } from "@mui/material";
 import { FiFilter } from "react-icons/fi";
 import { TabButton } from "../../../shared/TabPanel";
 import ReusableTable from "../../../shared/Table";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { getComplaints } from "../../../services/general";
 
 // ProviderComplaints Component
 const ProviderComplaints = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("all");
 
+  const {
+    data: complaints,
+    isLoading,
+    isError,
+    error
+  } = useQuery({
+    queryKey: ["complaints"],
+    queryFn: () => getComplaints({ page: 1, pageSize: 10 })
+  });
+
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
 
+  const getColumns = () => [
+    { label: "Date", field: "created_at", align: "center" },
+    { label: "Complainant", field: "name", align: "center" },
+    { label: "Complaint no", field: "complaint_no", align: "center" },
+    { label: "Complaint type", field: "type", align: "center" },
+    { label: "Location", field: "location", align: "center" }
+  ];
+
+  const transformedRows =
+    complaints?.results?.map((user) => ({
+      created_at: new Date(user.created_at).toLocaleDateString(),
+      name: `${user.firstname || ""} ${user.lastname || ""}`.trim(),
+      complaint_no: user.case_id,
+      type: user.complaint_type,
+      location: user?.state?.name,
+      id: user.id,
+      status: user.status
+    })) || [];
+
+  const filteredRows = transformedRows.filter((row) => {
+    if (activeTab === "new") return row.status === "pending";
+    if (activeTab === "act") return row.status === "active";
+    if (activeTab === "com") return row.status === "closed";
+    if (activeTab === "esc") return row.status === "escalated";
+    return true;
+  });
   const handleViewComplaint = (row) => {
     navigate(`/provider/complaint/${row.complaint_no}`, {
-      state: { complaint: row }
+      state: { complaint: row?.id }
     });
   };
 
-  const complaintsData = {
-    all: [
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        type: "Claims processing errors",
-        location: "Ondo State",
-        status: "Open"
-      },
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        type: "Quality Care",
-        location: "Lagos State",
-        status: "Pending"
-      },
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        type: "Access to services",
-        location: "Kaduna State",
-        status: "Resolved"
-      }
-    ],
-    new: [
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        type: "Claims processing errors",
-        location: "Ondo State",
-        timeLeft: "54 mins",
-        status: "Pending"
-      },
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        type: "Quality of care",
-        location: "Lagos State",
-        timeLeft: "2 Hours 32 Mins",
-        status: "Pending"
-      },
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        type: "Access to services",
-        location: "Kaduna State",
-        timeLeft: "7 Hours 59 mins",
-        status: "Pending"
-      }
-    ],
-    act: [
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        type: "Claims processing errors",
-        location: "Ondo State",
-        status: "Open"
-      },
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        type: "Quality Care",
-        location: "Lagos State",
-        status: "Open"
-      },
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        type: "Access to services",
-        location: "Kaduna State",
-        status: "Open"
-      }
-    ],
-    com: [
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        type: "Claims processing errors",
-        location: "Ondo State",
-        status: "Open"
-      },
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        type: "Quality Care",
-        location: "Lagos State",
-        status: "Open"
-      },
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        type: "Access to services",
-        location: "Kaduna State",
-        status: "Open"
-      }
-    ],
-    esc: [
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        type: "Claims processing errors",
-        location: "Ondo State",
-        status: "Open"
-      },
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        type: "Quality Care",
-        location: "Lagos State",
-        status: "Open"
-      },
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        type: "Access to services",
-        location: "Kaduna State",
-        status: "Open"
-      }
-    ]
-  };
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh"
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
-  // Define table columns dynamically based on activeTab
-  const getColumns = () => {
-    if (activeTab === "new") {
-      return [
-        { label: "Date", field: "date", align: "center" },
-        { label: "Complainant", field: "name", align: "center" },
-        { label: "Complaint no", field: "complaint_no", align: "center" },
-        { label: "Complaint type", field: "type", align: "center" },
-        { label: "Location", field: "location", align: "center" }
-      ];
-    }
-    if (activeTab === "act") {
-      return [
-        { label: "Date", field: "date", align: "center" },
-        { label: "Complainant", field: "name", align: "center" },
-        { label: "Complaint no", field: "complaint_no", align: "center" },
-        { label: "Complaint type", field: "type", align: "center" },
-        { label: "Location", field: "location", align: "center" }
-      ];
-    }
-    if (activeTab === "com") {
-      return [
-        { label: "Date", field: "date", align: "center" },
-        { label: "Complainant", field: "name", align: "center" },
-        { label: "Complaint no", field: "complaint_no", align: "center" },
-        { label: "Complaint type", field: "type", align: "center" },
-        { label: "Location", field: "location", align: "center" }
-      ];
-    }
-    if (activeTab === "esc") {
-      return [
-        { label: "Date", field: "date", align: "center" },
-        { label: "Complainant", field: "name", align: "center" },
-        { label: "Complaint no", field: "complaint_no", align: "center" },
-        { label: "Complaint type", field: "type", align: "center" },
-        { label: "Location", field: "location", align: "center" }
-      ];
-    }
-    return [
-      { label: "Date", field: "date", align: "center" },
-      { label: "Complainant", field: "name", align: "center" },
-      { label: "Complaint no", field: "complaint_no", align: "center" },
-      { label: "Complaint type", field: "type", align: "center" },
-      { label: "Location", field: "location", align: "center" }
-    ];
-  };
-
-  // Render Table Rows
-  const renderTableRows = () => {
-    const data = complaintsData[activeTab];
-    return data.map((complaint) => ({
-      ...complaint,
-      status: complaint.status
-    }));
-  };
+  if (isError) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          color: "red"
+        }}
+      >
+        <Typography>Error: {error.message}</Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box>
-      {/* <Helmet>
-        <title>HMO Complaints</title>
-        <meta name="HMO Complaints" content=" " />
-        <link rel="canonical" href="/" />
-      </Helmet> */}
       <Box
         sx={{
           display: "flex",
@@ -302,7 +174,7 @@ const ProviderComplaints = () => {
         {/* Table */}
         <ReusableTable
           columns={getColumns()}
-          rows={renderTableRows()}
+          rows={filteredRows}
           onViewClick={handleViewComplaint}
           showActions={true}
           showStatus={true}

@@ -13,40 +13,75 @@ import {
 } from "@mui/material";
 import Logo from "../../assets/nhia-logo.png";
 import { VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
-import { mockLogin } from "../../mock/mockAuth";
+import { userLogin } from "../../services/auth/auth";
+import { jwtDecode } from "jwt-decode";
+import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
+import { textFieldStyles } from "../../utils/style";
+import Auth from "../../utils/Auth";
 
-const textFieldStyles = {
-  "& .MuiOutlinedInput-root": {
-    borderRadius: "8px",
-    backgroundColor: "#F5F5F5",
-    color: "#737373",
-    border: "0.5px solid #DADADA",
-    mb: 3,
-    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#038F3E"
-    }
-  }
-};
 const LoginPage = () => {
   const navigate = useNavigate();
+  const handleSuccess = useHandleSuccess();
+  const handleError = useHandleError();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
 
-  const handleLogin = (e) => {
+  const validateFields = () => {
+    const newErrors = {};
+    if (!email) {
+      newErrors.email = "Email is required.";
+    }
+    if (!password) {
+      newErrors.password = "Password is required.";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+  const handleLogin = async (e) => {
     e.preventDefault();
-    const role = mockLogin(email, password);
-    console.log(role);
+    if (!validateFields()) {
+      return;
+    }
 
-    if (role) {
-      navigate(`/${role}/dashboard`); // Redirect to user's dashboard
-    } else {
-      setError("Invalid credentials! Please try again.");
+    try {
+      const response = await userLogin(email, password);
+      if (response.status === 200) {
+        const successMessage = response.data.detail || "Login successful";
+        handleSuccess(successMessage);
+        const accessToken = response.data.access;
+        const refreshToken = response.data.refresh;
+
+        // Decode the access token
+        const decodedToken = jwtDecode(accessToken);
+
+        const role = decodedToken.role;
+        const username = decodedToken.name;
+
+        localStorage.setItem("userRole", role);
+        localStorage.setItem("access_token", accessToken);
+        localStorage.setItem("refresh_token", refreshToken);
+        localStorage.setItem("fullname", username);
+
+        Auth.setToken(accessToken);
+
+        navigate(`/${role.toLowerCase()}/dashboard`);
+      } else if (response && response.detail) {
+        console.log("Login Response Status:", response.detail);
+        handleError("Login Failed", response.detail); // Provide a title for the error toast
+      } else {
+        const errorMessage = "Failed to login";
+        handleError(errorMessage); // Provide a title for the error toast
+      }
+    } catch (err) {
+      if (err.response && err.response.data && err.response.data.message) {
+        handleError(err.response.data.message);
+      }
     }
   };
 
@@ -110,7 +145,8 @@ const LoginPage = () => {
                     lineHeight: "24px"
                   }}
                 >
-                  Official Phone Number or Email Address
+                  {/* Official Phone Number or Email Address */}
+                  Email Address
                   <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
                 </Typography>
                 <TextField
@@ -122,6 +158,8 @@ const LoginPage = () => {
                   sx={textFieldStyles}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  error={!!errors.email}
+                  helperText={errors.email}
                 />
               </Box>
 
@@ -132,7 +170,8 @@ const LoginPage = () => {
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "flex-start",
-                  gap: 1
+                  gap: 1,
+                  my: 2
                 }}
               >
                 <Typography
@@ -181,6 +220,11 @@ const LoginPage = () => {
                     }
                   }}
                 />
+                {errors.password && (
+                  <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
+                    {errors.password}
+                  </Typography>
+                )}
               </Box>
 
               {/* Forgot Password Link */}
@@ -217,8 +261,6 @@ const LoginPage = () => {
               >
                 Login
               </Button>
-
-              {error && <p style={{ color: "red" }}>{error}</p>}
             </Box>
           </Box>
         </Container>

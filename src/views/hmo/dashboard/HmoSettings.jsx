@@ -28,7 +28,7 @@ const textFieldStyles = {
   "& .MuiOutlinedInput-root": {
     borderRadius: "8px",
     backgroundColor: "#F5F5F5",
-    color: "#737373",
+    color: "#000000",
     border: "0.5px solid #DADADA",
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
       borderColor: "#038F3E"
@@ -40,7 +40,7 @@ const selectStyles = {
   width: "100%",
   borderRadius: "8px",
   backgroundColor: "#F5F5F5",
-  color: "#737373",
+  color: "#000000",
   border: "0.5px solid #DADADA",
   fontSize: "16px",
   outline: "none",
@@ -390,7 +390,7 @@ const AddAdminForm = () => {
                 sx={{
                   fontSize: "16px",
                   fontWeight: 500,
-                  color: "#737373"
+                  color: "#000000"
                 }}
               >
                 Select option
@@ -693,7 +693,7 @@ const EditAdminForm = () => {
                   sx={{
                     fontSize: "16px",
                     fontWeight: 500,
-                    color: "#737373"
+                    color: "#000000"
                   }}
                 >
                   Select option

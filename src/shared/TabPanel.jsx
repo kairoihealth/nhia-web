@@ -7,14 +7,14 @@ export const TabButton = ({ tab, activeTab, label, onClick }) => (
     variant="text"
     sx={{
       borderBottom: activeTab === tab ? "2px solid #038F3E" : "none",
-      color: activeTab === tab ? "#038F3E" : "#737373",
+      color: activeTab === tab ? "#038F3E" : "#000000",
       fontWeight: activeTab === tab ? "bold" : "normal",
       textTransform: "none",
       mr: 2,
       mb: 1,
       "&:hover": {
-        color: "#038F3E",
-      },
+        color: "#038F3E"
+      }
     }}
     onClick={() => onClick(tab)}
   >
@@ -26,5 +26,5 @@ TabButton.propTypes = {
   tab: PropTypes.string.isRequired,
   activeTab: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
-  onClick: PropTypes.func.isRequired,
+  onClick: PropTypes.func.isRequired
 };

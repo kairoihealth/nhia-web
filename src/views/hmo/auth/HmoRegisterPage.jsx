@@ -23,7 +23,7 @@ const textFieldStyles = {
   "& .MuiOutlinedInput-root": {
     borderRadius: "8px",
     backgroundColor: "#F5F5F5",
-    color: "#737373",
+    color: "#000000",
     border: "0.5px solid #DADADA",
     mb: 3,
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
@@ -37,7 +37,7 @@ const formControlStyles = {
   height: "55px",
   borderRadius: "8px",
   backgroundColor: "#F5F5F5",
-  color: "#737373",
+  color: "#000000",
   border: "0.5px solid #DADADA",
   paddingY: "34px",
   fontSize: "16px",

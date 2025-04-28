@@ -5,18 +5,30 @@ import { FiFilter } from "react-icons/fi";
 import { TabButton } from "../../../shared/TabPanel";
 import ReusableTable from "../../../shared/Table";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { getComplaints } from "../../../services/general";
 
 // CentralComplaints Component
 const CentralComplaints = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("all");
 
+  const {
+    data: complaints
+    //  isLoading,
+    //  isError,
+    //  error
+  } = useQuery({
+    queryKey: ["complaints"],
+    queryFn: () => getComplaints({ page: 1, pageSize: 10 })
+  });
+
   const buttonTextMapping = {
     all: "View Complaint",
-    new: "Respond",
+    new: "View Complaint",
     act: "View Complaint",
     com: "View Resolution",
-    esc: "View Complaints"
+    esc: "View Complaint"
   };
 
   const handleTabClick = (tab) => {
@@ -24,210 +36,43 @@ const CentralComplaints = () => {
   };
 
   const handleViewComplaint = (row) => {
-    navigate(`/central/complaint/${row.complaint_no}`, {
-      state: { complaint: row }
+    console.log(row, "state:");
+    navigate(`/admin/complaint/${row.complaint_no}`, {
+      state: { complaint: row?.id }
     });
   };
 
-  const complaintsData = {
-    all: [
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        priority: "High",
-        location: "Ondo State",
-        status: "Open"
-      },
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        priority: "Mid",
-        location: "Lagos State",
-        status: "Pending"
-      },
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        priority: "Low",
-        location: "Kaduna State",
-        status: "Resolved"
-      }
-    ],
-    new: [
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        priority: "High",
-        location: "Ondo State",
-        timeLeft: "54 mins",
-        status: "Pending"
-      },
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        priority: "Quality of care",
-        location: "Lagos State",
-        timeLeft: "2 Hours 32 Mins",
-        status: "Pending"
-      },
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        priority: "Low",
-        location: "Kaduna State",
-        timeLeft: "7 Hours 59 mins",
-        status: "Pending"
-      }
-    ],
-    act: [
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        priority: "High",
-        location: "Ondo State",
-        status: "Open"
-      },
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        priority: "Mid",
-        location: "Lagos State",
-        status: "Open"
-      },
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        priority: "Low",
-        location: "Kaduna State",
-        status: "Open"
-      }
-    ],
-    com: [
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        priority: "High",
-        location: "Ondo State",
-        status: "Open"
-      },
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        priority: "Mid",
-        location: "Lagos State",
-        status: "Open"
-      },
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        priority: "Low",
-        location: "Kaduna State",
-        status: "Open"
-      }
-    ],
-    esc: [
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        priority: "High",
-        location: "Ondo State",
-        status: "Open"
-      },
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        priority: "Mid",
-        location: "Lagos State",
-        status: "Open"
-      },
-      {
-        date: "02/04/2023",
-        name: "Adebayo Adekunle",
-        complaint_no: "11023",
-        priority: "Low",
-        location: "Kaduna State",
-        status: "Open"
-      }
-    ]
-  };
-
   // Define table columns dynamically based on activeTab
-  const getColumns = () => {
-    if (activeTab === "new") {
-      return [
-        { label: "Date", field: "date", align: "center" },
-        { label: "Complainant", field: "name", align: "center" },
-        { label: "Complaint no", field: "complaint_no", align: "center" },
-        { label: "Complaint priority", field: "priority", align: "center" },
-        { label: "Location", field: "location", align: "center" }
-      ];
-    }
-    if (activeTab === "act") {
-      return [
-        { label: "Date", field: "date", align: "center" },
-        { label: "Complainant", field: "name", align: "center" },
-        { label: "Complaint no", field: "complaint_no", align: "center" },
-        { label: "Complaint priority", field: "priority", align: "center" },
-        { label: "Location", field: "location", align: "center" }
-      ];
-    }
-    if (activeTab === "com") {
-      return [
-        { label: "Date", field: "date", align: "center" },
-        { label: "Complainant", field: "name", align: "center" },
-        { label: "Complaint no", field: "complaint_no", align: "center" },
-        { label: "Complaint priority", field: "priority", align: "center" },
-        { label: "Location", field: "location", align: "center" }
-      ];
-    }
-    if (activeTab === "esc") {
-      return [
-        { label: "Date", field: "date", align: "center" },
-        { label: "Complainant", field: "name", align: "center" },
-        { label: "Complaint no", field: "complaint_no", align: "center" },
-        { label: "Complaint priority", field: "priority", align: "center" },
-        { label: "Location", field: "location", align: "center" }
-      ];
-    }
-    return [
-      { label: "Date", field: "date", align: "center" },
-      { label: "Complainant", field: "name", align: "center" },
-      { label: "Complaint no", field: "complaint_no", align: "center" },
-      { label: "Complaint priority", field: "priority", align: "center" },
-      { label: "Location", field: "location", align: "center" }
-    ];
-  };
+  const getColumns = () => [
+    { label: "Date", field: "created_at", align: "center" },
+    { label: "Complainant", field: "name", align: "center" },
+    { label: "Complaint no", field: "complaint_no", align: "center" },
+    // { label: "Complaint priority", field: "priority", align: "center" },
+    { label: "Complaint type", field: "type", align: "center" },
+    { label: "Location", field: "location", align: "center" }
+  ];
 
-  // Render Table Rows
-  const renderTableRows = () => {
-    const data = complaintsData[activeTab];
-    return data.map((complaint) => ({
-      ...complaint,
-      status: complaint.status
-    }));
-  };
+  const transformedRows =
+    complaints?.results?.map((user) => ({
+      created_at: new Date(user.created_at).toLocaleDateString(),
+      name: `${user.firstname || ""} ${user.lastname || ""}`.trim(),
+      complaint_no: user.case_id,
+      type: user.complaint_type,
+      location: user?.state?.name,
+      id: user.id,
+      status: user.status
+    })) || [];
+
+  const filteredRows = transformedRows.filter((row) => {
+    if (activeTab === "new") return row.status === "pending";
+    if (activeTab === "act") return row.status === "active";
+    if (activeTab === "com") return row.status === "closed";
+    if (activeTab === "esc") return row.status === "escalated";
+    return true;
+  });
 
   return (
     <Box>
-      {/* <Helmet>
-        <title>State Complaints</title>
-        <meta name="State Complaints" content=" " />
-        <link rel="canonical" href="/" />
-      </Helmet> */}
       <Box
         sx={{
           display: "flex",
@@ -310,7 +155,7 @@ const CentralComplaints = () => {
         {/* Table */}
         <ReusableTable
           columns={getColumns()}
-          rows={renderTableRows()}
+          rows={filteredRows}
           onViewClick={handleViewComplaint}
           showActions={true}
           showStatus={true}

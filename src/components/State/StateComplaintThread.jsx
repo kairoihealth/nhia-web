@@ -7,29 +7,34 @@ import {
   IconButton,
   Typography
 } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import hospital1 from "../../assets/hospital1.png";
 import hospital2 from "../../assets/hospital2.png";
 import hospital3 from "../../assets/hospital3.png";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import {
+  getComplaintResponses,
+  getSingleComplaint
+} from "../../services/general";
 
-const data = {
-  id: 1,
-  name: "John Doe",
-  email: "john@doe.com",
-  phone: "123-456-9999",
-  complaint_no: "11023",
-  complaint:
-    "I've been experiencing issues with my HMO, and my doctor hasn't seen me in over a year. I'd like to discuss my concerns and see if there's anything I can do to improve my quality of life.",
-  status: "Open",
-  attachment: [
-    { id: 1, name: "testing 1", icon: hospital1, type: "image" },
-    { id: 2, name: "testing 2", icon: hospital2, type: "image" },
-    { id: 3, name: "testing 3", icon: hospital3, type: "image" }
-  ]
-};
+// const data = {
+//   id: 1,
+//   name: "John Doe",
+//   email: "john@doe.com",
+//   phone: "123-456-9999",
+//   complaint_no: "11023",
+//   complaint:
+//     "I've been experiencing issues with my HMO, and my doctor hasn't seen me in over a year. I'd like to discuss my concerns and see if there's anything I can do to improve my quality of life.",
+//   status: "Open",
+//   attachment: [
+//     { id: 1, name: "testing 1", icon: hospital1, type: "image" },
+//     { id: 2, name: "testing 2", icon: hospital2, type: "image" },
+//     { id: 3, name: "testing 3", icon: hospital3, type: "image" }
+//   ]
+// };
 
 const repsonseData = [
   {
@@ -64,14 +69,36 @@ const repsonseData = [
   }
 ];
 const StateComplaintThread = () => {
-  const { id } = useParams();
-  console.log(id, "checking...");
+  const location = useLocation();
+  const slug = location?.state.thread;
   const navigate = useNavigate();
 
-  const [isResponse] = useState(true);
+  const {
+    data: complaint
+    //  isLoading,
+    //  isError,
+    //  error
+  } = useQuery({
+    queryKey: ["complaints", slug],
+    queryFn: () => getSingleComplaint(slug)
+  });
+
+  const {
+    data: response
+    //  isLoading,
+    //  isError,
+    //  error
+  } = useQuery({
+    queryKey: ["responses", slug],
+    queryFn: () => getComplaintResponses(slug)
+  });
+
+  const [isResponse] = useState(response?.length > 1);
 
   const handleReply = () => {
-    navigate(`/state/complaint/${id}/reply`, { state: { data } });
+    navigate(`/stateadmin/complaint/${complaint?.case_id}/reply`, {
+      state: { thread: complaint?.id }
+    });
   };
 
   return (
@@ -100,7 +127,7 @@ const StateComplaintThread = () => {
                 color: "#111827"
               }}
             >
-              {data.complaint_no} - Access to services
+              {complaint?.case_id} - {complaint?.complaint_type}
             </Typography>
             <Box
               sx={{
@@ -111,25 +138,26 @@ const StateComplaintThread = () => {
                 fontWeight: 400,
                 lineHeight: "21.6px",
                 borderRadius: "8px",
+                textTransform: "capitalize",
                 backgroundColor:
-                  data.status === "Pending"
+                  complaint?.status === "pending"
                     ? "#FFF3E7"
-                    : data.status === "Resolved"
+                    : complaint?.status === "resolved"
                     ? "#D6EBFF"
                     : "#E8F8EE",
                 color:
-                  data.status === "Pending"
+                  complaint?.status === "pending"
                     ? "#EDB378"
-                    : data.status === "Resolved"
+                    : complaint?.status === "resolved"
                     ? "#4B95DD"
                     : "#096F35"
               }}
             >
-              &bull; {data.status || "N/A"}
+              &bull; {complaint?.status || "N/A"}
             </Box>
           </Box>
           <Typography sx={{ mt: 1, cursor: "pointer" }}>
-            View Complain details
+            View Complaint details
           </Typography>
         </Box>
       </Box>
@@ -154,7 +182,7 @@ const StateComplaintThread = () => {
               color: "#111827"
             }}
           >
-            {data.name}
+            {complaint?.hmo?.name}
           </Typography>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 2 }}>
             <Typography
@@ -166,7 +194,7 @@ const StateComplaintThread = () => {
                 textDecoration: "underline"
               }}
             >
-              {data.email}
+              {complaint?.email}
             </Typography>
             <Divider
               orientation="vertical"
@@ -180,7 +208,7 @@ const StateComplaintThread = () => {
                 color: "#000000"
               }}
             >
-              {data.phone}
+              {complaint?.phone}
             </Typography>
           </Box>
         </Box>
@@ -207,7 +235,7 @@ const StateComplaintThread = () => {
               mt: 2
             }}
           >
-            {data.complaint}
+            {complaint?.description}
           </Box>
         </Box>
 
@@ -223,9 +251,10 @@ const StateComplaintThread = () => {
           >
             Attachments
           </Typography>
-          {Array.isArray(data.attachment) && data.attachment.length > 0 ? (
+          {Array.isArray(complaint?.evidences) &&
+          complaint?.evidences.length > 0 ? (
             <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-              {data.attachment.map((file) => (
+              {complaint?.evidences.map((file) => (
                 <Card
                   key={file.id}
                   sx={{
@@ -294,7 +323,7 @@ const StateComplaintThread = () => {
               ))}
             </Box>
           ) : (
-            <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+            <Typography variant="body2" align="left" sx={{ mt: 2 }}>
               No attachments available.
             </Typography>
           )}
@@ -304,7 +333,7 @@ const StateComplaintThread = () => {
         <Box sx={{ width: "987px", textAlign: "center", my: 2 }}>
           <Divider
             sx={{
-              borderBottom: "1px dashed #737373"
+              borderBottom: "1px dashed #000000"
             }}
           />
         </Box>
@@ -313,93 +342,94 @@ const StateComplaintThread = () => {
       {/*Complaint responses*/}
       {isResponse ? (
         <>
-          {repsonseData.map((t) => (
-            <>
-              <Box sx={{ width: "100%", textAlign: "center", my: 3 }}>
-                <Divider
-                  sx={{
-                    borderBottom: "2px solid #7E7E7E"
-                  }}
-                />
-              </Box>
-
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 2,
-                  width: "1032px",
-                  mt: 6,
-                  px: 10
-                }}
-              >
-                <Box>
-                  <Box
+          {response.length > 1 &&
+            repsonseData.map((t) => (
+              <>
+                <Box sx={{ width: "100%", textAlign: "center", my: 3 }}>
+                  <Divider
                     sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 2,
-                      width: "1032px",
-                      mt: 2
+                      borderBottom: "2px solid #7E7E7E"
                     }}
-                  >
-                    <Box sx={{ width: "972px" }}>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: 1.5,
-                          mt: 2
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            fontSize: "16px",
-                            fontWeight: 600,
-                            lineHeight: "24px",
-                            color: "#595959"
-                          }}
-                        >
-                          From:{" "}
-                          <span
-                            style={{
-                              fontSize: "16px",
-                              fontWeight: 600,
-                              lineHeight: "24px"
-                            }}
-                          >
-                            Matthew Johnson
-                          </span>
-                        </Typography>
+                  />
+                </Box>
 
-                        <Typography
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 2,
+                    width: "1032px",
+                    mt: 6,
+                    px: 10
+                  }}
+                >
+                  <Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 2,
+                        width: "1032px",
+                        mt: 2
+                      }}
+                    >
+                      <Box sx={{ width: "972px" }}>
+                        <Box
                           sx={{
-                            fontSize: "16px",
-                            fontWeight: 600,
-                            lineHeight: "24px",
-                            color: "#595959"
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 1.5,
+                            mt: 2
                           }}
                         >
-                          Sent to:{" "}
-                          <span
-                            style={{
+                          <Typography
+                            sx={{
                               fontSize: "16px",
                               fontWeight: 600,
                               lineHeight: "24px",
-                              color: "#000000"
+                              color: "#595959"
                             }}
                           >
-                            Axion Hmo, Gabriella James
-                          </span>
-                        </Typography>
+                            From:{" "}
+                            <span
+                              style={{
+                                fontSize: "16px",
+                                fontWeight: 600,
+                                lineHeight: "24px"
+                              }}
+                            >
+                              Matthew Johnson
+                            </span>
+                          </Typography>
+
+                          <Typography
+                            sx={{
+                              fontSize: "16px",
+                              fontWeight: 600,
+                              lineHeight: "24px",
+                              color: "#595959"
+                            }}
+                          >
+                            Sent to:{" "}
+                            <span
+                              style={{
+                                fontSize: "16px",
+                                fontWeight: 600,
+                                lineHeight: "24px",
+                                color: "#000000"
+                              }}
+                            >
+                              Axion Hmo, Gabriella James
+                            </span>
+                          </Typography>
+                        </Box>
                       </Box>
                     </Box>
                   </Box>
-                </Box>
 
-                {/*complaint details*/}
-                <Box sx={{ width: "972px" }}>
-                  {/* <Typography
+                  {/*complaint details*/}
+                  <Box sx={{ width: "972px" }}>
+                    {/* <Typography
                       sx={{
                         fontSize: "16px",
                         fontWeight: 500,
@@ -410,121 +440,121 @@ const StateComplaintThread = () => {
                     >
                       Complaint description
                     </Typography> */}
+                    <Box
+                      sx={{
+                        fontSize: "16px",
+                        fontWeight: 400,
+                        lineHeight: "24px",
+                        color: "#1B1C1E",
+                        mt: 2
+                      }}
+                    >
+                      {t.complaint}
+                    </Box>
+                  </Box>
+
+                  {/*attachment*/}
                   <Box
                     sx={{
-                      fontSize: "16px",
-                      fontWeight: 400,
-                      lineHeight: "24px",
-                      color: "#1B1C1E",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 1,
                       mt: 2
                     }}
                   >
-                    {t.complaint}
-                  </Box>
-                </Box>
-
-                {/*attachment*/}
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 1,
-                    mt: 2
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      fontSize: "16px",
-                      fontWeight: 500,
-                      lineHeight: "21.6px",
-                      color: "#000000"
-                    }}
-                  >
-                    Attachments
-                  </Typography>
-                  {Array.isArray(t.attachment) && t.attachment.length > 0 ? (
-                    <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-                      {t.attachment.map((file) => (
-                        <Card
-                          key={file.id}
-                          sx={{
-                            position: "relative",
-                            width: "149px",
-                            borderRadius: 2,
-                            overflow: "hidden"
-                          }}
-                        >
-                          {file.type === "image" ? (
-                            <CardMedia
-                              component="img"
-                              sx={{
-                                width: "149px",
-                                height: "101px"
-                              }}
-                              image={file.icon}
-                              alt={file.name}
-                            />
-                          ) : (
-                            <Box
-                              sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                height: 140,
-                                backgroundColor: "#f5f5f5"
-                              }}
-                            >
-                              <InsertDriveFileIcon
-                                sx={{ fontSize: 48, color: "#d32f2f" }}
-                              />
-                              <Typography variant="caption">
-                                {file.name}
-                              </Typography>
-                            </Box>
-                          )}
-
-                          {/* Overlay Download Button */}
-                          <Box
+                    <Typography
+                      sx={{
+                        fontSize: "16px",
+                        fontWeight: 500,
+                        lineHeight: "21.6px",
+                        color: "#000000"
+                      }}
+                    >
+                      Attachments
+                    </Typography>
+                    {Array.isArray(t.attachment) && t.attachment.length > 0 ? (
+                      <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+                        {t.attachment.map((file) => (
+                          <Card
+                            key={file.id}
                             sx={{
-                              position: "absolute",
-                              bottom: 8,
-                              right: 12,
-                              display: "flex",
-                              justifyContent: "center",
-                              alignItems: "center",
-                              width: "24px",
-                              height: "24px",
-                              borderRadius: "3px",
-                              backgroundColor: "#EFF3F9"
+                              position: "relative",
+                              width: "149px",
+                              borderRadius: 2,
+                              overflow: "hidden"
                             }}
                           >
-                            <IconButton
-                              onClick={() => {}}
+                            {file.type === "image" ? (
+                              <CardMedia
+                                component="img"
+                                sx={{
+                                  width: "149px",
+                                  height: "101px"
+                                }}
+                                image={file.icon}
+                                alt={file.name}
+                              />
+                            ) : (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  height: 140,
+                                  backgroundColor: "#f5f5f5"
+                                }}
+                              >
+                                <InsertDriveFileIcon
+                                  sx={{ fontSize: 48, color: "#d32f2f" }}
+                                />
+                                <Typography variant="caption">
+                                  {file.name}
+                                </Typography>
+                              </Box>
+                            )}
+
+                            {/* Overlay Download Button */}
+                            <Box
                               sx={{
-                                color: "#EFF3F9",
-                                "&:hover": {
-                                  backgroundColor: "rgba(0,0,0,0.7)"
-                                }
+                                position: "absolute",
+                                bottom: 8,
+                                right: 12,
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                width: "24px",
+                                height: "24px",
+                                borderRadius: "3px",
+                                backgroundColor: "#EFF3F9"
                               }}
                             >
-                              <FileDownloadOutlinedIcon
-                                sx={{ color: "#038F3E" }}
-                              />
-                            </IconButton>
-                          </Box>
-                        </Card>
-                      ))}
-                    </Box>
-                  ) : (
-                    <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-                      No attachments available.
-                    </Typography>
-                  )}
+                              <IconButton
+                                onClick={() => {}}
+                                sx={{
+                                  color: "#EFF3F9",
+                                  "&:hover": {
+                                    backgroundColor: "rgba(0,0,0,0.7)"
+                                  }
+                                }}
+                              >
+                                <FileDownloadOutlinedIcon
+                                  sx={{ color: "#038F3E" }}
+                                />
+                              </IconButton>
+                            </Box>
+                          </Card>
+                        ))}
+                      </Box>
+                    ) : (
+                      <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+                        No attachments available.
+                      </Typography>
+                    )}
+                  </Box>
                 </Box>
-              </Box>
-            </>
-          ))}
+              </>
+            ))}
         </>
       ) : (
         ""

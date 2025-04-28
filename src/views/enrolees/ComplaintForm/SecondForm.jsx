@@ -1,57 +1,47 @@
 import { useState } from "react";
-// import { Helmet } from "react-helmet-async";
 import Logo from "../../../assets/nhia-logo.png";
-import {
-  Box,
-  TextField,
-  Button,
-  Select,
-  MenuItem,
-  FormControl,
-  Typography,
-  LinearProgress
-} from "@mui/material";
+import { Box, TextField, Button, FormControl, Typography } from "@mui/material";
 import { useDropzone } from "react-dropzone";
 import { BsCloudUpload } from "react-icons/bs";
 import { AiOutlineFile } from "react-icons/ai";
+import PropTypes from "prop-types";
+import ReactSelect from "react-select";
+import { complaintType, nhiaProgram } from "../../../mock/type";
+import { selectStyles, textFieldStyles } from "../../../utils/style";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 
-const textFieldStyles = {
-  "& .MuiOutlinedInput-root": {
-    borderRadius: "8px",
-    backgroundColor: "#F5F5F5",
-    color: "#737373",
-    border: "0.5px solid #DADADA",
-    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#038F3E" // Green border color
-    }
-  }
-};
-
-const selectStyles = {
-  width: "100%",
-  borderRadius: "8px",
-  backgroundColor: "#F5F5F5",
-  color: "#737373",
-  border: "0.5px solid #DADADA",
-  fontSize: "16px",
-  outline: "none",
-  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-    borderColor: "#038F3E" // Green border color
-  }
-};
-const SecondForm = () => {
-  const [files, setFiles] = useState([]);
+const SecondForm = ({
+  complaintInfo,
+  setComplaintInfo,
+  onNext,
+  onBack,
+  btn
+}) => {
   const maxFiles = 5;
+  const [errors, setErrors] = useState({});
 
   const onDrop = (acceptedFiles) => {
-    if (files.length + acceptedFiles.length <= maxFiles) {
-      const filesWithPreview = acceptedFiles.map((file) =>
-        Object.assign(file, {
-          preview: URL.createObjectURL(file),
-          progress: Math.floor(Math.random() * 50) + 20 // Simulating an upload progress
-        })
-      );
-      setFiles([...files, ...filesWithPreview]);
+    // console.log("Accepted Files:", acceptedFiles);
+    const currentFilesLength = complaintInfo.files?.length || 0;
+    if (currentFilesLength + acceptedFiles.length <= maxFiles) {
+      const filesWithPreview = acceptedFiles.map((file) => ({
+        ...file,
+        id: Math.random().toString(36).substr(2, 9),
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        path: file.path,
+        preview: URL.createObjectURL(file),
+        raw: file
+      }));
+      setComplaintInfo((prev) => {
+        const updatedFiles = [...(prev.files || []), ...filesWithPreview];
+        // console.log("Updated complaintInfo.files:", updatedFiles);
+        return {
+          ...prev,
+          files: updatedFiles
+        };
+      });
     } else {
       alert(`You can only upload a maximum of ${maxFiles} files`);
     }
@@ -59,30 +49,66 @@ const SecondForm = () => {
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    accept: "image/*",
-    maxFiles: maxFiles - files.length
+    accept: {
+      "image/*": [],
+      "application/pdf": [],
+      "application/msword": [],
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        []
+    },
+    maxFiles: 5 - (complaintInfo.files?.length || 0)
   });
+  const removeFile = (fileToRemove) => {
+    setComplaintInfo((prev) => {
+      const updatedFiles =
+        prev.files?.filter((file) => file.id !== fileToRemove.id) || [];
+      URL.revokeObjectURL(fileToRemove.preview); // Free up memory
+      return { ...prev, files: updatedFiles };
+    });
+  };
 
-  const removeFile = (file) => {
-    const newFiles = files.filter((f) => f !== file);
-    setFiles(newFiles);
-    URL.revokeObjectURL(file.preview); // Revoke the preview URL
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setComplaintInfo({ ...complaintInfo, [name]: value });
+  };
+
+  const handleComplaintChange = (selectedOption) => {
+    setComplaintInfo({ ...complaintInfo, complaint: selectedOption.value });
+  };
+
+  const handleProgramChange = (selectedOption) => {
+    setComplaintInfo({ ...complaintInfo, programme: selectedOption.value });
+  };
+
+  const validateFields = () => {
+    const newErrors = {};
+
+    if (!complaintInfo.date?.trim()) newErrors.date = "Date is required.";
+    if (!complaintInfo.time?.trim()) newErrors.time = "Time is required.";
+    if (!complaintInfo.programme?.trim())
+      newErrors.programme = "Nhia programme is required.";
+    if (!complaintInfo.complaint)
+      newErrors.complaint = "Please select a complaint type.";
+    if (!complaintInfo.description?.trim())
+      newErrors.description = "Description is required.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleNext = () => {
+    if (validateFields()) {
+      onNext();
+    }
   };
 
   return (
     <>
-      {/* <Helmet>
-        <title>Enrolee Complaint Form</title>
-        <meta name="Enrolee Complaint Form" content=" " />
-        <link rel="canonical" href="/" />
-      </Helmet> */}
       <Box
         sx={{
           backgroundColor: { xs: "#FFFFFF", md: "#038F3E" }
-          // height: "100%"
         }}
       >
-        {/* <Container> */}
         <Box
           sx={{
             display: { xs: "grid", md: "flex" },
@@ -152,11 +178,16 @@ const SecondForm = () => {
                       </span>
                     </Typography>
                     <TextField
+                      name="date"
                       fullWidth
                       type="date"
                       variant="outlined"
                       required
                       sx={textFieldStyles}
+                      value={complaintInfo.date}
+                      onChange={handleInputChange}
+                      error={!!errors.date}
+                      helperText={errors.date}
                     />
                   </Box>
                   <Box
@@ -177,11 +208,16 @@ const SecondForm = () => {
                       </span>
                     </Typography>
                     <TextField
+                      name="time"
                       fullWidth
                       type="time"
                       variant="outlined"
                       required
                       sx={textFieldStyles}
+                      value={complaintInfo.time}
+                      onChange={handleInputChange}
+                      error={!!errors.time}
+                      helperText={errors.time}
                     />
                   </Box>
                 </Box>
@@ -208,13 +244,22 @@ const SecondForm = () => {
                         *
                       </span>
                     </Typography>
-                    <FormControl fullWidth variant="outlined">
-                      <Select sx={selectStyles}>
-                        <MenuItem value="individual">Individual</MenuItem>
-                        <MenuItem value="family">Family</MenuItem>
-                        <MenuItem value="group">Group</MenuItem>
-                      </Select>
-                    </FormControl>
+                    <ReactSelect
+                      styles={selectStyles}
+                      value={nhiaProgram.find(
+                        (el) => el.id === complaintInfo.programme
+                      )}
+                      onChange={handleProgramChange}
+                      options={nhiaProgram}
+                      placeholder="Select option"
+                    />
+                    {errors.programme && (
+                      <Typography
+                        sx={{ color: "red", fontSize: "13px", mt: 0.5 }}
+                      >
+                        {errors.programme}
+                      </Typography>
+                    )}
                   </Box>
                   <Box
                     flex={1}
@@ -233,26 +278,22 @@ const SecondForm = () => {
                         *
                       </span>
                     </Typography>
-                    <FormControl fullWidth variant="outlined">
-                      <Select sx={selectStyles}>
-                        <MenuItem value="discrimination">
-                          Discrimination and refusal to treat/manage any
-                          enrollees and their covered dependents after receiving
-                          payment from the relevant HMOs on behalf of such
-                          enrollees.
-                        </MenuItem>
-                        <MenuItem value="fee-paying">
-                          Receipt and management of any enrollee as a fee-paying
-                          patient.
-                        </MenuItem>
-                        <MenuItem value="co-payment">
-                          Solicitation, collection, or charging any fee from any
-                          enrollee in addition to the fees payable by NIS,
-                          except for 10% co-payment for prescribed drugs.
-                        </MenuItem>
-                        {/* Add other options here */}
-                      </Select>
-                    </FormControl>
+                    <ReactSelect
+                      styles={selectStyles}
+                      value={complaintType.find(
+                        (type) => type.id === complaintInfo.complaint
+                      )}
+                      onChange={handleComplaintChange}
+                      options={complaintType}
+                      placeholder="Select option"
+                    />
+                    {errors.complaint && (
+                      <Typography
+                        sx={{ color: "red", fontSize: "13px", mt: 0.5 }}
+                      >
+                        {errors.complaint}
+                      </Typography>
+                    )}
                   </Box>
                 </Box>
                 <Box
@@ -277,13 +318,17 @@ const SecondForm = () => {
                     </span>
                   </Typography>
                   <TextField
+                    name="description"
                     fullWidth
-                    // label="Complaint Description"
                     variant="outlined"
                     multiline
                     rows={4}
                     required
                     placeholder="enter complaint description"
+                    value={complaintInfo.description}
+                    onChange={handleInputChange}
+                    error={!!errors.description}
+                    helperText={errors.description}
                   />
                 </Box>
                 <Box
@@ -337,111 +382,174 @@ const SecondForm = () => {
                         Upload max. 5 documents in total
                       </Typography>
                     </Box>
-                    {files.length > 0 && (
-                      <Box mt={2}>
-                        <Box display="flex" flexWrap="wrap" gap={2} mt={2}>
-                          {files.map((file, index) => (
+                    {complaintInfo.files?.length > 0 && (
+                      <Box sx={{ mt: 2, width: "100%" }}>
+                        <Box display="flex" gap={2} mt={2}>
+                          {complaintInfo?.files?.map((file, index) => (
                             <Box
                               key={index}
                               sx={{
                                 display: "flex",
                                 alignItems: "center",
-                                padding: "10px",
+                                px: "10px",
+                                py: "10px",
                                 backgroundColor: "#f1f3f4",
                                 borderRadius: "8px",
                                 marginBottom: "8px"
                               }}
                             >
-                              <AiOutlineFile
-                                size={24}
-                                style={{ marginRight: "10px" }}
-                              />
-                              <Box sx={{ flexGrow: 1 }}>
-                                <Typography variant="body2">
-                                  {file.name}
+                              {file?.type?.startsWith("image/") &&
+                              file?.preview ? (
+                                <Box
+                                  sx={{
+                                    width: 60,
+                                    height: 60,
+                                    marginRight: "10px",
+                                    borderRadius: "4px",
+                                    overflow: "hidden",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center"
+                                  }}
+                                >
+                                  <img
+                                    src={file?.preview}
+                                    alt={file?.name}
+                                    style={{
+                                      display: "block",
+                                      maxWidth: "100%",
+                                      maxHeight: "100%",
+                                      objectFit: "cover"
+                                    }}
+                                  />
+                                </Box>
+                              ) : (
+                                <AiOutlineFile
+                                  size={34}
+                                  style={{ marginRight: "10px" }}
+                                />
+                              )}
+                              <Box sx={{ width: "100%", height: "auto" }}>
+                                <Typography sx={{ fontSize: "12px" }}>
+                                  {file?.name}
+                                </Typography>
+                                <Typography sx={{ fontSize: "12px" }}>
+                                  {Math.round(file.size / 1024)} KB - uploaded
                                 </Typography>
                                 <Typography
-                                  variant="caption"
-                                  color="textSecondary"
+                                  sx={{ fontSize: "12px", color: "#038F3E" }}
                                 >
-                                  {Math.round(file.size / 1024)} KB -{" "}
-                                  {file.progress}% uploaded
+                                  {file?.type}
                                 </Typography>
-                                <LinearProgress
-                                  variant="determinate"
-                                  value={file.progress}
-                                  sx={{ marginTop: "4px" }}
-                                />
                               </Box>
-                              <Button
+                              <Box
                                 size="small"
                                 color="error"
                                 onClick={() => removeFile(file)}
-                                sx={{ marginLeft: "10px" }}
+                                sx={{ marginLeft: "10px", cursor: "pointer" }}
                               >
-                                x
-                              </Button>
+                                <CancelOutlinedIcon />
+                              </Box>
                             </Box>
                           ))}
                         </Box>
+                        {complaintInfo.files.length === 5 && (
+                          <Typography sx={{ color: "red" }}>
+                            {`You can only upload a maximum of ${maxFiles} files`}
+                          </Typography>
+                        )}
                       </Box>
                     )}
                   </FormControl>
                 </Box>
                 <Box
                   sx={{
-                    display: { xs: "grid", md: "flex" },
-                    justifyContent: { xs: "center", md: "flex-end" },
-                    gap: 2,
-                    mt: 4
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "flex-end",
+                    alignItems: "flex-end"
                   }}
                 >
-                  <Button
-                    variant="outlined"
+                  <Box
                     sx={{
-                      width: "270px",
-                      height: "48px",
-                      borderRadius: "16px",
-                      py: 1.5,
-                      fontSize: { xs: "14px", md: "16px" },
-                      fontWeight: 500,
-                      lineHeight: "24px",
-                      textTransform: "capitalize",
-                      borderColor: "#038F3E",
-                      color: "#038F3E",
-                      "&:hover": { borderColor: "#038F3E" }
+                      display: { xs: "grid", md: "flex" },
+                      justifyContent: { xs: "center", md: "flex-end" },
+                      gap: 2,
+                      mt: 4
                     }}
-                    href="/"
                   >
-                    Back
-                  </Button>
-                  <Button
-                    variant="contained"
-                    sx={{
-                      width: "270px",
-                      height: "48px",
-                      borderRadius: "16px",
-                      py: 1.5,
-                      fontSize: { xs: "14px", md: "16px" },
-                      fontWeight: 500,
-                      lineHeight: "24px",
-                      textTransform: "capitalize",
-                      backgroundColor: "#038F3E",
-                      "&:hover": { backgroundColor: "#038F3E" }
-                    }}
-                    href="/enrollee-form-preview"
-                  >
-                    Save & Continue
-                  </Button>
+                    <Button
+                      variant="outlined"
+                      sx={{
+                        width: "270px",
+                        height: "48px",
+                        borderRadius: "16px",
+                        py: 1.5,
+                        fontSize: { xs: "14px", md: "16px" },
+                        fontWeight: 500,
+                        lineHeight: "24px",
+                        textTransform: "capitalize",
+                        borderColor: "#038F3E",
+                        color: "#038F3E",
+                        "&:hover": { borderColor: "#038F3E" }
+                      }}
+                      // href="/"
+                      onClick={onBack}
+                    >
+                      Back
+                    </Button>
+                    <Button
+                      variant="contained"
+                      sx={{
+                        width: "270px",
+                        height: "48px",
+                        borderRadius: "16px",
+                        py: 1.5,
+                        fontSize: { xs: "14px", md: "16px" },
+                        fontWeight: 500,
+                        lineHeight: "24px",
+                        textTransform: "capitalize",
+                        backgroundColor: "#038F3E",
+                        "&:hover": { backgroundColor: "#038F3E" }
+                      }}
+                      // href="/enrollee-form-preview"
+                      onClick={handleNext}
+                    >
+                      Save & Continue
+                    </Button>
+                  </Box>
+                  <Box sx={{ width: "20%", my: 2 }}>{btn}</Box>
                 </Box>
               </form>
             </Box>
           </Box>
         </Box>
-        {/* </Container> */}
       </Box>
     </>
   );
 };
 
 export default SecondForm;
+
+SecondForm.propTypes = {
+  complaintInfo: PropTypes.shape({
+    files: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string,
+        name: PropTypes.string,
+        type: PropTypes.string,
+        preview: PropTypes.string
+      })
+    ),
+    // length: PropTypes.number,
+    date: PropTypes.string,
+    time: PropTypes.string,
+    programme: PropTypes.string,
+    complaint: PropTypes.string,
+    description: PropTypes.string
+  }),
+  setComplaintInfo: PropTypes.func.isRequired,
+  onNext: PropTypes.func,
+  onBack: PropTypes.func,
+  btn: PropTypes.any
+};
