@@ -9,7 +9,7 @@ const GaugeChart = ({ value, width = 250, height = 200 }) => {
   const data = [
     { value: 55 }, // Red (0-55)
     { value: 25 }, // Yellow (55-80)
-    { value: 20 } // Green (80-100)
+    { value: 20 }, // Green (80-100)
   ];
 
   // Chart dimensions
@@ -76,5 +76,5 @@ export default GaugeChart;
 GaugeChart.propTypes = {
   value: PropTypes.number.isRequired,
   width: PropTypes.number,
-  height: PropTypes.number
+  height: PropTypes.number,
 };

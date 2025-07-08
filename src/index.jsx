@@ -7,6 +7,9 @@ import "./index.css";
 import App from "./App";
 import AppProvider from "./contexts/AppProvider";
 import { ToastProvider } from "./contexts/ToastProvider"; // Ensure this import is correct
+import setupLocatorUI from "@locator/runtime";
+
+setupLocatorUI();
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

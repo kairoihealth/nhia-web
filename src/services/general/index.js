@@ -7,7 +7,7 @@ export const getComplaints = async ({
   pageSize,
   search,
   state,
-  status
+  status,
 }) => {
   try {
     const params = new URLSearchParams();
@@ -30,7 +30,7 @@ export const getNewComplaints = async ({
   ordering,
   page,
   pageSize,
-  status
+  status,
 }) => {
   try {
     const params = new URLSearchParams();
@@ -83,6 +83,46 @@ export const respondToComplaint = async (payload) => {
     return response;
   } catch (error) {
     console.error("Failed to respond to complaint:", error);
+    throw error;
+  }
+};
+
+export const getComplaintSatisfactionScores = async () => {
+  try {
+    const response = await Api.get(e.GET_COMPLAINT_SATISFACTION_SCORES);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch scores:", error);
+    throw error;
+  }
+};
+
+export const getComplaintStats = async () => {
+  try {
+    const response = await Api.get(e.GET_COMPLAINT_STATS);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch complaint stats:", error);
+    throw error;
+  }
+};
+
+export const getComplaintTrends = async () => {
+  try {
+    const response = await Api.get(e.GET_COMPLAINT_TRENDS);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch complaint trends:", error);
+    throw error;
+  }
+};
+
+export const getComplaintTrendsByOrganisation = async () => {
+  try {
+    const response = await Api.get(e.GET_COMPLAINT_TRENDS_BY_ORG);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch complaint trends:", error);
     throw error;
   }
 };

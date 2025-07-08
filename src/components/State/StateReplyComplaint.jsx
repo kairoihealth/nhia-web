@@ -51,7 +51,7 @@ const StateReplyComplaint = () => {
     queryFn: () => getSingleComplaint(slug)
   });
 
-  const hmoName = complaint?.hmo.name;
+  const hmoName = complaint?.hmo?.name;
 
   const {
     data: response

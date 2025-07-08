@@ -9,7 +9,7 @@ import {
   InputAdornment,
   IconButton,
   Link,
-  OutlinedInput
+  OutlinedInput,
 } from "@mui/material";
 import Logo from "../../assets/nhia-logo.png";
 import { VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
@@ -62,11 +62,13 @@ const LoginPage = () => {
 
         const role = decodedToken.role;
         const username = decodedToken.name;
+        const userId = decodedToken.user_id;
 
         localStorage.setItem("userRole", role);
         localStorage.setItem("access_token", accessToken);
         localStorage.setItem("refresh_token", refreshToken);
         localStorage.setItem("fullname", username);
+        localStorage.setItem("userId", userId);
 
         Auth.setToken(accessToken);
 
@@ -93,7 +95,7 @@ const LoginPage = () => {
           justifyContent: "center",
           alignItems: "center",
           backgroundColor: "#038F3E",
-          height: "100vh"
+          height: "100vh",
         }}
       >
         <Container maxWidth="sm">
@@ -105,7 +107,7 @@ const LoginPage = () => {
               textAlign: "center",
               width: "100%",
               maxWidth: 500,
-              borderRadius: "25px"
+              borderRadius: "25px",
             }}
           >
             <Box
@@ -120,7 +122,7 @@ const LoginPage = () => {
                 fontWeight: 500,
                 lineHeight: "32.4px",
                 color: "#038F3E",
-                mt: 2
+                mt: 2,
               }}
               gutterBottom
             >
@@ -134,7 +136,7 @@ const LoginPage = () => {
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "flex-start",
-                  gap: 1
+                  gap: 1,
                 }}
               >
                 <Typography
@@ -142,7 +144,7 @@ const LoginPage = () => {
                     color: "#595959",
                     fontSize: "16px",
                     fontWeight: 500,
-                    lineHeight: "24px"
+                    lineHeight: "24px",
                   }}
                 >
                   {/* Official Phone Number or Email Address */}
@@ -171,7 +173,7 @@ const LoginPage = () => {
                   flexDirection: "column",
                   alignItems: "flex-start",
                   gap: 1,
-                  my: 2
+                  my: 2,
                 }}
               >
                 <Typography
@@ -179,7 +181,7 @@ const LoginPage = () => {
                     color: "#595959",
                     fontSize: "16px",
                     fontWeight: 500,
-                    lineHeight: "24px"
+                    lineHeight: "24px",
                   }}
                 >
                   Password
@@ -216,8 +218,8 @@ const LoginPage = () => {
                   sx={{
                     ...textFieldStyles,
                     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#038F3E"
-                    }
+                      borderColor: "#038F3E",
+                    },
                   }}
                 />
                 {errors.password && (
@@ -254,7 +256,7 @@ const LoginPage = () => {
                   mb: 3,
                   py: "12px",
                   px: "8px",
-                  textTransform: "capitalize"
+                  textTransform: "capitalize",
                 }}
                 disabled={!email || !password}
                 onClick={handleLogin}
