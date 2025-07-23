@@ -1,72 +1,203 @@
-import { Box, Typography, Card } from "@mui/material";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Box, Typography, Card, CircularProgress } from "@mui/material";
 import ReusableTable from "../../../shared/Table";
 // import DashboardLayout from "../../../shared/DashboardLayout";
 import ArrowRightAltTwoToneIcon from "@mui/icons-material/ArrowRightAltTwoTone";
 import { useNavigate } from "react-router-dom";
-import { frequencyOfComplaints } from "../../../mock/dashboard";
+
 import PieChart from "../../../shared/PieChart";
-import { barData, lineData, pieColor, pieData } from "../../../mock/chartData";
+// import { pieColor } from "../../../mock/chartData";
 import BarChart from "../../../shared/BarChart";
 import LineChart from "../../../shared/LineChart";
 import { barOptions, lineOptions, options } from "../../../utils/config";
 import GaugeChart from "../../../shared/SofaChart";
+import {
+  getComplaints,
+  getComplaintSatisfactionScores,
+  getComplaintStats,
+  getComplaintTrends,
+} from "../../../services/general";
+import { useQuery } from "@tanstack/react-query";
+import { getInitials, shortenDay } from "../../../utils/general";
+import { useMemo } from "react";
 
 const Dashboard = () => {
   const navigate = useNavigate();
 
-  const columns = [
-    // { label: "ID", field: "id", align: "center" },
-    {
-      label: "Date",
-      field: "date",
-      format: (value) => new Date(value).toLocaleDateString()
-    },
-    { label: "Complainant", field: "name" },
-    { label: "Complaint No", field: "number" },
-    { label: "Complaint Category", field: "category" }
+  const {
+    data: complaints,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["complaints"],
+    queryFn: () => getComplaints({ page: 1, pageSize: 10 }),
+  });
+
+  const {
+    data: complaintScores,
+    // isLoading,
+    // isError,
+    // error,
+  } = useQuery({
+    queryKey: ["complaintScores"],
+    queryFn: () => getComplaintSatisfactionScores({}),
+  });
+
+  const {
+    data: complaintStats,
+    // isLoading,
+    // isError,
+    // error,
+  } = useQuery({
+    queryKey: ["complaintStats"],
+    queryFn: () => getComplaintStats({}),
+  });
+
+  const {
+    data: complaintTrends,
+    // isLoading,
+    // isError,
+    // error,
+  } = useQuery({
+    queryKey: ["complaintTrends"],
+    queryFn: () => getComplaintTrends({}),
+  });
+
+  const pieStatusColors = [
+    { status: "pending", color: "#FFCC99" },
+    { status: "active", color: "#72F172" },
+    { status: "closed", color: "#4B95DD" },
+    { status: "escalated", color: "#E75C5C" },
+  ];
+  const filteredPieStatus = useMemo(
+    () =>
+      complaintStats?.status?.map((s) => {
+        const colorObj = pieStatusColors.find((c) => c.status === s.status);
+        return {
+          ...s,
+          color: colorObj ? colorObj.color : "#dddddd",
+          title: s.status,
+        };
+      }),
+    [complaintStats?.status]
+  );
+
+  const pieStatusData = {
+    labels: filteredPieStatus?.map((s) => s.status) || [],
+    datasets: [
+      {
+        data: filteredPieStatus?.map((s) => s.total) || [],
+        backgroundColor: filteredPieStatus?.map((s) => s.color),
+        borderColor: filteredPieStatus?.map((s) => s.color),
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  // const pieData = {
+  //   labels: complaintStats?.status?.map((status) => status.status) || [],
+  //   datasets: [
+  //     {
+  //       data: complaintStats?.status?.map((status) => status.total) || [],
+  //       backgroundColor: ["#FFCC99", "#72F172", "#4B95DD", "#E75C5C"],
+  //       borderColor: ["#FFCC99", "#72F172", "#4B95DD", "#E75C5C"],
+  //       borderWidth: 1,
+  //     },
+  //   ],
+  // };
+
+  const barData = {
+    labels:
+      complaintStats?.regions?.map((region) =>
+        getInitials(region.state__region__name)
+      ) || [],
+    datasets: [
+      {
+        label: "Volume",
+        data: complaintStats?.regions?.map((region) => region.total) || [],
+        backgroundColor: ["#20201E"],
+        borderColor: ["#20201E"],
+        borderWidth: 1,
+        barThickness: 15,
+        borderRadius: 4,
+      },
+    ],
+  };
+
+  const lineData = {
+    labels:
+      complaintTrends?.current_week_trends?.map((trend) =>
+        shortenDay(trend.date)
+      ) || [],
+    datasets: [
+      {
+        label: "Trend",
+        data:
+          complaintTrends?.current_week_trends?.map((trend) => trend.total) ||
+          [],
+        fill: false,
+        borderColor: "#18A0FB",
+        tension: 0.1,
+      },
+    ],
+  };
+
+  console.log("complaintTrends", complaintStats);
+
+  const getColumns = () => [
+    { label: "Date", field: "created_at", align: "center" },
+    { label: "Complainant", field: "name", align: "center" },
+    { label: "Complaint no", field: "complaint_no", align: "center" },
+    { label: "Complaint type", field: "type", align: "center" },
+    { label: "Location", field: "location", align: "center" },
   ];
 
-  const rows = [
-    {
-      id: 1,
-      name: "John Doe",
-      number: "11023",
-      date: "2023-10-01",
-      category: "HMO"
-    },
-    {
-      id: 2,
-      name: "John Doe",
-      number: "11023",
-      date: "2023-10-01",
-      category: "HMO"
-    },
-    {
-      id: 3,
-      name: "John Doe",
-      number: "11023",
-      date: "2023-10-01",
-      category: "HMO"
-    },
-    {
-      id: 4,
-      name: "John Doe",
-      number: "11023",
-      date: "2023-10-01",
-      category: "HMO"
-    },
-    {
-      id: 5,
-      name: "John Doe",
-      number: "11023",
-      date: "2023-10-01",
-      category: "HMO"
-    }
-  ];
+  const transformedRows =
+    complaints?.results?.map((user) => ({
+      created_at: new Date(user.created_at).toLocaleDateString(),
+      name: `${user.firstname || "-"} ${user.lastname || "-"}`.trim(),
+      complaint_no: user.case_id,
+      type: user.complaint_type,
+      location: user?.state?.name,
+      id: user.id,
+      status: user.status,
+    })) || [];
 
   const handleViewClick = (row) => {
     alert("View clicked for:", row);
   };
+
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          color: "red",
+        }}
+      >
+        <Typography>Error: {error.message}</Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box>
@@ -77,7 +208,7 @@ const Dashboard = () => {
           alignItems: "flex-start",
           mt: 2,
           gap: 4,
-          px: 4
+          px: 4,
         }}
       >
         {/*Left side*/}
@@ -89,7 +220,7 @@ const Dashboard = () => {
               width: "100%",
               gap: 4,
               flexWrap: "wrap",
-              mb: 4
+              mb: 4,
             }}
           >
             <Card
@@ -102,7 +233,7 @@ const Dashboard = () => {
                 borderRadius: "12px",
                 backgroundColor: "#FFFFFF",
                 width: "313px",
-                height: "209px"
+                height: "209px",
               }}
             >
               <Typography
@@ -110,7 +241,7 @@ const Dashboard = () => {
                   fontSize: "18px",
                   fontWeight: 500,
                   lineHeight: "28px",
-                  color: "#475467"
+                  color: "#475467",
                 }}
                 gutterBottom
               >
@@ -121,10 +252,10 @@ const Dashboard = () => {
                   fontSize: "48px",
                   fontWeight: 600,
                   lineHeight: "72px",
-                  color: "#20201E"
+                  color: "#20201E",
                 }}
               >
-                500
+                {complaintScores?.total_complaints}
               </Typography>
             </Card>
             <Card
@@ -137,7 +268,7 @@ const Dashboard = () => {
                 borderRadius: "12px",
                 backgroundColor: "#FFFFFF",
                 width: "313px",
-                height: "209px"
+                height: "209px",
               }}
             >
               <Typography
@@ -145,7 +276,7 @@ const Dashboard = () => {
                   fontSize: "18px",
                   fontWeight: 500,
                   lineHeight: "28px",
-                  color: "#475467"
+                  color: "#475467",
                 }}
                 gutterBottom
               >
@@ -154,12 +285,12 @@ const Dashboard = () => {
               <Box sx={{ display: "flex", alignItems: "center", px: 10 }}>
                 <PieChart
                   title="Pie Chart Example"
-                  data={pieData}
+                  data={pieStatusData}
                   options={options}
                 />
               </Box>
               <Box sx={{ display: "flex" }}>
-                {pieColor.map((t) => (
+                {filteredPieStatus.map((t) => (
                   <Box
                     key={t.id}
                     sx={{ display: "flex", alignItems: "center" }}
@@ -170,7 +301,7 @@ const Dashboard = () => {
                         height: "8px",
                         backgroundColor: t.color,
                         borderRadius: "50%",
-                        margin: "0 8px"
+                        margin: "0 8px",
                       }}
                     />
                     <Typography
@@ -178,7 +309,7 @@ const Dashboard = () => {
                         fontSize: "12px",
                         fontWeight: 500,
                         lineHeight: "16px",
-                        color: "#475467"
+                        color: "#475467",
                       }}
                     >
                       {t.title}
@@ -197,7 +328,7 @@ const Dashboard = () => {
                 borderRadius: "12px",
                 backgroundColor: "#FFFFFF",
                 width: "313px",
-                height: "209px"
+                height: "209px",
               }}
             >
               <Typography
@@ -206,7 +337,7 @@ const Dashboard = () => {
                   fontWeight: 500,
                   lineHeight: "28px",
                   color: "#475467",
-                  p: 1
+                  p: 1,
                 }}
                 gutterBottom
               >
@@ -230,7 +361,7 @@ const Dashboard = () => {
                 borderRadius: "12px",
                 backgroundColor: "#FFFFFF",
                 width: "313px",
-                height: "209px"
+                height: "209px",
               }}
             >
               <Typography
@@ -238,14 +369,16 @@ const Dashboard = () => {
                   fontSize: "18px",
                   fontWeight: 500,
                   lineHeight: "28px",
-                  color: "#475467"
+                  color: "#475467",
                 }}
                 gutterBottom
               >
                 Compliance with Regulations
               </Typography>
               <Box sx={{ display: "flex", alignItems: "center", px: 2 }}>
-                <GaugeChart value={50.1} />
+                <GaugeChart
+                  value={complaintScores?.satisfaction_percentage || 0}
+                />
               </Box>
             </Card>
           </Box>
@@ -261,7 +394,7 @@ const Dashboard = () => {
                   fontWeight: 500,
                   lineHeight: "27px",
                   color: "#1B1C1E",
-                  mb: 2
+                  mb: 2,
                 }}
               >
                 Escalated Complaints
@@ -275,7 +408,7 @@ const Dashboard = () => {
                   lineHeight: "18.9px",
                   color: "#038F3E",
                   textDecoration: "underline",
-                  cursor: "pointer"
+                  cursor: "pointer",
                 }}
                 onClick={() => navigate("/hmo/complaints")}
               >
@@ -284,8 +417,8 @@ const Dashboard = () => {
               </Typography>
             </Box>
             <ReusableTable
-              columns={columns}
-              rows={rows}
+              columns={getColumns()}
+              rows={transformedRows}
               onViewClick={handleViewClick}
               showActions={false}
               showStatus={false}
@@ -299,7 +432,7 @@ const Dashboard = () => {
             width: "40%",
             display: "flex",
             flexDirection: "column",
-            gap: 4
+            gap: 4,
           }}
         >
           <Card
@@ -312,7 +445,7 @@ const Dashboard = () => {
               borderRadius: "12px",
               backgroundColor: "#FFFFFF",
               width: "360px",
-              height: "451px"
+              height: "451px",
             }}
           >
             <Typography
@@ -320,12 +453,12 @@ const Dashboard = () => {
                 fontSize: "18px",
                 fontWeight: 500,
                 lineHeight: "28px",
-                color: "#101828"
+                color: "#101828",
               }}
             >
               Frequency of Complaints
             </Typography>
-            {frequencyOfComplaints.map((t) => (
+            {complaintStats?.complaint_type?.map((t) => (
               <Box
                 key={t.id}
                 sx={{ display: "flex", flexDirection: "column", gap: 1 }}
@@ -335,10 +468,10 @@ const Dashboard = () => {
                     fontSize: "16px",
                     fontWeight: 500,
                     lineHeight: "21.6px",
-                    color: "#111827"
+                    color: "#111827",
                   }}
                 >
-                  {t.title}
+                  {t.complaint_type}
                 </Typography>
                 <Box sx={{ display: "flex", gap: 1 }}>
                   <Typography
@@ -346,20 +479,20 @@ const Dashboard = () => {
                       fontSize: "14px",
                       fontWeight: 400,
                       lineHeight: "16.94px",
-                      color: "#000000"
+                      color: "#000000",
                     }}
                   >
-                    {t.number} Complaints
+                    {t.total} Complaints
                   </Typography>
                   <Typography
                     sx={{
                       fontSize: "14px",
                       fontWeight: 400,
                       lineHeight: "16.94px",
-                      color: "#000000"
+                      color: "#000000",
                     }}
                   >
-                    &bull; {t.reason}
+                    &bull; {t.complaint_type}
                   </Typography>
                 </Box>
               </Box>
@@ -375,7 +508,7 @@ const Dashboard = () => {
               borderRadius: "12px",
               backgroundColor: "#FFFFFF",
               width: "360px",
-              height: "313px"
+              height: "313px",
             }}
           >
             <Typography
@@ -384,7 +517,7 @@ const Dashboard = () => {
                 fontWeight: 500,
                 lineHeight: "28px",
                 color: "#101828",
-                px: 1
+                px: 1,
               }}
             >
               Complaint Trend

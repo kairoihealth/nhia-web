@@ -1,124 +1,81 @@
 import {
+  // Autocomplete,
   Box,
   Button,
   Card,
   CardMedia,
+  CircularProgress,
   IconButton,
   TextField,
   Typography,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import AttachmentOutlinedIcon from "@mui/icons-material/AttachmentOutlined";
-import { useEffect, useState } from "react";
+import {
+  // useMemo,
+  useState,
+} from "react";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { getSingleComplaint, respondToComplaint } from "../../services/general";
-import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
 import { useQuery } from "@tanstack/react-query";
+import { getSingleComplaint, respondToComplaint } from "../../services/general";
+import {
+  multiLineStyles,
+  // textFieldStyles
+} from "../../utils/style";
+import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
 import { convertToBase64 } from "../../utils/convertTobase64";
-import { getSingleUser } from "../../services/central";
+// import { convertFileToBase64 } from "../../utils/convertTobase64";
+// import { getAllHmo } from "../../services/settings";
 
-const textFieldStyles = {
-  "& .MuiOutlinedInput-root": {
-    borderRadius: "8px",
-    backgroundColor: "#F5F5F5",
-    color: "#000000",
-    border: "0.5px solid #DADADA",
-    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#038F3E",
-    },
-  },
-};
-
-const multiLineStyles = {
-  "& .MuiOutlinedInput-root": {
-    height: "204px",
-    borderRadius: "8px",
-    color: "#000000",
-    "& .MuiOutlinedInput-input": {
-      paddingTop: 0,
-      paddingBottom: "16px",
-      marginTop: 0,
-      alignSelf: "flex-start",
-    },
-    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#038F3E",
-    },
-  },
-};
-
-const getUserId = () => localStorage.getItem("userId");
-
-const ProvidersReplyComplaint = () => {
-  const userId = getUserId();
+const CentralReplyComplaint = () => {
   const handleError = useHandleError();
   const handleSuccess = useHandleSuccess();
   const navigate = useNavigate();
-
-  // const location = useLocation();
-  // const { data } = location.state || {};
-
   const location = useLocation();
   const slug = location?.state?.thread;
-  const [attachments, setAttachments] = useState([]); // State to store selected files
-  const [providerName, setProviderName] = useState("");
-  const [address, setAddress] = useState("");
+  const responseTo = location?.state?.to;
+
+  // const [selectedHMO, setSelectedHMO] = useState("");
+  const [attachments, setAttachments] = useState([]);
   const [respond, setRespond] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
-    data: user,
-    //  isLoading,
-    //  isError,
-    //  error
-  } = useQuery({
-    queryKey: ["complaints", userId],
-    queryFn: () => getSingleUser(userId),
-  });
-
-  const {
     data: complaint,
-    //  isLoading,
-    //  isError,
-    //  error
+    isLoading,
+    isError,
+    error,
   } = useQuery({
     queryKey: ["complaints", slug],
     queryFn: () => getSingleComplaint(slug),
   });
 
-  useEffect(() => {
-    if (user) {
-      setProviderName(user.firstname + " " + user.lastname);
-      setAddress(user.address || "");
-    }
-  }, [user]);
-
-  // const providerName = user?.firstname + " " + user?.lastname;
+  // const {
+  //   data: response,
+  //   //  isLoading,
+  //   //  isError,
+  //   //  error
+  // } = useQuery({
+  //   queryKey: ["complaints", slug],
+  //   queryFn: () => getComplaintResponses(slug),
+  // });
 
   // Function to handle file selection
-  const handleFileChange = (event) => {
-    const selectedFiles = Array.from(event.target.files);
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
 
-    // Check if the total number of attachments exceeds 5
-    if (attachments.length + selectedFiles.length > 5) {
-      alert("You can only add up to 5 attachments.");
-      return;
-    }
-
-    // Update the attachments state
-    setAttachments((prevAttachments) => [
-      ...prevAttachments,
-      ...selectedFiles.map((file) => ({
-        file, // Store the file object
+    setAttachments((prev) => {
+      const newFiles = files.map((file) => ({
+        file: file,
+        preview: URL.createObjectURL(file),
         name: file.name,
-        size: file.size,
         type: file.type,
-        preview: file.type.startsWith("image/")
-          ? URL.createObjectURL(file)
-          : null, // Create preview for images
-      })),
-    ]);
+      }));
+
+      return [...prev, ...newFiles].slice(0, 5);
+    });
   };
 
   // Function to trigger the file input
@@ -137,6 +94,8 @@ const ProvidersReplyComplaint = () => {
     // navigate(`/provider/complaint/${data.id}/thread`);
     setIsSubmitting(true);
     try {
+      if (!respond) return handleError("Response field cannot be empty.");
+
       const docs = await Promise.all(
         attachments.map(async (attachment) => {
           const base64 = await convertToBase64(attachment.file);
@@ -146,9 +105,16 @@ const ProvidersReplyComplaint = () => {
 
       const data = {
         complaint: complaint?.id,
-        provider_name: providerName,
-        provider_address: address || "Unknown Address",
+        ...(complaint?.complaint_against === "HMO" && {
+          hmo_name: complaint?.hmo?.name,
+          hmo_address: "Unknown Address",
+        }),
+        ...(complaint?.complaint_against === "Provider" && {
+          provider_name: complaint?.provider?.name,
+          provider_address: "Unknown Address",
+        }),
         response: respond,
+        response_recipient: responseTo,
         docs: docs,
       };
 
@@ -158,7 +124,7 @@ const ProvidersReplyComplaint = () => {
       setAttachments({});
       handleSuccess(res.data?.message || "Response sent successfully");
       if (res.data?.id) {
-        navigate(`/provider/complaint/${complaint?.case_id}/thread`, {
+        navigate(`/stateadmin/complaint/${complaint?.case_id}/thread`, {
           state: { thread: complaint?.id },
         });
       }
@@ -169,13 +135,44 @@ const ProvidersReplyComplaint = () => {
     }
   };
 
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          color: "red",
+        }}
+      >
+        <Typography>Error: {error.message}</Typography>
+      </Box>
+    );
+  }
+
   return (
-    <Box sx={{ display: "flex", p: 4 }}>
+    <Box sx={{ display: "flex", p: 4, background: "#ffffff" }}>
       <Box
         sx={{
           display: "flex",
           flexDirection: "column",
-          width: "1034px",
+          width: "90%",
           height: "auto",
         }}
       >
@@ -193,13 +190,13 @@ const ProvidersReplyComplaint = () => {
         >
           <Typography
             sx={{
-              fontSize: "16px",
+              fontSize: "24px",
               fontWeight: 500,
-              lineHeight: "21.6px",
+              lineHeight: "32.4px",
               color: "#FFFFFF",
             }}
           >
-            Complaint Response to NHIA
+            {complaint?.case_id} - {complaint?.complaint_type || ""}
           </Typography>
         </Box>
 
@@ -223,7 +220,7 @@ const ProvidersReplyComplaint = () => {
                 color: "#111827",
               }}
             >
-              Message From NHIA
+              Message From Complainant
             </Typography>
             <Box
               sx={{
@@ -236,110 +233,80 @@ const ProvidersReplyComplaint = () => {
             >
               {complaint?.description}
             </Box>
-            <Box sx={{ mt: 2 }}>
-              <Typography
-                sx={{
-                  fontSize: "14px",
-                  fontWeight: 400,
-                  lineHeight: "24px",
-                  color: "#111827",
-                }}
-              >
-                Sent by:{" "}
-                <span>
-                  {complaint?.firstname || "-"} {complaint?.lastname || "-"}
-                </span>
-              </Typography>
-              <Typography
-                sx={{
-                  fontSize: "14px",
-                  fontWeight: 400,
-                  lineHeight: "24px",
-                  color: "#111827",
-                }}
-              >
-                Date:{" "}
-                <span>
-                  {new Date(complaint?.created_at).toLocaleDateString() || "--"}
-                </span>
-              </Typography>
-            </Box>
           </Box>
         </Box>
 
         {/*Reply*/}
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 3, p: 5 }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 3,
+            p: 4,
+            mt: 5,
+            background: "#FAFAFA",
+          }}
+        >
+          {responseTo === "Complainant" && (
+            <Typography
+              variant="subtitle1"
+              sx={{
+                fontSize: "20px",
+                fontWeight: 600,
+                lineHeight: "24px",
+                color: "#111827",
+                mb: 2,
+              }}
+            >
+              Complainant: {complaint?.firstname + " " + complaint?.lastname}
+            </Typography>
+          )}
           <Typography
             sx={{
-              fontSize: "24px",
-              fontWeight: 500,
-              lineHeight: "32.4px",
-              color: "#111827",
+              fontSize: "16px",
+              fontWeight: 400,
+              lineHeight: "21.6px",
+              color: "#000000",
             }}
           >
-            {complaint?.case_id} - {complaint?.complaint_type || ""}
+            Message {responseTo}
           </Typography>
 
+          {/* <Autocomplete
+            freeSolo
+            id="free-solo-2-demo"
+            disableClearable
+            sx={{
+              position: "relative",
+              zIndex: 9999
+            }}
+            options={hmos.map((option) => option?.label)}
+            inputValue={selectedHMO}
+            onInputChange={(event, newValue) => {
+              if (newValue) {
+                const selected = hmos.find((hmo) => hmo?.label === newValue);
+                setSelectedHMO(selected || null);
+              } else {
+                setSelectedHMO(null);
+              }
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                placeholder="Send response to..."
+                sx={textFieldStyles}
+                slotProps={{
+                  input: {
+                    ...params.InputProps,
+                    type: "search"
+                  }
+                }}
+              />
+            )}
+          /> */}
+
           {/*Input fields*/}
-          <Box
-            display="flex"
-            flexDirection={{ xs: "column", md: "row" }}
-            gap={2}
-            mt={2}
-          >
-            <Box
-              flex={1}
-              sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-            >
-              <Typography
-                sx={{
-                  color: "#595959",
-                  fontSize: "16px",
-                  fontWeight: 500,
-                  lineHeight: "24px",
-                }}
-              >
-                Provider&apos;s Name
-                <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
-              </Typography>
-              <TextField
-                fullWidth
-                variant="outlined"
-                required
-                placeholder="Provider's name"
-                value={providerName || ""}
-                onChange={(e) => setProviderName(e.target.value)}
-                // disabled
-                sx={textFieldStyles}
-              />
-            </Box>
-            <Box
-              flex={1}
-              sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-            >
-              <Typography
-                sx={{
-                  color: "#595959",
-                  fontSize: "16px",
-                  fontWeight: 500,
-                  lineHeight: "24px",
-                }}
-              >
-                Provider&apos;s Address
-                <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
-              </Typography>
-              <TextField
-                fullWidth
-                variant="outlined"
-                required
-                placeholder="Provider's address"
-                value={address || ""}
-                onChange={(e) => setAddress(e.target.value)}
-                // disabled
-                sx={textFieldStyles}
-              />
-            </Box>
-          </Box>
+
           <Box>
             <TextField
               fullWidth
@@ -376,15 +343,15 @@ const ProvidersReplyComplaint = () => {
               onClick={handleAddAttachmentClick}
             >
               {/* Attachment Limit Alert */}
-              {attachments.length >= 5 && (
+              {attachments?.length >= 5 && (
                 <Typography variant="caption" sx={{ color: "#FF0000", mt: 1 }}>
                   Maximum attachment limit reached (5).
                 </Typography>
               )}
-              {attachments.length > 0 && (
+              {attachments?.length > 0 && (
                 <Box sx={{ width: "523px", my: 2 }}>
                   <Box sx={{ display: "flex", gap: 1 }}>
-                    {attachments.map((attachment, index) => (
+                    {attachments?.map((file, index) => (
                       <Card
                         key={index}
                         sx={{
@@ -394,12 +361,11 @@ const ProvidersReplyComplaint = () => {
                           overflow: "hidden",
                         }}
                       >
-                        {/* Image Preview */}
-                        {attachment.preview ? (
+                        {file?.type?.startsWith("image") ? (
                           <CardMedia
                             component="img"
-                            image={attachment.preview}
-                            alt={attachment.name}
+                            image={file?.preview}
+                            alt={file?.name}
                             sx={{
                               width: "100%",
                               height: "100px",
@@ -422,17 +388,17 @@ const ProvidersReplyComplaint = () => {
                               width: "119.34px",
                             }}
                           >
-                            {attachment.type.includes("pdf") ? (
+                            {file?.type?.includes("pdf") ? (
                               <PictureAsPdfIcon
                                 sx={{ color: "#FF7F50", mb: 1 }}
                               />
-                            ) : attachment.type.includes("word") ||
-                              attachment.type.includes("docx") ? (
+                            ) : file?.type?.includes("word") ||
+                              file?.type?.includes("docx") ? (
                               <InsertDriveFileIcon
                                 sx={{ color: "#1E90FF", mb: 1 }}
                               />
-                            ) : attachment.type.includes("excel") ||
-                              attachment.type.includes("xlsx") ? (
+                            ) : file?.type?.includes("excel") ||
+                              file?.type?.includes("xlsx") ? (
                               <InsertDriveFileIcon
                                 sx={{ color: "#32CD32", mb: 1 }}
                               />
@@ -454,7 +420,7 @@ const ProvidersReplyComplaint = () => {
                                 color: "#595959",
                               }}
                             >
-                              {attachment.name.slice(0, 12)}
+                              {file?.name?.slice(0, 12)}
                             </Typography>
                           </Box>
                         )}
@@ -475,10 +441,7 @@ const ProvidersReplyComplaint = () => {
                           }}
                         >
                           <IconButton
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleRemoveAttachment(index);
-                            }}
+                            onClick={() => handleRemoveAttachment(index)}
                             sx={{
                               position: "absolute",
                               color: "#FF0000",
@@ -528,58 +491,28 @@ const ProvidersReplyComplaint = () => {
               </Typography>
             </Box>
 
-            <Box
-              flex={1}
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: 1,
-                width: "300px",
-              }}
-            >
-              <Typography
+            {/*Button */}
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <Button
+                variant="contained"
                 sx={{
-                  color: "#595959",
-                  fontSize: "16px",
+                  width: "261px",
+                  backgroundColor: "#038F3E",
+                  color: "#FFFFFF",
                   fontWeight: 500,
+                  fontSize: "16px",
                   lineHeight: "24px",
+                  textTransform: "capitalize",
+                  padding: "12px 24px",
+                  borderRadius: "50px",
+                  mb: 6,
                 }}
+                onClick={handleSubmit}
+                loading={isSubmitting}
               >
-                Signature of Provider
-                <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
-              </Typography>
-              <TextField
-                variant="outlined"
-                required
-                placeholder="input fullname to sign"
-                sx={textFieldStyles}
-              />
+                Send Response
+              </Button>
             </Box>
-          </Box>
-
-          {/*Button */}
-          <Box sx={{ display: "flex", justifyContent: "center" }}>
-            <Button
-              variant="contained"
-              sx={{
-                width: "26%",
-                backgroundColor: "#038F3E",
-                color: "#FFFFFF",
-                fontWeight: 500,
-                fontSize: "16px",
-                lineHeight: "24px",
-                textTransform: "capitalize",
-                padding: "12px 24px",
-                borderRadius: "50px",
-                mt: 8,
-                mb: 6,
-              }}
-              onClick={handleSubmit}
-              loading={isSubmitting}
-            >
-              Send Response
-            </Button>
           </Box>
         </Box>
       </Box>
@@ -587,4 +520,4 @@ const ProvidersReplyComplaint = () => {
   );
 };
 
-export default ProvidersReplyComplaint;
+export default CentralReplyComplaint;

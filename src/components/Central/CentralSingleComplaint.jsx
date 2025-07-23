@@ -1,33 +1,49 @@
 import {
   Box,
+  Button,
+  CircularProgress,
   // Button,
-  Typography
+  Typography,
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import {
-  useLocation
-  // useNavigate
-} from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getSingleComplaint } from "../../services/general";
 
 const CentralSingleComplaint = () => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const location = useLocation();
   const slug = location?.state.complaint;
 
   const {
-    data: complaint
-    //  isLoading,
+    data: complaint,
+    isLoading,
     //  isError,
     //  error
   } = useQuery({
     queryKey: ["complaints", slug],
-    queryFn: () => getSingleComplaint(slug)
+    queryFn: () => getSingleComplaint(slug),
   });
 
-  // const handleCompliant = () => {
-  //   navigate(`/admin/complaint/${slug?.case_id}/thread`);
-  // };
+  const handleCompliant = () => {
+    navigate(`/admin/complaint/${complaint?.case_id}/thread`, {
+      state: { thread: complaint?.id },
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Box>
@@ -38,7 +54,7 @@ const CentralSingleComplaint = () => {
               fontSize: "24px",
               fontWeight: 500,
               lineHeight: "32.4px",
-              color: "#1B1C1E"
+              color: "#1B1C1E",
             }}
           >
             Complaints
@@ -50,7 +66,7 @@ const CentralSingleComplaint = () => {
               fontSize: "24px",
               fontWeight: 500,
               lineHeight: "32.4px",
-              color: "#111827"
+              color: "#111827",
             }}
           >
             {complaint?.case_id || ""} - {complaint?.complaint_type || ""}
@@ -64,7 +80,7 @@ const CentralSingleComplaint = () => {
               fontSize: "24px",
               fontWeight: 500,
               lineHeight: "32.4px",
-              color: "#038F3E"
+              color: "#038F3E",
             }}
           >
             Complainant&apos;s Details
@@ -77,7 +93,7 @@ const CentralSingleComplaint = () => {
               width: "40%",
               gap: 2,
               mt: 4,
-              px: 2
+              px: 2,
             }}
           >
             <Box flex={1} sx={{ display: "flex", gap: 2 }}>
@@ -87,7 +103,7 @@ const CentralSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 Complainant&apos;s Name
@@ -98,7 +114,7 @@ const CentralSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 {complaint?.firstname || "-"} {complaint?.lastname || "-"}
@@ -111,7 +127,7 @@ const CentralSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 Complainant&apos;s Address
@@ -122,7 +138,7 @@ const CentralSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 {complaint?.contact_address || "--"}
@@ -135,7 +151,7 @@ const CentralSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 Complainant&apos;s Email Address
@@ -146,7 +162,7 @@ const CentralSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 {complaint?.email || "--"}
@@ -159,7 +175,7 @@ const CentralSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 Complainant&apos;s Phone Number
@@ -170,7 +186,7 @@ const CentralSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 {complaint?.phone || "--"}
@@ -183,7 +199,7 @@ const CentralSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 HMO of Complaint
@@ -194,7 +210,7 @@ const CentralSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 {complaint?.hmo?.name || "--"}
@@ -210,7 +226,7 @@ const CentralSingleComplaint = () => {
               fontSize: "24px",
               fontWeight: 500,
               lineHeight: "32.4px",
-              color: "#038F3E"
+              color: "#038F3E",
             }}
           >
             Complaints Details
@@ -223,7 +239,7 @@ const CentralSingleComplaint = () => {
               width: "40%",
               gap: 2,
               mt: 4,
-              px: 2
+              px: 2,
             }}
           >
             <Box flex={1} sx={{ display: "flex", gap: 2 }}>
@@ -233,7 +249,7 @@ const CentralSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 Date of Incident
@@ -244,7 +260,7 @@ const CentralSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 {new Date(complaint?.incident_date).toLocaleDateString() ||
@@ -258,7 +274,7 @@ const CentralSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 Time of Incident
@@ -269,7 +285,7 @@ const CentralSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 {complaint?.incident_time || "--"}
@@ -282,7 +298,7 @@ const CentralSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 Date Reported
@@ -293,7 +309,7 @@ const CentralSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 {new Date(complaint?.created_at).toLocaleDateString() || "--"}
@@ -306,7 +322,7 @@ const CentralSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 NHIA Programme
@@ -317,7 +333,7 @@ const CentralSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 {complaint?.nhia_programme || "--"}
@@ -330,7 +346,7 @@ const CentralSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 Complaint Against
@@ -341,7 +357,7 @@ const CentralSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 {complaint?.complaint_against || "--"}
@@ -354,7 +370,7 @@ const CentralSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 Name of Respondent
@@ -365,7 +381,7 @@ const CentralSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 {complaint?.respondent || "--"}
@@ -375,7 +391,7 @@ const CentralSingleComplaint = () => {
         </Box>
 
         {/*Button*/}
-        {/* <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
           <Button
             variant="contained"
             sx={{
@@ -389,13 +405,13 @@ const CentralSingleComplaint = () => {
               padding: "12px 24px",
               borderRadius: "8px",
               mt: 8,
-              mb: 6
+              mb: 6,
             }}
             onClick={handleCompliant}
           >
             Resolve Complaints
           </Button>
-        </Box> */}
+        </Box>
       </Box>
     </Box>
   );

@@ -9,6 +9,7 @@ import StateProfile from "../dashboard/StateProfile";
 import StateSingleComplaint from "../../../components/State/StateSingleComplaint";
 import StateComplaintThread from "../../../components/State/StateComplaintThread";
 import StateReplyComplaint from "../../../components/State/StateReplyComplaint";
+import StateSettings from "../dashboard/StateSettings";
 
 const StateRoutes = () => {
   return (
@@ -25,7 +26,7 @@ const StateRoutes = () => {
         </Route>
 
         <Route path="profile" element={<StateProfile />} />
-        {/* <Route path="settings" element={<StateSettings />} /> */}
+        <Route path="settings" element={<StateSettings />} />
         <Route path="complaint/:id" element={<StateSingleComplaint />} />
         <Route path="complaint/:id/thread" element={<StateComplaintThread />} />
         <Route path="complaint/:id/reply" element={<StateReplyComplaint />} />

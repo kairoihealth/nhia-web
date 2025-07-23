@@ -17,7 +17,7 @@ export const getUsers = async ({
   page,
   pageSize,
   role,
-  search
+  search,
 }) => {
   try {
     const params = new URLSearchParams();
@@ -32,6 +32,26 @@ export const getUsers = async ({
     return response.data;
   } catch (error) {
     console.error("Failed to fetch users:", error);
+    throw error;
+  }
+};
+
+export const getSingleUser = async (id) => {
+  try {
+    const response = await Api.get(e.GET_SINGLE_USER(id));
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch user:", error);
+    throw error;
+  }
+};
+
+export const userUpdateProfile = async ({ id, payload }) => {
+  try {
+    const response = await Api.patch(e.UPDATE_PROFILE(id), payload);
+    return response;
+  } catch (error) {
+    console.error("Failed to update profile:", error);
     throw error;
   }
 };

@@ -20,12 +20,16 @@ export const useHandleError = () => {
     if (error) {
       if (error?.data?.errors) {
         errorMessage = error.data.errors.map((err) => err).join(", ");
+      } else if (error?.response?.data?.errors) {
+        errorMessage = extractErrorMessages(error?.response?.data?.errors);
       } else {
         errorMessage =
-          error?.data?.message ||
-          defaultErrorMessage?.toString() ||
-          error?.message ||
-          errorMessage;
+          typeof error === "string"
+            ? error
+            : error?.data?.message ||
+              defaultErrorMessage?.toString() ||
+              error?.message ||
+              errorMessage;
       }
     }
 
@@ -56,3 +60,22 @@ export const useResponseHandler = () => {
 
   return handleResponse;
 };
+
+function extractErrorMessages(errors) {
+  const messages = [];
+
+  const recurse = (value) => {
+    if (!value) return;
+
+    if (typeof value === "string") {
+      messages.push(<div>{value}</div>);
+    } else if (Array.isArray(value)) {
+      value.forEach((item) => recurse(item));
+    } else if (typeof value === "object") {
+      Object.values(value).forEach((innerVal) => recurse(innerVal));
+    }
+  };
+
+  recurse(errors);
+  return messages;
+}

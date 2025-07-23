@@ -5,14 +5,21 @@ import {
   Card,
   CardMedia,
   IconButton,
-  Typography
+  Typography,
 } from "@mui/material";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useState } from "react";
 import PropTypes from "prop-types";
 
-const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
+const FormPreview = ({
+  firstInfo,
+  complaintInfo,
+  onSubmit,
+  isSubmitting,
+  onBack,
+  btn,
+}) => {
   const [, setFiles] = useState(complaintInfo?.files || []);
   const handleDeleteFile = (fileId) => {
     setFiles((prevFiles) => {
@@ -26,7 +33,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
     <>
       <Box
         sx={{
-          backgroundColor: { xs: "#FFFFFF", md: "#038F3E" }
+          backgroundColor: { xs: "#FFFFFF", md: "#038F3E" },
         }}
       >
         <Box
@@ -34,7 +41,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
             display: { xs: "grid", md: "flex" },
             justifyContent: "center",
             alignItems: { xs: "flex-start", md: "center" },
-            py: { xs: 0, md: 4 }
+            py: { xs: 0, md: 4 },
           }}
         >
           <Box>
@@ -45,7 +52,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                 padding: "2rem",
                 // margin: { xs: 0, md: "2rem" },
                 borderRadius: "8px",
-                px: { xs: 2, md: 16 }
+                px: { xs: 2, md: 16 },
               }}
             >
               <img
@@ -60,7 +67,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                   fontWeight: 500,
                   lineHeight: "27px",
                   color: "#038F3E",
-                  margin: "1rem 0"
+                  margin: "1rem 0",
                 }}
               >
                 Complaint Preview
@@ -71,7 +78,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                   fontWeight: 500,
                   lineHeight: "21.6px",
                   color: "#038F3E",
-                  my: 4
+                  my: 4,
                 }}
               >
                 Complainant Details
@@ -83,7 +90,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                   border: "0.5px solid #DADADA",
                   borderRadius: "8px",
                   backgroundColor: "#F5F5F5",
-                  p: 2
+                  p: 2,
                 }}
               >
                 <Box display="flex" flexDirection="column" gap={2}>
@@ -94,7 +101,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                         fontSize: { xs: "14px", md: "16px" },
                         fontWeight: 500,
                         lineHeight: "24px",
-                        width: "40%"
+                        width: "40%",
                       }}
                     >
                       Name:
@@ -105,7 +112,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                         fontSize: { xs: "14px", md: "16px" },
                         fontWeight: 500,
                         lineHeight: "24px",
-                        width: "60%"
+                        width: "60%",
                       }}
                     >
                       {firstInfo.firstName} {firstInfo.lastName}
@@ -118,7 +125,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                         fontSize: { xs: "14px", md: "16px" },
                         fontWeight: 500,
                         lineHeight: "24px",
-                        width: "40%"
+                        width: "40%",
                       }}
                     >
                       Contact Address:
@@ -129,7 +136,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                         fontSize: { xs: "14px", md: "16px" },
                         fontWeight: 500,
                         lineHeight: "24px",
-                        width: "60%"
+                        width: "60%",
                       }}
                     >
                       {firstInfo?.contactAddress}
@@ -142,7 +149,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                         fontSize: { xs: "14px", md: "16px" },
                         fontWeight: 500,
                         lineHeight: "24px",
-                        width: "40%"
+                        width: "40%",
                       }}
                     >
                       Email Address:
@@ -153,7 +160,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                         fontSize: { xs: "14px", md: "16px" },
                         fontWeight: 500,
                         lineHeight: "24px",
-                        width: "60%"
+                        width: "60%",
                       }}
                     >
                       {firstInfo.email}
@@ -166,7 +173,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                         fontSize: { xs: "14px", md: "16px" },
                         fontWeight: 500,
                         lineHeight: "24px",
-                        width: "40%"
+                        width: "40%",
                       }}
                     >
                       Phone Number:
@@ -177,7 +184,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                         fontSize: { xs: "14px", md: "16px" },
                         fontWeight: 500,
                         lineHeight: "24px",
-                        width: "60%"
+                        width: "60%",
                       }}
                     >
                       {firstInfo?.phone}
@@ -190,7 +197,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                         fontSize: { xs: "14px", md: "16px" },
                         fontWeight: 500,
                         lineHeight: "24px",
-                        width: "40%"
+                        width: "40%",
                       }}
                     >
                       HMO of Complainant:
@@ -201,7 +208,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                         fontSize: { xs: "14px", md: "16px" },
                         fontWeight: 500,
                         lineHeight: "24px",
-                        width: "60%"
+                        width: "60%",
                       }}
                     >
                       {complaintInfo?.complaint}
@@ -217,7 +224,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                     fontWeight: 500,
                     lineHeight: "21.6px",
                     color: "#038F3E",
-                    my: 4
+                    my: 4,
                   }}
                 >
                   Complaint Details
@@ -227,7 +234,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                     display: "flex",
                     flexDirection: "column",
                     width: "60%",
-                    gap: 1
+                    gap: 1,
                   }}
                 >
                   <Box
@@ -239,7 +246,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                         color: "#595959",
                         fontSize: "14px",
                         fontWeight: 500,
-                        lineHeight: "18.9px"
+                        lineHeight: "18.9px",
                       }}
                     >
                       Date of Incident:
@@ -249,7 +256,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                         color: "#1B1C1E",
                         fontSize: { xs: "14px", md: "16px" },
                         fontWeight: 500,
-                        lineHeight: "24px"
+                        lineHeight: "24px",
                       }}
                     >
                       {complaintInfo?.date}
@@ -264,7 +271,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                         color: "#595959",
                         fontSize: "14px",
                         fontWeight: 500,
-                        lineHeight: "18.9px"
+                        lineHeight: "18.9px",
                       }}
                     >
                       Time of Incident:
@@ -274,7 +281,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                         color: "#1B1C1E",
                         fontSize: { xs: "14px", md: "16px" },
                         fontWeight: 500,
-                        lineHeight: "24px"
+                        lineHeight: "24px",
                       }}
                     >
                       {complaintInfo?.time}
@@ -294,7 +301,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                     borderRadius: "8px",
                     p: 2,
                     my: 6,
-                    gap: 6
+                    gap: 6,
                   }}
                 >
                   <Box
@@ -305,7 +312,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                         fontSize: "16px",
                         fontWeight: 500,
                         lineHeight: "21.6px",
-                        color: "#000000"
+                        color: "#000000",
                       }}
                     >
                       Complaint Description
@@ -320,7 +327,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                         border: "1px solid #E4E4E7",
                         borderRadius: "8px",
                         backgroundColor: "#F8F8F8",
-                        p: 2
+                        p: 2,
                       }}
                     >
                       <Typography
@@ -328,7 +335,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                           fontSize: { xs: "14px", md: "16px" },
                           fontWeight: 500,
                           lineHeight: "24px",
-                          color: "#1B1C1E"
+                          color: "#1B1C1E",
                         }}
                       >
                         {complaintInfo?.description}
@@ -340,7 +347,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                       display: "flex",
                       flexDirection: "column",
                       gap: 1,
-                      pb: 2
+                      pb: 2,
                     }}
                   >
                     <Typography
@@ -348,7 +355,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                         fontSize: "16px",
                         fontWeight: 500,
                         lineHeight: "21.6px",
-                        color: "#000000"
+                        color: "#000000",
                       }}
                     >
                       Attachments
@@ -363,7 +370,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                               position: "relative",
                               width: "100%",
                               borderRadius: 2,
-                              overflow: "hidden"
+                              overflow: "hidden",
                             }}
                           >
                             {file.type?.startsWith("image/") ? (
@@ -382,7 +389,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                                   justifyContent: "center",
                                   height: 140,
                                   backgroundColor: "#f5f5f5",
-                                  p: 1
+                                  p: 1,
                                 }}
                               >
                                 <InsertDriveFileIcon
@@ -406,7 +413,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                                 width: "24px",
                                 height: "24px",
                                 borderRadius: "3px",
-                                backgroundColor: "#F2E2DD"
+                                backgroundColor: "#F2E2DD",
                               }}
                             >
                               <IconButton
@@ -415,8 +422,8 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                                   // backgroundColor: "rgba(0,0,0,0.5)",
                                   color: "#EB001B",
                                   "&:hover": {
-                                    backgroundColor: "rgba(0,0,0,0.7)"
-                                  }
+                                    backgroundColor: "rgba(0,0,0,0.7)",
+                                  },
                                 }}
                               >
                                 <DeleteIcon />
@@ -437,7 +444,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "flex-end",
-                    alignItems: "flex-end"
+                    alignItems: "flex-end",
                   }}
                 >
                   <Box
@@ -445,7 +452,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                       display: { xs: "grid", md: "flex" },
                       justifyContent: { xs: "center", md: "flex-end" },
                       gap: 2,
-                      my: 4
+                      my: 4,
                     }}
                   >
                     <Button
@@ -461,7 +468,7 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                         textTransform: "capitalize",
                         borderColor: "#038F3E",
                         color: "#038F3E",
-                        "&:hover": { borderColor: "#038F3E" }
+                        "&:hover": { borderColor: "#038F3E" },
                       }}
                       // href="/"
                       onClick={onBack}
@@ -480,10 +487,11 @@ const FormPreview = ({ firstInfo, complaintInfo, onSubmit, onBack, btn }) => {
                         lineHeight: "24px",
                         textTransform: "capitalize",
                         backgroundColor: "#038F3E",
-                        "&:hover": { backgroundColor: "#038F3E" }
+                        "&:hover": { backgroundColor: "#038F3E" },
                       }}
                       // href="/"
                       onClick={onSubmit}
+                      loading={isSubmitting}
                     >
                       Submit
                     </Button>
@@ -507,7 +515,7 @@ FormPreview.propTypes = {
     lastName: PropTypes.string,
     contactAddress: PropTypes.string,
     email: PropTypes.string,
-    phone: PropTypes.string
+    phone: PropTypes.string,
   }),
   complaintInfo: PropTypes.shape({
     files: PropTypes.arrayOf(
@@ -515,15 +523,15 @@ FormPreview.propTypes = {
         id: PropTypes.string,
         name: PropTypes.string,
         type: PropTypes.string,
-        preview: PropTypes.string
+        preview: PropTypes.string,
       })
     ),
     date: PropTypes.string,
     time: PropTypes.string,
     description: PropTypes.string,
-    complaint: PropTypes.string
+    complaint: PropTypes.string,
   }),
   onSubmit: PropTypes.func,
   onBack: PropTypes.func,
-  btn: PropTypes.any
+  btn: PropTypes.any,
 };

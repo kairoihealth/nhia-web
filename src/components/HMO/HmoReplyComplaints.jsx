@@ -5,7 +5,7 @@ import {
   CardMedia,
   IconButton,
   TextField,
-  Typography
+  Typography,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import AttachmentOutlinedIcon from "@mui/icons-material/AttachmentOutlined";
@@ -13,6 +13,10 @@ import { useState } from "react";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { convertToBase64 } from "../../utils/convertTobase64";
+import { useQuery } from "@tanstack/react-query";
+import { getSingleComplaint, respondToComplaint } from "../../services/general";
+import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
 
 const textFieldStyles = {
   "& .MuiOutlinedInput-root": {
@@ -21,9 +25,9 @@ const textFieldStyles = {
     color: "#000000",
     border: "0.5px solid #DADADA",
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#038F3E"
-    }
-  }
+      borderColor: "#038F3E",
+    },
+  },
 };
 
 const multiLineStyles = {
@@ -35,18 +39,40 @@ const multiLineStyles = {
       paddingTop: 0,
       paddingBottom: "16px",
       marginTop: 0,
-      alignSelf: "flex-start"
+      alignSelf: "flex-start",
     },
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#038F3E"
-    }
-  }
+      borderColor: "#038F3E",
+    },
+  },
 };
 const HmoReplyComplaints = () => {
+  const handleError = useHandleError();
+  const handleSuccess = useHandleSuccess();
   const navigate = useNavigate();
+
+  // const location = useLocation();
+  // const { data } = location.state || {};
+
   const location = useLocation();
-  const { data } = location.state || {};
+  const slug = location?.state?.thread;
   const [attachments, setAttachments] = useState([]); // State to store selected files
+  const [hmoName, setHmoName] = useState("");
+  const [address, setAddress] = useState("");
+  const [respond, setRespond] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const {
+    data: complaint,
+    //  isLoading,
+    //  isError,
+    //  error
+  } = useQuery({
+    queryKey: ["complaints", slug],
+    queryFn: () => getSingleComplaint(slug),
+  });
+
+  // const hmoName = complaint?.hmo?.name;
 
   // Function to handle file selection
   const handleFileChange = (event) => {
@@ -62,13 +88,14 @@ const HmoReplyComplaints = () => {
     setAttachments((prevAttachments) => [
       ...prevAttachments,
       ...selectedFiles.map((file) => ({
+        file, // Store the file object
         name: file.name,
         size: file.size,
         type: file.type,
         preview: file.type.startsWith("image/")
           ? URL.createObjectURL(file)
-          : null // Create preview for images
-      }))
+          : null, // Create preview for images
+      })),
     ]);
   };
 
@@ -84,8 +111,40 @@ const HmoReplyComplaints = () => {
     );
   };
 
-  const handleSubmit = () => {
-    navigate(`/hmo/complaint/${data.id}/thread`);
+  const handleSubmit = async () => {
+    // navigate(`/hmo/complaint/${data.id}/thread`);
+    setIsSubmitting(true);
+    try {
+      const docs = await Promise.all(
+        attachments.map(async (attachment) => {
+          const base64 = await convertToBase64(attachment.file);
+          return { document: base64 };
+        })
+      );
+
+      const data = {
+        complaint: complaint?.id,
+        hmo_name: hmoName,
+        hmo_address: address || "Unknown Address",
+        response: respond,
+        docs: docs,
+      };
+
+      let res = await respondToComplaint(data);
+
+      setRespond("");
+      setAttachments({});
+      handleSuccess(res.data?.message || "Response sent successfully");
+      if (res.data?.id) {
+        navigate(`/hmo/complaint/${complaint?.case_id}/thread`, {
+          state: { thread: complaint?.id },
+        });
+      }
+    } catch (error) {
+      handleError("Failed to send response:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -95,7 +154,7 @@ const HmoReplyComplaints = () => {
           display: "flex",
           flexDirection: "column",
           width: "1034px",
-          height: "auto"
+          height: "auto",
         }}
       >
         {/*Header*/}
@@ -107,7 +166,7 @@ const HmoReplyComplaints = () => {
             backgroundColor: "#20201E",
             borderTopLeftRadius: "10px",
             borderTopRightRadius: "10px",
-            px: 4
+            px: 4,
           }}
         >
           <Typography
@@ -115,7 +174,7 @@ const HmoReplyComplaints = () => {
               fontSize: "16px",
               fontWeight: 500,
               lineHeight: "21.6px",
-              color: "#FFFFFF"
+              color: "#FFFFFF",
             }}
           >
             Complaint Response to NHIA
@@ -130,7 +189,7 @@ const HmoReplyComplaints = () => {
             gap: 2,
             width: "1032px",
             mt: 2,
-            px: 5
+            px: 5,
           }}
         >
           <Box sx={{ width: "972px" }}>
@@ -139,7 +198,7 @@ const HmoReplyComplaints = () => {
                 fontSize: "20px",
                 fontWeight: 600,
                 lineHeight: "24px",
-                color: "#111827"
+                color: "#111827",
               }}
             >
               Message From NHIA
@@ -150,10 +209,10 @@ const HmoReplyComplaints = () => {
                 fontWeight: 400,
                 lineHeight: "24px",
                 color: "#1B1C1E",
-                mt: 2
+                mt: 2,
               }}
             >
-              {data.complaint}
+              {complaint?.description}
             </Box>
             <Box sx={{ mt: 2 }}>
               <Typography
@@ -161,20 +220,26 @@ const HmoReplyComplaints = () => {
                   fontSize: "14px",
                   fontWeight: 400,
                   lineHeight: "24px",
-                  color: "#111827"
+                  color: "#111827",
                 }}
               >
-                Sent by: <span>Abiodun Adeleke</span>
+                Sent by:{" "}
+                <span>
+                  {complaint?.firstname || "-"} {complaint?.lastname || "-"}
+                </span>
               </Typography>
               <Typography
                 sx={{
                   fontSize: "14px",
                   fontWeight: 400,
                   lineHeight: "24px",
-                  color: "#111827"
+                  color: "#111827",
                 }}
               >
-                Date: <span>14/04/2024</span>
+                Date:{" "}
+                <span>
+                  {new Date(complaint?.created_at).toLocaleDateString() || "--"}
+                </span>
               </Typography>
             </Box>
           </Box>
@@ -187,10 +252,10 @@ const HmoReplyComplaints = () => {
               fontSize: "24px",
               fontWeight: 500,
               lineHeight: "32.4px",
-              color: "#111827"
+              color: "#111827",
             }}
           >
-            {data.id} -Access to services
+            {complaint?.case_id} - {complaint?.complaint_type || ""}
           </Typography>
 
           {/*Input fields*/}
@@ -209,7 +274,7 @@ const HmoReplyComplaints = () => {
                   color: "#595959",
                   fontSize: "16px",
                   fontWeight: 500,
-                  lineHeight: "24px"
+                  lineHeight: "24px",
                 }}
               >
                 HMO&apos;s Name
@@ -219,7 +284,10 @@ const HmoReplyComplaints = () => {
                 fullWidth
                 variant="outlined"
                 required
-                placeholder="enter HMO's name"
+                placeholder="HMO's name"
+                value={hmoName || ""}
+                onChange={(e) => setHmoName(e.target.value)}
+                // disabled
                 sx={textFieldStyles}
               />
             </Box>
@@ -232,17 +300,20 @@ const HmoReplyComplaints = () => {
                   color: "#595959",
                   fontSize: "16px",
                   fontWeight: 500,
-                  lineHeight: "24px"
+                  lineHeight: "24px",
                 }}
               >
-                Contact Address
+                HMO&apos;s Address
                 <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
               </Typography>
               <TextField
                 fullWidth
                 variant="outlined"
                 required
-                placeholder="enter HMO's name"
+                placeholder="HMO's address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                // disabled
                 sx={textFieldStyles}
               />
             </Box>
@@ -256,8 +327,10 @@ const HmoReplyComplaints = () => {
               sx={multiLineStyles}
               placeholder="Type response here..."
               slotProps={{
-                style: { textAlign: "start" }
+                style: { textAlign: "start" },
               }}
+              value={respond}
+              onChange={(e) => setRespond(e.target.value)}
             />
           </Box>
 
@@ -268,7 +341,7 @@ const HmoReplyComplaints = () => {
               justifyContent: "space-between",
               alignItems: "flex-start",
               gap: 4,
-              mt: 3
+              mt: 3,
             }}
           >
             <Box
@@ -276,7 +349,7 @@ const HmoReplyComplaints = () => {
                 display: "flex",
                 flexDirection: "column",
                 width: "60%",
-                gap: 1
+                gap: 1,
               }}
               onClick={handleAddAttachmentClick}
             >
@@ -296,7 +369,7 @@ const HmoReplyComplaints = () => {
                           width: "119.34px",
                           borderRadius: "8px",
                           position: "relative",
-                          overflow: "hidden"
+                          overflow: "hidden",
                         }}
                       >
                         {/* Image Preview */}
@@ -308,7 +381,7 @@ const HmoReplyComplaints = () => {
                             sx={{
                               width: "100%",
                               height: "100px",
-                              objectFit: "cover"
+                              objectFit: "cover",
                             }}
                           />
                         ) : (
@@ -324,7 +397,7 @@ const HmoReplyComplaints = () => {
                               flexDirection: "column",
                               justifyContent: "center",
                               alignItems: "center",
-                              width: "119.34px"
+                              width: "119.34px",
                             }}
                           >
                             {attachment.type.includes("pdf") ? (
@@ -356,7 +429,7 @@ const HmoReplyComplaints = () => {
                                 left: 6,
                                 fontSize: "12px",
                                 fontWeight: 500,
-                                color: "#595959"
+                                color: "#595959",
                               }}
                             >
                               {attachment.name.slice(0, 12)}
@@ -376,15 +449,18 @@ const HmoReplyComplaints = () => {
                             width: "12px",
                             height: "12px",
                             borderRadius: "3px",
-                            backgroundColor: "#F2E2DD"
+                            backgroundColor: "#F2E2DD",
                           }}
                         >
                           <IconButton
-                            onClick={() => handleRemoveAttachment(index)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveAttachment(index);
+                            }}
                             sx={{
                               position: "absolute",
                               color: "#FF0000",
-                              "&:hover": { color: "#FF4500" }
+                              "&:hover": { color: "#FF4500" },
                             }}
                           >
                             <DeleteIcon />
@@ -403,7 +479,7 @@ const HmoReplyComplaints = () => {
                     fontWeight: 500,
                     lineHeight: "24px",
                     color: "#038F3E",
-                    cursor: "pointer"
+                    cursor: "pointer",
                   }}
                 >
                   Add attachment
@@ -423,7 +499,7 @@ const HmoReplyComplaints = () => {
                   fontWeight: 400,
                   lineHeight: "18px",
                   color: "#475467",
-                  mt: 1
+                  mt: 1,
                 }}
               >
                 Upload max. 5 documents
@@ -437,7 +513,7 @@ const HmoReplyComplaints = () => {
                 flexDirection: "column",
                 alignItems: "center",
                 gap: 1,
-                width: "300px"
+                width: "300px",
               }}
             >
               <Typography
@@ -445,7 +521,7 @@ const HmoReplyComplaints = () => {
                   color: "#595959",
                   fontSize: "16px",
                   fontWeight: 500,
-                  lineHeight: "24px"
+                  lineHeight: "24px",
                 }}
               >
                 Signature of HMO
@@ -475,9 +551,10 @@ const HmoReplyComplaints = () => {
                 padding: "12px 24px",
                 borderRadius: "50px",
                 mt: 8,
-                mb: 6
+                mb: 6,
               }}
               onClick={handleSubmit}
+              loading={isSubmitting}
             >
               Send Response
             </Button>

@@ -6,15 +6,22 @@ import {
   FormControl,
   InputAdornment,
   IconButton,
-  Checkbox,
-  Button
+  // Checkbox,
+  Button,
   // Link,
 } from "@mui/material";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import ProfileImage from "../../../assets/profile-img.png";
 import { VisibilityOutlined, VisibilityOffOutlined } from "@mui/icons-material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getSingleUser, userUpdateProfile } from "../../../services/central";
+import { useQuery } from "@tanstack/react-query";
+import {
+  useHandleError,
+  useHandleSuccess,
+} from "../../../hooks/useToastHandler";
+import { userChangePassword } from "../../../services/auth/auth";
 
 const textFieldStyles = {
   "& .MuiOutlinedInput-root": {
@@ -23,9 +30,9 @@ const textFieldStyles = {
     color: "#000000",
     border: "0.5px solid #DADADA",
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#038F3E"
-    }
-  }
+      borderColor: "#038F3E",
+    },
+  },
 };
 
 const formControlStyles = {
@@ -37,31 +44,81 @@ const formControlStyles = {
   border: "0.5px solid #DADADA",
   paddingY: "34px",
   fontSize: "16px",
-  outline: "none"
+  outline: "none",
 };
 
-const permissions = [
-  {
-    label: "View and manage complaints, no authority to delete.",
-    checked: true
-  },
-  {
-    label: "Generate and view reports, no permission to modify.",
-    checked: true
-  },
-  {
-    label: "Adjust user details, no permission to add or remove users.",
-    checked: true
-  },
-  {
-    label: "View settings, but cannot make significant changes.",
-    checked: true
-  }
-];
+// const permissions = [
+//   {
+//     label: "View and manage complaints, no authority to delete.",
+//     checked: true,
+//   },
+//   {
+//     label: "Generate and view reports, no permission to modify.",
+//     checked: true,
+//   },
+//   {
+//     label: "Adjust user details, no permission to add or remove users.",
+//     checked: true,
+//   },
+//   {
+//     label: "View settings, but cannot make significant changes.",
+//     checked: true,
+//   },
+// ];
+
+const getUserRole = () => localStorage.getItem("userRole");
+const getUsername = () => localStorage.getItem("fullname");
+const getUserId = () => localStorage.getItem("userId");
 
 const HmoProfile = () => {
+  const handleSuccess = useHandleSuccess();
+  const handleError = useHandleError();
+  const [isCurrentlySubmitting, setIsCurrentlySubmitting] = useState(null);
+  const userRole = getUserRole();
+  const fullname = getUsername();
+  const userId = getUserId();
   // const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+  // const [toggleEditProfile, setToggleEditProfile] = useState(false);
+  const [profileValues, setProfileValues] = useState({
+    firstname: "",
+    lastname: "",
+    phone: "",
+    email: "",
+    image: "",
+    // middlename: "",
+    // designation: "",
+  });
+  const [passwordValues, setPassowrdValues] = useState({
+    current_password: "",
+    new_password: "",
+    confirm_password: "",
+  });
+
+  const {
+    data: user,
+    //  isLoading,
+    //  isError,
+    //  error
+  } = useQuery({
+    queryKey: ["complaints", userId],
+    queryFn: () => getSingleUser(userId),
+  });
+
+  console.log("User Data:", user, profileValues);
+  useEffect(() => {
+    if (user) {
+      setProfileValues({
+        firstname: user.firstname || "",
+        lastname: user.lastname || "",
+        phone: user.phone || "",
+        email: user.email || "",
+        image: user.image,
+        // middlename: user.middlename || "",
+        // designation: user.designation || "",
+      });
+    }
+  }, [user]);
 
   // const togglePasswordVisibility = () => {
   //   setPasswordVisible(!passwordVisible);
@@ -69,6 +126,37 @@ const HmoProfile = () => {
 
   const toggleConfirmPasswordVisibility = () => {
     setConfirmPasswordVisible(!confirmPasswordVisible);
+  };
+
+  const handleUpdateProfile = async () => {
+    setIsCurrentlySubmitting("profile");
+    try {
+      let res = await userUpdateProfile({ id: userId, payload: profileValues });
+
+      handleSuccess(res.data?.message || "Response sent successfully");
+    } catch (error) {
+      handleError("Failed to send response:", error);
+    } finally {
+      setIsCurrentlySubmitting(null);
+    }
+  };
+
+  const handleChangePassword = async () => {
+    setIsCurrentlySubmitting("password");
+    try {
+      let res = await userChangePassword(passwordValues);
+
+      handleSuccess(res.data?.message || "Response sent successfully");
+      setPassowrdValues({
+        current_password: "",
+        new_password: "",
+        confirm_password: "",
+      });
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setIsCurrentlySubmitting(null);
+    }
   };
 
   return (
@@ -84,7 +172,7 @@ const HmoProfile = () => {
         sx={{
           display: "flex",
           backgroundColor: "#FAFAFA",
-          height: "100vh"
+          height: "100vh",
         }}
       >
         {/* Main Content Area */}
@@ -98,7 +186,7 @@ const HmoProfile = () => {
                 fontWeight: 500,
                 lineHeight: "28px",
                 textTransform: "none",
-                color: "#101828"
+                color: "#101828",
               }}
               gutterBottom
             >
@@ -112,18 +200,18 @@ const HmoProfile = () => {
                   display: "flex",
                   alignItems: "flex-end",
                   gap: 2,
-                  mb: 4
+                  mb: 4,
                 }}
               >
                 <Box>
                   <img
-                    src={ProfileImage}
+                    src={profileValues.image || ProfileImage}
                     alt="Profile"
                     style={{
                       width: "100px",
                       height: "100px",
                       borderRadius: "50%",
-                      marginBottom: "16px"
+                      marginBottom: "16px",
                     }}
                   />
                   <Typography
@@ -131,23 +219,23 @@ const HmoProfile = () => {
                       fontSize: "24px",
                       fontWeight: 500,
                       lineHeight: "28px",
-                      color: "#071C42"
+                      color: "#071C42",
                     }}
                   >
-                    Oyinkansola Shoroye
+                    {fullname}
                   </Typography>
                   <Typography
                     sx={{
                       fontSize: "16px",
                       fontWeight: 500,
                       lineHeight: "24px",
-                      color: "#304262"
+                      color: "#304262",
                     }}
                   >
-                    Admin I
+                    {userRole}
                   </Typography>
                 </Box>
-                <Box sx={{ mb: 2 }}>
+                {/* <Box sx={{ mb: 2 }}>
                   <Button
                     variant="contained"
                     sx={{
@@ -159,15 +247,21 @@ const HmoProfile = () => {
                       fontWeight: 500,
                       lineHeight: "24px",
                       textTransform: "none",
-                      color: "#F2F2F2"
+                      color: "#F2F2F2",
                     }}
+                    onClick={() => setToggleEditProfile(!toggleEditProfile)}
                   >
                     Edit Profile
                   </Button>
-                </Box>
+                </Box> */}
               </Box>
 
-              <form>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleUpdateProfile();
+                }}
+              >
                 <Box
                   display="flex"
                   flexDirection={{ xs: "column", md: "row" }}
@@ -182,7 +276,7 @@ const HmoProfile = () => {
                         color: "#595959",
                         fontSize: "16px",
                         fontWeight: 500,
-                        lineHeight: "24px"
+                        lineHeight: "24px",
                       }}
                     >
                       First Name
@@ -193,6 +287,14 @@ const HmoProfile = () => {
                       required
                       placeholder="enter first name"
                       sx={textFieldStyles}
+                      name="firstname"
+                      value={profileValues.firstname}
+                      onChange={(e) =>
+                        setProfileValues({
+                          ...profileValues,
+                          firstname: e.target.value,
+                        })
+                      }
                     />
                   </Box>
                   <Box
@@ -204,7 +306,7 @@ const HmoProfile = () => {
                         color: "#595959",
                         fontSize: "16px",
                         fontWeight: 500,
-                        lineHeight: "24px"
+                        lineHeight: "24px",
                       }}
                     >
                       Last Name
@@ -215,6 +317,14 @@ const HmoProfile = () => {
                       required
                       placeholder="enter last name"
                       sx={textFieldStyles}
+                      name="lastname"
+                      value={profileValues.lastname}
+                      onChange={(e) =>
+                        setProfileValues({
+                          ...profileValues,
+                          lastname: e.target.value,
+                        })
+                      }
                     />
                   </Box>
                 </Box>
@@ -224,7 +334,7 @@ const HmoProfile = () => {
                   gap={2}
                   mt={2}
                 >
-                  <Box
+                  {/* <Box
                     flex={1}
                     sx={{ display: "flex", flexDirection: "column", gap: 1 }}
                   >
@@ -233,7 +343,7 @@ const HmoProfile = () => {
                         color: "#595959",
                         fontSize: "16px",
                         fontWeight: 500,
-                        lineHeight: "24px"
+                        lineHeight: "24px",
                       }}
                     >
                       Middle Name
@@ -241,11 +351,19 @@ const HmoProfile = () => {
                     <TextField
                       fullWidth
                       variant="outlined"
-                      required
+                      // required
                       placeholder="enter middle name"
                       sx={textFieldStyles}
+                      name="middlename"
+                      value={profileValues.middlename}
+                      onChange={(e) =>
+                        setProfileValues({
+                          ...profileValues,
+                          middlename: e.target.value,
+                        })
+                      }
                     />
-                  </Box>
+                  </Box> */}
                   <Box
                     flex={1}
                     sx={{ display: "flex", flexDirection: "column", gap: 1 }}
@@ -255,7 +373,7 @@ const HmoProfile = () => {
                         color: "#595959",
                         fontSize: "16px",
                         fontWeight: 500,
-                        lineHeight: "24px"
+                        lineHeight: "24px",
                       }}
                     >
                       Phone Number
@@ -264,16 +382,21 @@ const HmoProfile = () => {
                       <PhoneInput
                         country={"ng"}
                         inputStyle={formControlStyles}
+                        inputProps={{
+                          name: "phone",
+                          required: true,
+                          placeholder: "Enter phone number",
+                        }}
+                        value={profileValues.phone}
+                        onChange={(phone) =>
+                          setProfileValues({
+                            ...profileValues,
+                            phone: phone,
+                          })
+                        }
                       />
                     </FormControl>
                   </Box>
-                </Box>
-                <Box
-                  display="flex"
-                  flexDirection={{ xs: "column", md: "row" }}
-                  gap={2}
-                  mt={2}
-                >
                   <Box
                     flex={1}
                     sx={{ display: "flex", flexDirection: "column", gap: 1 }}
@@ -283,7 +406,7 @@ const HmoProfile = () => {
                         color: "#595959",
                         fontSize: "16px",
                         fontWeight: 500,
-                        lineHeight: "24px"
+                        lineHeight: "24px",
                       }}
                     >
                       Email Address
@@ -295,9 +418,24 @@ const HmoProfile = () => {
                       type="email"
                       placeholder="example@example.com"
                       sx={textFieldStyles}
+                      name="email"
+                      value={profileValues.email}
+                      onChange={(e) =>
+                        setProfileValues({
+                          ...profileValues,
+                          email: e.target.value,
+                        })
+                      }
                     />
                   </Box>
-                  <Box
+                </Box>
+                <Box
+                  display="flex"
+                  flexDirection={{ xs: "column", md: "row" }}
+                  gap={2}
+                  mt={2}
+                >
+                  {/* <Box
                     flex={1}
                     sx={{ display: "flex", flexDirection: "column", gap: 1 }}
                   >
@@ -306,7 +444,7 @@ const HmoProfile = () => {
                         color: "#595959",
                         fontSize: "16px",
                         fontWeight: 500,
-                        lineHeight: "24px"
+                        lineHeight: "24px",
                       }}
                     >
                       Designation
@@ -314,22 +452,42 @@ const HmoProfile = () => {
                     <TextField
                       fullWidth
                       variant="outlined"
-                      required
+                      // required
                       placeholder="e.g H23 dolphin estate"
                       sx={textFieldStyles}
                     />
-                  </Box>
+                  </Box> */}
+                </Box>
+                <Box sx={{ mb: 2 }} display={"flex"} justifyContent={"center"}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    sx={{
+                      width: "144px",
+                      height: "42px",
+                      borderRadius: "12px",
+                      backgroundColor: "#038F3E",
+                      color: "#FFFFFF",
+                      fontSize: "16px",
+                      fontWeight: 500,
+                      lineHeight: "24px",
+                      textTransform: "none",
+                      marginTop: "36px",
+                    }}
+                    loading={isCurrentlySubmitting === "profile"}
+                  >
+                    Update Profile
+                  </Button>
                 </Box>
               </form>
             </Box>
 
             {/* Form Section */}
             <Box
-              component="form"
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                gap: 3
+                gap: 3,
               }}
             >
               {/* Security Section */}
@@ -340,93 +498,56 @@ const HmoProfile = () => {
                   lineHeight: "32.4px",
                   textTransform: "none",
                   color: "#038F3E",
-                  mt: 5
+                  mt: 5,
                 }}
               >
                 Security
               </Typography>
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                {/* Current Password */}
-                <Box
-                  flex={1}
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 1,
-                    width: "49%"
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      color: "#595959",
-                      fontSize: "16px",
-                      fontWeight: 500,
-                      lineHeight: "24px"
-                    }}
-                  >
-                    Enter your current password
-                    <span style={{ color: "#099243", marginLeft: "6px" }}>
-                      *
-                    </span>
-                  </Typography>
-                  <TextField
-                    type="password"
-                    variant="outlined"
-                    required
-                    placeholder="enter your password"
-                    sx={textFieldStyles}
-                    slotProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton onClick={toggleConfirmPasswordVisibility}>
-                            {confirmPasswordVisible ? (
-                              <VisibilityOffOutlined />
-                            ) : (
-                              <VisibilityOutlined />
-                            )}
-                          </IconButton>
-                        </InputAdornment>
-                      )
-                    }}
-                  />
-                  <Typography
-                    sx={{
-                      color: "#595959",
-                      fontSize: "16px",
-                      fontWeight: 500,
-                      lineHeight: "24px"
-                    }}
-                  >
-                    Can&apos;t remember your password?
-                  </Typography>
-                </Box>
-
-                {/* New Password and Confirm Password */}
-                <Box sx={{ display: "flex", gap: 2, mt: 2, flexWrap: "wrap" }}>
+              <Box
+                component="form"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleChangePassword();
+                }}
+              >
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                  {/* Current Password */}
                   <Box
                     flex={1}
-                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 1,
+                      width: "49%",
+                    }}
                   >
                     <Typography
                       sx={{
                         color: "#595959",
                         fontSize: "16px",
                         fontWeight: 500,
-                        lineHeight: "24px"
+                        lineHeight: "24px",
                       }}
                     >
-                      New Password
+                      Enter your current password
                       <span style={{ color: "#099243", marginLeft: "6px" }}>
                         *
                       </span>
                     </Typography>
                     <TextField
-                      fullWidth
                       type="password"
                       variant="outlined"
                       required
-                      placeholder="enter first name"
+                      placeholder="enter your password"
                       sx={textFieldStyles}
+                      name="current_password"
+                      value={passwordValues.current_password}
+                      onChange={(e) =>
+                        setPassowrdValues({
+                          ...passwordValues,
+                          current_password: e.target.value,
+                        })
+                      }
                       slotProps={{
                         endAdornment: (
                           <InputAdornment position="end">
@@ -440,56 +561,154 @@ const HmoProfile = () => {
                               )}
                             </IconButton>
                           </InputAdornment>
-                        )
+                        ),
                       }}
                     />
+                    {/* <Typography
+                      sx={{
+                        color: "#595959",
+                        fontSize: "16px",
+                        fontWeight: 500,
+                        lineHeight: "24px",
+                      }}
+                    >
+                      Can&apos;t remember your password?
+                    </Typography> */}
+                  </Box>
+
+                  {/* New Password and Confirm Password */}
+                  <Box
+                    sx={{ display: "flex", gap: 2, mt: 2, flexWrap: "wrap" }}
+                  >
+                    <Box
+                      flex={1}
+                      sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                    >
+                      <Typography
+                        sx={{
+                          color: "#595959",
+                          fontSize: "16px",
+                          fontWeight: 500,
+                          lineHeight: "24px",
+                        }}
+                      >
+                        New Password
+                        <span style={{ color: "#099243", marginLeft: "6px" }}>
+                          *
+                        </span>
+                      </Typography>
+                      <TextField
+                        fullWidth
+                        type="password"
+                        variant="outlined"
+                        required
+                        placeholder="Enter new password"
+                        sx={textFieldStyles}
+                        name="new_password"
+                        value={passwordValues.new_password}
+                        onChange={(e) =>
+                          setPassowrdValues({
+                            ...passwordValues,
+                            new_password: e.target.value,
+                          })
+                        }
+                        slotProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton
+                                onClick={toggleConfirmPasswordVisibility}
+                              >
+                                {confirmPasswordVisible ? (
+                                  <VisibilityOffOutlined />
+                                ) : (
+                                  <VisibilityOutlined />
+                                )}
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </Box>
+                    <Box
+                      flex={1}
+                      sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                    >
+                      <Typography
+                        sx={{
+                          color: "#595959",
+                          fontSize: "16px",
+                          fontWeight: 500,
+                          lineHeight: "24px",
+                        }}
+                      >
+                        Confirm new password
+                        <span style={{ color: "#099243", marginLeft: "6px" }}>
+                          *
+                        </span>
+                      </Typography>
+                      <TextField
+                        fullWidth
+                        type="password"
+                        variant="outlined"
+                        required
+                        placeholder="Confirm new password"
+                        sx={textFieldStyles}
+                        name="confirm_password"
+                        value={passwordValues.confirm_password}
+                        onChange={(e) =>
+                          setPassowrdValues({
+                            ...passwordValues,
+                            confirm_password: e.target.value,
+                          })
+                        }
+                        slotProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton
+                                onClick={toggleConfirmPasswordVisibility}
+                              >
+                                {confirmPasswordVisible ? (
+                                  <VisibilityOffOutlined />
+                                ) : (
+                                  <VisibilityOutlined />
+                                )}
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </Box>
                   </Box>
                   <Box
-                    flex={1}
-                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                    sx={{ mb: 2 }}
+                    display={"flex"}
+                    justifyContent={"center"}
                   >
-                    <Typography
+                    <Button
+                      type="submit"
+                      variant="contained"
                       sx={{
-                        color: "#595959",
+                        // width: "144px",
+                        height: "42px",
+                        borderRadius: "12px",
+                        backgroundColor: "#038F3E",
+                        color: "#FFFFFF",
                         fontSize: "16px",
                         fontWeight: 500,
-                        lineHeight: "24px"
+                        lineHeight: "24px",
+                        textTransform: "none",
+                        marginTop: "36px",
                       }}
+                      loading={isCurrentlySubmitting === "password"}
                     >
-                      Confirm new password
-                      <span style={{ color: "#099243", marginLeft: "6px" }}>
-                        *
-                      </span>
-                    </Typography>
-                    <TextField
-                      fullWidth
-                      type="password"
-                      variant="outlined"
-                      required
-                      placeholder="enter first name"
-                      sx={textFieldStyles}
-                      slotProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              onClick={toggleConfirmPasswordVisibility}
-                            >
-                              {confirmPasswordVisible ? (
-                                <VisibilityOffOutlined />
-                              ) : (
-                                <VisibilityOutlined />
-                              )}
-                            </IconButton>
-                          </InputAdornment>
-                        )
-                      }}
-                    />
+                      Update Password
+                    </Button>
                   </Box>
                 </Box>
               </Box>
 
               {/* Permission Section */}
-              <Box sx={{ display: "flex", flexDirection: "column", mb: 4 }}>
+              {/* <Box sx={{ display: "flex", flexDirection: "column", mb: 4 }}>
                 <Typography
                   sx={{
                     fontSize: "24px",
@@ -497,7 +716,7 @@ const HmoProfile = () => {
                     lineHeight: "32.4px",
                     textTransform: "none",
                     color: "#038F3E",
-                    mt: 5
+                    mt: 5,
                   }}
                 >
                   Permissions
@@ -510,7 +729,7 @@ const HmoProfile = () => {
                       lineHeight: "28px",
                       textTransform: "none",
                       color: "#071C42",
-                      mb: 1
+                      mb: 1,
                     }}
                   >
                     Oyinkansola Shoroye
@@ -522,7 +741,7 @@ const HmoProfile = () => {
                       lineHeight: "24px",
                       textTransform: "none",
                       color: "#304262",
-                      mb: 2
+                      mb: 2,
                     }}
                   >
                     Admin II
@@ -538,23 +757,23 @@ const HmoProfile = () => {
                         fontSize: "16px",
                         fontWeight: 400,
                         lineHeight: "28px",
-                        color: "#595959"
+                        color: "#595959",
                       }}
                     >
                       <Checkbox
                         defaultChecked={permission.checked}
                         sx={{
                           "&.Mui-checked, &.MuiCheckbox-indeterminate": {
-                            color: "#000000"
+                            color: "#000000",
                           },
-                          color: "#000000"
+                          color: "#000000",
                         }}
                       />
                       {permission.label}
                     </Typography>
                   ))}
                 </Box>
-              </Box>
+              </Box> */}
             </Box>
           </Box>
         </Box>

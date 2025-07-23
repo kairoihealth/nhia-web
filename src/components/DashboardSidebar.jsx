@@ -6,7 +6,7 @@ import {
   ListItemIcon,
   ListItemText,
   IconButton,
-  Typography
+  Typography,
 } from "@mui/material";
 import {
   FiMenu,
@@ -14,7 +14,8 @@ import {
   FiX,
   FiUser,
   // FiSettings,
-  FiHome
+  FiHome,
+  FiSettings,
 } from "react-icons/fi";
 import Logo from "../assets/nhia-logo.png";
 import { TbReportAnalytics } from "react-icons/tb";
@@ -29,15 +30,15 @@ const menuData = {
       id: 2,
       label: "Complaints",
       icon: <FaRegComment />,
-      link: "/hmo/complaints"
+      link: "/hmo/complaints",
     },
     {
       id: 3,
       label: "Reports",
       icon: <TbReportAnalytics />,
-      link: "/hmo/reports"
+      link: "/hmo/reports",
     },
-    { id: 4, label: "Profile", icon: <FiUser />, link: "/hmo/profile" }
+    { id: 4, label: "Profile", icon: <FiUser />, link: "/hmo/profile" },
     // { id: 5, label: "Settings", icon: <FiSettings />, link: "/hmo/settings" }
   ],
   Provider: [
@@ -45,21 +46,21 @@ const menuData = {
       id: 1,
       label: "Dashboard",
       icon: <FiHome />,
-      link: "/provider/dashboard"
+      link: "/provider/dashboard",
     },
     {
       id: 2,
       label: "Complaints",
       icon: <FaRegComment />,
-      link: "/provider/complaints"
+      link: "/provider/complaints",
     },
     {
       id: 3,
       label: "Reports",
       icon: <TbReportAnalytics />,
-      link: "/provider/reports"
+      link: "/provider/reports",
     },
-    { id: 4, label: "Profile", icon: <FiUser />, link: "/provider/profile" }
+    { id: 4, label: "Profile", icon: <FiUser />, link: "/provider/profile" },
     // {
     //   id: 5,
     //   label: "Settings",
@@ -72,33 +73,33 @@ const menuData = {
       id: 1,
       label: "Dashboard",
       icon: <FiHome />,
-      link: "/stateadmin/dashboard"
+      link: "/stateadmin/dashboard",
     },
     {
       id: 2,
       label: "Complaints",
       icon: <FaRegComment />,
-      link: "/stateadmin/complaints"
+      link: "/stateadmin/complaints",
     },
     {
       id: 3,
       label: "Reports",
       icon: <TbReportAnalytics />,
-      link: "/stateadmin/reports"
+      link: "/stateadmin/reports",
     },
     {
       id: 4,
       label: "Providers & HMO",
       icon: <LuCross />,
-      link: "/stateadmin/invitations"
+      link: "/stateadmin/invitations",
     },
-    { id: 5, label: "Profile", icon: <FiUser />, link: "/stateadmin/profile" }
-    // {
-    //   id: 6,
-    //   label: "Settings",
-    //   icon: <FiSettings />,
-    //   link: "/stateadmin/settings"
-    // }
+    { id: 5, label: "Profile", icon: <FiUser />, link: "/stateadmin/profile" },
+    {
+      id: 6,
+      label: "Settings",
+      icon: <FiSettings />,
+      link: "/stateadmin/settings",
+    },
   ],
   Admin: [
     { id: 1, label: "Dashboard", icon: <FiHome />, link: "/admin/dashboard" },
@@ -107,28 +108,28 @@ const menuData = {
       id: 2,
       label: "Complaints",
       icon: <FaRegComment />,
-      link: "/admin/complaints"
+      link: "/admin/complaints",
     },
     {
       id: 3,
       label: "Reports",
       icon: <TbReportAnalytics />,
-      link: "/admin/reports"
+      link: "/admin/reports",
     },
     {
       id: 4,
       label: "State Invites",
       icon: <LuCross />,
-      link: "/admin/state/invite"
+      link: "/admin/state/invite",
     },
-    { id: 5, label: "Profile", icon: <FiUser />, link: "/admin/profile" }
+    { id: 5, label: "Profile", icon: <FiUser />, link: "/admin/profile" },
     // {
     //   id: 6,
     //   label: "Settings",
     //   icon: <FiSettings />,
     //   link: "/admin/settings"
     // }
-  ]
+  ],
 };
 
 const DashboardSidebar = () => {
@@ -159,7 +160,7 @@ const DashboardSidebar = () => {
         height: "100vh",
         overflowY: "auto",
         overflowX: "hidden",
-        p: 6
+        p: 6,
       }}
     >
       {/* Mobile Menu Toggle */}
@@ -167,7 +168,7 @@ const DashboardSidebar = () => {
         sx={{
           p: 2,
           display: { xs: "flex", md: "none" },
-          justifyContent: "center"
+          justifyContent: "center",
         }}
       >
         <IconButton onClick={handleMobileMenuToggle}>
@@ -187,13 +188,13 @@ const DashboardSidebar = () => {
             flexDirection: "column",
             gap: 2,
             mt: 3,
-            cursor: "pointer"
+            cursor: "pointer",
           }}
         >
           {menuData[role]?.length > 0 ? (
-            menuData[role].map((item) => (
+            menuData[role].map((item, index) => (
               <NavLink
-                key={item.id}
+                key={index}
                 to={item.link}
                 style={({ isActive }) => ({
                   width: "223px",
@@ -204,7 +205,7 @@ const DashboardSidebar = () => {
                   borderBottomLeftRadius: "20px",
                   padding: "12px 20px",
                   display: "flex",
-                  alignItems: "flex-end"
+                  alignItems: "flex-end",
                 })}
               >
                 {({ isActive }) => (
@@ -214,7 +215,7 @@ const DashboardSidebar = () => {
                       sx={{
                         fontSize: "16px",
                         fontWeight: isActive ? 600 : 500,
-                        lineHeight: "21.6px"
+                        lineHeight: "21.6px",
                       }}
                     >
                       {item.label}
@@ -238,7 +239,7 @@ const DashboardSidebar = () => {
           bottom: 0,
           width: "100%",
           borderTop: "1px solid #e0e0e0",
-          cursor: "pointer"
+          cursor: "pointer",
         }}
       >
         <ListItem
@@ -248,7 +249,7 @@ const DashboardSidebar = () => {
             background: "none",
             border: "none",
             cursor: "pointer",
-            color: "#ffffff"
+            color: "#ffffff",
           }}
         >
           <ListItemIcon>
@@ -265,5 +266,5 @@ export default DashboardSidebar;
 
 DashboardSidebar.propTypes = {
   menuData: PropTypes.array.isRequired,
-  role: PropTypes.string
+  role: PropTypes.string,
 };

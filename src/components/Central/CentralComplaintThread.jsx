@@ -37,7 +37,7 @@ import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
 //   ]
 // };
 
-const StateComplaintThread = () => {
+const CentralComplaintThread = () => {
   const handleError = useHandleError();
   const handleSuccess = useHandleSuccess();
   const location = useLocation();
@@ -67,6 +67,9 @@ const StateComplaintThread = () => {
     queryKey: ["complaintResponses", thread],
     queryFn: () => getComplaintResponses(thread),
   });
+
+  const centralNhiaResponse =
+    responses?.find((response) => response.response_by?.role === "Admin") || {};
 
   const handleUpdateStatus = async (status) => {
     try {
@@ -445,9 +448,86 @@ const StateComplaintThread = () => {
                   </Typography>
                 )}
               </Box>
+
+              {/*Message trail*/}
+              {centralNhiaResponse && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 2,
+                    mt: 2,
+                  }}
+                >
+                  <Box sx={{ width: "987px", textAlign: "center", my: 2 }}>
+                    <Divider
+                      sx={{
+                        borderBottom: "1px dashed #000000",
+                      }}
+                    />
+                  </Box>
+                  <Box sx={{ width: "972px" }}>
+                    <Typography
+                      sx={{
+                        fontSize: "20px",
+                        fontWeight: 600,
+                        lineHeight: "24px",
+                        color: "#111827",
+                      }}
+                    >
+                      Message From NHIA
+                    </Typography>
+                    <Box
+                      sx={{
+                        fontSize: "16px",
+                        fontWeight: 400,
+                        lineHeight: "24px",
+                        color: "#1B1C1E",
+                        my: 2.6,
+                      }}
+                    >
+                      <Typography>
+                        {centralNhiaResponse?.response ||
+                          "No response provided."}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <Typography
+                        sx={{
+                          fontSize: "14px",
+                          fontWeight: 400,
+                          lineHeight: "24px",
+                          color: "#111827",
+                        }}
+                      >
+                        Sent by:{" "}
+                        <span>
+                          {centralNhiaResponse?.response_by?.firstname +
+                            " " +
+                            centralNhiaResponse?.response_by?.lastname}
+                        </span>
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontSize: "14px",
+                          fontWeight: 400,
+                          lineHeight: "24px",
+                          color: "#111827",
+                        }}
+                      >
+                        Date:{" "}
+                        <span>
+                          {new Date(
+                            centralNhiaResponse?.created_at
+                          ).toLocaleDateString() || "--"}
+                        </span>
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Box>
+              )}
             </Box>
 
-            {/*Message trail*/}
             {/* <Box
         sx={{
           display: "flex",
@@ -883,4 +963,4 @@ const StateComplaintThread = () => {
   );
 };
 
-export default StateComplaintThread;
+export default CentralComplaintThread;
