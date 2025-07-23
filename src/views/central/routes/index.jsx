@@ -11,6 +11,8 @@ import StateInvitationForm from "../dashboard/StateInvitationForm";
 import CentralProfile from "../dashboard/CentralProfile";
 // import CentralSettings from "../dashboard/CentralSettings";
 import CentralSingleComplaint from "../../../components/Central/CentralSingleComplaint";
+import CentralComplaintThread from "../../../components/Central/CentralComplaintThread";
+import CentralReplyComplaint from "../../../components/Central/CentralReplyComplaint";
 
 const CentralRoutes = () => {
   return (
@@ -33,6 +35,11 @@ const CentralRoutes = () => {
         <Route path="profile" element={<CentralProfile />} />
         {/* <Route path="settings" element={<CentralSettings />} /> */}
         <Route path="complaint/:id" element={<CentralSingleComplaint />} />
+        <Route
+          path="complaint/:id/thread"
+          element={<CentralComplaintThread />}
+        />
+        <Route path="complaint/:id/reply" element={<CentralReplyComplaint />} />
       </Route>
     </Routes>
   );

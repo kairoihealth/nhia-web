@@ -8,6 +8,8 @@ export const getComplaints = async ({
   search,
   state,
   status,
+  start_date,
+  end_date,
 }) => {
   try {
     const params = new URLSearchParams();
@@ -17,6 +19,8 @@ export const getComplaints = async ({
     if (search) params.append("search", search);
     if (state) params.append("state", state.toString());
     if (status) params.append("status", status);
+    if (start_date) params.append("start_date", start_date);
+    if (end_date) params.append("end_date", end_date);
 
     const response = await Api.get(e.GET_COMPLAINTS, { params });
     return response.data;
@@ -87,9 +91,32 @@ export const respondToComplaint = async (payload) => {
   }
 };
 
-export const getComplaintSatisfactionScores = async () => {
+export const updateComplaintStatus = async ({ id, payload }) => {
   try {
-    const response = await Api.get(e.GET_COMPLAINT_SATISFACTION_SCORES);
+    const response = await Api.post(e.UPDATE_COMPLAINT_STATUS(id), payload);
+    return response;
+  } catch (error) {
+    console.error("Failed to update complaint status:", error);
+    throw error;
+  }
+};
+
+export const getComplaintSatisfactionScores = async ({
+  start_date,
+  end_date,
+  region_id,
+  state_id,
+}) => {
+  const params = new URLSearchParams();
+  if (start_date) params.append("start_date", start_date);
+  if (end_date) params.append("end_date", end_date);
+  if (region_id) params.append("region_id", region_id);
+  if (state_id) params.append("state_id", state_id);
+
+  try {
+    const response = await Api.get(e.GET_COMPLAINT_SATISFACTION_SCORES, {
+      params,
+    });
     return response.data;
   } catch (error) {
     console.error("Failed to fetch scores:", error);
@@ -97,9 +124,20 @@ export const getComplaintSatisfactionScores = async () => {
   }
 };
 
-export const getComplaintStats = async () => {
+export const getComplaintStats = async ({
+  start_date,
+  end_date,
+  region_id,
+  state_id,
+}) => {
+  const params = new URLSearchParams();
+  if (start_date) params.append("start_date", start_date);
+  if (end_date) params.append("end_date", end_date);
+  if (region_id) params.append("region_id", region_id);
+  if (state_id) params.append("state_id", state_id);
+
   try {
-    const response = await Api.get(e.GET_COMPLAINT_STATS);
+    const response = await Api.get(e.GET_COMPLAINT_STATS, { params });
     return response.data;
   } catch (error) {
     console.error("Failed to fetch complaint stats:", error);
@@ -107,9 +145,20 @@ export const getComplaintStats = async () => {
   }
 };
 
-export const getComplaintTrends = async () => {
+export const getComplaintTrends = async ({
+  start_date,
+  end_date,
+  region_id,
+  state_id,
+}) => {
+  const params = new URLSearchParams();
+  if (start_date) params.append("start_date", start_date);
+  if (end_date) params.append("end_date", end_date);
+  if (region_id) params.append("region_id", region_id);
+  if (state_id) params.append("state_id", state_id);
+
   try {
-    const response = await Api.get(e.GET_COMPLAINT_TRENDS);
+    const response = await Api.get(e.GET_COMPLAINT_TRENDS, { params });
     return response.data;
   } catch (error) {
     console.error("Failed to fetch complaint trends:", error);
@@ -117,9 +166,20 @@ export const getComplaintTrends = async () => {
   }
 };
 
-export const getComplaintTrendsByOrganisation = async () => {
+export const getComplaintTrendsByOrganisation = async ({
+  start_date,
+  end_date,
+  region_id,
+  state_id,
+}) => {
+  const params = new URLSearchParams();
+  if (start_date) params.append("start_date", start_date);
+  if (end_date) params.append("end_date", end_date);
+  if (region_id) params.append("region_id", region_id);
+  if (state_id) params.append("state_id", state_id);
+
   try {
-    const response = await Api.get(e.GET_COMPLAINT_TRENDS_BY_ORG);
+    const response = await Api.get(e.GET_COMPLAINT_TRENDS_BY_ORG, { params });
     return response.data;
   } catch (error) {
     console.error("Failed to fetch complaint trends:", error);

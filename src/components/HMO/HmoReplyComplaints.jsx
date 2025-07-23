@@ -57,6 +57,8 @@ const HmoReplyComplaints = () => {
   const location = useLocation();
   const slug = location?.state?.thread;
   const [attachments, setAttachments] = useState([]); // State to store selected files
+  const [hmoName, setHmoName] = useState("");
+  const [address, setAddress] = useState("");
   const [respond, setRespond] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -70,17 +72,7 @@ const HmoReplyComplaints = () => {
     queryFn: () => getSingleComplaint(slug),
   });
 
-  const hmoName = complaint?.hmo?.name;
-
-  // const {
-  //   data: responses,
-  //   //  isLoading,
-  //   //  isError,
-  //   //  error
-  // } = useQuery({
-  //   queryKey: ["complaintResponses", slug],
-  //   queryFn: () => getComplaintResponses(slug),
-  // });
+  // const hmoName = complaint?.hmo?.name;
 
   // Function to handle file selection
   const handleFileChange = (event) => {
@@ -133,7 +125,7 @@ const HmoReplyComplaints = () => {
       const data = {
         complaint: complaint?.id,
         hmo_name: hmoName,
-        hmo_address: complaint?.hmo?.address || "Unknown Address",
+        hmo_address: address || "Unknown Address",
         response: respond,
         docs: docs,
       };
@@ -263,8 +255,7 @@ const HmoReplyComplaints = () => {
               color: "#111827",
             }}
           >
-            {complaint?.case_id} -{" "}
-            {complaint?.complaint_type || "Access to services"}
+            {complaint?.case_id} - {complaint?.complaint_type || ""}
           </Typography>
 
           {/*Input fields*/}
@@ -295,7 +286,8 @@ const HmoReplyComplaints = () => {
                 required
                 placeholder="HMO's name"
                 value={hmoName || ""}
-                disabled
+                onChange={(e) => setHmoName(e.target.value)}
+                // disabled
                 sx={textFieldStyles}
               />
             </Box>
@@ -319,6 +311,8 @@ const HmoReplyComplaints = () => {
                 variant="outlined"
                 required
                 placeholder="HMO's address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
                 // disabled
                 sx={textFieldStyles}
               />

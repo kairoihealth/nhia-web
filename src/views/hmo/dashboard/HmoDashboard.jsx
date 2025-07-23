@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Box, Typography, Card, CircularProgress } from "@mui/material";
 import ReusableTable from "../../../shared/Table";
 // import DashboardLayout from "../../../shared/DashboardLayout";
@@ -5,7 +6,7 @@ import ArrowRightAltTwoToneIcon from "@mui/icons-material/ArrowRightAltTwoTone";
 import { useNavigate } from "react-router-dom";
 
 import PieChart from "../../../shared/PieChart";
-import { pieColor } from "../../../mock/chartData";
+// import { pieColor } from "../../../mock/chartData";
 import BarChart from "../../../shared/BarChart";
 import LineChart from "../../../shared/LineChart";
 import { barOptions, lineOptions, options } from "../../../utils/config";
@@ -17,22 +18,8 @@ import {
   getComplaintTrends,
 } from "../../../services/general";
 import { useQuery } from "@tanstack/react-query";
-
-const getInitials = (name) => {
-  if (!name) return "";
-  const parts = name.split(" ");
-  if (parts.length === 1) {
-    return parts[0].charAt(0).toUpperCase();
-  }
-  return (
-    parts[0].charAt(0).toUpperCase() + parts[1].charAt(0).toUpperCase() || ""
-  );
-};
-
-const shortenDay = (date) => {
-  let day = new Date(date);
-  return day.toLocaleDateString("en-US", { weekday: "short" });
-};
+import { getInitials, shortenDay } from "../../../utils/general";
+import { useMemo } from "react";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -54,7 +41,7 @@ const Dashboard = () => {
     // error,
   } = useQuery({
     queryKey: ["complaintScores"],
-    queryFn: () => getComplaintSatisfactionScores(),
+    queryFn: () => getComplaintSatisfactionScores({}),
   });
 
   const {
@@ -64,7 +51,7 @@ const Dashboard = () => {
     // error,
   } = useQuery({
     queryKey: ["complaintStats"],
-    queryFn: () => getComplaintStats(),
+    queryFn: () => getComplaintStats({}),
   });
 
   const {
@@ -74,20 +61,51 @@ const Dashboard = () => {
     // error,
   } = useQuery({
     queryKey: ["complaintTrends"],
-    queryFn: () => getComplaintTrends(),
+    queryFn: () => getComplaintTrends({}),
   });
 
-  const pieData = {
-    labels: complaintStats?.status?.map((status) => status.status) || [],
+  const pieStatusColors = [
+    { status: "pending", color: "#FFCC99" },
+    { status: "active", color: "#72F172" },
+    { status: "closed", color: "#4B95DD" },
+    { status: "escalated", color: "#E75C5C" },
+  ];
+  const filteredPieStatus = useMemo(
+    () =>
+      complaintStats?.status?.map((s) => {
+        const colorObj = pieStatusColors.find((c) => c.status === s.status);
+        return {
+          ...s,
+          color: colorObj ? colorObj.color : "#dddddd",
+          title: s.status,
+        };
+      }),
+    [complaintStats?.status]
+  );
+
+  const pieStatusData = {
+    labels: filteredPieStatus?.map((s) => s.status) || [],
     datasets: [
       {
-        data: complaintStats?.status?.map((status) => status.total) || [],
-        backgroundColor: ["#FFCC99", "#72F172", "#4B95DD", "#E75C5C"],
-        borderColor: ["#FFCC99", "#72F172", "#4B95DD", "#E75C5C"],
+        data: filteredPieStatus?.map((s) => s.total) || [],
+        backgroundColor: filteredPieStatus?.map((s) => s.color),
+        borderColor: filteredPieStatus?.map((s) => s.color),
         borderWidth: 1,
       },
     ],
   };
+
+  // const pieData = {
+  //   labels: complaintStats?.status?.map((status) => status.status) || [],
+  //   datasets: [
+  //     {
+  //       data: complaintStats?.status?.map((status) => status.total) || [],
+  //       backgroundColor: ["#FFCC99", "#72F172", "#4B95DD", "#E75C5C"],
+  //       borderColor: ["#FFCC99", "#72F172", "#4B95DD", "#E75C5C"],
+  //       borderWidth: 1,
+  //     },
+  //   ],
+  // };
 
   const barData = {
     labels:
@@ -267,12 +285,12 @@ const Dashboard = () => {
               <Box sx={{ display: "flex", alignItems: "center", px: 10 }}>
                 <PieChart
                   title="Pie Chart Example"
-                  data={pieData}
+                  data={pieStatusData}
                   options={options}
                 />
               </Box>
               <Box sx={{ display: "flex" }}>
-                {pieColor.map((t) => (
+                {filteredPieStatus.map((t) => (
                   <Box
                     key={t.id}
                     sx={{ display: "flex", alignItems: "center" }}

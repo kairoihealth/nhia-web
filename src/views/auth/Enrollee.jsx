@@ -5,65 +5,74 @@ import SecondForm from "../enrolees/ComplaintForm/SecondForm";
 import FormPreview from "../enrolees/ComplaintForm/FormPreview";
 import { Box, Chip, Step, Stepper } from "@mui/material";
 import CircleIcon from "@mui/icons-material/Circle";
-import { useHandleError } from "../../hooks/useToastHandler";
+import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
 import { addComplaint } from "../../services/general";
+import { convertToBase64 } from "../../utils/convertTobase64";
 
 const steps = [
   "Select State",
   "Personal Information",
   "Complaint Details",
-  "Preview & Submit"
+  "Preview & Submit",
 ];
 
 const Enrollee = () => {
+  const handleSuccess = useHandleSuccess();
   const handleError = useHandleError();
   const [step, setStep] = useState(1);
   const [stateInfo, setStateInfo] = useState(null);
   const [firstInfo, setFirstInfo] = useState({});
   const [complaintInfo, setComplaintInfo] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   //   const handleNext = () => setStep(step + 1);
   //   const handleBack = () => setStep(step - 1);
   const handleNext = () =>
     setStep((prevStep) => Math.min(prevStep + 1, steps.length));
   const handleBack = () => setStep((prevStep) => Math.max(prevStep - 1, 1));
+  console.log(complaintInfo, "complaintInfo");
 
   const handleSubmit = async () => {
+    setIsSubmitting(true);
     try {
-      const formData = new FormData();
+      const evidences = await Promise.all(
+        (complaintInfo.files || []).map(async (file) => {
+          const base64 = await convertToBase64(file.raw);
+          return { document: base64 };
+        })
+      );
 
-      formData.append("state", stateInfo);
-      formData.append("nhia_number", firstInfo.nhiaNo);
-      formData.append("firstname", firstInfo.firstName);
-      formData.append("lastname", firstInfo.lastName);
-      formData.append("middle_name", firstInfo.middleName);
-      formData.append("email", firstInfo.email);
-      formData.append("phone", firstInfo.phone);
-      formData.append("alternate_phone", firstInfo.altPhone || "");
-      formData.append("contact_address", firstInfo.contactAddress);
-      formData.append("complaint_against", firstInfo.complaint);
-      formData.append("incident_date", complaintInfo.date);
-      formData.append("incident_time", complaintInfo.time);
-      formData.append("nhia_programme", complaintInfo.programme);
-      formData.append("complaint_type", complaintInfo.complaint);
-      formData.append("description", complaintInfo.description);
-      formData.append("hmo", firstInfo.hmoId || "");
-      formData.append("provider", firstInfo.providerId || "");
+      const data = {
+        state: stateInfo,
+        nhia_number: firstInfo.nhiaNo,
+        firstname: firstInfo.firstName,
+        lastname: firstInfo.lastName,
+        middle_name: firstInfo.middleName,
+        email: firstInfo.email,
+        phone: firstInfo.phone,
+        alternate_phone: firstInfo.altPhone || "",
+        contact_address: firstInfo.contactAddress,
+        complaint_against: firstInfo.complaint,
+        incident_date: complaintInfo.date,
+        incident_time: complaintInfo.time,
+        nhia_programme: complaintInfo.programme,
+        complaint_type: complaintInfo.complaint,
+        description: complaintInfo.description,
+        hmo: firstInfo.hmoId || "",
+        provider: firstInfo.providerId || "",
+        evidences,
+      };
 
-      (complaintInfo.files || []).forEach((fileObj, index) => {
-        if (fileObj && fileObj.raw instanceof File) {
-          formData.append(`evidences[${index}][document]`, fileObj.raw);
-        } else {
-          console.warn(`File at index ${index} is invalid:`, fileObj);
-        }
-      });
-
-      await addComplaint(formData, true);
+      const res = await addComplaint(data, true);
+      handleSuccess(res.data?.message || "Complaint sent successfully");
+      setStep(1);
       setStateInfo("");
       setFirstInfo({});
       setComplaintInfo({});
     } catch (error) {
-      handleError("Failed to submit complaint:", error);
+      handleError(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -82,7 +91,7 @@ const Enrollee = () => {
                 sx={{
                   width: "100%",
                   height: "12px",
-                  backgroundColor: "green"
+                  backgroundColor: "green",
                 }}
               />
             ) : (
@@ -133,6 +142,7 @@ const Enrollee = () => {
             firstInfo={firstInfo}
             complaintInfo={complaintInfo}
             onSubmit={handleSubmit}
+            isSubmitting={isSubmitting}
             onBack={handleBack}
             btn={<StepButton />}
           />

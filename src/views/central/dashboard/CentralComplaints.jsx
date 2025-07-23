@@ -1,7 +1,6 @@
 import { useState } from "react";
 // import { Helmet } from "react-helmet-async";
-import { Box, Typography, Stack } from "@mui/material";
-import { FiFilter } from "react-icons/fi";
+import { Box, Typography, Stack, CircularProgress } from "@mui/material";
 import { TabButton } from "../../../shared/TabPanel";
 import ReusableTable from "../../../shared/Table";
 import { useNavigate } from "react-router-dom";
@@ -14,42 +13,25 @@ const CentralComplaints = () => {
   const [activeTab, setActiveTab] = useState("all");
 
   const {
-    data: complaints
-    //  isLoading,
-    //  isError,
-    //  error
+    data: complaints,
+    isLoading,
+    isError,
+    error,
   } = useQuery({
     queryKey: ["complaints"],
-    queryFn: () => getComplaints({ page: 1, pageSize: 10 })
+    queryFn: () => getComplaints({ page: 1, pageSize: 10 }),
   });
-
-  const buttonTextMapping = {
-    all: "View Complaint",
-    new: "View Complaint",
-    act: "View Complaint",
-    com: "View Resolution",
-    esc: "View Complaint"
-  };
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
 
-  const handleViewComplaint = (row) => {
-    console.log(row, "state:");
-    navigate(`/admin/complaint/${row.complaint_no}`, {
-      state: { complaint: row?.id }
-    });
-  };
-
-  // Define table columns dynamically based on activeTab
   const getColumns = () => [
     { label: "Date", field: "created_at", align: "center" },
     { label: "Complainant", field: "name", align: "center" },
     { label: "Complaint no", field: "complaint_no", align: "center" },
-    // { label: "Complaint priority", field: "priority", align: "center" },
     { label: "Complaint type", field: "type", align: "center" },
-    { label: "Location", field: "location", align: "center" }
+    { label: "Location", field: "location", align: "center" },
   ];
 
   const transformedRows =
@@ -60,7 +42,7 @@ const CentralComplaints = () => {
       type: user.complaint_type,
       location: user?.state?.name,
       id: user.id,
-      status: user.status
+      status: user.status,
     })) || [];
 
   const filteredRows = transformedRows.filter((row) => {
@@ -71,6 +53,50 @@ const CentralComplaints = () => {
     return true;
   });
 
+  const handleViewComplaint = (row) => {
+    navigate(`/admin/complaint/${row.complaint_no}`, {
+      state: { complaint: row?.id },
+    });
+  };
+  const buttonTextMapping = {
+    all: "View Complaint",
+    new: "View Complaint",
+    act: "View Complaint",
+    com: "View Resolution",
+    esc: "View Complaint",
+  };
+
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          color: "red",
+        }}
+      >
+        <Typography>Error: {error.message}</Typography>
+      </Box>
+    );
+  }
+
   return (
     <Box>
       <Box
@@ -80,7 +106,7 @@ const CentralComplaints = () => {
           p: 1,
           backgroundColor: "#FAFAFA",
           height: "100vh",
-          overflowY: "auto"
+          overflowY: "auto",
         }}
       >
         {/* Header */}
@@ -125,7 +151,7 @@ const CentralComplaints = () => {
               onClick={handleTabClick}
             />
           </Stack>
-          <Box
+          {/* <Box
             // color="primary"
             sx={{
               display: "flex",
@@ -134,7 +160,7 @@ const CentralComplaints = () => {
               border: "1px solid #F2F4F7",
               backgroundColor: "#F2F4F7",
               p: 1,
-              cursor: "pointer"
+              cursor: "pointer",
             }}
             onClick={() => alert("Filter clicked")}
           >
@@ -144,12 +170,12 @@ const CentralComplaints = () => {
                 fontSize: "16px",
                 fontWeight: 500,
                 lineHeight: "21.6px",
-                color: "#64748B"
+                color: "#64748B",
               }}
             >
               Filter
             </Typography>
-          </Box>
+          </Box> */}
         </Stack>
 
         {/* Table */}

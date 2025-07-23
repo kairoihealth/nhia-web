@@ -16,16 +16,14 @@ import { useQuery } from "@tanstack/react-query";
 import {
   getComplaintResponses,
   getSingleComplaint,
+  updateComplaintStatus,
 } from "../../services/general";
-
-export const isImage = (fileName) => {
-  const imageExtensions = ["png", "jpg", "jpeg", "gif", "svg", "tiff", "tif"];
-  const nameSplit = fileName.split(".");
-  const fileExtension = nameSplit[nameSplit.length - 1].toLowerCase();
-  return imageExtensions.includes(fileExtension);
-};
+import { isImage } from "../../utils/general";
+import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
 
 const HmoComplaintsThread = () => {
+  const handleError = useHandleError();
+  const handleSuccess = useHandleSuccess();
   const location = useLocation();
   const thread = location?.state?.thread;
   const { id: case_id } = useParams();
@@ -39,6 +37,7 @@ const HmoComplaintsThread = () => {
     isLoading,
     isError,
     error,
+    refetch,
   } = useQuery({
     queryKey: ["complaints", thread],
     queryFn: () => getSingleComplaint(thread),
@@ -52,6 +51,38 @@ const HmoComplaintsThread = () => {
     queryKey: ["complaintResponses", thread],
     queryFn: () => getComplaintResponses(thread),
   });
+
+  const centralNhiaResponse =
+    responses?.find((response) => response.response_by?.role === "Admin") || {};
+
+  const stateNhiaResponse =
+    responses?.find(
+      (response) => response.response_by?.role === "StateAdmin"
+    ) || {};
+
+  const nhiaResponse = centralNhiaResponse?.response
+    ? centralNhiaResponse
+    : stateNhiaResponse?.response
+    ? stateNhiaResponse
+    : null;
+
+  const respondentResponses = responses?.filter(
+    (response) => response.response_by?.role === "HMO"
+  );
+
+  const handleUpdateStatus = async (status) => {
+    try {
+      let res = await updateComplaintStatus({
+        id: thread,
+        payload: { status, feedback: status },
+      });
+
+      refetch();
+      handleSuccess(res.data?.message || "Complaint updated successfully");
+    } catch (error) {
+      handleError("Failed to send response:", error);
+    }
+  };
 
   const handleReply = () => {
     navigate(`/hmo/complaint/${case_id}/reply`, { state: { thread } });
@@ -89,9 +120,9 @@ const HmoComplaintsThread = () => {
   }
 
   return (
-    <Box>
+    <Box sx={{ background: "#fff", px: 4 }}>
       {/*Head*/}
-      <Box sx={{ px: 2 }}>
+      <Box>
         <Box sx={{ mt: 2 }}>
           <Typography
             sx={{
@@ -111,55 +142,102 @@ const HmoComplaintsThread = () => {
           {/*Complaint trail*/}
 
           <Box sx={{ mt: 3 }}>
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <Typography
-                sx={{
-                  fontSize: "24px",
-                  fontWeight: 500,
-                  lineHeight: "32.4px",
-                  color: "#111827",
-                }}
-              >
-                {complaint?.case_id} - {complaint?.complaint_type || ""}
-              </Typography>
-              <Box
-                sx={{
-                  display: "inline-block",
-                  px: 2,
-                  py: 0.5,
-                  fontSize: "16px",
-                  fontWeight: 400,
-                  lineHeight: "21.6px",
-                  borderRadius: "8px",
-                  backgroundColor:
-                    complaint?.status === "Pending"
-                      ? "#FFF3E7"
-                      : complaint?.status === "Resolved"
-                      ? "#D6EBFF"
-                      : "#E8F8EE",
-                  color:
-                    complaint?.status === "Pending"
-                      ? "#EDB378"
-                      : complaint?.status === "Resolved"
-                      ? "#4B95DD"
-                      : "#096F35",
-                }}
-              >
-                &bull; {complaint?.status || "N/A"}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Box>
+                <Typography
+                  sx={{
+                    fontSize: "24px",
+                    fontWeight: 500,
+                    lineHeight: "32.4px",
+                    color: "#111827",
+                  }}
+                >
+                  {complaint?.case_id} - {complaint?.complaint_type || ""}
+                </Typography>
+                <Typography
+                  role="button"
+                  onClick={() =>
+                    navigate(`/stateadmin/complaint/${complaint.case_id}`, {
+                      state: { complaint: complaint?.id },
+                    })
+                  }
+                  sx={{ cursor: "pointer", color: "#071C42", mt: "4px" }}
+                >
+                  View Complain details
+                </Typography>
+              </Box>
+              <Box>
+                <Box
+                  sx={{
+                    display: "inline-block",
+                    px: 2,
+                    py: 0.5,
+                    fontSize: "16px",
+                    fontWeight: 400,
+                    lineHeight: "21.6px",
+                    borderRadius: "8px",
+                    textTransform: "capitalize",
+                    backgroundColor:
+                      complaint?.status === "pending"
+                        ? "#FFF3E7"
+                        : complaint?.status === "closed"
+                        ? "#D6EBFF"
+                        : complaint?.status === "active"
+                        ? "#E8F8EE"
+                        : "#FFF2F4",
+                    color:
+                      complaint?.status === "pending"
+                        ? "#EDB378"
+                        : complaint?.status === "closed"
+                        ? "#4B95DD"
+                        : complaint?.status === "active"
+                        ? "#096F35"
+                        : "#EB001B",
+                  }}
+                >
+                  &bull; {complaint?.status || "N/A"}
+                </Box>
+                <Box>
+                  <select
+                    name="status"
+                    style={{
+                      border: "none",
+                      background: "transparent",
+                      marginTop: "10px",
+                      outline: "none",
+                      color: "#555555",
+                    }}
+                    onChange={(e) => {
+                      handleUpdateStatus(e.target.value);
+                    }}
+                  >
+                    <option value="">Change status</option>
+                    <option value="pending">Pending</option>
+                    <option value="active">Active</option>
+                    <option value="closed">Closed</option>
+                    <option value="escalated">Escalated</option>
+                  </select>
+                </Box>
               </Box>
             </Box>
-            {/* <Typography sx={{ mt: 1, cursor: "pointer" }}>
-            View Complain details
-          </Typography> */}
           </Box>
           <Box
             sx={{
               display: "flex",
               flexDirection: "column",
               gap: 2,
-              width: "1032px",
-              mt: 6,
-              px: 10,
+              // width: "100%",
+              maxWidth: "1332px",
+              mt: 4,
+              px: 4,
+              py: 4,
+              background: "#FAFAFA",
             }}
           >
             <Box>
@@ -212,7 +290,8 @@ const HmoComplaintsThread = () => {
                   fontWeight: 500,
                   lineHeight: "21.6px",
                   color: "#000000",
-                  mt: 4,
+                  mt: 3,
+                  mb: "26px",
                 }}
               >
                 Complaint description
@@ -226,13 +305,13 @@ const HmoComplaintsThread = () => {
                   mt: 2,
                 }}
               >
-                {complaint?.description}
+                <Typography>{complaint?.description}</Typography>
               </Box>
             </Box>
 
             {/*attachment*/}
             <Box
-              sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 2 }}
+              sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 3 }}
             >
               <Typography
                 sx={{
@@ -247,7 +326,7 @@ const HmoComplaintsThread = () => {
               {Array.isArray(complaint?.evidences) &&
               complaint?.evidences.length > 0 ? (
                 <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-                  {complaint?.evidences.map((file) => (
+                  {complaint?.evidences.map((file, index) => (
                     <Card
                       key={file.id}
                       sx={{
@@ -257,15 +336,15 @@ const HmoComplaintsThread = () => {
                         overflow: "hidden",
                       }}
                     >
-                      {file.type === "image" ? (
+                      {isImage(file.document) ? (
                         <CardMedia
                           component="img"
                           sx={{
                             width: "149px",
                             height: "101px",
                           }}
-                          image={file.icon}
-                          alt={file.name}
+                          image={file.document}
+                          alt={`Complaint attachment ${index + 1}`}
                         />
                       ) : (
                         <Box
@@ -301,7 +380,39 @@ const HmoComplaintsThread = () => {
                         }}
                       >
                         <IconButton
-                          onClick={() => {}}
+                          onClick={() => {
+                            setIsDownloading(file.document);
+                            fetch(
+                              "https://cors-anywhere.herokuapp.com/" +
+                                file.document,
+                              {
+                                method: "GET",
+                                headers: {
+                                  "Content-Type": "application/pdf",
+                                },
+                              }
+                            )
+                              .then((response) => response.blob())
+                              .then((blob) => {
+                                // Create blob link to download
+                                const url = window.URL.createObjectURL(blob);
+                                const fileName = file.document.split("/").pop();
+                                const link = document.createElement("a");
+
+                                link.href = url;
+                                link.setAttribute("download", fileName);
+
+                                // Append to html link element page
+                                document.body.appendChild(link);
+
+                                // Start download
+                                link.click();
+                                setIsDownloading(file.document);
+
+                                // Clean up and remove the link
+                                link.parentNode.removeChild(link);
+                              });
+                          }}
                           sx={{
                             color: "#EFF3F9",
                             "&:hover": {
@@ -316,83 +427,99 @@ const HmoComplaintsThread = () => {
                   ))}
                 </Box>
               ) : (
-                <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-                  No attachments available.
+                <Typography
+                  variant="body2"
+                  align="left"
+                  sx={{ mt: 2 }}
+                  color="#595959"
+                >
+                  No attachments added.
                 </Typography>
               )}
             </Box>
-          </Box>
 
-          {/*Message trail*/}
-          {/* <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 2,
-          width: "1032px",
-          mt: 2,
-          px: 10,
-        }}
-      >
-
-            <Box sx={{ width: "987px", textAlign: "center", my: 2 }}>
-              <Divider
+            {/*NHIA Message trail*/}
+            {nhiaResponse && (
+              <Box
                 sx={{
-                  borderBottom: "1px dashed #000000",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 2,
+                  mt: 2,
                 }}
-              />
-            </Box>
-        <Box sx={{ width: "972px" }}>
-          <Typography
-            sx={{
-              fontSize: "20px",
-              fontWeight: 600,
-              lineHeight: "24px",
-              color: "#111827",
-            }}
-          >
-            Message From NHIA
-          </Typography>
-          <Box
-            sx={{
-              fontSize: "16px",
-              fontWeight: 400,
-              lineHeight: "24px",
-              color: "#1B1C1E",
-              mt: 2,
-            }}
-          >
-            To be fixed ----- {complaint?.description}
+              >
+                <Box sx={{ width: "987px", textAlign: "center", my: 2 }}>
+                  <Divider
+                    sx={{
+                      borderBottom: "1px dashed #000000",
+                    }}
+                  />
+                </Box>
+                <Box sx={{ width: "972px" }}>
+                  <Typography
+                    sx={{
+                      fontSize: "20px",
+                      fontWeight: 600,
+                      lineHeight: "24px",
+                      color: "#111827",
+                    }}
+                  >
+                    Message From NHIA
+                  </Typography>
+                  <Box
+                    sx={{
+                      fontSize: "16px",
+                      fontWeight: 400,
+                      lineHeight: "24px",
+                      color: "#1B1C1E",
+                      my: 2.6,
+                    }}
+                  >
+                    <Typography>
+                      {nhiaResponse?.response || "No response provided."}
+                    </Typography>
+                  </Box>
+                  <Box>
+                    <Typography
+                      sx={{
+                        fontSize: "14px",
+                        fontWeight: 400,
+                        lineHeight: "24px",
+                        color: "#111827",
+                      }}
+                    >
+                      Sent by:{" "}
+                      <span>
+                        {nhiaResponse?.response_by?.firstname +
+                          " " +
+                          nhiaResponse?.response_by?.lastname}
+                      </span>
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: "14px",
+                        fontWeight: 400,
+                        lineHeight: "24px",
+                        color: "#111827",
+                      }}
+                    >
+                      Date:{" "}
+                      <span>
+                        {new Date(
+                          nhiaResponse?.created_at
+                        ).toLocaleDateString() || "--"}
+                      </span>
+                    </Typography>
+                  </Box>
+                </Box>
+              </Box>
+            )}
           </Box>
-          <Box sx={{ mt: 2 }}>
-            <Typography
-              sx={{
-                fontSize: "14px",
-                fontWeight: 400,
-                lineHeight: "24px",
-                color: "#111827",
-              }}
-            >
-              Sent by: <span>Abiodun Adeleke</span>
-            </Typography>
-            <Typography
-              sx={{
-                fontSize: "14px",
-                fontWeight: 400,
-                lineHeight: "24px",
-                color: "#111827",
-              }}
-            >
-              Date: <span>14/04/2024</span>
-            </Typography>
-          </Box>
-        </Box>
-      </Box> */}
 
           {/*Complaint responses*/}
-          {responses?.length ? (
+          {respondentResponses?.length ? (
             <>
-              {responses?.map((t) => (
+              {respondentResponses?.map((t) => (
                 <>
                   <Box sx={{ width: "100%", textAlign: "center", my: 3 }}>
                     <Divider
@@ -407,7 +534,7 @@ const HmoComplaintsThread = () => {
                       fontWeight: 500,
                       lineHeight: "32.4px",
                       color: "#071C42",
-                      px: 4,
+                      mb: 2,
                     }}
                   >
                     Respondent
@@ -418,9 +545,11 @@ const HmoComplaintsThread = () => {
                       display: "flex",
                       flexDirection: "column",
                       gap: 2,
-                      width: "1032px",
-                      mt: 6,
-                      px: 10,
+                      // width: "1032px",
+                      maxWidth: "1332px",
+                      px: 4,
+                      py: 4,
+                      background: "#FAFAFA",
                     }}
                   >
                     <Box>
@@ -492,7 +621,7 @@ const HmoComplaintsThread = () => {
                           mt: 2,
                         }}
                       >
-                        {t.response}
+                        <Typography>{t.response}</Typography>
                       </Box>
                     </Box>
 
@@ -572,12 +701,6 @@ const HmoComplaintsThread = () => {
                                   backgroundColor: "#EFF3F9",
                                 }}
                               >
-                                {/* <a
-                              href={file.document}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              download
-                            > */}
                                 <IconButton
                                   onClick={() => {
                                     setIsDownloading(file.document);
@@ -631,7 +754,6 @@ const HmoComplaintsThread = () => {
                                     />
                                   )}
                                 </IconButton>
-                                {/* </a> */}
                               </Box>
                             </Card>
                           ))}
@@ -639,144 +761,165 @@ const HmoComplaintsThread = () => {
                       ) : (
                         <Typography
                           variant="body2"
-                          align="center"
+                          align="left"
                           sx={{ mt: 2 }}
+                          color="#595959"
                         >
-                          No attachments available.
+                          No attachments added.
                         </Typography>
                       )}
                     </Box>
-                  </Box>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 2,
-                      width: "1032px",
-                      mt: 2,
-                      px: 10,
-                    }}
-                  >
-                    {t?.receiving_officer && (
-                      <>
-                        {/*divider*/}
-                        <Box
-                          sx={{ width: "987px", textAlign: "center", my: 2 }}
-                        >
-                          <Divider
-                            sx={{
-                              borderBottom: "1px dashed #000000",
-                            }}
-                          />
-                        </Box>
-                        <Box sx={{ width: "972px" }}>
-                          <Typography
-                            sx={{
-                              fontSize: "20px",
-                              fontWeight: 600,
-                              lineHeight: "24px",
-                              color: "#111827",
-                            }}
-                          >
-                            Official Use
-                          </Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 2,
+                        // width: "1032px",
+                        maxWidth: "1032px",
+                        mt: 2,
+                      }}
+                    >
+                      {nhiaResponse && (
+                        <>
+                          {/*divider*/}
                           <Box
-                            sx={{
-                              display: "flex",
-                              flexDirection: "column",
-                              gap: 1.5,
-                              mt: 2,
-                            }}
+                            sx={{ width: "987px", textAlign: "center", my: 2 }}
                           >
-                            <Typography
+                            <Divider
                               sx={{
-                                fontSize: "16px",
-                                fontWeight: 400,
-                                lineHeight: "24px",
-                                color: "#000000",
+                                borderBottom: "1px dashed #000000",
                               }}
-                            >
-                              Receiving Officer ( for NHIA):{" "}
-                              <span
-                                style={{
-                                  fontSize: "20px",
-                                  fontWeight: 600,
-                                  lineHeight: "24px",
-                                  color: "#111827",
-                                }}
-                              >
-                                {t?.receiving_officer?.name
-                                  ? t?.receiving_officer?.name
-                                  : t?.receiving_officer?.firstname +
-                                    " " +
-                                    t?.receiving_officer?.lastname}
-                              </span>
-                            </Typography>
+                            />
+                          </Box>
+                          <Box sx={{ width: "972px" }}>
                             <Typography
                               sx={{
-                                fontSize: "16px",
-                                fontWeight: 400,
-                                lineHeight: "24px",
-                                color: "#000000",
-                              }}
-                            >
-                              Signature:{" "}
-                              <span
-                                style={{
-                                  fontSize: "14px",
-                                  fontWeight: 500,
-                                  lineHeight: "18.9px",
-                                  color: "#038F3E",
-                                }}
-                              >
-                                {t?.receiving_officer?.name
-                                  ? t?.receiving_officer?.name
-                                  : t?.receiving_officer?.firstname +
-                                    " " +
-                                    t?.receiving_officer?.lastname}
-                              </span>
-                            </Typography>
-
-                            <Typography
-                              sx={{
-                                fontSize: "14px",
-                                fontWeight: 400,
+                                fontSize: "20px",
+                                fontWeight: 600,
                                 lineHeight: "24px",
                                 color: "#111827",
                               }}
                             >
-                              Date:
-                              {/* <span>14/04/2024</span> */}
+                              Official Use
                             </Typography>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                flexDirection: "row",
+                                gap: 1.5,
+                                mt: 2,
+                              }}
+                            >
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  gap: 1.8,
+                                }}
+                              >
+                                <Typography
+                                  sx={{
+                                    fontSize: "16px",
+                                    fontWeight: 400,
+                                    lineHeight: "24px",
+                                    color: "#000000",
+                                  }}
+                                >
+                                  Receiving Officer ( for NHIA):{" "}
+                                </Typography>
+                                <Typography
+                                  sx={{
+                                    fontSize: "16px",
+                                    fontWeight: 400,
+                                    lineHeight: "24px",
+                                    color: "#000000",
+                                  }}
+                                >
+                                  Signature:{" "}
+                                </Typography>
+                                <Typography
+                                  sx={{
+                                    fontSize: "14px",
+                                    fontWeight: 400,
+                                    lineHeight: "24px",
+                                    color: "#111827",
+                                  }}
+                                >
+                                  Date:
+                                </Typography>
+                              </Box>
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  gap: 1.8,
+                                }}
+                              >
+                                <Typography
+                                  sx={{
+                                    fontSize: "16px",
+                                    fontWeight: 400,
+                                    lineHeight: "24px",
+                                    color: "#000000",
+                                  }}
+                                >
+                                  <span
+                                    style={{
+                                      fontSize: "20px",
+                                      fontWeight: 600,
+                                      lineHeight: "24px",
+                                      color: "#111827",
+                                    }}
+                                  >
+                                    {nhiaResponse?.response_by?.firstname +
+                                      " " +
+                                      nhiaResponse?.response_by?.lastname}
+                                  </span>
+                                </Typography>
+                                <Typography
+                                  sx={{
+                                    fontSize: "16px",
+                                    fontWeight: 400,
+                                    lineHeight: "24px",
+                                    color: "#000000",
+                                  }}
+                                >
+                                  <span
+                                    style={{
+                                      fontSize: "14px",
+                                      fontWeight: 500,
+                                      lineHeight: "18.9px",
+                                      color: "#038F3E",
+                                    }}
+                                  >
+                                    {nhiaResponse?.response_by?.firstname +
+                                      " " +
+                                      nhiaResponse?.response_by?.lastname}
+                                  </span>
+                                </Typography>
+                                <Typography
+                                  sx={{
+                                    fontSize: "14px",
+                                    fontWeight: 400,
+                                    lineHeight: "24px",
+                                    color: "#111827",
+                                  }}
+                                >
+                                  {new Date(
+                                    nhiaResponse?.created_at
+                                  ).toLocaleDateString() || "--"}
+                                </Typography>
+                              </Box>
+                            </Box>
                           </Box>
-                        </Box>
-                      </>
-                    )}
+                        </>
+                      )}
+                    </Box>
                   </Box>
                 </>
               ))}
             </>
-          ) : (
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Typography
-                sx={{
-                  fontSize: "14px",
-                  fontWeight: 400,
-                  lineHeight: "24px",
-                  color: "#111827",
-                }}
-              >
-                No Response
-                {/* <span>14/04/2024</span> */}
-              </Typography>
-            </Box>
-          )}
+          ) : null}
 
           {/*Button*/}
           <Box sx={{ display: "flex", justifyContent: "center" }}>

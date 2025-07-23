@@ -15,8 +15,13 @@ import "react-phone-input-2/lib/style.css";
 import ProfileImage from "../../../assets/profile-img.png";
 import { VisibilityOutlined, VisibilityOffOutlined } from "@mui/icons-material";
 import { useEffect, useState } from "react";
-import { getSingleUser } from "../../../services/central";
+import { getSingleUser, userUpdateProfile } from "../../../services/central";
 import { useQuery } from "@tanstack/react-query";
+import {
+  useHandleError,
+  useHandleSuccess,
+} from "../../../hooks/useToastHandler";
+import { userChangePassword } from "../../../services/auth/auth";
 
 const textFieldStyles = {
   "& .MuiOutlinedInput-root": {
@@ -66,6 +71,9 @@ const getUsername = () => localStorage.getItem("fullname");
 const getUserId = () => localStorage.getItem("userId");
 
 const HmoProfile = () => {
+  const handleSuccess = useHandleSuccess();
+  const handleError = useHandleError();
+  const [isCurrentlySubmitting, setIsCurrentlySubmitting] = useState(null);
   const userRole = getUserRole();
   const fullname = getUsername();
   const userId = getUserId();
@@ -75,11 +83,16 @@ const HmoProfile = () => {
   const [profileValues, setProfileValues] = useState({
     firstname: "",
     lastname: "",
-    middlename: "",
     phone: "",
     email: "",
     image: "",
+    // middlename: "",
     // designation: "",
+  });
+  const [passwordValues, setPassowrdValues] = useState({
+    current_password: "",
+    new_password: "",
+    confirm_password: "",
   });
 
   const {
@@ -98,10 +111,10 @@ const HmoProfile = () => {
       setProfileValues({
         firstname: user.firstname || "",
         lastname: user.lastname || "",
-        middlename: user.middlename || "",
         phone: user.phone || "",
         email: user.email || "",
         image: user.image,
+        // middlename: user.middlename || "",
         // designation: user.designation || "",
       });
     }
@@ -113,6 +126,37 @@ const HmoProfile = () => {
 
   const toggleConfirmPasswordVisibility = () => {
     setConfirmPasswordVisible(!confirmPasswordVisible);
+  };
+
+  const handleUpdateProfile = async () => {
+    setIsCurrentlySubmitting("profile");
+    try {
+      let res = await userUpdateProfile({ id: userId, payload: profileValues });
+
+      handleSuccess(res.data?.message || "Response sent successfully");
+    } catch (error) {
+      handleError("Failed to send response:", error);
+    } finally {
+      setIsCurrentlySubmitting(null);
+    }
+  };
+
+  const handleChangePassword = async () => {
+    setIsCurrentlySubmitting("password");
+    try {
+      let res = await userChangePassword(passwordValues);
+
+      handleSuccess(res.data?.message || "Response sent successfully");
+      setPassowrdValues({
+        current_password: "",
+        new_password: "",
+        confirm_password: "",
+      });
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setIsCurrentlySubmitting(null);
+    }
   };
 
   return (
@@ -212,7 +256,12 @@ const HmoProfile = () => {
                 </Box> */}
               </Box>
 
-              <form>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleUpdateProfile();
+                }}
+              >
                 <Box
                   display="flex"
                   flexDirection={{ xs: "column", md: "row" }}
@@ -285,7 +334,7 @@ const HmoProfile = () => {
                   gap={2}
                   mt={2}
                 >
-                  <Box
+                  {/* <Box
                     flex={1}
                     sx={{ display: "flex", flexDirection: "column", gap: 1 }}
                   >
@@ -302,7 +351,7 @@ const HmoProfile = () => {
                     <TextField
                       fullWidth
                       variant="outlined"
-                      required
+                      // required
                       placeholder="enter middle name"
                       sx={textFieldStyles}
                       name="middlename"
@@ -314,7 +363,7 @@ const HmoProfile = () => {
                         })
                       }
                     />
-                  </Box>
+                  </Box> */}
                   <Box
                     flex={1}
                     sx={{ display: "flex", flexDirection: "column", gap: 1 }}
@@ -348,13 +397,6 @@ const HmoProfile = () => {
                       />
                     </FormControl>
                   </Box>
-                </Box>
-                <Box
-                  display="flex"
-                  flexDirection={{ xs: "column", md: "row" }}
-                  gap={2}
-                  mt={2}
-                >
                   <Box
                     flex={1}
                     sx={{ display: "flex", flexDirection: "column", gap: 1 }}
@@ -386,7 +428,14 @@ const HmoProfile = () => {
                       }
                     />
                   </Box>
-                  <Box
+                </Box>
+                <Box
+                  display="flex"
+                  flexDirection={{ xs: "column", md: "row" }}
+                  gap={2}
+                  mt={2}
+                >
+                  {/* <Box
                     flex={1}
                     sx={{ display: "flex", flexDirection: "column", gap: 1 }}
                   >
@@ -403,14 +452,15 @@ const HmoProfile = () => {
                     <TextField
                       fullWidth
                       variant="outlined"
-                      required
+                      // required
                       placeholder="e.g H23 dolphin estate"
                       sx={textFieldStyles}
                     />
-                  </Box>
+                  </Box> */}
                 </Box>
                 <Box sx={{ mb: 2 }} display={"flex"} justifyContent={"center"}>
                   <Button
+                    type="submit"
                     variant="contained"
                     sx={{
                       width: "144px",
@@ -424,6 +474,7 @@ const HmoProfile = () => {
                       textTransform: "none",
                       marginTop: "36px",
                     }}
+                    loading={isCurrentlySubmitting === "profile"}
                   >
                     Update Profile
                   </Button>
@@ -433,7 +484,6 @@ const HmoProfile = () => {
 
             {/* Form Section */}
             <Box
-              component="form"
               sx={{
                 display: "flex",
                 flexDirection: "column",
@@ -453,7 +503,13 @@ const HmoProfile = () => {
               >
                 Security
               </Typography>
-              <form>
+              <Box
+                component="form"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleChangePassword();
+                }}
+              >
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                   {/* Current Password */}
                   <Box
@@ -484,6 +540,14 @@ const HmoProfile = () => {
                       required
                       placeholder="enter your password"
                       sx={textFieldStyles}
+                      name="current_password"
+                      value={passwordValues.current_password}
+                      onChange={(e) =>
+                        setPassowrdValues({
+                          ...passwordValues,
+                          current_password: e.target.value,
+                        })
+                      }
                       slotProps={{
                         endAdornment: (
                           <InputAdornment position="end">
@@ -538,8 +602,16 @@ const HmoProfile = () => {
                         type="password"
                         variant="outlined"
                         required
-                        placeholder="enter first name"
+                        placeholder="Enter new password"
                         sx={textFieldStyles}
+                        name="new_password"
+                        value={passwordValues.new_password}
+                        onChange={(e) =>
+                          setPassowrdValues({
+                            ...passwordValues,
+                            new_password: e.target.value,
+                          })
+                        }
                         slotProps={{
                           endAdornment: (
                             <InputAdornment position="end">
@@ -579,8 +651,16 @@ const HmoProfile = () => {
                         type="password"
                         variant="outlined"
                         required
-                        placeholder="enter first name"
+                        placeholder="Confirm new password"
                         sx={textFieldStyles}
+                        name="confirm_password"
+                        value={passwordValues.confirm_password}
+                        onChange={(e) =>
+                          setPassowrdValues({
+                            ...passwordValues,
+                            confirm_password: e.target.value,
+                          })
+                        }
                         slotProps={{
                           endAdornment: (
                             <InputAdornment position="end">
@@ -605,6 +685,7 @@ const HmoProfile = () => {
                     justifyContent={"center"}
                   >
                     <Button
+                      type="submit"
                       variant="contained"
                       sx={{
                         // width: "144px",
@@ -618,12 +699,13 @@ const HmoProfile = () => {
                         textTransform: "none",
                         marginTop: "36px",
                       }}
+                      loading={isCurrentlySubmitting === "password"}
                     >
                       Update Password
                     </Button>
                   </Box>
                 </Box>
-              </form>
+              </Box>
 
               {/* Permission Section */}
               {/* <Box sx={{ display: "flex", flexDirection: "column", mb: 4 }}>

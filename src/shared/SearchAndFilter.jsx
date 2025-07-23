@@ -3,9 +3,9 @@ import {
   Box,
   TextField,
   Button,
-  MenuItem,
-  Select,
-  Typography
+  // MenuItem,
+  // Select,
+  Typography,
 } from "@mui/material";
 
 const SearchFilter = ({
@@ -15,7 +15,9 @@ const SearchFilter = ({
   onSearchChange,
   filterValue,
   onFilterChange,
-  filterOptions
+  filterOptions,
+  handleSearch,
+  isLoading = false,
 }) => {
   return (
     <Box
@@ -25,10 +27,17 @@ const SearchFilter = ({
         gap: 2,
         justifyContent: "space-between",
         width: "100%",
-        p: 2
+        p: 2,
       }}
     >
-      <Box sx={{ display: "flex", gap: 1, flex: 1 }}>
+      <Box
+        component="form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSearch();
+        }}
+        sx={{ display: "flex", gap: 1, flex: 1 }}
+      >
         <TextField
           variant="outlined"
           placeholder={placeholder}
@@ -42,9 +51,9 @@ const SearchFilter = ({
               color: "#000000",
               border: "0.5px solid #DADADA",
               "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#038F3E"
-              }
-            }
+                borderColor: "#038F3E",
+              },
+            },
           }}
         />
         <Button
@@ -56,15 +65,41 @@ const SearchFilter = ({
             color: "#fff",
             fontSize: "16px",
             fontWeight: 500,
-            textTransform: "none"
+            textTransform: "none",
           }}
+          type="submit"
+          loading={isLoading}
         >
           Search
         </Button>
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <Typography>Sort by:</Typography>
-        <Select
+        <select
+          value={filterValue}
+          defaultValue={filterOptions[0].value}
+          onChange={(e) => {
+            onFilterChange(e);
+          }}
+          style={{
+            width: "120px",
+            height: "38px",
+            borderRadius: "8px",
+            backgroundColor: "#fff",
+            border: "1px solid #DADADA",
+            padding: "0 10px",
+            fontSize: "16px",
+            color: "#000000",
+          }}
+          // variant="outlined"
+        >
+          {filterOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        {/* <Select
           value={filterValue}
           onChange={onFilterChange}
           variant="outlined"
@@ -75,7 +110,7 @@ const SearchFilter = ({
               {option.label}
             </MenuItem>
           ))}
-        </Select>
+        </Select> */}
       </Box>
     </Box>
   );
@@ -93,7 +128,9 @@ SearchFilter.propTypes = {
   filterOptions: PropTypes.arrayOf(
     PropTypes.shape({
       value: PropTypes.string.isRequired,
-      label: PropTypes.string.isRequired
+      label: PropTypes.string.isRequired,
     })
-  ).isRequired
+  ).isRequired,
+  handleSearch: PropTypes.func.isRequired,
+  isLoading: PropTypes.bool,
 };

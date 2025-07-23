@@ -27,6 +27,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -49,6 +50,7 @@ const LoginPage = () => {
       return;
     }
 
+    setIsSubmitting(true);
     try {
       const response = await userLogin(email, password);
       if (response.status === 200) {
@@ -75,15 +77,21 @@ const LoginPage = () => {
         navigate(`/${role.toLowerCase()}/dashboard`);
       } else if (response && response.detail) {
         console.log("Login Response Status:", response.detail);
-        handleError("Login Failed", response.detail); // Provide a title for the error toast
+        handleError(response); // Provide a title for the error toast
       } else {
         const errorMessage = "Failed to login";
         handleError(errorMessage); // Provide a title for the error toast
       }
     } catch (err) {
-      if (err.response && err.response.data && err.response.data.message) {
-        handleError(err.response.data.message);
+      if (
+        err.response &&
+        err.response.data &&
+        (err.response.data.message || err.response.data.detail)
+      ) {
+        handleError({}, err.response.data.message || err.response.data.detail);
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -259,6 +267,7 @@ const LoginPage = () => {
                   textTransform: "capitalize",
                 }}
                 disabled={!email || !password}
+                loading={isSubmitting}
                 onClick={handleLogin}
               >
                 Login

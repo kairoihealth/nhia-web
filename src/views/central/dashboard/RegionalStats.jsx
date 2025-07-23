@@ -1,22 +1,58 @@
 import { useNavigate } from "react-router-dom";
-import { Box, Card, Typography } from "@mui/material";
+import { Box, Card, CircularProgress, Typography } from "@mui/material";
 import ArrowBackIosOutlinedIcon from "@mui/icons-material/ArrowBackIosOutlined";
 import ArrowForwardIosOutlinedIcon from "@mui/icons-material/ArrowForwardIosOutlined";
-
-const regionData = [
-  { id: 1, region: "North West", slug: "north-west" },
-  { id: 2, region: "North Central", slug: "north-central" },
-  { id: 3, region: "North East", slug: "north-east" },
-  { id: 4, region: "South West", slug: "south-west" },
-  { id: 5, region: "South South", slug: "south-south" },
-  { id: 6, region: "South East", slug: "south-east" }
-];
+import { getRegions } from "../../../services/settings";
+import { useQuery } from "@tanstack/react-query";
 
 const RegionalStats = () => {
   const navigate = useNavigate();
+
+  const {
+    data: regions,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["regions"],
+    queryFn: () => getRegions({}),
+  });
+
   const handleBack = () => {
     navigate(-1);
   };
+
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          color: "red",
+        }}
+      >
+        <Typography>Error: {error.message}</Typography>
+      </Box>
+    );
+  }
+
   return (
     <Box>
       <Box
@@ -25,7 +61,7 @@ const RegionalStats = () => {
           alignItems: "center",
           gap: 1,
           cursor: "pointer",
-          p: 1
+          p: 1,
         }}
         onClick={handleBack}
       >
@@ -37,7 +73,7 @@ const RegionalStats = () => {
             fontSize: "18px",
             fontWeight: 500,
             lineHeight: "18px",
-            color: "#101828"
+            color: "#101828",
           }}
         >
           Region
@@ -45,9 +81,9 @@ const RegionalStats = () => {
       </Box>
 
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 6, p: 1, mt: 2 }}>
-        {regionData.map((region) => (
+        {regions?.results?.map((region, index) => (
           <Card
-            key={region.id}
+            key={index}
             sx={{
               display: "flex",
               flexDirection: "column",
@@ -57,33 +93,33 @@ const RegionalStats = () => {
               borderRadius: "12px",
               backgroundColor: "#FFFFFF",
               width: "313px",
-              height: "209px"
+              height: "209px",
             }}
           >
             <Typography
               sx={{
                 fontSize: { xs: "24px", md: "48px" },
                 fontWeight: 600,
-                lineHeight: "50px"
+                lineHeight: "50px",
               }}
             >
-              {region.region}
+              {region.name}
             </Typography>
             <Box
               sx={{
                 display: "flex",
                 alignItems: "center",
                 gap: 0.5,
-                cursor: "pointer"
+                cursor: "pointer",
               }}
-              onClick={() => navigate(`/central-regional-stats/${region.slug}`)}
+              onClick={() => navigate(`/admin/regional-stats/${region.id}`)}
             >
               <Typography
                 sx={{
                   fontSize: "14px",
                   fontWeight: 500,
                   lineHeight: "18.9px",
-                  color: "#071C42"
+                  color: "#071C42",
                 }}
               >
                 View Region

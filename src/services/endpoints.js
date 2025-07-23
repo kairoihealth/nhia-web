@@ -5,6 +5,8 @@ export const ENDPOINTS = {
 
   // USERS
   SETUP_ACCOUNT: "/users/create-password/",
+  UPDATE_PROFILE: (id) => `/users/${id}/update-profile/`,
+  CHANGE_PASSWORD: "/users/change-password/",
   GET_USERS: "/users/",
   GET_SINGLE_USER: (id) => `/users/${id}/`,
 
@@ -24,5 +26,6 @@ export const ENDPOINTS = {
   GET_SINGLE_COMPLAINT: (id) => `/complaints/${id}/`,
   GET_COMPLAINT_RESPONSES: (id) => `/complaints/${id}/responses/`,
   ADD_COMPLAINTS: "/complaints/",
+  UPDATE_COMPLAINT_STATUS: (id) => `/complaints/${id}/status/`,
   RESPOND_TO_COMPLAINTS: "/complaints/respond/",
 };

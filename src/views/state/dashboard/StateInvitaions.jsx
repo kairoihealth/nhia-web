@@ -9,26 +9,43 @@ import { getUsers } from "../../../services/central";
 const InvitationsByState = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [filter, setFilter] = useState("providers");
+  const [filter, setFilter] = useState("");
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     data: users,
-    isLoading,
+    isLoading: isUsersLoading,
     isError,
-    error
+    error,
+    refetch,
   } = useQuery({
     queryKey: ["users"],
-    queryFn: () => getUsers({ page: 1, pageSize: 10 })
+    queryFn: () =>
+      getUsers({ page: 1, pageSize: 10, search: searchTerm, role: filter }),
   });
 
-  if (isLoading) {
+  const handleFilter = async (roleFilter = "") => {
+    setIsLoading(true);
+    const params = {
+      page: 1,
+      pageSize: 10,
+      search: searchTerm,
+      role: roleFilter,
+    };
+    const u = await getUsers(params);
+    setFilteredUsers(u || []);
+    setIsLoading(false);
+  };
+
+  if (isUsersLoading) {
     return (
       <Box
         sx={{
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          height: "100vh"
+          height: "100vh",
         }}
       >
         <CircularProgress />
@@ -44,7 +61,7 @@ const InvitationsByState = () => {
           justifyContent: "center",
           alignItems: "center",
           height: "100vh",
-          color: "red"
+          color: "red",
         }}
       >
         <Typography>Error: {error.message}</Typography>
@@ -53,8 +70,9 @@ const InvitationsByState = () => {
   }
 
   const filterOptions = [
-    { value: "providers", label: "Providers" },
-    { value: "hmo", label: "HMO" }
+    { value: "", label: "All" },
+    { value: "Provider", label: "Providers" },
+    { value: "HMO", label: "HMO" },
   ];
 
   const handleAddUser = () => {
@@ -68,19 +86,23 @@ const InvitationsByState = () => {
       { label: "Date added", field: "created_at", align: "center" },
       // { label: "ID", field: "id", align: "center" },
       { label: "Email", field: "email", align: "center" },
-      { label: "Type", field: "type", align: "center" }
+      { label: "Type", field: "type", align: "center" },
     ];
   };
 
   const transformedRows =
-    users?.results?.map((user) => ({
-      name: `${user.firstname || "-"} ${user.lastname || "-"}`.trim(),
-      created_at: new Date(user.created_at).toLocaleDateString(),
-      id: user.id,
-      email: user.email,
-      type: user.role,
-      status: user.verified === true ? "active" : "pending"
-    })) || [];
+    (filteredUsers?.results?.length ? filteredUsers : users)?.results?.map(
+      (user) => ({
+        name: `${user.firstname || "-"} ${user.lastname || "-"}`.trim(),
+        created_at: new Date(user.created_at).toLocaleDateString(),
+        id: user.id,
+        email: user.email,
+        type: user.role,
+        status: user.verified === true ? "active" : "pending",
+      })
+    ) || [];
+
+  console.log(filteredUsers, searchTerm, filter, "searchTerm");
 
   return (
     <Box>
@@ -91,7 +113,7 @@ const InvitationsByState = () => {
           py: 3,
           backgroundColor: "#FAFAFA",
           //   height: "100vh",
-          overflowY: "auto"
+          overflowY: "auto",
         }}
       >
         {/* Header */}
@@ -99,7 +121,7 @@ const InvitationsByState = () => {
           sx={{
             display: "flex",
             justifyContent: "space-between",
-            alignItems: "center"
+            alignItems: "center",
           }}
         >
           <Typography
@@ -107,7 +129,7 @@ const InvitationsByState = () => {
               fontSize: "18px",
               fontWeight: 500,
               lineHeight: "28px",
-              color: "#101828"
+              color: "#101828",
             }}
             gutterBottom
           >
@@ -127,7 +149,7 @@ const InvitationsByState = () => {
               py: "12px",
               px: "23px",
               textTransform: "none",
-              "&:hover": { backgroundColor: "#027A3B" }
+              "&:hover": { backgroundColor: "#027A3B" },
             }}
           >
             Send Invitation
@@ -140,10 +162,23 @@ const InvitationsByState = () => {
             placeholder="Search providers/HMO's"
             searchValue={searchTerm}
             width={"482px"}
-            onSearchChange={(e) => setSearchTerm(e.target.value)}
+            onSearchChange={(e) => {
+              if (e.target.value === "") {
+                refetch();
+              }
+              setSearchTerm(e.target.value);
+            }}
             filterValue={filter}
-            onFilterChange={(e) => setFilter(e.target.value)}
+            onFilterChange={(e) => {
+              setFilter(e.target.value);
+              handleFilter(e.target.value);
+            }}
             filterOptions={filterOptions}
+            handleSearch={() => {
+              setFilteredUsers([]);
+              refetch();
+            }}
+            isLoading={isLoading}
           />
         </Box>
 

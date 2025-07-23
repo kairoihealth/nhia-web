@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getSingleComplaint } from "../../services/general";
@@ -9,20 +9,51 @@ const ProvidersSingleComplaint = () => {
   const slug = location?.state.complaint;
 
   const {
-    data: complaint
-    //  isLoading,
-    //  isError,
-    //  error
+    data: complaint,
+    isLoading,
+    isError,
+    error,
   } = useQuery({
     queryKey: ["complaints", slug],
-    queryFn: () => getSingleComplaint(slug)
+    queryFn: () => getSingleComplaint(slug),
   });
 
   const handleCompliant = () => {
     navigate(`/provider/complaint/${complaint?.case_id}/thread`, {
-      state: { thread: complaint?.id }
+      state: { thread: complaint?.id },
     });
   };
+
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          color: "red",
+        }}
+      >
+        <Typography>Error: {error.message}</Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box>
@@ -33,7 +64,7 @@ const ProvidersSingleComplaint = () => {
               fontSize: "24px",
               fontWeight: 500,
               lineHeight: "32.4px",
-              color: "#1B1C1E"
+              color: "#1B1C1E",
             }}
           >
             Complaints
@@ -45,7 +76,7 @@ const ProvidersSingleComplaint = () => {
               fontSize: "24px",
               fontWeight: 500,
               lineHeight: "32.4px",
-              color: "#111827"
+              color: "#111827",
             }}
           >
             {complaint?.case_id || ""} - {complaint?.complaint_type || ""}
@@ -59,7 +90,7 @@ const ProvidersSingleComplaint = () => {
               fontSize: "24px",
               fontWeight: 500,
               lineHeight: "32.4px",
-              color: "#038F3E"
+              color: "#038F3E",
             }}
           >
             Complainant&apos;s Details
@@ -72,7 +103,7 @@ const ProvidersSingleComplaint = () => {
               width: "40%",
               gap: 2,
               mt: 4,
-              px: 2
+              px: 2,
             }}
           >
             <Box flex={1} sx={{ display: "flex", gap: 2 }}>
@@ -82,7 +113,7 @@ const ProvidersSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 Complainant&apos;s Name
@@ -93,7 +124,7 @@ const ProvidersSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 {complaint?.firstname || "-"} {complaint?.lastname || "-"}
@@ -106,7 +137,7 @@ const ProvidersSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 Complainant&apos;s Address
@@ -117,7 +148,7 @@ const ProvidersSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 {complaint?.contact_address || "--"}
@@ -130,7 +161,7 @@ const ProvidersSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 Complainant&apos;s Email Address
@@ -141,7 +172,7 @@ const ProvidersSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 {complaint?.email || "--"}
@@ -154,7 +185,7 @@ const ProvidersSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 Complainant&apos;s Phone Number
@@ -165,7 +196,7 @@ const ProvidersSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 {complaint?.phone || "--"}
@@ -178,7 +209,7 @@ const ProvidersSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 HMO of Complaint
@@ -189,7 +220,7 @@ const ProvidersSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 {complaint?.hmo?.name || "--"}
@@ -205,7 +236,7 @@ const ProvidersSingleComplaint = () => {
               fontSize: "24px",
               fontWeight: 500,
               lineHeight: "32.4px",
-              color: "#038F3E"
+              color: "#038F3E",
             }}
           >
             Complaints Details
@@ -218,7 +249,7 @@ const ProvidersSingleComplaint = () => {
               width: "40%",
               gap: 2,
               mt: 4,
-              px: 2
+              px: 2,
             }}
           >
             <Box flex={1} sx={{ display: "flex", gap: 2 }}>
@@ -228,7 +259,7 @@ const ProvidersSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 Date of Incident
@@ -239,7 +270,7 @@ const ProvidersSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 {new Date(complaint?.incident_date).toLocaleDateString() ||
@@ -253,7 +284,7 @@ const ProvidersSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 Time of Incident
@@ -264,7 +295,7 @@ const ProvidersSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 {complaint?.incident_time || "--"}
@@ -277,7 +308,7 @@ const ProvidersSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 Date Reported
@@ -288,7 +319,7 @@ const ProvidersSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 {new Date(complaint?.created_at).toLocaleDateString() || "--"}
@@ -301,7 +332,7 @@ const ProvidersSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 NHIA Programme
@@ -312,7 +343,7 @@ const ProvidersSingleComplaint = () => {
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
                   lineHeight: "24px",
-                  width: "60%"
+                  width: "60%",
                 }}
               >
                 {complaint?.nhia_programme || "--"}
@@ -336,7 +367,7 @@ const ProvidersSingleComplaint = () => {
               padding: "12px 24px",
               borderRadius: "8px",
               mt: 8,
-              mb: 6
+              mb: 6,
             }}
             onClick={handleCompliant}
           >

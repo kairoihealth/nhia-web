@@ -7,12 +7,12 @@ export const userLogin = async (email, password) => {
       e.LOGIN,
       {
         email,
-        password
+        password,
       },
       {
         headers: {
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       }
     );
     return response;
@@ -32,7 +32,12 @@ export const setUpAccount = async (payload) => {
   }
 };
 
-export const userChangePassword = async () => {
-  const response = await Api.patch(e.CHANGE_PASSWORD);
-  return response;
+export const userChangePassword = async (payload) => {
+  try {
+    const response = await Api.post(e.CHANGE_PASSWORD, payload);
+    return response;
+  } catch (error) {
+    console.error("Password change failed:", error);
+    throw error;
+  }
 };

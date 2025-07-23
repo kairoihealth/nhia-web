@@ -17,12 +17,22 @@ export const getRegions = async ({ ordering, page, pageSize, search }) => {
   }
 };
 
+export const getSingleRegion = async (id) => {
+  try {
+    const response = await Api.get(e.GET_SINGLE_REGION(id));
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch region:", error);
+    throw error;
+  }
+};
+
 export const getStatesByRegion = async ({
   ordering,
   page,
   pageSize,
   region,
-  search
+  search,
 }) => {
   try {
     const params = new URLSearchParams();

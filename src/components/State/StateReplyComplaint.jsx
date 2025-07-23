@@ -4,64 +4,63 @@ import {
   Button,
   Card,
   CardMedia,
+  CircularProgress,
   IconButton,
   TextField,
-  Typography
+  Typography,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import AttachmentOutlinedIcon from "@mui/icons-material/AttachmentOutlined";
 import {
   // useMemo,
-  useState
+  useState,
 } from "react";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useQuery } from "@tanstack/react-query";
+import { getSingleComplaint, respondToComplaint } from "../../services/general";
 import {
-  getComplaintResponses,
-  getSingleComplaint,
-  respondToComplaint
-} from "../../services/general";
-import {
-  multiLineStyles
+  multiLineStyles,
   // textFieldStyles
 } from "../../utils/style";
-import { useHandleError } from "../../hooks/useToastHandler";
+import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
 import { convertToBase64 } from "../../utils/convertTobase64";
 // import { convertFileToBase64 } from "../../utils/convertTobase64";
 // import { getAllHmo } from "../../services/settings";
 
 const StateReplyComplaint = () => {
   const handleError = useHandleError();
+  const handleSuccess = useHandleSuccess();
   const navigate = useNavigate();
   const location = useLocation();
-  const slug = location?.state.thread;
+  const slug = location?.state?.thread;
+  const responseTo = location?.state?.to;
+
   // const [selectedHMO, setSelectedHMO] = useState("");
   const [attachments, setAttachments] = useState([]);
   const [respond, setRespond] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
-    data: complaint
-    //  isLoading,
-    //  isError,
-    //  error
+    data: complaint,
+    isLoading,
+    isError,
+    error,
   } = useQuery({
     queryKey: ["complaints", slug],
-    queryFn: () => getSingleComplaint(slug)
+    queryFn: () => getSingleComplaint(slug),
   });
 
-  const hmoName = complaint?.hmo?.name;
-
-  const {
-    data: response
-    //  isLoading,
-    //  isError,
-    //  error
-  } = useQuery({
-    queryKey: ["complaints", slug],
-    queryFn: () => getComplaintResponses(slug)
-  });
+  // const {
+  //   data: response,
+  //   //  isLoading,
+  //   //  isError,
+  //   //  error
+  // } = useQuery({
+  //   queryKey: ["complaints", slug],
+  //   queryFn: () => getComplaintResponses(slug),
+  // });
 
   // Function to handle file selection
   const handleFileChange = (e) => {
@@ -72,7 +71,7 @@ const StateReplyComplaint = () => {
         file: file,
         preview: URL.createObjectURL(file),
         name: file.name,
-        type: file.type
+        type: file.type,
       }));
 
       return [...prev, ...newFiles].slice(0, 5);
@@ -92,47 +91,10 @@ const StateReplyComplaint = () => {
   };
 
   const handleSubmit = async () => {
+    // navigate(`/provider/complaint/${data.id}/thread`);
+    setIsSubmitting(true);
     try {
-      // console.log("Attachments:", attachments);
-      const formData = new FormData();
-      // const docsArray = [];
-
-      // attachments.forEach((attachment) => {
-      //   docsArray.push({ document: attachment.file }); // Directly include the File object
-      // });
-
-      // await Promise.all(
-      //   attachments.map(async (attachment, index) => {
-      //     return new Promise((resolve, reject) => {
-      //       const reader = new FileReader();
-      //       reader.onload = () => {
-      //         const base64String = reader.result.split(",")[1];
-      //         docsArray.push({ document: base64String });
-      //         console.log(
-      //           `Attachment ${index + 1} Base64:`,
-      //           base64String ? base64String.substring(0, 50) + "..." : null
-      //         ); // Log a snippet
-      //         resolve();
-      //       };
-      //       reader.onerror = (error) => {
-      //         console.error(`Error reading attachment ${index + 1}:`, error);
-      //         reject(error);
-      //       };
-      //       reader.readAsDataURL(attachment.file); // Read the file as a data URL (base64)
-      //     });
-      //   })
-      // );
-
-      // console.log(attachments, "attach");
-      //  const documents = [];
-
-      // Convert files to base64
-      //  for (const attachment of attachments) {
-      //    const base64String = await convertFileToBase64(attachment.file);
-      //    documents.push({ document: base64String });
-      //  }
-
-      //  formData.append("docs", JSON.stringify(documents));
+      if (!respond) return handleError("Response field cannot be empty.");
 
       const docs = await Promise.all(
         attachments.map(async (attachment) => {
@@ -140,42 +102,78 @@ const StateReplyComplaint = () => {
           return { document: base64 };
         })
       );
-      // Append other fields to FormData
-      formData.append("complaint", complaint?.id);
-      formData.append("hmo_name", hmoName);
-      formData.append(
-        "hmo_address",
-        complaint?.hmo?.address || "Unknown Address"
-      );
-      formData.append("response", respond);
-      // attachments.forEach((attachment) => {
-      //   formData.append(
-      //     "docs[]",
-      //     JSON.stringify({ document: attachment.file.name })
-      //   );
-      // });
 
-      formData.append("docs", JSON.stringify(docs));
+      const data = {
+        complaint: complaint?.id,
+        ...(complaint?.complaint_against === "HMO" && {
+          hmo_name: complaint?.hmo?.name,
+          hmo_address: "Unknown Address",
+        }),
+        ...(complaint?.complaint_against === "Provider" && {
+          provider_name: complaint?.provider?.name,
+          provider_address: "Unknown Address",
+        }),
+        response: respond,
+        response_recipient: responseTo,
+        docs: docs,
+      };
 
-      await respondToComplaint(formData);
+      let res = await respondToComplaint(data);
+
       setRespond("");
       setAttachments({});
-      if (response?.id) {
-        navigate(`/state/complaint/${response?.case_id}/thread`);
+      handleSuccess(res.data?.message || "Response sent successfully");
+      if (res.data?.id) {
+        navigate(`/stateadmin/complaint/${complaint?.case_id}/thread`, {
+          state: { thread: complaint?.id },
+        });
       }
     } catch (error) {
       handleError("Failed to send response:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          color: "red",
+        }}
+      >
+        <Typography>Error: {error.message}</Typography>
+      </Box>
+    );
+  }
+
   return (
-    <Box sx={{ display: "flex", p: 4 }}>
+    <Box sx={{ display: "flex", p: 4, background: "#ffffff" }}>
       <Box
         sx={{
           display: "flex",
           flexDirection: "column",
           width: "90%",
-          height: "auto"
+          height: "auto",
         }}
       >
         {/*Header*/}
@@ -187,7 +185,7 @@ const StateReplyComplaint = () => {
             backgroundColor: "#20201E",
             borderTopLeftRadius: "10px",
             borderTopRightRadius: "10px",
-            px: 4
+            px: 4,
           }}
         >
           <Typography
@@ -195,10 +193,10 @@ const StateReplyComplaint = () => {
               fontSize: "24px",
               fontWeight: 500,
               lineHeight: "32.4px",
-              color: "#FFFFFF"
+              color: "#FFFFFF",
             }}
           >
-            {complaint?.case_id} - Access to services
+            {complaint?.case_id} - {complaint?.complaint_type || ""}
           </Typography>
         </Box>
 
@@ -210,7 +208,7 @@ const StateReplyComplaint = () => {
             gap: 2,
             width: "1032px",
             mt: 2,
-            px: 5
+            px: 5,
           }}
         >
           <Box sx={{ width: "972px" }}>
@@ -219,10 +217,10 @@ const StateReplyComplaint = () => {
                 fontSize: "20px",
                 fontWeight: 600,
                 lineHeight: "24px",
-                color: "#111827"
+                color: "#111827",
               }}
             >
-              Message From Complaints
+              Message From Complainant
             </Typography>
             <Box
               sx={{
@@ -230,7 +228,7 @@ const StateReplyComplaint = () => {
                 fontWeight: 400,
                 lineHeight: "24px",
                 color: "#1B1C1E",
-                mt: 2
+                mt: 2,
               }}
             >
               {complaint?.description}
@@ -239,8 +237,17 @@ const StateReplyComplaint = () => {
         </Box>
 
         {/*Reply*/}
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 3, p: 5 }}>
-          {/* {selectedHMO && (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 3,
+            p: 4,
+            mt: 5,
+            background: "#FAFAFA",
+          }}
+        >
+          {responseTo === "Complainant" && (
             <Typography
               variant="subtitle1"
               sx={{
@@ -248,21 +255,21 @@ const StateReplyComplaint = () => {
                 fontWeight: 600,
                 lineHeight: "24px",
                 color: "#111827",
-                mb: 2
+                mb: 2,
               }}
             >
-              Complainant: {selectedHMO?.name}
+              Complainant: {complaint?.firstname + " " + complaint?.lastname}
             </Typography>
-          )} */}
+          )}
           <Typography
             sx={{
               fontSize: "16px",
               fontWeight: 400,
               lineHeight: "21.6px",
-              color: "#000000"
+              color: "#000000",
             }}
           >
-            Message Respondent
+            Message {responseTo}
           </Typography>
 
           {/* <Autocomplete
@@ -309,7 +316,7 @@ const StateReplyComplaint = () => {
               sx={multiLineStyles}
               placeholder="Type response here..."
               slotProps={{
-                style: { textAlign: "start" }
+                style: { textAlign: "start" },
               }}
               value={respond}
               onChange={(e) => setRespond(e.target.value)}
@@ -323,7 +330,7 @@ const StateReplyComplaint = () => {
               justifyContent: "space-between",
               alignItems: "flex-start",
               gap: 4,
-              mt: 3
+              mt: 3,
             }}
           >
             <Box
@@ -331,7 +338,7 @@ const StateReplyComplaint = () => {
                 display: "flex",
                 flexDirection: "column",
                 width: "60%",
-                gap: 1
+                gap: 1,
               }}
               onClick={handleAddAttachmentClick}
             >
@@ -351,7 +358,7 @@ const StateReplyComplaint = () => {
                           width: "119.34px",
                           borderRadius: "8px",
                           position: "relative",
-                          overflow: "hidden"
+                          overflow: "hidden",
                         }}
                       >
                         {file?.type?.startsWith("image") ? (
@@ -362,7 +369,7 @@ const StateReplyComplaint = () => {
                             sx={{
                               width: "100%",
                               height: "100px",
-                              objectFit: "cover"
+                              objectFit: "cover",
                             }}
                           />
                         ) : (
@@ -378,7 +385,7 @@ const StateReplyComplaint = () => {
                               flexDirection: "column",
                               justifyContent: "center",
                               alignItems: "center",
-                              width: "119.34px"
+                              width: "119.34px",
                             }}
                           >
                             {file?.type?.includes("pdf") ? (
@@ -410,7 +417,7 @@ const StateReplyComplaint = () => {
                                 left: 6,
                                 fontSize: "12px",
                                 fontWeight: 500,
-                                color: "#595959"
+                                color: "#595959",
                               }}
                             >
                               {file?.name?.slice(0, 12)}
@@ -430,7 +437,7 @@ const StateReplyComplaint = () => {
                             width: "12px",
                             height: "12px",
                             borderRadius: "3px",
-                            backgroundColor: "#F2E2DD"
+                            backgroundColor: "#F2E2DD",
                           }}
                         >
                           <IconButton
@@ -438,7 +445,7 @@ const StateReplyComplaint = () => {
                             sx={{
                               position: "absolute",
                               color: "#FF0000",
-                              "&:hover": { color: "#FF4500" }
+                              "&:hover": { color: "#FF4500" },
                             }}
                           >
                             <DeleteIcon />
@@ -457,7 +464,7 @@ const StateReplyComplaint = () => {
                     fontWeight: 500,
                     lineHeight: "24px",
                     color: "#038F3E",
-                    cursor: "pointer"
+                    cursor: "pointer",
                   }}
                 >
                   Add attachment
@@ -477,7 +484,7 @@ const StateReplyComplaint = () => {
                   fontWeight: 400,
                   lineHeight: "18px",
                   color: "#475467",
-                  mt: 1
+                  mt: 1,
                 }}
               >
                 Upload max. 5 documents
@@ -498,9 +505,10 @@ const StateReplyComplaint = () => {
                   textTransform: "capitalize",
                   padding: "12px 24px",
                   borderRadius: "50px",
-                  mb: 6
+                  mb: 6,
                 }}
                 onClick={handleSubmit}
+                loading={isSubmitting}
               >
                 Send Response
               </Button>

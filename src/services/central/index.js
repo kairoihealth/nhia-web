@@ -45,3 +45,13 @@ export const getSingleUser = async (id) => {
     throw error;
   }
 };
+
+export const userUpdateProfile = async ({ id, payload }) => {
+  try {
+    const response = await Api.patch(e.UPDATE_PROFILE(id), payload);
+    return response;
+  } catch (error) {
+    console.error("Failed to update profile:", error);
+    throw error;
+  }
+};

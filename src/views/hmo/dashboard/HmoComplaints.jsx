@@ -1,7 +1,7 @@
 import { useState } from "react";
 // import { Helmet } from "react-helmet-async";
 import { Box, Typography, Stack, CircularProgress } from "@mui/material";
-import { FiFilter } from "react-icons/fi";
+// import { FiFilter } from "react-icons/fi";
 import { TabButton } from "../../../shared/TabPanel";
 import ReusableTable from "../../../shared/Table";
 import { useNavigate } from "react-router-dom";
@@ -145,7 +145,7 @@ const HmoComplaints = () => {
               onClick={handleTabClick}
             />
           </Stack>
-          <Box
+          {/* <Box
             // color="primary"
             sx={{
               display: "flex",
@@ -169,7 +169,7 @@ const HmoComplaints = () => {
             >
               Filter
             </Typography>
-          </Box>
+          </Box> */}
         </Stack>
 
         {/* Table */}
