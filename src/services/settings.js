@@ -59,6 +59,16 @@ export const getStates = async () => {
   }
 };
 
+export const getSingleState = async (id) => {
+  try {
+    const response = await Api.get(e.GET_SINGLE_STATE(id));
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch state:", error);
+    throw error;
+  }
+};
+
 export const getAllHmo = async ({ ordering, page, pageSize, search }) => {
   try {
     const params = new URLSearchParams();

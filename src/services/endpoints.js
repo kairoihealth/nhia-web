@@ -14,6 +14,7 @@ export const ENDPOINTS = {
   GET_REGIONS: "/settings/regions/",
   GET_SINGLE_REGION: (id) => `/settings/regions/${id}/`,
   GET_STATES: "/settings/states/",
+  GET_SINGLE_STATE: (id) => `/settings/states/${id}/`,
   GET_ALL_HMO: "/settings/hmos/",
   GET_ALL_PROVIDERS: "/settings/providers/",
 
