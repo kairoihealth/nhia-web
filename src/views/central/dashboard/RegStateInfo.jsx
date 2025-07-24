@@ -12,6 +12,7 @@ import {
   getComplaintSatisfactionScores,
   getComplaintStats,
   getComplaintTrends,
+  getComplaintTrendsByOrganisation,
 } from "../../../services/general";
 import { useMemo } from "react";
 import { shortenDay } from "../../../utils/general";
@@ -67,6 +68,16 @@ const RegStateInfo = () => {
   } = useQuery({
     queryKey: ["complaintTrends"],
     queryFn: () => getComplaintTrends({ state_id: stateId }),
+  });
+
+  const {
+    data: complaintTrendsByOrganisation,
+    isLoading: isLoadingTrendsByOrganisation,
+    // isError,
+    // error,
+  } = useQuery({
+    queryKey: ["complaintTrendsByOrganisation"],
+    queryFn: () => getComplaintTrendsByOrganisation({ state_id: stateId }),
   });
 
   const {
@@ -146,7 +157,13 @@ const RegStateInfo = () => {
     ],
   };
 
-  if (isLoadingState || isLoadingScores || isLoadingStats || isLoadingTrends) {
+  if (
+    isLoadingState ||
+    isLoadingScores ||
+    isLoadingStats ||
+    isLoadingTrends ||
+    isLoadingTrendsByOrganisation
+  ) {
     return (
       <Box
         sx={{
@@ -393,7 +410,7 @@ const RegStateInfo = () => {
             >
               Most Complaints Respondents
             </Typography>
-            {complaintStats?.complaint_type?.map((t) => (
+            {complaintTrendsByOrganisation?.HMO?.organisations?.map((t) => (
               <Box
                 key={t.id}
                 sx={{ display: "flex", flexDirection: "column", gap: 1 }}
@@ -406,7 +423,7 @@ const RegStateInfo = () => {
                     color: "#111827",
                   }}
                 >
-                  {t.complaint_type}
+                  {t.name}
                 </Typography>
                 <Box sx={{ display: "flex", gap: 1 }}>
                   <Typography
@@ -417,9 +434,9 @@ const RegStateInfo = () => {
                       color: "#000000",
                     }}
                   >
-                    {t.total} Complaints
+                    {t.count} Complaints
                   </Typography>
-                  <Typography
+                  {/* <Typography
                     sx={{
                       fontSize: "14px",
                       fontWeight: 400,
@@ -427,11 +444,52 @@ const RegStateInfo = () => {
                       color: "#000000",
                     }}
                   >
-                    &bull; {t.complaint_type}
-                  </Typography>
+                    &bull; {t.reason}
+                  </Typography> */}
                 </Box>
               </Box>
             ))}
+            {complaintTrendsByOrganisation?.Provider?.organisations?.map(
+              (t) => (
+                <Box
+                  key={t.id}
+                  sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                >
+                  <Typography
+                    sx={{
+                      fontSize: "16px",
+                      fontWeight: 500,
+                      lineHeight: "21.6px",
+                      color: "#111827",
+                    }}
+                  >
+                    {t.name}
+                  </Typography>
+                  <Box sx={{ display: "flex", gap: 1 }}>
+                    <Typography
+                      sx={{
+                        fontSize: "14px",
+                        fontWeight: 400,
+                        lineHeight: "16.94px",
+                        color: "#000000",
+                      }}
+                    >
+                      {t.count} Complaints
+                    </Typography>
+                    {/* <Typography
+                    sx={{
+                      fontSize: "14px",
+                      fontWeight: 400,
+                      lineHeight: "16.94px",
+                      color: "#000000",
+                    }}
+                  >
+                    &bull; {t.reason}
+                  </Typography> */}
+                  </Box>
+                </Box>
+              )
+            )}
           </Card>
         </Box>
       </Box>

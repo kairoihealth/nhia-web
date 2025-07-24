@@ -123,14 +123,20 @@ const RegionStatesById = () => {
   const states = stateData[regionId] || [];
 
   const {
-    data: closedComplaints,
-    isLoading: isLoadingClosedComplaints,
+    data: complaints,
+    isLoading: isLoadingComplaints,
     // isError,
     // error,
   } = useQuery({
-    queryKey: ["closedComplaints"],
-    queryFn: () => getNewComplaints({ status: "closed" }),
+    queryKey: ["complaints"],
+    queryFn: () => getNewComplaints({}),
   });
+
+  const unresolvedComplaints = complaints?.results?.filter(
+    (complaint) => complaint?.status !== "closed"
+  )?.length;
+
+  console.log(unresolvedComplaints);
 
   const {
     data: regions,
@@ -264,7 +270,8 @@ const RegionStatesById = () => {
     isLoadingRegionStates ||
     isLoadingScores ||
     isLoadingStats ||
-    isLoadingTrends
+    isLoadingTrends ||
+    isLoadingComplaints
   ) {
     return (
       <Box
@@ -533,7 +540,7 @@ const RegionStatesById = () => {
                 color: "#101828",
               }}
             >
-              {closedComplaints?.total}
+              {unresolvedComplaints || 0}
             </Typography>
             <Box
               sx={{

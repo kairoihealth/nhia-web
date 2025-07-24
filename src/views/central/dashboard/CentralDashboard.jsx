@@ -12,6 +12,7 @@ import {
   getComplaintSatisfactionScores,
   getComplaintStats,
   getComplaintTrends,
+  getComplaintTrendsByOrganisation,
   getNewComplaints,
 } from "../../../services/general";
 import { useMemo } from "react";
@@ -68,6 +69,16 @@ const CentralDashboard = () => {
   } = useQuery({
     queryKey: ["complaintTrends"],
     queryFn: () => getComplaintTrends({}),
+  });
+
+  const {
+    data: complaintTrendsByOrganisation,
+    isLoading: isLoadingTrendsByOrganisation,
+    // isError,
+    // error,
+  } = useQuery({
+    queryKey: ["complaintTrendsByOrganisation"],
+    queryFn: () => getComplaintTrendsByOrganisation({}),
   });
 
   const pieStatusColors = [
@@ -170,6 +181,7 @@ const CentralDashboard = () => {
     isLoadingScores ||
     isLoadingStats ||
     isLoadingTrends ||
+    isLoadingTrendsByOrganisation ||
     isLoadingEscalatedComplaints
   ) {
     return (
@@ -486,7 +498,7 @@ const CentralDashboard = () => {
             >
               Most Complaints respondents
             </Typography>
-            {complaintStats?.complaint_type?.map((t) => (
+            {complaintTrendsByOrganisation?.HMO?.organisations?.map((t) => (
               <Box
                 key={t.id}
                 sx={{ display: "flex", flexDirection: "column", gap: 1 }}
@@ -499,7 +511,7 @@ const CentralDashboard = () => {
                     color: "#111827",
                   }}
                 >
-                  {t.complaint_type}
+                  {t.name}
                 </Typography>
                 <Box sx={{ display: "flex", gap: 1 }}>
                   <Typography
@@ -510,9 +522,9 @@ const CentralDashboard = () => {
                       color: "#000000",
                     }}
                   >
-                    {t.total} Complaints
+                    {t.count} Complaints
                   </Typography>
-                  <Typography
+                  {/* <Typography
                     sx={{
                       fontSize: "14px",
                       fontWeight: 400,
@@ -520,11 +532,52 @@ const CentralDashboard = () => {
                       color: "#000000",
                     }}
                   >
-                    &bull; {t.complaint_type}
-                  </Typography>
+                    &bull; {t.reason}
+                  </Typography> */}
                 </Box>
               </Box>
             ))}
+            {complaintTrendsByOrganisation?.Provider?.organisations?.map(
+              (t) => (
+                <Box
+                  key={t.id}
+                  sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                >
+                  <Typography
+                    sx={{
+                      fontSize: "16px",
+                      fontWeight: 500,
+                      lineHeight: "21.6px",
+                      color: "#111827",
+                    }}
+                  >
+                    {t.name}
+                  </Typography>
+                  <Box sx={{ display: "flex", gap: 1 }}>
+                    <Typography
+                      sx={{
+                        fontSize: "14px",
+                        fontWeight: 400,
+                        lineHeight: "16.94px",
+                        color: "#000000",
+                      }}
+                    >
+                      {t.count} Complaints
+                    </Typography>
+                    {/* <Typography
+                    sx={{
+                      fontSize: "14px",
+                      fontWeight: 400,
+                      lineHeight: "16.94px",
+                      color: "#000000",
+                    }}
+                  >
+                    &bull; {t.reason}
+                  </Typography> */}
+                  </Box>
+                </Box>
+              )
+            )}
           </Card>
           <Card
             sx={{
