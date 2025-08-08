@@ -2,7 +2,9 @@ import axios from "axios";
 import Auth from "./Auth";
 
 const Api = axios.create({
-  baseURL: import.meta.env.VITE_APP_BASE_URL || ""
+  baseURL:
+    import.meta.env.VITE_APP_BASE_URL ||
+    "https://svz3mxw8-46000.uks1.devtunnels.ms/api/v1",
 });
 
 Api.interceptors.request.use(

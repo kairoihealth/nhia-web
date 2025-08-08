@@ -1,17 +1,21 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { Box, Card, Typography } from "@mui/material";
+import { Box, Card, CircularProgress, Typography } from "@mui/material";
 import ArrowBackIosOutlinedIcon from "@mui/icons-material/ArrowBackIosOutlined";
 import PieChart from "../../../shared/PieChart";
-import {
-  lineData,
-  pieColor,
-  pieData,
-  regComplaintData
-} from "../../../mock/chartData";
 import { barOptions, lineOptions, options } from "../../../utils/config";
 import LineChart from "../../../shared/LineChart";
 import BarChart from "../../../shared/BarChart";
 import { complaintRespondents } from "../../../mock/dashboard";
+import { getSingleState } from "../../../services/settings";
+import { useQuery } from "@tanstack/react-query";
+import {
+  getComplaintSatisfactionScores,
+  getComplaintStats,
+  getComplaintTrends,
+  getComplaintTrendsByOrganisation,
+} from "../../../services/general";
+import { useMemo } from "react";
+import { shortenDay } from "../../../utils/general";
 
 const stateData = {
   "north-west": [
@@ -22,10 +26,10 @@ const stateData = {
       resolved: 450,
       satisfaction: 85,
       topPerformer: true,
-      worstPerformer: false
-    }
+      worstPerformer: false,
+    },
     // ... other states
-  ]
+  ],
   // ... other regions
 };
 const RegStateInfo = () => {
@@ -34,7 +38,161 @@ const RegStateInfo = () => {
 
   // Find state data using slug
   const regionStates = stateData[slug] || [];
-  const state = regionStates.find((s) => s.slug === stateId);
+  // const state = regionStates.find((s) => s.slug === stateId);
+
+  const {
+    data: state,
+    isLoading: isLoadingState,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["state"],
+    queryFn: () => getSingleState(stateId),
+  });
+
+  const {
+    data: complaintStats,
+    isLoading: isLoadingStats,
+    // isError,
+    // error,
+  } = useQuery({
+    queryKey: ["complaintStats"],
+    queryFn: () => getComplaintStats({ state_id: stateId }),
+  });
+
+  const {
+    data: complaintTrends,
+    isLoading: isLoadingTrends,
+    // isError,
+    // error,
+  } = useQuery({
+    queryKey: ["complaintTrends"],
+    queryFn: () => getComplaintTrends({ state_id: stateId }),
+  });
+
+  const {
+    data: complaintTrendsByOrganisation,
+    isLoading: isLoadingTrendsByOrganisation,
+    // isError,
+    // error,
+  } = useQuery({
+    queryKey: ["complaintTrendsByOrganisation"],
+    queryFn: () => getComplaintTrendsByOrganisation({ state_id: stateId }),
+  });
+
+  const {
+    data: complaintScores,
+    isLoading: isLoadingScores,
+    // isError,
+    // error,
+  } = useQuery({
+    queryKey: ["complaintScores"],
+    queryFn: () => getComplaintSatisfactionScores({ state_id: stateId }),
+  });
+
+  const pieStatusColors = [
+    { status: "pending", color: "#FFCC99" },
+    { status: "active", color: "#72F172" },
+    { status: "closed", color: "#4B95DD" },
+    { status: "escalated", color: "#E75C5C" },
+  ];
+  const filteredPieStatus = useMemo(
+    () =>
+      complaintStats?.status?.map((s) => {
+        const colorObj = pieStatusColors.find((c) => c.status === s.status);
+        return {
+          ...s,
+          color: colorObj ? colorObj.color : "#dddddd",
+          title: s.status,
+        };
+      }),
+    [complaintStats?.status]
+  );
+
+  const pieStatusData = {
+    labels: filteredPieStatus?.map((s) => s.status) || [],
+    datasets: [
+      {
+        data: filteredPieStatus?.map((s) => s.total) || [],
+        backgroundColor: filteredPieStatus?.map((s) => s.color),
+        borderColor: filteredPieStatus?.map((s) => s.color),
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const barData = {
+    labels:
+      complaintStats?.complaint_type?.map((region) => region.complaint_type) ||
+      [],
+    datasets: [
+      {
+        label: "Volume",
+        data:
+          complaintStats?.complaint_type?.map((region) => region.total) || [],
+        backgroundColor: ["#20201E"],
+        borderColor: ["#20201E"],
+        borderWidth: 1,
+        barThickness: 15,
+        borderRadius: 4,
+      },
+    ],
+  };
+
+  const lineData = {
+    labels:
+      complaintTrends?.current_week_trends?.map((trend) =>
+        shortenDay(trend.date)
+      ) || [],
+    datasets: [
+      {
+        label: "Trend",
+        data:
+          complaintTrends?.current_week_trends?.map((trend) => trend.total) ||
+          [],
+        fill: false,
+        borderColor: "#18A0FB",
+        tension: 0.1,
+      },
+    ],
+  };
+
+  if (
+    isLoadingState ||
+    isLoadingScores ||
+    isLoadingStats ||
+    isLoadingTrends ||
+    isLoadingTrendsByOrganisation
+  ) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          color: "red",
+        }}
+      >
+        <Typography>Error: {error.message}</Typography>
+      </Box>
+    );
+  }
 
   if (!state) return <div>State not found</div>;
 
@@ -47,7 +205,7 @@ const RegStateInfo = () => {
           alignItems: "center",
           gap: 1,
           cursor: "pointer",
-          mb: 4
+          mb: 4,
         }}
         onClick={() => navigate(-1)}
       >
@@ -72,7 +230,7 @@ const RegStateInfo = () => {
                 borderRadius: "12px",
                 backgroundColor: "#FFFFFF",
                 width: "313px",
-                height: "209px"
+                height: "209px",
               }}
             >
               <Typography
@@ -80,7 +238,7 @@ const RegStateInfo = () => {
                   fontSize: "18px",
                   fontWeight: 500,
                   lineHeight: "28px",
-                  color: "#475467"
+                  color: "#475467",
                 }}
                 gutterBottom
               >
@@ -91,10 +249,10 @@ const RegStateInfo = () => {
                   fontSize: "48px",
                   fontWeight: 600,
                   lineHeight: "72px",
-                  color: "#20201E"
+                  color: "#20201E",
                 }}
               >
-                {state.totalComplaints}
+                {complaintStats?.total}
               </Typography>
             </Card>
             <Card
@@ -107,7 +265,7 @@ const RegStateInfo = () => {
                 borderRadius: "12px",
                 backgroundColor: "#FFFFFF",
                 width: "313px",
-                height: "209px"
+                height: "209px",
               }}
             >
               <Typography
@@ -115,7 +273,7 @@ const RegStateInfo = () => {
                   fontSize: "18px",
                   fontWeight: 500,
                   lineHeight: "28px",
-                  color: "#475467"
+                  color: "#475467",
                 }}
                 gutterBottom
               >
@@ -124,12 +282,12 @@ const RegStateInfo = () => {
               <Box sx={{ display: "flex", alignItems: "center", px: 10 }}>
                 <PieChart
                   title="Pie Chart Example"
-                  data={pieData}
+                  data={pieStatusData}
                   options={options}
                 />
               </Box>
               <Box sx={{ display: "flex" }}>
-                {pieColor.map((t) => (
+                {filteredPieStatus.map((t) => (
                   <Box
                     key={t.id}
                     sx={{ display: "flex", alignItems: "center" }}
@@ -140,7 +298,7 @@ const RegStateInfo = () => {
                         height: "8px",
                         backgroundColor: t.color,
                         borderRadius: "50%",
-                        margin: "0 8px"
+                        margin: "0 8px",
                       }}
                     />
                     <Typography
@@ -148,7 +306,8 @@ const RegStateInfo = () => {
                         fontSize: "12px",
                         fontWeight: 500,
                         lineHeight: "16px",
-                        color: "#475467"
+                        color: "#475467",
+                        textTransform: "capitalize",
                       }}
                     >
                       {t.title}
@@ -170,7 +329,7 @@ const RegStateInfo = () => {
                 borderRadius: "12px",
                 backgroundColor: "#FFFFFF",
                 width: "313px",
-                height: "209px"
+                height: "209px",
               }}
             >
               <Typography
@@ -179,7 +338,7 @@ const RegStateInfo = () => {
                   fontWeight: 500,
                   lineHeight: "28px",
                   color: "#475467",
-                  p: 1
+                  p: 1,
                 }}
                 gutterBottom
               >
@@ -188,7 +347,7 @@ const RegStateInfo = () => {
               <Box sx={{ display: "flex", alignItems: "flex-start" }}>
                 <BarChart
                   title="Bar Chart Example"
-                  data={regComplaintData}
+                  data={barData}
                   options={barOptions}
                 />
               </Box>
@@ -203,7 +362,7 @@ const RegStateInfo = () => {
                 borderRadius: "12px",
                 backgroundColor: "#FFFFFF",
                 width: "360px",
-                height: "239px"
+                height: "239px",
               }}
             >
               <Typography
@@ -211,7 +370,7 @@ const RegStateInfo = () => {
                   fontSize: "18px",
                   fontWeight: 500,
                   lineHeight: "28px",
-                  color: "#101828"
+                  color: "#101828",
                 }}
               >
                 Complaint Trends
@@ -238,7 +397,7 @@ const RegStateInfo = () => {
               borderRadius: "12px",
               backgroundColor: "#FFFFFF",
               width: "360px",
-              height: "451px"
+              height: "451px",
             }}
           >
             <Typography
@@ -246,28 +405,65 @@ const RegStateInfo = () => {
                 fontSize: "18px",
                 fontWeight: 500,
                 lineHeight: "28px",
-                color: "#101828"
+                color: "#101828",
               }}
             >
               Most Complaints Respondents
             </Typography>
-            {complaintRespondents.map((t) => (
-              <Box key={t.id} sx={{ display: "flex", gap: 1 }}>
-                <img
-                  src={t.icon}
-                  alt=""
-                  style={{ width: "37px", height: "37px" }}
-                />
-                <Box>
+            {complaintTrendsByOrganisation?.HMO?.organisations?.map((t) => (
+              <Box
+                key={t.id}
+                sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: "16px",
+                    fontWeight: 500,
+                    lineHeight: "21.6px",
+                    color: "#111827",
+                  }}
+                >
+                  {t.name}
+                </Typography>
+                <Box sx={{ display: "flex", gap: 1 }}>
+                  <Typography
+                    sx={{
+                      fontSize: "14px",
+                      fontWeight: 400,
+                      lineHeight: "16.94px",
+                      color: "#000000",
+                    }}
+                  >
+                    {t.count} Complaints
+                  </Typography>
+                  {/* <Typography
+                    sx={{
+                      fontSize: "14px",
+                      fontWeight: 400,
+                      lineHeight: "16.94px",
+                      color: "#000000",
+                    }}
+                  >
+                    &bull; {t.reason}
+                  </Typography> */}
+                </Box>
+              </Box>
+            ))}
+            {complaintTrendsByOrganisation?.Provider?.organisations?.map(
+              (t) => (
+                <Box
+                  key={t.id}
+                  sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                >
                   <Typography
                     sx={{
                       fontSize: "16px",
                       fontWeight: 500,
                       lineHeight: "21.6px",
-                      color: "#111827"
+                      color: "#111827",
                     }}
                   >
-                    {t.title}
+                    {t.name}
                   </Typography>
                   <Box sx={{ display: "flex", gap: 1 }}>
                     <Typography
@@ -275,25 +471,25 @@ const RegStateInfo = () => {
                         fontSize: "14px",
                         fontWeight: 400,
                         lineHeight: "16.94px",
-                        color: "#000000"
+                        color: "#000000",
                       }}
                     >
-                      {t.number} Complaints
+                      {t.count} Complaints
                     </Typography>
-                    <Typography
-                      sx={{
-                        fontSize: "14px",
-                        fontWeight: 400,
-                        lineHeight: "16.94px",
-                        color: "#000000"
-                      }}
-                    >
-                      &bull; {t.reason}
-                    </Typography>
+                    {/* <Typography
+                    sx={{
+                      fontSize: "14px",
+                      fontWeight: 400,
+                      lineHeight: "16.94px",
+                      color: "#000000",
+                    }}
+                  >
+                    &bull; {t.reason}
+                  </Typography> */}
                   </Box>
                 </Box>
-              </Box>
-            ))}
+              )
+            )}
           </Card>
         </Box>
       </Box>

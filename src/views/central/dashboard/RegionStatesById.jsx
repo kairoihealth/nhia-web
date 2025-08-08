@@ -1,22 +1,22 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { Box, Typography, Card } from "@mui/material";
+import { Box, Typography, Card, CircularProgress } from "@mui/material";
 import ArrowBackIosOutlinedIcon from "@mui/icons-material/ArrowBackIosOutlined";
 import ArrowForwardIosOutlinedIcon from "@mui/icons-material/ArrowForwardIosOutlined";
 import PieChart from "../../../shared/PieChart";
-import {
-  regComplaintData,
-  pieColor,
-  pieData,
-  lineData,
-} from "../../../mock/chartData";
 import { barOptions, lineOptions, options } from "../../../utils/config";
 import BarChart from "../../../shared/BarChart";
 import GaugeChart from "../../../shared/SofaChart";
 import LineChart from "../../../shared/LineChart";
 import { useQuery } from "@tanstack/react-query";
 import { getRegions, getStatesByRegion } from "../../../services/settings";
-import { getComplaintStats, getNewComplaints } from "../../../services/general";
+import {
+  getComplaintSatisfactionScores,
+  getComplaintStats,
+  getComplaintTrends,
+  getNewComplaints,
+} from "../../../services/general";
 import { useMemo } from "react";
+import { shortenDay } from "../../../utils/general";
 
 const stateData = {
   "north-west": [
@@ -123,14 +123,20 @@ const RegionStatesById = () => {
   const states = stateData[regionId] || [];
 
   const {
-    data: closedComplaints,
-    isLoading: isLoadingClosedComplaints,
+    data: complaints,
+    isLoading: isLoadingComplaints,
     // isError,
     // error,
   } = useQuery({
-    queryKey: ["closedComplaints"],
-    queryFn: () => getNewComplaints({ status: "closed" }),
+    queryKey: ["complaints"],
+    queryFn: () => getNewComplaints({}),
   });
+
+  const unresolvedComplaints = complaints?.results?.filter(
+    (complaint) => complaint?.status !== "closed"
+  )?.length;
+
+  console.log(unresolvedComplaints);
 
   const {
     data: regions,
@@ -160,6 +166,26 @@ const RegionStatesById = () => {
   } = useQuery({
     queryKey: ["complaintStats"],
     queryFn: () => getComplaintStats({ region_id: regionId }),
+  });
+
+  const {
+    data: complaintTrends,
+    isLoading: isLoadingTrends,
+    // isError,
+    // error,
+  } = useQuery({
+    queryKey: ["complaintTrends"],
+    queryFn: () => getComplaintTrends({ region_id: regionId }),
+  });
+
+  const {
+    data: complaintScores,
+    isLoading: isLoadingScores,
+    // isError,
+    // error,
+  } = useQuery({
+    queryKey: ["complaintScores"],
+    queryFn: () => getComplaintSatisfactionScores({ region_id: regionId }),
   });
 
   const pieStatusColors = [
@@ -211,6 +237,24 @@ const RegionStatesById = () => {
     ],
   };
 
+  const lineData = {
+    labels:
+      complaintTrends?.current_week_trends?.map((trend) =>
+        shortenDay(trend.date)
+      ) || [],
+    datasets: [
+      {
+        label: "Trend",
+        data:
+          complaintTrends?.current_week_trends?.map((trend) => trend.total) ||
+          [],
+        fill: false,
+        borderColor: "#18A0FB",
+        tension: 0.1,
+      },
+    ],
+  };
+
   const getTopPerformer = () => {
     const topPerformers = states.filter((state) => state.topPerformer);
     return topPerformers.length > 0 ? topPerformers[0].name : "N/A";
@@ -220,6 +264,44 @@ const RegionStatesById = () => {
     const worstPerformers = states.filter((state) => state.worstPerformer);
     return worstPerformers.length > 0 ? worstPerformers[0].name : "N/A";
   };
+
+  if (
+    isLoading ||
+    isLoadingRegionStates ||
+    isLoadingScores ||
+    isLoadingStats ||
+    isLoadingTrends ||
+    isLoadingComplaints
+  ) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          color: "red",
+        }}
+      >
+        <Typography>Error: {error.message}</Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box>
@@ -275,7 +357,7 @@ const RegionStatesById = () => {
               }}
               onClick={() =>
                 navigate(
-                  `/central-regional-stats/${regionId}/${state.name
+                  `/admin/regional-stats/${regionId}/${state.id
                     .toLowerCase()
                     .replace(/ /g, "-")}`
                 )
@@ -458,7 +540,7 @@ const RegionStatesById = () => {
                 color: "#101828",
               }}
             >
-              {closedComplaints?.total}
+              {unresolvedComplaints || 0}
             </Typography>
             <Box
               sx={{
@@ -467,7 +549,7 @@ const RegionStatesById = () => {
                 gap: 0.5,
                 cursor: "pointer",
               }}
-              onClick={() => navigate("/central-complaints")}
+              onClick={() => navigate("/admin/complaints")}
             >
               <Typography
                 sx={{
@@ -617,7 +699,9 @@ const RegionStatesById = () => {
               Complaints Satisfaction
             </Typography>
             <Box sx={{ display: "flex", alignItems: "center", px: 5 }}>
-              <GaugeChart value={70.1} />
+              <GaugeChart
+                value={complaintScores?.satisfaction_percentage || 0}
+              />
             </Box>
           </Card>
         </Box>

@@ -38,6 +38,39 @@ const InvitationsByState = () => {
     setIsLoading(false);
   };
 
+  const filterOptions = [
+    { value: "", label: "All" },
+    { value: "Provider", label: "Providers" },
+    { value: "HMO", label: "HMO" },
+  ];
+
+  const handleAddUser = () => {
+    navigate(`add-policy-user`);
+  };
+
+  // Define table columns dynamically based on activeTab
+  const getColumns = () => {
+    return [
+      { label: "Name", field: "name", align: "center" },
+      { label: "Date added", field: "created_at", align: "center" },
+      // { label: "ID", field: "id", align: "center" },
+      { label: "Email", field: "email", align: "center" },
+      { label: "Type", field: "type", align: "center" },
+    ];
+  };
+
+  const transformedRows =
+    (filteredUsers?.results?.length ? filteredUsers : users)?.results
+      ?.filter((u) => u.role === "Provider" || u.role === "HMO")
+      ?.map((user) => ({
+        name: `${user?.provider?.name || user?.hmo?.name}`.trim(),
+        created_at: new Date(user.created_at).toLocaleDateString(),
+        id: user.id,
+        email: user.email,
+        type: user.role,
+        status: user.verified === true ? "active" : "pending",
+      })) || [];
+
   if (isUsersLoading) {
     return (
       <Box
@@ -68,41 +101,6 @@ const InvitationsByState = () => {
       </Box>
     );
   }
-
-  const filterOptions = [
-    { value: "", label: "All" },
-    { value: "Provider", label: "Providers" },
-    { value: "HMO", label: "HMO" },
-  ];
-
-  const handleAddUser = () => {
-    navigate(`add-policy-user`);
-  };
-
-  // Define table columns dynamically based on activeTab
-  const getColumns = () => {
-    return [
-      { label: "Name", field: "name", align: "center" },
-      { label: "Date added", field: "created_at", align: "center" },
-      // { label: "ID", field: "id", align: "center" },
-      { label: "Email", field: "email", align: "center" },
-      { label: "Type", field: "type", align: "center" },
-    ];
-  };
-
-  const transformedRows =
-    (filteredUsers?.results?.length ? filteredUsers : users)?.results?.map(
-      (user) => ({
-        name: `${user.firstname || "-"} ${user.lastname || "-"}`.trim(),
-        created_at: new Date(user.created_at).toLocaleDateString(),
-        id: user.id,
-        email: user.email,
-        type: user.role,
-        status: user.verified === true ? "active" : "pending",
-      })
-    ) || [];
-
-  console.log(filteredUsers, searchTerm, filter, "searchTerm");
 
   return (
     <Box>
@@ -135,7 +133,7 @@ const InvitationsByState = () => {
           >
             Providers & HMO
           </Typography>
-          <Button
+          {/* <Button
             variant="contained"
             size="medium"
             onClick={handleAddUser}
@@ -153,7 +151,7 @@ const InvitationsByState = () => {
             }}
           >
             Send Invitation
-          </Button>
+          </Button> */}
         </Box>
 
         {/* Search and Sort */}
