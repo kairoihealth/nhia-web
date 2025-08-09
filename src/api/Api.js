@@ -3,9 +3,9 @@ import Auth from "./Auth";
 
 const Api = axios.create({
   baseURL:
-    import.meta.env.VITE_APP_BASE_URL ||
-    "https://svz3mxw8-46000.uks1.devtunnels.ms/api/v1",
+    import.meta.env.VITE_APP_BASE_URL || "http://142.93.170.222:46001/api/v1",
 });
+// "https://svz3mxw8-46000.uks1.devtunnels.ms/api/v1",
 
 Api.interceptors.request.use(
   (config) => {
