@@ -1,4 +1,4 @@
-import { Box, Typography, Button, CircularProgress } from "@mui/material";
+import { Box, Typography, CircularProgress } from "@mui/material";
 import ReusableTable from "../../../shared/Table";
 import { useNavigate } from "react-router-dom";
 import SearchFilter from "../../../shared/SearchAndFilter";
@@ -48,9 +48,9 @@ const StateInviteByCentral = () => {
     { value: "HMO", label: "HMO" },
   ];
 
-  const handleAddUser = () => {
-    navigate(`add-user`);
-  };
+  // const handleAddUser = () => {
+  //   navigate(`add-user`);
+  // };
 
   // Define table columns dynamically based on activeTab
   const getColumns = () => {
@@ -181,7 +181,7 @@ const StateInviteByCentral = () => {
               setFilteredUsers([]);
               refetch();
             }}
-            isLoading={isLoading}
+            isLoading={isLoading || isUsersLoading}
           />
         </Box>
 

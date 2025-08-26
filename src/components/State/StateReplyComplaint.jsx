@@ -97,7 +97,7 @@ const StateReplyComplaint = () => {
       if (!respond) return handleError("Response field cannot be empty.");
 
       const docs = await Promise.all(
-        attachments.map(async (attachment) => {
+        attachments?.map(async (attachment) => {
           const base64 = await convertToBase64(attachment.file);
           return { document: base64 };
         })

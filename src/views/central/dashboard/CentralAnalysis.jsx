@@ -40,11 +40,11 @@ const CentralAnalysis = () => {
       getNewComplaints({ page: 1, pageSize: 5, status: "pending" }),
   });
 
-  const { data: hmosData } = useQuery({
+  const { data: hmosData, isLoading: isLoadingHmos } = useQuery({
     queryKey: ["hmos"],
     queryFn: () => getAllHmo({ page: 1, pageSize: 100 }),
   });
-  const { data: providersData } = useQuery({
+  const { data: providersData, isLoading: isLoadingProviders } = useQuery({
     queryKey: ["providers"],
     queryFn: () => getAllProviders({ page: 1, pageSize: 100 }),
   });
@@ -166,7 +166,14 @@ const CentralAnalysis = () => {
     ],
   };
 
-  if (isLoading || isLoadingScores || isLoadingStats || isLoadingTrends) {
+  if (
+    isLoading ||
+    isLoadingHmos ||
+    isLoadingProviders ||
+    isLoadingScores ||
+    isLoadingStats ||
+    isLoadingTrends
+  ) {
     return (
       <Box
         sx={{

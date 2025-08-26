@@ -298,7 +298,7 @@ const StateDashboard = () => {
                 />
               </Box>
               <Box sx={{ display: "flex", justifySelf: "center" }}>
-                {filteredPieStatus.map((t) => (
+                {filteredPieStatus?.map((t) => (
                   <Box
                     key={t.id}
                     sx={{ display: "flex", alignItems: "center" }}
@@ -358,7 +358,7 @@ const StateDashboard = () => {
                 />
               </Box>
               <Box sx={{ display: "flex", alignItems: "center", px: 3 }}>
-                {filteredPieCategories.map((t) => (
+                {filteredPieCategories?.map((t) => (
                   <Box
                     key={t.id}
                     sx={{ display: "flex", alignItems: "center" }}

@@ -93,7 +93,7 @@ const SearchFilter = ({
           }}
           // variant="outlined"
         >
-          {filterOptions.map((option) => (
+          {filterOptions?.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>
@@ -105,7 +105,7 @@ const SearchFilter = ({
           variant="outlined"
           sx={{ backgroundColor: "#fff", height: "38px", borderRadius: "8px" }}
         >
-          {filterOptions.map((option) => (
+          {filterOptions?.map((option) => (
             <MenuItem key={option.value} value={option.value}>
               {option.label}
             </MenuItem>

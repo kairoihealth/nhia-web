@@ -287,7 +287,7 @@ const RegStateInfo = () => {
                 />
               </Box>
               <Box sx={{ display: "flex" }}>
-                {filteredPieStatus.map((t) => (
+                {filteredPieStatus?.map((t) => (
                   <Box
                     key={t.id}
                     sx={{ display: "flex", alignItems: "center" }}

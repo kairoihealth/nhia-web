@@ -1,13 +1,12 @@
-import { Box, Typography, Button, CircularProgress } from "@mui/material";
+import { Box, Typography,  CircularProgress } from "@mui/material";
 import ReusableTable from "../../../shared/Table";
-import { useNavigate } from "react-router-dom";
 import SearchFilter from "../../../shared/SearchAndFilter";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getUsers } from "../../../services/central";
 
 const InvitationsByState = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -44,9 +43,9 @@ const InvitationsByState = () => {
     { value: "HMO", label: "HMO" },
   ];
 
-  const handleAddUser = () => {
-    navigate(`add-policy-user`);
-  };
+  // const handleAddUser = () => {
+  //   navigate(`add-policy-user`);
+  // };
 
   // Define table columns dynamically based on activeTab
   const getColumns = () => {
@@ -176,7 +175,7 @@ const InvitationsByState = () => {
               setFilteredUsers([]);
               refetch();
             }}
-            isLoading={isLoading}
+            isLoading={isLoading || isUsersLoading}
           />
         </Box>
 

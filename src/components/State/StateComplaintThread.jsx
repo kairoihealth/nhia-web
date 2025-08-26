@@ -47,6 +47,7 @@ const StateComplaintThread = () => {
   const navigate = useNavigate();
 
   const [isDownloading, setIsDownloading] = useState("");
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const {
     data: complaint,
@@ -69,6 +70,7 @@ const StateComplaintThread = () => {
   });
 
   const handleUpdateStatus = async (status) => {
+    setIsUpdating(true);
     try {
       let res = await updateComplaintStatus({
         id: thread,
@@ -79,6 +81,8 @@ const StateComplaintThread = () => {
       handleSuccess(res.data?.message || "Complaint updated successfully");
     } catch (error) {
       handleError("Failed to send response:", error);
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -206,25 +210,38 @@ const StateComplaintThread = () => {
                     &bull; {complaint?.status || "N/A"}
                   </Box>
                   <Box>
-                    <select
-                      name="status"
-                      style={{
-                        border: "none",
-                        background: "transparent",
-                        marginTop: "10px",
-                        outline: "none",
-                        color: "#555555",
-                      }}
-                      onChange={(e) => {
-                        handleUpdateStatus(e.target.value);
-                      }}
-                    >
-                      <option value="">Change status</option>
-                      <option value="pending">Pending</option>
-                      <option value="active">Active</option>
-                      <option value="closed">Closed</option>
-                      <option value="escalated">Escalated</option>
-                    </select>
+                    {isUpdating || isLoading ? (
+                      <Typography
+                        sx={{
+                          fontSize: "14px",
+                          fontWeight: 300,
+                          color: "#111827",
+                          marginTop: "8px",
+                        }}
+                      >
+                        Please wait...
+                      </Typography>
+                    ) : (
+                      <select
+                        name="status"
+                        style={{
+                          border: "none",
+                          background: "transparent",
+                          marginTop: "10px",
+                          outline: "none",
+                          color: "#555555",
+                        }}
+                        onChange={(e) => {
+                          handleUpdateStatus(e.target.value);
+                        }}
+                      >
+                        <option value="">Change status</option>
+                        <option value="pending">Pending</option>
+                        <option value="active">Active</option>
+                        <option value="closed">Closed</option>
+                        <option value="escalated">Escalated</option>
+                      </select>
+                    )}
                   </Box>
                 </Box>
               </Box>
@@ -328,7 +345,7 @@ const StateComplaintThread = () => {
                 {Array.isArray(complaint?.evidences) &&
                 complaint?.evidences.length > 0 ? (
                   <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-                    {complaint?.evidences.map((file, index) => (
+                    {complaint?.evidences?.map((file, index) => (
                       <Card
                         key={file.id}
                         sx={{
@@ -550,8 +567,10 @@ const StateComplaintThread = () => {
                           }}
                         >
                           {t.response_by.role === "StateAdmin"
-                            ? `From: ${t.response_by.firstname} ${t.response_by.lastname}`
-                            : "Respondent"}
+                            ? `From: ${t.response_by.firstname} ${t.response_by.lastname} (State NHIA)`
+                            : t.response_by.role === "Admin"
+                            ? `From: ${t.response_by.firstname} ${t.response_by.lastname} (Central NHIA)`
+                            : "From: Respondent"}
                         </Typography>
                         <Typography
                           sx={{
@@ -631,7 +650,7 @@ const StateComplaintThread = () => {
                           <Box
                             sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}
                           >
-                            {t?.docs.map((file, index) => (
+                            {t?.docs?.map((file, index) => (
                               <Card
                                 key={file.id}
                                 sx={{
