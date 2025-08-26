@@ -138,7 +138,7 @@ const ProvidersReplyComplaint = () => {
     setIsSubmitting(true);
     try {
       const docs = await Promise.all(
-        attachments.map(async (attachment) => {
+        attachments?.map(async (attachment) => {
           const base64 = await convertToBase64(attachment.file);
           return { document: base64 };
         })
@@ -384,7 +384,7 @@ const ProvidersReplyComplaint = () => {
               {attachments.length > 0 && (
                 <Box sx={{ width: "523px", my: 2 }}>
                   <Box sx={{ display: "flex", gap: 1 }}>
-                    {attachments.map((attachment, index) => (
+                    {attachments?.map((attachment, index) => (
                       <Card
                         key={index}
                         sx={{

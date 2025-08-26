@@ -132,12 +132,6 @@ const RegionStatesById = () => {
     queryFn: () => getNewComplaints({}),
   });
 
-  const unresolvedComplaints = complaints?.results?.filter(
-    (complaint) => complaint?.status !== "closed"
-  )?.length;
-
-  console.log(unresolvedComplaints);
-
   const {
     data: regions,
     isLoading,
@@ -167,6 +161,10 @@ const RegionStatesById = () => {
     queryKey: ["complaintStats"],
     queryFn: () => getComplaintStats({ region_id: regionId }),
   });
+
+  const unresolvedComplaints = complaintStats?.status
+    ?.filter((complaint) => complaint?.status !== "closed")
+    ?.reduce((total, complaint) => total + complaint.total, 0);
 
   const {
     data: complaintTrends,

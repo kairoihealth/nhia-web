@@ -19,7 +19,7 @@ export const useHandleError = () => {
 
     if (error) {
       if (error?.data?.errors) {
-        errorMessage = error.data.errors.map((err) => err).join(", ");
+        errorMessage = error?.data?.errors?.map((err) => err).join(", ");
       } else if (error?.response?.data?.errors) {
         errorMessage = extractErrorMessages(error?.response?.data?.errors);
       } else {

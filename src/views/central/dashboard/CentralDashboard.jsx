@@ -90,7 +90,7 @@ const CentralDashboard = () => {
   const filteredPieStatus = useMemo(
     () =>
       complaintStats?.status?.map((s) => {
-        const colorObj = pieStatusColors.find((c) => c.status === s.status);
+        const colorObj = pieStatusColors?.find((c) => c.status === s.status);
         return {
           ...s,
           color: colorObj ? colorObj.color : "#dddddd",
@@ -306,7 +306,7 @@ const CentralDashboard = () => {
                 />
               </Box>
               <Box sx={{ display: "flex", px: 4, justifySelf: "center" }}>
-                {filteredPieStatus.map((t) => (
+                {filteredPieStatus?.map((t) => (
                   <Box
                     key={t.id}
                     sx={{ display: "flex", alignItems: "center" }}

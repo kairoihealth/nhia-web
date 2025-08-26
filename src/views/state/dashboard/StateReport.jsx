@@ -6,6 +6,7 @@ import {
   FormControl,
   TextField,
   Card,
+  CircularProgress,
 } from "@mui/material";
 import { useMemo } from "react";
 import { useState } from "react";
@@ -66,7 +67,7 @@ const StateReports = () => {
 
   const {
     data: states,
-    // isLoading: isLoadingStates,
+    isLoading: isLoadingStates,
     // isError,
     // error,
   } = useQuery({
@@ -135,6 +136,9 @@ const StateReports = () => {
     const doc = new jsPDF();
 
     //Create header
+    doc.setFontSize(18);
+    doc.setTextColor(40);
+    doc.text("NHIA Complaints Report", 14, 15);
 
     // Create table
     autoTable(doc, {
@@ -181,6 +185,21 @@ const StateReports = () => {
       },
     ],
   };
+
+  if (isLoadingStates) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Box>
