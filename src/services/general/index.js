@@ -10,6 +10,8 @@ export const getComplaints = async ({
   status,
   start_date,
   end_date,
+  state_id,
+  region_id,
 }) => {
   try {
     const params = new URLSearchParams();
@@ -21,6 +23,8 @@ export const getComplaints = async ({
     if (status) params.append("status", status);
     if (start_date) params.append("start_date", start_date);
     if (end_date) params.append("end_date", end_date);
+    if (state_id) params.append("state_id", state_id);
+    if (region_id) params.append("region_id", region_id);
 
     const response = await Api.get(e.GET_COMPLAINTS, { params });
     return response.data;
@@ -35,6 +39,8 @@ export const getNewComplaints = async ({
   page,
   pageSize,
   status,
+  state_id,
+  region_id,
 }) => {
   try {
     const params = new URLSearchParams();
@@ -42,6 +48,8 @@ export const getNewComplaints = async ({
     if (page) params.append("page", page.toString());
     if (pageSize) params.append("page_size", pageSize.toString());
     if (status) params.append("status", status);
+    if (state_id) params.append("state_id", state_id);
+    if (region_id) params.append("region_id", region_id);
 
     const response = await Api.get(e.GET_COMPLAINTS, { params });
     return response.data;

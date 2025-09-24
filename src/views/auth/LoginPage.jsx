@@ -18,6 +18,7 @@ import { jwtDecode } from "jwt-decode";
 import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
 import { textFieldStyles } from "../../utils/style";
 import Auth from "../../utils/Auth";
+import { getSingleUser, getSingleUserWithToken } from "../../services/central";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -65,12 +66,15 @@ const LoginPage = () => {
         const role = decodedToken.role;
         const username = decodedToken.name;
         const userId = decodedToken.user_id;
-
         localStorage.setItem("userRole", role);
         localStorage.setItem("access_token", accessToken);
         localStorage.setItem("refresh_token", refreshToken);
         localStorage.setItem("fullname", username);
         localStorage.setItem("userId", userId);
+        const userDetails = await getSingleUserWithToken(userId, accessToken);
+        if (userDetails?.state?.id) {
+          localStorage.setItem("stateId", userDetails?.state?.id);
+        }
 
         Auth.setToken(accessToken);
 

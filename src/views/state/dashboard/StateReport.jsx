@@ -50,6 +50,7 @@ const StateReports = () => {
   const handleError = useHandleError();
   const [pieData, setPieData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const stateId = localStorage.getItem("stateId");
   const [filters, setFilters] = useState({
     reportType: "complaints",
     location: "",
@@ -311,7 +312,9 @@ const StateReports = () => {
                 <FormControl fullWidth sx={{ maxWidth: "243px" }}>
                   <select
                     id="location"
-                    value={filters.location}
+                    value={stateId}
+                    defaultValue={stateId}
+                    // disabled={true}
                     name="location"
                     onChange={handleFilterChange}
                     style={{
@@ -326,11 +329,13 @@ const StateReports = () => {
                     }}
                   >
                     <option value="">Select Location</option>
-                    {states?.results?.map((state) => (
-                      <option key={state.id} value={state.id}>
-                        {state.name}
-                      </option>
-                    ))}
+                    {states?.results
+                      ?.filter((state) => state.id === stateId)
+                      ?.map((state) => (
+                        <option key={state.id} value={state.id}>
+                          {state.name}
+                        </option>
+                      ))}
                   </select>
                   {/* <Select
                     labelId="location-label"

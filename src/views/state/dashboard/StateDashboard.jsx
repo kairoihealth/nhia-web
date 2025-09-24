@@ -19,6 +19,7 @@ import { shortenDay } from "../../../utils/general";
 
 const StateDashboard = () => {
   const navigate = useNavigate();
+  const stateId = localStorage.getItem("stateId");
 
   const {
     data: complaints,
@@ -28,7 +29,12 @@ const StateDashboard = () => {
   } = useQuery({
     queryKey: ["new-complaints"],
     queryFn: () =>
-      getNewComplaints({ page: 1, pageSize: 5, status: "pending" }),
+      getNewComplaints({
+        page: 1,
+        pageSize: 5,
+        status: "pending",
+        state_id: stateId,
+      }),
   });
 
   const {
@@ -38,7 +44,7 @@ const StateDashboard = () => {
     // error,
   } = useQuery({
     queryKey: ["complaintScores"],
-    queryFn: () => getComplaintSatisfactionScores({}),
+    queryFn: () => getComplaintSatisfactionScores({ state_id: stateId }),
   });
 
   const {
@@ -48,7 +54,7 @@ const StateDashboard = () => {
     // error,
   } = useQuery({
     queryKey: ["complaintStats"],
-    queryFn: () => getComplaintStats({}),
+    queryFn: () => getComplaintStats({ state_id: stateId }),
   });
 
   const {
@@ -58,7 +64,7 @@ const StateDashboard = () => {
     // error,
   } = useQuery({
     queryKey: ["complaintTrends"],
-    queryFn: () => getComplaintTrends({}),
+    queryFn: () => getComplaintTrends({ state_id: stateId }),
   });
   const {
     data: complaintTrendsByOrganisation,
@@ -67,7 +73,7 @@ const StateDashboard = () => {
     // error,
   } = useQuery({
     queryKey: ["complaintTrendsByOrganisation"],
-    queryFn: () => getComplaintTrendsByOrganisation({}),
+    queryFn: () => getComplaintTrendsByOrganisation({ state_id: stateId }),
   });
 
   const pieStatusColors = [

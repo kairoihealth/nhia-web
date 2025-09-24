@@ -17,6 +17,7 @@ import CentralRoutes from "./views/central/routes";
 // import ReviewForm from "./views/enrolees/ComplaintReview/ReviewForm";
 import ErrorPage from "./shared/ErrorPage";
 import Enrollee from "./views/auth/Enrollee";
+import HmoRegisterPage from "./views/hmo/auth/HmoRegisterPage";
 // import NotFound from "./components/NotFound";
 
 const getUserRole = () => localStorage.getItem("userRole");
@@ -41,6 +42,7 @@ function App() {
       <Route path="/enrollee-form-preview" element={<FormPreview />} />
       <Route path="/enrollee-complaint-review" element={<ReviewForm />} /> */}
 
+      <Route path="hmo-register" element={<HmoRegisterPage />} />
       {/* Protect all dashboard routes */}
       <Route element={<ProtectedRoute />}>
         <Route
