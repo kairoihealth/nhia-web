@@ -12,15 +12,16 @@ import { getComplaints } from "../../../services/general";
 const StateComplaints = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("all");
+  const stateId = localStorage.getItem("stateId");
 
   const {
     data: complaints,
     isLoading,
     isError,
-    error
+    error,
   } = useQuery({
     queryKey: ["complaints"],
-    queryFn: () => getComplaints({ page: 1, pageSize: 10 })
+    queryFn: () => getComplaints({ page: 1, pageSize: 10, state_id: stateId }),
   });
 
   const handleTabClick = (tab) => {
@@ -32,7 +33,7 @@ const StateComplaints = () => {
     { label: "Complainant", field: "name", align: "center" },
     { label: "Complaint no", field: "complaint_no", align: "center" },
     { label: "Complaint type", field: "type", align: "center" },
-    { label: "Location", field: "location", align: "center" }
+    { label: "Location", field: "location", align: "center" },
   ];
 
   const transformedRows =
@@ -43,7 +44,7 @@ const StateComplaints = () => {
       type: user.complaint_type,
       location: user?.state?.name,
       id: user.id,
-      status: user.status
+      status: user.status,
     })) || [];
 
   const filteredRows = transformedRows.filter((row) => {
@@ -56,7 +57,7 @@ const StateComplaints = () => {
 
   const handleViewComplaint = (row) => {
     navigate(`/stateadmin/complaint/${row.complaint_no}`, {
-      state: { complaint: row?.id }
+      state: { complaint: row?.id },
     });
   };
 
@@ -67,7 +68,7 @@ const StateComplaints = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          height: "100vh"
+          height: "100vh",
         }}
       >
         <CircularProgress />
@@ -83,7 +84,7 @@ const StateComplaints = () => {
           justifyContent: "center",
           alignItems: "center",
           height: "100vh",
-          color: "red"
+          color: "red",
         }}
       >
         <Typography>Error: {error.message}</Typography>
@@ -100,7 +101,7 @@ const StateComplaints = () => {
           p: 1,
           backgroundColor: "#FAFAFA",
           height: "100vh",
-          overflowY: "auto"
+          overflowY: "auto",
         }}
       >
         {/* Header */}
@@ -154,7 +155,7 @@ const StateComplaints = () => {
               border: "1px solid #F2F4F7",
               backgroundColor: "#F2F4F7",
               p: 1,
-              cursor: "pointer"
+              cursor: "pointer",
             }}
             onClick={() => alert("Filter clicked")}
           >
@@ -164,7 +165,7 @@ const StateComplaints = () => {
                 fontSize: "16px",
                 fontWeight: 500,
                 lineHeight: "21.6px",
-                color: "#64748B"
+                color: "#64748B",
               }}
             >
               Filter

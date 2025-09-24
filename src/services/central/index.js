@@ -46,6 +46,24 @@ export const getSingleUser = async (id) => {
   }
 };
 
+export const getSingleUserWithToken = async (id, token = "") => {
+  try {
+    const response = await Api.get(e.GET_SINGLE_USER(id), {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${
+          token || localStorage.getItem("access_token")
+        }`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch user:", error);
+    throw error;
+  }
+};
+
 export const userUpdateProfile = async ({ id, payload }) => {
   try {
     const response = await Api.patch(e.UPDATE_PROFILE(id), payload);

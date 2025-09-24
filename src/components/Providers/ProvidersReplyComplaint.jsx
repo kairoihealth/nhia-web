@@ -134,7 +134,10 @@ const ProvidersReplyComplaint = () => {
   };
 
   const handleSubmit = async () => {
-    // navigate(`/provider/complaint/${data.id}/thread`);
+    if (!respond) return handleError("Response field cannot be empty.");
+    if (attachments.length === 0)
+      return handleError("Please add one or more attachments");
+
     setIsSubmitting(true);
     try {
       const docs = await Promise.all(

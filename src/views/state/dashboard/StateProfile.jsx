@@ -75,17 +75,11 @@ const StateProfile = () => {
     confirm_password: "",
   });
 
-  const {
-    data: user,
-    //  isLoading,
-    //  isError,
-    //  error
-  } = useQuery({
-    queryKey: ["complaints", userId],
+  const { data: user } = useQuery({
+    queryKey: ["user", userId],
     queryFn: () => getSingleUser(userId),
   });
 
-  console.log("User Data:", user, profileValues);
   useEffect(() => {
     if (user) {
       setProfileValues({

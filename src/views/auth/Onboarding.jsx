@@ -1,4 +1,4 @@
-import { Box, Typography, Button, Link } from "@mui/material";
+import { Box, Typography, Button } from "@mui/material";
 import Logo from "../../assets/nhia-logo.png";
 import KairoiLogo from "../../assets/kairoi-logo.png";
 import { useNavigate } from "react-router-dom";
@@ -13,16 +13,16 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["states"],
-    queryFn: () => getStates()
+    queryFn: () => getStates(),
   });
 
   const states = useMemo(
     () =>
       data?.results?.map((t) => ({
         value: t.id,
-        label: t.name
+        label: t.name,
       })) || [],
     [data]
   );
@@ -71,7 +71,7 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
             justifyContent: { xs: "center", md: "space-between" },
             alignItems: { xs: "center", md: "flex-start" },
             position: "relative",
-            height: { xs: "auto", md: "100vh" }
+            height: { xs: "auto", md: "100vh" },
           }}
         >
           <Box>
@@ -87,7 +87,7 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
               width: { xs: "100%", md: "80%" },
               display: "flex",
               flexDirection: "column",
-              alignItems: "center"
+              alignItems: "center",
             }}
           >
             <Typography
@@ -97,7 +97,7 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
                 lineHeight: { xs: "43.2px", md: "68.3px" },
                 mt: { xs: 2, md: 5 },
                 textAlign: { xs: "center", md: "left" },
-                width: { xs: "90%", md: "90%" }
+                width: { xs: "90%", md: "90%" },
               }}
             >
               Welcome to NHIA Complaint Management System
@@ -109,7 +109,7 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
                 lineHeight: { xs: "27px", md: "32.4px" },
                 mt: 3,
                 textAlign: { xs: "center", md: "left" },
-                width: { xs: "70%", md: "90%" }
+                width: { xs: "70%", md: "90%" },
               }}
             >
               Welcome aboard! Your complaints fuel our quest for service
@@ -120,7 +120,7 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
             sx={{
               display: { xs: "none", md: "flex" },
               justifyContent: "flex-end",
-              mt: 5
+              mt: 5,
             }}
           >
             <span></span>
@@ -130,7 +130,7 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
                 bottom: "20px",
                 right: "20px",
                 display: "flex",
-                alignItems: "center"
+                alignItems: "center",
               }}
             >
               <Typography
@@ -155,7 +155,7 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
             p: { xs: 2, md: 4 },
             display: "flex",
             flexDirection: "column",
-            justifyContent: "space-between"
+            justifyContent: "space-between",
           }}
         >
           <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -169,7 +169,7 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
                   lineHeight: { xs: "21.6px", md: "43.2px" },
                   color: "#038F3E",
                   textAlign: "left",
-                  mb: 2
+                  mb: 2,
                 }}
               >
                 Create a complaint
@@ -182,7 +182,7 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
                   color: "#038F3E",
                   textAlign: "left",
                   mb: 2,
-                  cursor: "pointer"
+                  cursor: "pointer",
                 }}
                 onClick={handleClick}
               >
@@ -196,7 +196,7 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
                 lineHeight: { xs: "21.6px", md: "43.2px" },
                 color: "#20201E",
                 textAlign: "left",
-                mb: 2
+                mb: 2,
               }}
             >
               Select NHIA
@@ -207,7 +207,7 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
                 fontWeight: 400,
                 lineHeight: { xs: "18.9px", md: "24.3px" },
                 color: "#595959",
-                mb: { xs: 2, md: 4 }
+                mb: { xs: 2, md: 4 },
               }}
             >
               What state did the incident you want to report happen?
@@ -218,7 +218,8 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
                 value={selectedState}
                 onChange={handleStateChange}
                 options={states}
-                placeholder="Select State"
+                placeholder={isLoading ? "Loading..." : "Select State"}
+                isLoading={isLoading}
               />
               {errors.state && (
                 <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
@@ -227,7 +228,7 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
               )}
             </Box>
 
-            <Link
+            {/* <Link
               href="/enrollee-complaint-review"
               sx={{
                 fontSize: "16px",
@@ -240,7 +241,7 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
               }}
             >
               Review of existing complaint or request
-            </Link>
+            </Link> */}
           </Box>
 
           <Box
@@ -248,7 +249,7 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
               display: "flex",
               flexDirection: "column",
               justifyContent: "flex-end",
-              alignItems: "flex-end"
+              alignItems: "flex-end",
             }}
           >
             <Box
@@ -256,7 +257,7 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
                 display: { xs: "grid", md: "flex" },
                 justifyContent: { xs: "center", md: "flex-end" },
                 gap: 2,
-                mb: { xs: 2, md: 6 }
+                mb: { xs: 2, md: 6 },
               }}
             >
               {/* <Button
@@ -290,7 +291,7 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
                   lineHeight: "24px",
                   textTransform: "capitalize",
                   backgroundColor: "#038F3E",
-                  "&:hover": { backgroundColor: "#038F3E" }
+                  "&:hover": { backgroundColor: "#038F3E" },
                 }}
                 onClick={handleValidateAndNext}
               >
@@ -312,5 +313,5 @@ OnboardingView.propTypes = {
   stateInfo: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   setStateInfo: PropTypes.func.isRequired,
   onNext: PropTypes.func,
-  btn: PropTypes.any
+  btn: PropTypes.any,
 };

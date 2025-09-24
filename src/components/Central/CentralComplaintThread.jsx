@@ -405,39 +405,41 @@ const CentralComplaintThread = () => {
                         >
                           <IconButton
                             onClick={() => {
-                              setIsDownloading(file.document);
-                              fetch(
-                                "https://cors-anywhere.herokuapp.com/" +
-                                  file.document,
-                                {
-                                  method: "GET",
-                                  headers: {
-                                    "Content-Type": "application/pdf",
-                                  },
-                                }
-                              )
-                                .then((response) => response.blob())
-                                .then((blob) => {
-                                  // Create blob link to download
-                                  const url = window.URL.createObjectURL(blob);
-                                  const fileName = file.document
-                                    .split("/")
-                                    .pop();
-                                  const link = document.createElement("a");
+                              window.open(file.document, "_blank");
+                              return;
+                              // setIsDownloading(file.document);
+                              // fetch(
+                              //   "https://cors-anywhere.herokuapp.com/" +
+                              //     file.document,
+                              //   {
+                              //     method: "GET",
+                              //     headers: {
+                              //       "Content-Type": "application/pdf",
+                              //     },
+                              //   }
+                              // )
+                              //   .then((response) => response.blob())
+                              //   .then((blob) => {
+                              //     // Create blob link to download
+                              //     const url = window.URL.createObjectURL(blob);
+                              //     const fileName = file.document
+                              //       .split("/")
+                              //       .pop();
+                              //     const link = document.createElement("a");
 
-                                  link.href = url;
-                                  link.setAttribute("download", fileName);
+                              //     link.href = url;
+                              //     link.setAttribute("download", fileName);
 
-                                  // Append to html link element page
-                                  document.body.appendChild(link);
+                              //     // Append to html link element page
+                              //     document.body.appendChild(link);
 
-                                  // Start download
-                                  link.click();
-                                  setIsDownloading(file.document);
+                              //     // Start download
+                              //     link.click();
+                              //     setIsDownloading(file.document);
 
-                                  // Clean up and remove the link
-                                  link.parentNode.removeChild(link);
-                                });
+                              //     // Clean up and remove the link
+                              //     link.parentNode.removeChild(link);
+                              //   });
                             }}
                             sx={{
                               color: "#EFF3F9",
@@ -793,44 +795,46 @@ const CentralComplaintThread = () => {
                                 >
                                   <IconButton
                                     onClick={() => {
-                                      setIsDownloading(file.document);
-                                      fetch(
-                                        "https://cors-anywhere.herokuapp.com/" +
-                                          file.document,
-                                        {
-                                          method: "GET",
-                                          headers: {
-                                            "Content-Type": "application/pdf",
-                                          },
-                                        }
-                                      )
-                                        .then((response) => response.blob())
-                                        .then((blob) => {
-                                          // Create blob link to download
-                                          const url =
-                                            window.URL.createObjectURL(blob);
-                                          const fileName = file.document
-                                            .split("/")
-                                            .pop();
-                                          const link =
-                                            document.createElement("a");
+                                      window.open(file.document, "_blank");
+                                      return;
+                                      // setIsDownloading(file.document);
+                                      // fetch(
+                                      //   "https://cors-anywhere.herokuapp.com/" +
+                                      //     file.document,
+                                      //   {
+                                      //     method: "GET",
+                                      //     headers: {
+                                      //       "Content-Type": "application/pdf",
+                                      //     },
+                                      //   }
+                                      // )
+                                      //   .then((response) => response.blob())
+                                      //   .then((blob) => {
+                                      //     // Create blob link to download
+                                      //     const url =
+                                      //       window.URL.createObjectURL(blob);
+                                      //     const fileName = file.document
+                                      //       .split("/")
+                                      //       .pop();
+                                      //     const link =
+                                      //       document.createElement("a");
 
-                                          link.href = url;
-                                          link.setAttribute(
-                                            "download",
-                                            fileName
-                                          );
+                                      //     link.href = url;
+                                      //     link.setAttribute(
+                                      //       "download",
+                                      //       fileName
+                                      //     );
 
-                                          // Append to html link element page
-                                          document.body.appendChild(link);
+                                      //     // Append to html link element page
+                                      //     document.body.appendChild(link);
 
-                                          // Start download
-                                          link.click();
-                                          setIsDownloading(file.document);
+                                      //     // Start download
+                                      //     link.click();
+                                      //     setIsDownloading(file.document);
 
-                                          // Clean up and remove the link
-                                          link.parentNode.removeChild(link);
-                                        });
+                                      //     // Clean up and remove the link
+                                      //     link.parentNode.removeChild(link);
+                                      //   });
                                     }}
                                     sx={{
                                       color: "#EFF3F9",
