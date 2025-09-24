@@ -1,5 +1,5 @@
 // import { Helmet } from "react-helmet-async";
-import { Box, Typography, Button, Link } from "@mui/material";
+import { Box, Typography, Button } from "@mui/material";
 import Logo from "../../assets/nhia-logo.png";
 import KairoiLogo from "../../assets/kairoi-logo.png";
 import { useQuery } from "@tanstack/react-query";
@@ -11,9 +11,9 @@ import { useState } from "react";
 const EnroleesWelcomePage = () => {
   const [selectedState, setSelectedState] = useState("");
 
-  const { data: states } = useQuery({
+  const { data: states, isLoading } = useQuery({
     queryKey: ["states"],
-    queryFn: () => getStates()
+    queryFn: () => getStates(),
   });
 
   const handleStateChange = (selectedOption) => {
@@ -35,7 +35,7 @@ const EnroleesWelcomePage = () => {
             justifyContent: { xs: "center", md: "space-between" },
             alignItems: { xs: "center", md: "flex-start" },
             position: "relative",
-            height: { xs: "auto", md: "100vh" }
+            height: { xs: "auto", md: "100vh" },
           }}
         >
           <Box>
@@ -51,7 +51,7 @@ const EnroleesWelcomePage = () => {
               width: { xs: "100%", md: "80%" },
               display: "flex",
               flexDirection: "column",
-              alignItems: "center"
+              alignItems: "center",
             }}
           >
             <Typography
@@ -61,7 +61,7 @@ const EnroleesWelcomePage = () => {
                 lineHeight: { xs: "43.2px", md: "68.3px" },
                 mt: { xs: 2, md: 5 },
                 textAlign: { xs: "center", md: "left" },
-                width: { xs: "90%", md: "90%" }
+                width: { xs: "90%", md: "90%" },
               }}
             >
               Welcome to NHIA Complaint Management System
@@ -73,7 +73,7 @@ const EnroleesWelcomePage = () => {
                 lineHeight: { xs: "27px", md: "32.4px" },
                 mt: 3,
                 textAlign: { xs: "center", md: "left" },
-                width: { xs: "70%", md: "90%" }
+                width: { xs: "70%", md: "90%" },
               }}
             >
               Welcome aboard! Your complaints fuel our quest for service
@@ -84,7 +84,7 @@ const EnroleesWelcomePage = () => {
             sx={{
               display: { xs: "none", md: "flex" },
               justifyContent: "flex-end",
-              mt: 5
+              mt: 5,
             }}
           >
             <span></span>
@@ -94,7 +94,7 @@ const EnroleesWelcomePage = () => {
                 bottom: "20px",
                 right: "20px",
                 display: "flex",
-                alignItems: "center"
+                alignItems: "center",
               }}
             >
               <Typography
@@ -119,7 +119,7 @@ const EnroleesWelcomePage = () => {
             p: { xs: 2, md: 4 },
             display: "flex",
             flexDirection: "column",
-            justifyContent: "space-between"
+            justifyContent: "space-between",
           }}
         >
           <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -130,7 +130,7 @@ const EnroleesWelcomePage = () => {
                 lineHeight: { xs: "21.6px", md: "43.2px" },
                 color: "#038F3E",
                 textAlign: "left",
-                mb: 2
+                mb: 2,
               }}
             >
               Select NHIA
@@ -141,7 +141,7 @@ const EnroleesWelcomePage = () => {
                 fontWeight: 400,
                 lineHeight: { xs: "18.9px", md: "24.3px" },
                 color: "#595959",
-                mb: { xs: 2, md: 4 }
+                mb: { xs: 2, md: 4 },
               }}
             >
               What state did the incident you want to report happen?
@@ -152,22 +152,23 @@ const EnroleesWelcomePage = () => {
               value={selectedState}
               onChange={handleStateChange}
               options={states}
-              placeholder="Select state"
+              placeholder={isLoading ? "Loading..." : "Select state"}
+              isLoading={isLoading}
             />
 
-            <Link
+            {/* <Link
               href="/enrollee-complaint-review"
               sx={{
                 fontSize: "16px",
                 fontWeight: 500,
                 lineHeight: { xs: "21.6px", md: "27px" },
                 color: "#038F3E",
-                textDecoration: "none"
+                textDecoration: "none",
                 // '&:hover': { textDecoration: 'underline' }
               }}
             >
               Review of existing complaint or request
-            </Link>
+            </Link> */}
           </Box>
 
           <Box
@@ -175,7 +176,7 @@ const EnroleesWelcomePage = () => {
               display: { xs: "grid", md: "flex" },
               justifyContent: { xs: "center", md: "flex-end" },
               gap: 2,
-              mb: { xs: 2, md: 6 }
+              mb: { xs: 2, md: 6 },
             }}
           >
             <Button
@@ -192,7 +193,7 @@ const EnroleesWelcomePage = () => {
                 textTransform: "capitalize",
                 borderColor: "#038F3E",
                 color: "#038F3E",
-                "&:hover": { borderColor: "#038F3E" }
+                "&:hover": { borderColor: "#038F3E" },
               }}
             >
               Back
@@ -210,7 +211,7 @@ const EnroleesWelcomePage = () => {
                 lineHeight: "24px",
                 textTransform: "capitalize",
                 backgroundColor: "#038F3E",
-                "&:hover": { backgroundColor: "#038F3E" }
+                "&:hover": { backgroundColor: "#038F3E" },
               }}
             >
               Save & Continue

@@ -1,4 +1,4 @@
-import { Box, Typography,  CircularProgress } from "@mui/material";
+import { Box, Typography, CircularProgress } from "@mui/material";
 import ReusableTable from "../../../shared/Table";
 import SearchFilter from "../../../shared/SearchAndFilter";
 import { useState } from "react";
@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getUsers } from "../../../services/central";
 
 const InvitationsByState = () => {
-  // const navigate = useNavigate();
+  const stateId = localStorage.getItem("stateId");
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -60,7 +60,10 @@ const InvitationsByState = () => {
 
   const transformedRows =
     (filteredUsers?.results?.length ? filteredUsers : users)?.results
-      ?.filter((u) => u.role === "Provider" || u.role === "HMO")
+      ?.filter(
+        (u) => u.role === "Provider" || u.role === "HMO"
+        // && u?.state?.id === stateId
+      )
       ?.map((user) => ({
         name: `${user?.provider?.name || user?.hmo?.name}`.trim(),
         created_at: new Date(user.created_at).toLocaleDateString(),

@@ -15,7 +15,7 @@ const SecondForm = ({
   setComplaintInfo,
   onNext,
   onBack,
-  btn
+  btn,
 }) => {
   const maxFiles = 5;
   const [errors, setErrors] = useState({});
@@ -32,14 +32,14 @@ const SecondForm = ({
         size: file.size,
         path: file.path,
         preview: URL.createObjectURL(file),
-        raw: file
+        raw: file,
       }));
       setComplaintInfo((prev) => {
         const updatedFiles = [...(prev.files || []), ...filesWithPreview];
         // console.log("Updated complaintInfo.files:", updatedFiles);
         return {
           ...prev,
-          files: updatedFiles
+          files: updatedFiles,
         };
       });
     } else {
@@ -54,9 +54,9 @@ const SecondForm = ({
       "application/pdf": [],
       "application/msword": [],
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-        []
+        [],
     },
-    maxFiles: 5 - (complaintInfo.files?.length || 0)
+    maxFiles: 5 - (complaintInfo.files?.length || 0),
   });
   const removeFile = (fileToRemove) => {
     setComplaintInfo((prev) => {
@@ -80,6 +80,7 @@ const SecondForm = ({
     setComplaintInfo({ ...complaintInfo, programme: selectedOption.value });
   };
 
+  console.log(complaintInfo, "complaintInfo");
   const validateFields = () => {
     const newErrors = {};
 
@@ -91,6 +92,8 @@ const SecondForm = ({
       newErrors.complaint = "Please select a complaint type.";
     if (!complaintInfo.description?.trim())
       newErrors.description = "Description is required.";
+    if (!complaintInfo.files || complaintInfo.files?.length === 0)
+      newErrors.files = "Please provide attachments to support your claim.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -106,7 +109,7 @@ const SecondForm = ({
     <>
       <Box
         sx={{
-          backgroundColor: { xs: "#FFFFFF", md: "#038F3E" }
+          backgroundColor: { xs: "#FFFFFF", md: "#038F3E" },
         }}
       >
         <Box
@@ -114,7 +117,7 @@ const SecondForm = ({
             display: { xs: "grid", md: "flex" },
             justifyContent: "center",
             alignItems: { xs: "flex-start", md: "center" },
-            pt: { xs: 0, md: 4 }
+            pt: { xs: 0, md: 4 },
           }}
         >
           <Box>
@@ -124,7 +127,7 @@ const SecondForm = ({
                 backgroundColor: "#fff",
                 padding: "2rem",
                 margin: "2rem",
-                borderRadius: "8px"
+                borderRadius: "8px",
               }}
             >
               <img
@@ -139,7 +142,7 @@ const SecondForm = ({
                   fontWeight: 500,
                   lineHeight: "27px",
                   color: "#038F3E",
-                  margin: "1rem 0"
+                  margin: "1rem 0",
                 }}
               >
                 Complaint Form
@@ -149,7 +152,7 @@ const SecondForm = ({
                   fontSize: "20px",
                   fontWeight: 500,
                   lineHeight: "27px",
-                  my: 4
+                  my: 4,
                 }}
               >
                 Complainant Details
@@ -169,7 +172,7 @@ const SecondForm = ({
                         color: "#595959",
                         fontSize: "16px",
                         fontWeight: 500,
-                        lineHeight: "24px"
+                        lineHeight: "24px",
                       }}
                     >
                       Date of Incident
@@ -199,7 +202,7 @@ const SecondForm = ({
                         color: "#595959",
                         fontSize: "16px",
                         fontWeight: 500,
-                        lineHeight: "24px"
+                        lineHeight: "24px",
                       }}
                     >
                       Time of Incident
@@ -236,7 +239,7 @@ const SecondForm = ({
                         color: "#595959",
                         fontSize: "16px",
                         fontWeight: 500,
-                        lineHeight: "24px"
+                        lineHeight: "24px",
                       }}
                     >
                       NHIA programme
@@ -270,7 +273,7 @@ const SecondForm = ({
                         color: "#595959",
                         fontSize: "16px",
                         fontWeight: 500,
-                        lineHeight: "24px"
+                        lineHeight: "24px",
                       }}
                     >
                       Complaint Type
@@ -301,7 +304,7 @@ const SecondForm = ({
                     display: "flex",
                     flexDirection: "column",
                     gap: 1,
-                    mt: 2
+                    mt: 2,
                   }}
                 >
                   <Typography
@@ -309,7 +312,7 @@ const SecondForm = ({
                       color: "#595959",
                       fontSize: "16px",
                       fontWeight: 500,
-                      lineHeight: "24px"
+                      lineHeight: "24px",
                     }}
                   >
                     Complaint Description
@@ -336,7 +339,7 @@ const SecondForm = ({
                     display: "flex",
                     flexDirection: "column",
                     gap: 1,
-                    mt: 2
+                    mt: 2,
                   }}
                 >
                   <Typography
@@ -344,7 +347,7 @@ const SecondForm = ({
                       color: "#595959",
                       fontSize: "16px",
                       fontWeight: 500,
-                      lineHeight: "24px"
+                      lineHeight: "24px",
                     }}
                   >
                     Supporting Evidence
@@ -358,7 +361,7 @@ const SecondForm = ({
                         textAlign: "center",
                         backgroundColor: "#f8f9fa",
                         cursor: "pointer",
-                        marginTop: "1rem"
+                        marginTop: "1rem",
                       }}
                     >
                       <input {...getInputProps()} />
@@ -369,7 +372,7 @@ const SecondForm = ({
                           fontWeight: 400,
                           lineHeight: "18px",
                           color: "#475467",
-                          mt: 2
+                          mt: 2,
                         }}
                       >
                         <span style={{ fontWeight: 600, color: "#6941C6" }}>
@@ -382,6 +385,11 @@ const SecondForm = ({
                         Upload max. 5 documents in total
                       </Typography>
                     </Box>
+                    {errors?.files && (
+                      <Typography sx={{ color: "red" }}>
+                        {errors?.files}
+                      </Typography>
+                    )}
                     {complaintInfo.files?.length > 0 && (
                       <Box sx={{ mt: 2, width: "100%" }}>
                         <Box display="flex" gap={2} mt={2}>
@@ -395,7 +403,7 @@ const SecondForm = ({
                                 py: "10px",
                                 backgroundColor: "#f1f3f4",
                                 borderRadius: "8px",
-                                marginBottom: "8px"
+                                marginBottom: "8px",
                               }}
                             >
                               {file?.type?.startsWith("image/") &&
@@ -409,7 +417,7 @@ const SecondForm = ({
                                     overflow: "hidden",
                                     display: "flex",
                                     alignItems: "center",
-                                    justifyContent: "center"
+                                    justifyContent: "center",
                                   }}
                                 >
                                   <img
@@ -419,7 +427,7 @@ const SecondForm = ({
                                       display: "block",
                                       maxWidth: "100%",
                                       maxHeight: "100%",
-                                      objectFit: "cover"
+                                      objectFit: "cover",
                                     }}
                                   />
                                 </Box>
@@ -467,7 +475,7 @@ const SecondForm = ({
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "flex-end",
-                    alignItems: "flex-end"
+                    alignItems: "flex-end",
                   }}
                 >
                   <Box
@@ -475,7 +483,7 @@ const SecondForm = ({
                       display: { xs: "grid", md: "flex" },
                       justifyContent: { xs: "center", md: "flex-end" },
                       gap: 2,
-                      mt: 4
+                      mt: 4,
                     }}
                   >
                     <Button
@@ -491,7 +499,7 @@ const SecondForm = ({
                         textTransform: "capitalize",
                         borderColor: "#038F3E",
                         color: "#038F3E",
-                        "&:hover": { borderColor: "#038F3E" }
+                        "&:hover": { borderColor: "#038F3E" },
                       }}
                       // href="/"
                       onClick={onBack}
@@ -510,7 +518,7 @@ const SecondForm = ({
                         lineHeight: "24px",
                         textTransform: "capitalize",
                         backgroundColor: "#038F3E",
-                        "&:hover": { backgroundColor: "#038F3E" }
+                        "&:hover": { backgroundColor: "#038F3E" },
                       }}
                       // href="/enrollee-form-preview"
                       onClick={handleNext}
@@ -538,7 +546,7 @@ SecondForm.propTypes = {
         id: PropTypes.string,
         name: PropTypes.string,
         type: PropTypes.string,
-        preview: PropTypes.string
+        preview: PropTypes.string,
       })
     ),
     // length: PropTypes.number,
@@ -546,10 +554,10 @@ SecondForm.propTypes = {
     time: PropTypes.string,
     programme: PropTypes.string,
     complaint: PropTypes.string,
-    description: PropTypes.string
+    description: PropTypes.string,
   }),
   setComplaintInfo: PropTypes.func.isRequired,
   onNext: PropTypes.func,
   onBack: PropTypes.func,
-  btn: PropTypes.any
+  btn: PropTypes.any,
 };

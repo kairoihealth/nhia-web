@@ -91,11 +91,12 @@ const StateReplyComplaint = () => {
   };
 
   const handleSubmit = async () => {
-    // navigate(`/provider/complaint/${data.id}/thread`);
+    if (!respond) return handleError("Response field cannot be empty.");
+    if (attachments.length === 0)
+      return handleError("Please add one or more attachments");
+
     setIsSubmitting(true);
     try {
-      if (!respond) return handleError("Response field cannot be empty.");
-
       const docs = await Promise.all(
         attachments?.map(async (attachment) => {
           const base64 = await convertToBase64(attachment.file);
@@ -467,7 +468,7 @@ const StateReplyComplaint = () => {
                     cursor: "pointer",
                   }}
                 >
-                  Add attachment
+                  Add attachment *
                 </Typography>
                 <input
                   accept=".pdf,.docx,.jpg,.jpeg,.png"
