@@ -7,7 +7,7 @@ import ReactSelect from "react-select";
 import {
   formControlStyles,
   selectStyles,
-  textFieldStyles
+  textFieldStyles,
 } from "../../../utils/style";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -15,25 +15,29 @@ import { getAllHmo, getAllProviders } from "../../../services/settings";
 
 const option = [
   { value: "HMO", label: "Hmo" },
-  { value: "Provider", label: "Provider" }
+  { value: "Provider", label: "Provider" },
+  { value: "Enrollee", label: "Enrollee" },
+  { value: "NHIA", label: "NHIA" },
 ];
 
 const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
   const [errors, setErrors] = useState({});
   const [selectedHmo, setSelectedHmo] = useState(null);
   const [selectedProvider, setSelectedProvider] = useState(null);
+  const [selectedHmoOrProviderName, setSelectedHmoOrProviderName] =
+    useState(null);
 
   const hmosQueryKey = useMemo(() => ["hmos"], []);
   const { data: hmosData } = useQuery({
     queryKey: hmosQueryKey,
-    queryFn: () => getAllHmo({ page: 1, pageSize: 100 })
+    queryFn: () => getAllHmo({ page: 1, pageSize: 100 }),
   });
 
   const hmos = useMemo(
     () =>
       hmosData?.results?.map((hmo) => ({
         value: hmo.id,
-        label: hmo.name
+        label: hmo.name,
       })) || [],
     [hmosData]
   );
@@ -41,14 +45,14 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
   const providersQueryKey = useMemo(() => ["providers"], []);
   const { data: providersData } = useQuery({
     queryKey: providersQueryKey,
-    queryFn: () => getAllProviders({ page: 1, pageSize: 100 })
+    queryFn: () => getAllProviders({ page: 1, pageSize: 100 }),
   });
 
   const providers = useMemo(
     () =>
       providersData?.results?.map((provider) => ({
         value: provider.id,
-        label: provider.name
+        label: provider.name,
       })) || [],
     [providersData]
   );
@@ -71,7 +75,7 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
 
     setFirstInfo((prev) => ({
       ...prev,
-      complaint: value
+      complaint_against: value,
     }));
 
     // Clear dependent selections
@@ -81,10 +85,12 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
 
   const handleHmoChange = (selectedOption) => {
     setSelectedHmo(selectedOption);
+    setSelectedHmoOrProviderName(selectedOption.label);
   };
 
   const handleProviderChange = (selectedOption) => {
     setSelectedProvider(selectedOption);
+    setSelectedHmoOrProviderName(selectedOption.label);
   };
 
   const validateFields = () => {
@@ -94,16 +100,16 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
       newErrors.firstName = "First name is required.";
     if (!firstInfo.lastName?.trim())
       newErrors.lastName = "Last name is required.";
-    if (!firstInfo.middleName?.trim())
-      newErrors.middleName = "Middle name is required.";
+    // if (!firstInfo.middleName?.trim())
+    //   newErrors.middleName = "Middle name is required.";
     if (!firstInfo.contactAddress?.trim())
       newErrors.contactAddress = "Contact address is required.";
     if (!firstInfo.email?.trim()) newErrors.email = "Email is required.";
     if (!firstInfo.phone?.trim()) newErrors.phone = "Phone number is required.";
     if (!firstInfo.nhiaNo?.trim())
       newErrors.nhiaNo = "NHIA number is required.";
-    if (!firstInfo.complaint)
-      newErrors.complaint = "Please select a complaint option.";
+    if (!firstInfo.complaint_against)
+      newErrors.complaint_against = "Please select a complaint option.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -114,7 +120,12 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
       setFirstInfo((prev) => ({
         ...prev,
         hmoId: selectedHmo?.value || null,
-        providerId: selectedProvider?.value || null
+        providerId: selectedProvider?.value || null,
+        selectedHmoOrProviderName: selectedHmoOrProviderName || null,
+        enrollee:
+          firstInfo.complaint_against === "enrollee"
+            ? firstInfo.enrollee
+            : null,
       }));
       onNext();
     }
@@ -124,7 +135,7 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
     <>
       <Box
         sx={{
-          backgroundColor: { xs: "#FFFFFF", md: "#038F3E" }
+          backgroundColor: { xs: "#FFFFFF", md: "#038F3E" },
         }}
       >
         <Box
@@ -132,7 +143,7 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
             display: { xs: "grid", md: "flex" },
             justifyContent: "center",
             alignItems: { xs: "flex-start", md: "center" },
-            pt: { xs: 0, md: 4 }
+            pt: { xs: 0, md: 4 },
           }}
         >
           <Box>
@@ -142,7 +153,7 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                 backgroundColor: "#fff",
                 padding: "2rem",
                 margin: { xs: 0, md: "2rem" },
-                borderRadius: "8px"
+                borderRadius: "8px",
               }}
             >
               <img
@@ -157,7 +168,7 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                   fontWeight: 500,
                   lineHeight: "27px",
                   color: "#038F3E",
-                  margin: "1rem 0"
+                  margin: "1rem 0",
                 }}
               >
                 Complaint Form
@@ -168,7 +179,7 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                   fontWeight: 500,
                   lineHeight: "27px",
                   color: "#1B1C1E",
-                  my: 4
+                  my: 4,
                 }}
               >
                 Complainant Details
@@ -188,7 +199,7 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                         color: "#595959",
                         fontSize: "16px",
                         fontWeight: 500,
-                        lineHeight: "24px"
+                        lineHeight: "24px",
                       }}
                     >
                       First Name
@@ -218,7 +229,7 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                         color: "#595959",
                         fontSize: "16px",
                         fontWeight: 500,
-                        lineHeight: "24px"
+                        lineHeight: "24px",
                       }}
                     >
                       Last Name
@@ -255,7 +266,7 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                         color: "#595959",
                         fontSize: "16px",
                         fontWeight: 500,
-                        lineHeight: "24px"
+                        lineHeight: "24px",
                       }}
                     >
                       Middle Name
@@ -285,7 +296,7 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                         color: "#595959",
                         fontSize: "16px",
                         fontWeight: 500,
-                        lineHeight: "24px"
+                        lineHeight: "24px",
                       }}
                     >
                       Contact Address
@@ -322,7 +333,7 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                         color: "#595959",
                         fontSize: "16px",
                         fontWeight: 500,
-                        lineHeight: "24px"
+                        lineHeight: "24px",
                       }}
                     >
                       Email Address
@@ -353,7 +364,7 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                         color: "#595959",
                         fontSize: "16px",
                         fontWeight: 500,
-                        lineHeight: "24px"
+                        lineHeight: "24px",
                       }}
                     >
                       Phone Number
@@ -369,7 +380,7 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                           label: "Phone Number",
                           variant: "outlined",
                           margin: "normal",
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                         value={firstInfo.phone || ""}
                         onChange={handlePhoneChange}
@@ -400,7 +411,7 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                         color: "#595959",
                         fontSize: "16px",
                         fontWeight: 500,
-                        lineHeight: "24px"
+                        lineHeight: "24px",
                       }}
                     >
                       NHIA Number
@@ -430,7 +441,7 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                         color: "#595959",
                         fontSize: "16px",
                         fontWeight: 500,
-                        lineHeight: "24px"
+                        lineHeight: "24px",
                       }}
                     >
                       Alternative Phone Number
@@ -443,7 +454,7 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                           label: "Alternative Phone Number",
                           variant: "outlined",
                           margin: "normal",
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                         value={firstInfo.altPhone || ""}
                         onChange={handleAltPhoneChange}
@@ -466,7 +477,7 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                         color: "#595959",
                         fontSize: "16px",
                         fontWeight: 500,
-                        lineHeight: "24px"
+                        lineHeight: "24px",
                       }}
                     >
                       Complaint against
@@ -475,32 +486,33 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                       </span>
                     </Typography>
                     <ReactSelect
+                      name="complaint_against"
                       styles={selectStyles}
                       value={option.find(
-                        (opt) => opt.value === firstInfo.complaint
+                        (opt) => opt.value === firstInfo.complaint_against
                       )}
                       onChange={handleComplaintChange}
                       options={option}
                       placeholder="Select Option"
                     />
-                    {errors.complaint && (
+                    {errors.complaint_against && (
                       <Typography
                         sx={{ color: "red", fontSize: "13px", mt: 0.5 }}
                       >
-                        {errors.complaint}
+                        {errors.complaint_against}
                       </Typography>
                     )}
                   </Box>
                 </Box>
 
-                {firstInfo.complaint === "HMO" ? (
+                {firstInfo.complaint_against === "HMO" ? (
                   <Box
                     flex={1}
                     sx={{
                       display: "flex",
                       flexDirection: "column",
                       gap: 1,
-                      my: 1
+                      my: 2,
                     }}
                   >
                     <Typography
@@ -508,7 +520,7 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                         color: "#595959",
                         fontSize: "16px",
                         fontWeight: 500,
-                        lineHeight: "24px"
+                        lineHeight: "24px",
                       }}
                     >
                       HMO Name
@@ -533,14 +545,14 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                       )}
                     </Box>
                   </Box>
-                ) : firstInfo.complaint === "Provider" ? (
+                ) : firstInfo.complaint_against === "Provider" ? (
                   <Box
                     flex={1}
                     sx={{
                       display: "flex",
                       flexDirection: "column",
                       gap: 1,
-                      my: 1
+                      my: 2,
                     }}
                   >
                     <Typography
@@ -548,7 +560,7 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                         color: "#595959",
                         fontSize: "16px",
                         fontWeight: 500,
-                        lineHeight: "24px"
+                        lineHeight: "24px",
                       }}
                     >
                       Providers Name
@@ -573,13 +585,58 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                       )}
                     </Box>
                   </Box>
+                ) : firstInfo.complaint_against === "Enrollee" ? (
+                  <Box
+                    flex={1}
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 1,
+                      my: 2,
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        color: "#595959",
+                        fontSize: "16px",
+                        fontWeight: 500,
+                        lineHeight: "24px",
+                      }}
+                    >
+                      Enrollee NHIA Number
+                      <span style={{ color: "#099243", marginLeft: "6px" }}>
+                        *
+                      </span>
+                    </Typography>
+                    <Box>
+                      <TextField
+                        name="enrollee"
+                        fullWidth
+                        variant="outlined"
+                        required
+                        placeholder="enter Enrollee NHIA number"
+                        sx={textFieldStyles}
+                        value={firstInfo.enrollee}
+                        onChange={handleInputChange}
+                        error={!!errors.enrollee}
+                        helperText={errors.enrollee}
+                      />
+                      {errors.provider && (
+                        <Typography
+                          sx={{ color: "red", fontSize: "13px", mt: 0.5 }}
+                        >
+                          {errors.provider}
+                        </Typography>
+                      )}
+                    </Box>
+                  </Box>
                 ) : null}
                 <Box
                   sx={{
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "flex-end",
-                    alignItems: "flex-end"
+                    alignItems: "flex-end",
                   }}
                 >
                   <Box
@@ -587,7 +644,7 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                       display: { xs: "grid", md: "flex" },
                       justifyContent: { xs: "center", md: "flex-end" },
                       gap: 2,
-                      mt: 4
+                      mt: 4,
                     }}
                   >
                     <Button
@@ -603,7 +660,7 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                         textTransform: "capitalize",
                         borderColor: "#038F3E",
                         color: "#038F3E",
-                        "&:hover": { borderColor: "#038F3E" }
+                        "&:hover": { borderColor: "#038F3E" },
                       }}
                       // href="/account-type"
                       onClick={onBack}
@@ -622,7 +679,7 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                         lineHeight: "24px",
                         textTransform: "capitalize",
                         backgroundColor: "#038F3E",
-                        "&:hover": { backgroundColor: "#038F3E" }
+                        "&:hover": { backgroundColor: "#038F3E" },
                       }}
                       // href="/enrollee-complaint-second-form"
                       onClick={handleNext}
@@ -648,5 +705,5 @@ FirstForm.propTypes = {
   setFirstInfo: PropTypes.func.isRequired,
   onNext: PropTypes.func,
   onBack: PropTypes.func,
-  btn: PropTypes.any
+  btn: PropTypes.any,
 };

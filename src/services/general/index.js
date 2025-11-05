@@ -12,6 +12,17 @@ export const getComplaints = async ({
   end_date,
   state_id,
   region_id,
+  type,
+  category,
+  hmo_id,
+  provider_id,
+  enrollee,
+  complaint_type,
+  complaint_category,
+  complaint_against,
+  priority,
+  assigned_to,
+  date_filter,
 }) => {
   try {
     const params = new URLSearchParams();
@@ -25,6 +36,19 @@ export const getComplaints = async ({
     if (end_date) params.append("end_date", end_date);
     if (state_id) params.append("state_id", state_id);
     if (region_id) params.append("region_id", region_id);
+    if (type) params.append("type", type);
+    if (category) params.append("category", category);
+    if (hmo_id) params.append("hmo_id", hmo_id);
+    if (provider_id) params.append("provider_id", provider_id);
+    if (enrollee) params.append("enrollee", enrollee);
+    if (complaint_type) params.append("complaint_type", complaint_type);
+    if (complaint_category)
+      params.append("complaint_category", complaint_category);
+    if (complaint_against)
+      params.append("complaint_against", complaint_against);
+    if (priority) params.append("priority", priority);
+    if (assigned_to) params.append("assigned_to", assigned_to);
+    if (date_filter) params.append("date_filter", date_filter);
 
     const response = await Api.get(e.GET_COMPLAINTS, { params });
     return response.data;
@@ -114,12 +138,20 @@ export const getComplaintSatisfactionScores = async ({
   end_date,
   region_id,
   state_id,
+  hmo_id,
+  provider_id,
+  enrollee,
+  date_filter,
 }) => {
   const params = new URLSearchParams();
   if (start_date) params.append("start_date", start_date);
   if (end_date) params.append("end_date", end_date);
   if (region_id) params.append("region_id", region_id);
   if (state_id) params.append("state_id", state_id);
+  if (hmo_id) params.append("hmo_id", hmo_id);
+  if (provider_id) params.append("provider_id", provider_id);
+  if (enrollee) params.append("enrollee", enrollee);
+  if (date_filter) params.append("date_filter", date_filter);
 
   try {
     const response = await Api.get(e.GET_COMPLAINT_SATISFACTION_SCORES, {
@@ -137,12 +169,20 @@ export const getComplaintStats = async ({
   end_date,
   region_id,
   state_id,
+  hmo_id,
+  provider_id,
+  enrollee,
+  date_filter,
 }) => {
   const params = new URLSearchParams();
   if (start_date) params.append("start_date", start_date);
   if (end_date) params.append("end_date", end_date);
   if (region_id) params.append("region_id", region_id);
   if (state_id) params.append("state_id", state_id);
+  if (hmo_id) params.append("hmo_id", hmo_id);
+  if (provider_id) params.append("provider_id", provider_id);
+  if (enrollee) params.append("enrollee", enrollee);
+  if (date_filter) params.append("date_filter", date_filter);
 
   try {
     const response = await Api.get(e.GET_COMPLAINT_STATS, { params });
@@ -158,12 +198,20 @@ export const getComplaintTrends = async ({
   end_date,
   region_id,
   state_id,
+  hmo_id,
+  provider_id,
+  enrollee,
+  date_filter,
 }) => {
   const params = new URLSearchParams();
   if (start_date) params.append("start_date", start_date);
   if (end_date) params.append("end_date", end_date);
   if (region_id) params.append("region_id", region_id);
   if (state_id) params.append("state_id", state_id);
+  if (hmo_id) params.append("hmo_id", hmo_id);
+  if (provider_id) params.append("provider_id", provider_id);
+  if (enrollee) params.append("enrollee", enrollee);
+  if (date_filter) params.append("date_filter", date_filter);
 
   try {
     const response = await Api.get(e.GET_COMPLAINT_TRENDS, { params });
@@ -179,12 +227,20 @@ export const getComplaintTrendsByOrganisation = async ({
   end_date,
   region_id,
   state_id,
+  hmo_id,
+  provider_id,
+  enrollee,
+  date_filter,
 }) => {
   const params = new URLSearchParams();
   if (start_date) params.append("start_date", start_date);
   if (end_date) params.append("end_date", end_date);
   if (region_id) params.append("region_id", region_id);
   if (state_id) params.append("state_id", state_id);
+  if (hmo_id) params.append("hmo_id", hmo_id);
+  if (provider_id) params.append("provider_id", provider_id);
+  if (enrollee) params.append("enrollee", enrollee);
+  if (date_filter) params.append("date_filter", date_filter);
 
   try {
     const response = await Api.get(e.GET_COMPLAINT_TRENDS_BY_ORG, { params });

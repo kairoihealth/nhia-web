@@ -3,7 +3,7 @@ import {
   Typography,
   TextField,
   Button,
-  Link
+  Link,
   //   Stack,
 } from "@mui/material";
 import Logo from "../../../assets/nhia-logo.png";
@@ -17,9 +17,9 @@ const textFieldStyles = {
     color: "#000000",
     border: "0.5px solid #DADADA",
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#038F3E"
-    }
-  }
+      borderColor: "#038F3E",
+    },
+  },
 };
 
 const ReviewForm = () => {
@@ -29,7 +29,7 @@ const ReviewForm = () => {
         display: { xs: "column", md: "flex" },
         height: "100vh",
         m: 0,
-        p: 0
+        p: 0,
       }}
     >
       {/* Left Column */}
@@ -44,7 +44,7 @@ const ReviewForm = () => {
           justifyContent: { xs: "center", md: "space-between" },
           alignItems: { xs: "center", md: "flex-start" },
           position: "relative",
-          height: { xs: "auto", md: "100vh" }
+          height: { xs: "auto", md: "100vh" },
         }}
       >
         <Box>
@@ -60,7 +60,7 @@ const ReviewForm = () => {
             width: { xs: "100%", md: "80%" },
             display: "flex",
             flexDirection: "column",
-            alignItems: "center"
+            alignItems: "center",
           }}
         >
           <Typography
@@ -70,7 +70,7 @@ const ReviewForm = () => {
               lineHeight: { xs: "43.2px", md: "68.3px" },
               mt: { xs: 2, md: 5 },
               textAlign: { xs: "center", md: "left" },
-              width: { xs: "357px", md: "90%" }
+              width: { xs: "357px", md: "90%" },
             }}
           >
             Welcome to NHIA Complaint Management System
@@ -82,7 +82,7 @@ const ReviewForm = () => {
               lineHeight: { xs: "27px", md: "32.4px" },
               mt: 3,
               textAlign: { xs: "center", md: "left" },
-              width: { xs: "90%", md: "90%" }
+              width: { xs: "90%", md: "90%" },
             }}
           >
             Welcome aboard! Your complaints fuel our quest for service
@@ -94,7 +94,7 @@ const ReviewForm = () => {
             display: { xs: "none", md: "flex" },
             justifyContent: "flex-end",
             alignItems: "flex-end",
-            mt: 5
+            mt: 5,
           }}
         >
           <Box
@@ -104,7 +104,7 @@ const ReviewForm = () => {
               right: "20px",
               display: "flex",
               justifyContent: "flex-end",
-              alignItems: "center"
+              alignItems: "center",
             }}
           >
             <Typography
@@ -131,12 +131,12 @@ const ReviewForm = () => {
           // justifyContent: "space-between",
           py: { xs: 4, md: 4 },
           px: { xs: 3, md: 6 },
-          backgroundColor: "#FAFAFA"
+          backgroundColor: "#FAFAFA",
         }}
       >
         {/* Back Button */}
         <Link
-          href="/enrollees-welcome-page"
+          href="/"
           underline="none"
           sx={{
             display: "flex",
@@ -144,7 +144,7 @@ const ReviewForm = () => {
             mb: { xs: 2, md: 10 },
             gap: 1,
             color: "#000000",
-            "&:hover": { color: "#027A3B" }
+            "&:hover": { color: "#027A3B" },
           }}
         >
           <FiArrowLeft sx={{ mr: 1 }} />
@@ -153,7 +153,7 @@ const ReviewForm = () => {
               fontSize: "16px",
               fontWeight: 600,
               lineHeight: "24px",
-              color: "#038F3E"
+              color: "#038F3E",
             }}
           >
             Back
@@ -168,7 +168,7 @@ const ReviewForm = () => {
             lineHeight: "43.2px",
             textAlign: "left",
             color: "#038F3E",
-            mb: 3
+            mb: 3,
           }}
         >
           Review of existing complaint or request
@@ -182,7 +182,7 @@ const ReviewForm = () => {
             fontSize: "18px",
             fontWeight: 400,
             lineHeight: "24.3px",
-            mb: { xs: 4, md: 10 }
+            mb: { xs: 4, md: 10 },
           }}
         >
           Track and manage your complaints on the Kairoi CMS platform at your
@@ -195,7 +195,7 @@ const ReviewForm = () => {
             display: "flex",
             flexDirection: "column",
             width: { xs: "100%", md: "80%" },
-            gap: 1
+            gap: 1,
           }}
         >
           <Box
@@ -207,7 +207,7 @@ const ReviewForm = () => {
                 color: "#595959",
                 fontSize: "16px",
                 fontWeight: 500,
-                lineHeight: "24px"
+                lineHeight: "24px",
               }}
             >
               Input your complaint number to get an update
@@ -227,7 +227,7 @@ const ReviewForm = () => {
               color: "#595959",
               fontSize: "16px",
               fontWeight: 400,
-              lineHeight: "21.6px"
+              lineHeight: "21.6px",
             }}
           >
             Sample: KAI-HMO/26/211024/1
@@ -248,7 +248,7 @@ const ReviewForm = () => {
               borderRadius: "8px",
               fontSize: "16px",
               fontWeight: 500,
-              "&:hover": { backgroundColor: "#027A3B" }
+              "&:hover": { backgroundColor: "#027A3B" },
             }}
           >
             Review Status

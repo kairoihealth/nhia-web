@@ -8,6 +8,7 @@ import CircleIcon from "@mui/icons-material/Circle";
 import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
 import { addComplaint } from "../../services/general";
 import { convertToBase64 } from "../../utils/convertTobase64";
+import { useNavigate } from "react-router-dom";
 
 const steps = [
   "Select State",
@@ -17,6 +18,7 @@ const steps = [
 ];
 
 const Enrollee = () => {
+  const navigate = useNavigate();
   const handleSuccess = useHandleSuccess();
   const handleError = useHandleError();
   const [step, setStep] = useState(1);
@@ -52,12 +54,14 @@ const Enrollee = () => {
         phone: firstInfo.phone,
         alternate_phone: firstInfo.altPhone || "",
         contact_address: firstInfo.contactAddress,
-        complaint_against: firstInfo.complaint,
+        complaint_against: firstInfo.complaint_against,
         incident_date: complaintInfo.date,
         incident_time: complaintInfo.time,
         nhia_programme: complaintInfo.programme,
-        complaint_type: complaintInfo.complaint,
-        description: complaintInfo.description,
+        complaint_type: complaintInfo.complaint_type,
+        complaint_category: complaintInfo.complaint_category,
+        description:
+          complaintInfo.otherDescription || complaintInfo.description,
         hmo: firstInfo.hmoId || "",
         provider: firstInfo.providerId || "",
         evidences,
@@ -65,7 +69,8 @@ const Enrollee = () => {
 
       const res = await addComplaint(data, true);
       handleSuccess(res.data?.message || "Complaint sent successfully");
-      setStep(1);
+      // setStep(1);
+      navigate("/enrollee-submission-status", { replace: true });
       setStateInfo("");
       setFirstInfo({});
       setComplaintInfo({});
@@ -131,6 +136,7 @@ const Enrollee = () => {
           <SecondForm
             complaintInfo={complaintInfo}
             setComplaintInfo={setComplaintInfo}
+            firstInfo={firstInfo}
             onNext={handleNext}
             onBack={handleBack}
             btn={<StepButton />}

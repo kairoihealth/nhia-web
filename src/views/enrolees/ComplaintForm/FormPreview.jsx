@@ -28,6 +28,7 @@ const FormPreview = ({
       return updatedFiles;
     });
   };
+  console.log(firstInfo, complaintInfo, "firstInfo");
 
   return (
     <>
@@ -115,7 +116,8 @@ const FormPreview = ({
                         width: "60%",
                       }}
                     >
-                      {firstInfo.firstName} {firstInfo.lastName}
+                      {firstInfo.firstName} {firstInfo.middleName}{" "}
+                      {firstInfo.lastName}
                     </Typography>
                   </Box>
                   <Box flex={1} sx={{ display: "flex", gap: 2 }}>
@@ -200,7 +202,7 @@ const FormPreview = ({
                         width: "40%",
                       }}
                     >
-                      HMO of Complainant:
+                      NHIA Number:
                     </Typography>
                     <Typography
                       sx={{
@@ -211,7 +213,7 @@ const FormPreview = ({
                         width: "60%",
                       }}
                     >
-                      {complaintInfo?.complaint}
+                      {firstInfo?.nhiaNo}
                     </Typography>
                   </Box>
                 </Box>
@@ -237,6 +239,106 @@ const FormPreview = ({
                     gap: 1,
                   }}
                 >
+                  <Box
+                    flex={1}
+                    sx={{ display: "flex", alignItems: "center", gap: 2 }}
+                  >
+                    <Typography
+                      sx={{
+                        color: "#595959",
+                        fontSize: "14px",
+                        fontWeight: 500,
+                        lineHeight: "18.9px",
+                      }}
+                    >
+                      Complaint Type:
+                    </Typography>
+                    <Typography
+                      sx={{
+                        color: "#1B1C1E",
+                        fontSize: { xs: "14px", md: "16px" },
+                        fontWeight: 500,
+                        lineHeight: "24px",
+                      }}
+                    >
+                      {complaintInfo?.complaint_type}
+                    </Typography>
+                  </Box>
+                  <Box
+                    flex={1}
+                    sx={{ display: "flex", alignItems: "center", gap: 2 }}
+                  >
+                    <Typography
+                      sx={{
+                        color: "#595959",
+                        fontSize: "14px",
+                        fontWeight: 500,
+                        lineHeight: "18.9px",
+                      }}
+                    >
+                      Complaint Category:
+                    </Typography>
+                    <Typography
+                      sx={{
+                        color: "#1B1C1E",
+                        fontSize: { xs: "14px", md: "16px" },
+                        fontWeight: 500,
+                        lineHeight: "24px",
+                      }}
+                    >
+                      {complaintInfo?.complaint_category}
+                    </Typography>
+                  </Box>
+                  <Box
+                    flex={1}
+                    sx={{ display: "flex", alignItems: "center", gap: 2 }}
+                  >
+                    <Typography
+                      sx={{
+                        color: "#595959",
+                        fontSize: "14px",
+                        fontWeight: 500,
+                        lineHeight: "18.9px",
+                      }}
+                    >
+                      Complaint Against:
+                    </Typography>
+                    <Typography
+                      sx={{
+                        color: "#1B1C1E",
+                        fontSize: { xs: "14px", md: "16px" },
+                        fontWeight: 500,
+                        lineHeight: "24px",
+                      }}
+                    >
+                      {firstInfo?.complaint_against}
+                    </Typography>
+                  </Box>
+                  <Box
+                    flex={1}
+                    sx={{ display: "flex", alignItems: "center", gap: 2 }}
+                  >
+                    <Typography
+                      sx={{
+                        color: "#595959",
+                        fontSize: "14px",
+                        fontWeight: 500,
+                        lineHeight: "18.9px",
+                      }}
+                    >
+                      {firstInfo?.complaint_against} Name
+                    </Typography>
+                    <Typography
+                      sx={{
+                        color: "#1B1C1E",
+                        fontSize: { xs: "14px", md: "16px" },
+                        fontWeight: 500,
+                        lineHeight: "24px",
+                      }}
+                    >
+                      {firstInfo?.selectedHmoOrProviderName}
+                    </Typography>
+                  </Box>
                   <Box
                     flex={1}
                     sx={{ display: "flex", alignItems: "center", gap: 2 }}
@@ -338,7 +440,8 @@ const FormPreview = ({
                           color: "#1B1C1E",
                         }}
                       >
-                        {complaintInfo?.description}
+                        {complaintInfo?.otherDescription ||
+                          complaintInfo?.description}
                       </Typography>
                     </Box>
                   </Box>
@@ -512,10 +615,14 @@ export default FormPreview;
 FormPreview.propTypes = {
   firstInfo: PropTypes.shape({
     firstName: PropTypes.string,
+    middleName: PropTypes.string | undefined,
     lastName: PropTypes.string,
     contactAddress: PropTypes.string,
     email: PropTypes.string,
     phone: PropTypes.string,
+    nhiaNo: PropTypes.string,
+    complaint_against: PropTypes.string,
+    selectedHmoOrProviderName: PropTypes.string,
   }),
   complaintInfo: PropTypes.shape({
     files: PropTypes.arrayOf(
@@ -528,9 +635,13 @@ FormPreview.propTypes = {
     ),
     date: PropTypes.string,
     time: PropTypes.string,
+    programme: PropTypes.string,
+    complaint_type: PropTypes.string,
+    complaint_category: PropTypes.string,
     description: PropTypes.string,
-    complaint: PropTypes.string,
+    otherDescription: PropTypes.string,
   }),
+  isSubmitting: PropTypes.bool,
   onSubmit: PropTypes.func,
   onBack: PropTypes.func,
   btn: PropTypes.any,

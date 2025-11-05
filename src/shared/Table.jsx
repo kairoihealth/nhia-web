@@ -9,7 +9,7 @@ import {
   Typography,
   Box,
   Pagination,
-  PaginationItem
+  PaginationItem,
 } from "@mui/material";
 import PropTypes from "prop-types";
 import { ArrowLeft, ArrowRight } from "@mui/icons-material";
@@ -23,19 +23,25 @@ const ReusableTable = ({
   pagination = false,
   headerBackgroundColor = "#038F3E",
   actionButtonText = "View Complaint",
-  statusLabel = "Complaint Status"
+  statusLabel = "Complaint Status",
+  totalPages = 1,
+  page = 1,
+  setPage,
+  pageSize = 10,
+  // setPageSize,
 }) => {
-  const [page, setPage] = useState(1);
-  const rowsPerPage = 10;
+  // const [page, setPage] = useState(1);
+  const rowsPerPage = pageSize || 10;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
+  console.log(rows, "rows");
 
-  const paginatedRows = rows.slice(
-    (page - 1) * rowsPerPage,
-    page * rowsPerPage
-  );
+  // const paginatedRows = rows.slice(
+  //   (page - 1) * rowsPerPage,
+  //   page * rowsPerPage
+  // );
 
   return (
     <Box
@@ -43,7 +49,7 @@ const ReusableTable = ({
       sx={{
         overflowX: "auto",
         mb: 4,
-        border: "none"
+        border: "none",
       }}
     >
       <Table>
@@ -55,12 +61,12 @@ const ReusableTable = ({
               color: "#FFFFFF",
               "& th:first-of-type": {
                 borderTopLeftRadius: "10px",
-                borderBottomLeftRadius: "10px"
+                borderBottomLeftRadius: "10px",
               },
               "& th:last-of-type": {
                 borderTopRightRadius: "10px",
-                borderBottomRightRadius: "10px"
-              }
+                borderBottomRightRadius: "10px",
+              },
             }}
           >
             {columns.map((column, index) => (
@@ -70,7 +76,7 @@ const ReusableTable = ({
                     fontSize: "14px",
                     fontWeight: 500,
                     lineHeight: "19.12px",
-                    color: "#FFFFFF"
+                    color: "#FFFFFF",
                   }}
                 >
                   {column.label}
@@ -84,7 +90,7 @@ const ReusableTable = ({
                   fontSize: "14px",
                   fontWeight: 500,
                   lineHeight: "19.12px",
-                  color: "#FFFFFF"
+                  color: "#FFFFFF",
                 }}
               >
                 Actions
@@ -97,7 +103,7 @@ const ReusableTable = ({
                   fontSize: "14px",
                   fontWeight: 500,
                   lineHeight: "19.12px",
-                  color: "#FFFFFF"
+                  color: "#FFFFFF",
                 }}
               >
                 {statusLabel}
@@ -111,14 +117,14 @@ const ReusableTable = ({
           sx={{
             "& td": {
               border: "none",
-              color: "#595959"
+              color: "#595959",
             },
             "& tr:hover": {
-              backgroundColor: "#F5F5F5"
-            }
+              backgroundColor: "#F5F5F5",
+            },
           }}
         >
-          {paginatedRows.map((row, rowIndex) => (
+          {rows.map((row, rowIndex) => (
             <TableRow key={rowIndex} hover>
               {/* Render Data Cells */}
               {columns.map((column, colIndex) => (
@@ -146,7 +152,7 @@ const ReusableTable = ({
                       py: "12px",
                       px: "23px",
                       textTransform: "none",
-                      "&:hover": { backgroundColor: "#027A3B" }
+                      "&:hover": { backgroundColor: "#027A3B" },
                     }}
                   >
                     {actionButtonText}
@@ -182,7 +188,7 @@ const ReusableTable = ({
                           ? "#4B95DD"
                           : row.status === "active"
                           ? "#096F35"
-                          : "red"
+                          : "red",
                     }}
                   >
                     &bull; {row.status || "N/A"}
@@ -197,13 +203,15 @@ const ReusableTable = ({
       {/* Pagination */}
       {pagination && (
         <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+          {/* Math.ceil(rows.length / rowsPerPage) */}
           <Pagination
-            count={Math.ceil(rows.length / rowsPerPage)}
+            count={totalPages}
             page={page}
             onChange={handleChangePage}
             variant="outlined"
             shape="rounded"
             renderItem={(item) => {
+              console.log(item, "item");
               // Render page numbers first
               if (item.type === "page") {
                 return (
@@ -215,9 +223,9 @@ const ReusableTable = ({
                         backgroundColor: "#038F3E",
                         color: "#FFFFFF",
                         "&:hover": {
-                          backgroundColor: "#027A3B"
-                        }
-                      }
+                          backgroundColor: "#027A3B",
+                        },
+                      },
                     }}
                   />
                 );
@@ -231,8 +239,8 @@ const ReusableTable = ({
                     sx={{
                       ml: 1, // Add spacing between navigation buttons
                       "&.Mui-disabled": {
-                        opacity: 0.5
-                      }
+                        opacity: 0.5,
+                      },
                     }}
                     icon={
                       item.type === "previous" ? <ArrowLeft /> : <ArrowRight />
@@ -262,7 +270,7 @@ ReusableTable.propTypes = {
       label: PropTypes.string.isRequired,
       field: PropTypes.string.isRequired,
       align: PropTypes.string,
-      format: PropTypes.func
+      format: PropTypes.func,
     })
   ).isRequired,
   rows: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -272,7 +280,12 @@ ReusableTable.propTypes = {
   pagination: PropTypes.bool,
   headerBackgroundColor: PropTypes.string,
   actionButtonText: PropTypes.string,
-  statusLabel: PropTypes.string
+  statusLabel: PropTypes.string,
+  totalPages: PropTypes.number,
+  page: PropTypes.number,
+  setPage: PropTypes.func,
+  pageSize: PropTypes.number,
+  setPageSize: PropTypes.func,
 };
 
 ReusableTable.defaultProps = {
@@ -281,7 +294,10 @@ ReusableTable.defaultProps = {
   pagination: false,
   headerBackgroundColor: "#038F3E",
   actionButtonText: "View Complaint",
-  statusLabel: "Complaint status"
+  statusLabel: "Complaint status",
+  totalPages: 1,
+  page: 1,
+  pageSize: 10,
 };
 
 export default ReusableTable;

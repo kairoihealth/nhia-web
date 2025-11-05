@@ -133,7 +133,7 @@ const EnroleesWelcomePage = () => {
                 mb: 2,
               }}
             >
-              Select NHIA
+              Select State
             </Typography>
             <Typography
               sx={{
