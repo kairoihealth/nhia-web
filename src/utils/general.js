@@ -20,3 +20,10 @@ export const shortenDay = (date) => {
   let day = new Date(date);
   return day.toLocaleDateString("en-US", { weekday: "short" });
 };
+
+export const truncateDay = (day) => {
+  if (day?.length > 3) {
+    return day?.slice(0, 3);
+  }
+  return day;
+};

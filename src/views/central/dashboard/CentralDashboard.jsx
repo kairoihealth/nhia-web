@@ -1,5 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Box, Typography, Card, CircularProgress } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Card,
+  CircularProgress,
+  Button,
+  Stack,
+} from "@mui/material";
 import ReusableTable from "../../../shared/Table";
 import ArrowRightAltTwoToneIcon from "@mui/icons-material/ArrowRightAltTwoTone";
 import { useNavigate } from "react-router-dom";
@@ -16,10 +23,23 @@ import {
   getNewComplaints,
 } from "../../../services/general";
 import { useMemo } from "react";
-import { getInitials, shortenDay } from "../../../utils/general";
+import { getInitials, truncateDay } from "../../../utils/general";
+import { useState } from "react";
+import { useRef } from "react";
+import { useEffect } from "react";
+import { FiChevronDown } from "react-icons/fi";
+
+const initialFilters = {
+  status: "",
+  trend: "current_week_trends",
+};
 
 const CentralDashboard = () => {
   const navigate = useNavigate();
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [filters, setFilters] = useState(initialFilters);
+  const filterButtonRef = useRef(null);
+  const popoverRef = useRef(null);
 
   const {
     data: complaints,
@@ -81,6 +101,36 @@ const CentralDashboard = () => {
     queryFn: () => getComplaintTrendsByOrganisation({}),
   });
 
+  const handleFilterClick = () => {
+    setIsFilterOpen((prev) => !prev);
+  };
+
+  const handleFilterChange = (event) => {
+    const { name, value } = event.target;
+    setFilters((prev) => ({ ...prev, [name]: value }));
+    setIsFilterOpen(false);
+  };
+
+  const handleResetFilters = () => {
+    setFilters(initialFilters);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        isFilterOpen &&
+        popoverRef.current &&
+        !popoverRef.current.contains(event.target) &&
+        filterButtonRef.current &&
+        !filterButtonRef.current.contains(event.target)
+      ) {
+        setIsFilterOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isFilterOpen]);
+
   const pieStatusColors = [
     { status: "pending", color: "#FFCC99" },
     { status: "active", color: "#72F172" },
@@ -132,15 +182,16 @@ const CentralDashboard = () => {
 
   const lineData = {
     labels:
-      complaintTrends?.current_week_trends?.map((trend) =>
-        shortenDay(trend.date)
+      complaintTrends?.[filters.trend]?.map((trend) =>
+        trend.day
+          ? truncateDay(trend.day)
+          : trend?.state__name || trend?.complaint_against
       ) || [],
     datasets: [
       {
-        label: "Trend",
+        label: "Total Complaints",
         data:
-          complaintTrends?.current_week_trends?.map((trend) => trend.total) ||
-          [],
+          complaintTrends?.[filters.trend]?.map((trend) => trend.total) || [],
         fill: false,
         borderColor: "#18A0FB",
         tension: 0.1,
@@ -305,7 +356,7 @@ const CentralDashboard = () => {
                   options={options}
                 />
               </Box>
-              <Box sx={{ display: "flex", px: 4, justifySelf: "center" }}>
+              <Box sx={{ display: "flex", mt: "5px", justifySelf: "center" }}>
                 {filteredPieStatus?.map((t) => (
                   <Box
                     key={t.id}
@@ -589,19 +640,139 @@ const CentralDashboard = () => {
               borderRadius: "12px",
               backgroundColor: "#FFFFFF",
               width: "360px",
-              height: "313px",
+              // height: "313px",
             }}
           >
-            <Typography
+            <Box
               sx={{
-                fontSize: "18px",
-                fontWeight: 500,
-                lineHeight: "28px",
-                color: "#101828",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                width: "100%",
+                mb: 2,
               }}
             >
-              Complaint Trends
-            </Typography>
+              <Typography
+                sx={{
+                  fontSize: "18px",
+                  fontWeight: 500,
+                  lineHeight: "28px",
+                  color: "#101828",
+                }}
+              >
+                Complaint Trends
+              </Typography>
+
+              <Box sx={{ position: "relative" }}>
+                <Box
+                  ref={filterButtonRef}
+                  onClick={handleFilterClick}
+                  sx={{
+                    display: "flex",
+                    gap: 1,
+                    borderRadius: "4px",
+                    border: "1px solid #F2F4F7",
+                    backgroundColor: "#F2F4F7",
+                    p: 1,
+                    cursor: "pointer",
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontSize: "16px",
+                      fontWeight: 500,
+                      lineHeight: "21.6px",
+                      color: "#64748B",
+                    }}
+                  >
+                    Filter
+                  </Typography>
+                  <FiChevronDown size={20} style={{ color: "#64748B" }} />
+                </Box>
+                {isFilterOpen && (
+                  <Box
+                    ref={popoverRef}
+                    sx={{
+                      position: "absolute",
+                      top: "calc(100% + 8px)", // Position below the button with a small gap
+                      right: 0,
+                      backgroundColor: "white",
+                      borderRadius: "8px",
+                      boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.15)",
+                      p: 2,
+                      zIndex: 10,
+                      minWidth: "250px",
+                      border: "1px solid #E0E0E0",
+                    }}
+                  >
+                    <Typography variant="subtitle1" gutterBottom>
+                      Filter Options
+                    </Typography>
+                    <Stack spacing={2}>
+                      <select
+                        id="trend-filter"
+                        value={filters.trend}
+                        name="trend"
+                        onChange={handleFilterChange}
+                        style={{
+                          padding: "8px",
+                          borderRadius: "4px",
+                          border: "1px solid #ccc",
+                        }}
+                      >
+                        <option value="current_week_trends">
+                          Current week
+                        </option>
+                        <option value="weekly_trends_over_time">
+                          Weekly over time
+                        </option>
+                        <option value="state_trends_over_time">States</option>
+                        <option value="complaint_against_trends_over_time">
+                          Complaint against
+                        </option>
+                      </select>
+                      <select
+                        id="status-filter"
+                        value={filters.status}
+                        name="status"
+                        onChange={handleFilterChange}
+                        style={{
+                          width: "100%",
+                          padding: "8px",
+                          borderRadius: "4px",
+                          border: "1px solid #ccc",
+                        }}
+                      >
+                        <option value="">All Complaints</option>
+                        <option value="pending">Pending</option>
+                        <option value="active">Active</option>
+                        <option value="closed">Closed</option>
+                        <option value="escalated">Escalated</option>
+                      </select>
+                      <Button
+                        variant="outlined"
+                        onClick={handleResetFilters}
+                        sx={{
+                          mt: 2,
+                          fontSize: "14px",
+                          fontWeight: 500,
+                          backgroundColor: "transparent",
+                          border: "1px solid #038F3E",
+                          color: "#038F3E",
+                          textTransform: "none",
+                          "&:hover": {
+                            backgroundColor: "#027A3B",
+                            color: "#fff",
+                          },
+                        }}
+                      >
+                        Reset Filters
+                      </Button>
+                    </Stack>
+                  </Box>
+                )}
+              </Box>
+            </Box>
             <Box sx={{ display: "flex", alignItems: "flex-start" }}>
               <LineChart
                 title="Line Chart Example"

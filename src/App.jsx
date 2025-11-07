@@ -18,6 +18,8 @@ import CentralRoutes from "./views/central/routes";
 import ErrorPage from "./shared/ErrorPage";
 import Enrollee from "./views/auth/Enrollee";
 import HmoRegisterPage from "./views/hmo/auth/HmoRegisterPage";
+import ReviewForm from "./views/enrolees/ComplaintReview/ReviewForm";
+import SubmissionStatus from "./views/enrolees/ComplaintSubmission/SubmissionStatus";
 // import NotFound from "./components/NotFound";
 
 const getUserRole = () => localStorage.getItem("userRole");
@@ -39,8 +41,12 @@ function App() {
       {/* <Route path="enrollee/*" element={<EnrolleeRoutes />} /> */}
       {/* <Route path="/enrollee-complaint-first-form" element={<FirstForm />} />
       <Route path="/enrollee-complaint-second-form" element={<SecondForm />} />
-      <Route path="/enrollee-form-preview" element={<FormPreview />} />
-      <Route path="/enrollee-complaint-review" element={<ReviewForm />} /> */}
+      <Route path="/enrollee-form-preview" element={<FormPreview />} />*/}
+      <Route path="/enrollee-complaint-review" element={<ReviewForm />} />
+      <Route
+        path="/enrollee-submission-status"
+        element={<SubmissionStatus />}
+      />
 
       <Route path="hmo-register" element={<HmoRegisterPage />} />
       {/* Protect all dashboard routes */}

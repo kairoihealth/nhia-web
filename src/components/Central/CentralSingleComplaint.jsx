@@ -192,30 +192,6 @@ const CentralSingleComplaint = () => {
                 {complaint?.phone || "--"}
               </Typography>
             </Box>
-            <Box flex={1} sx={{ display: "flex", gap: 2 }}>
-              <Typography
-                sx={{
-                  color: "#595959",
-                  fontSize: { xs: "14px", md: "16px" },
-                  fontWeight: 500,
-                  lineHeight: "24px",
-                  width: "60%",
-                }}
-              >
-                HMO of Complaint
-              </Typography>
-              <Typography
-                sx={{
-                  color: "#1B1C1E",
-                  fontSize: { xs: "14px", md: "16px" },
-                  fontWeight: 500,
-                  lineHeight: "24px",
-                  width: "60%",
-                }}
-              >
-                {complaint?.hmo?.name || "--"}
-              </Typography>
-            </Box>
           </Box>
         </Box>
 
@@ -385,6 +361,30 @@ const CentralSingleComplaint = () => {
                 }}
               >
                 {complaint?.respondent || "--"}
+              </Typography>
+            </Box>
+            <Box flex={1} sx={{ display: "flex", gap: 2 }}>
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: { xs: "14px", md: "16px" },
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                  width: "60%",
+                }}
+              >
+                Type of Complaint
+              </Typography>
+              <Typography
+                sx={{
+                  color: "#1B1C1E",
+                  fontSize: { xs: "14px", md: "16px" },
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                  width: "60%",
+                }}
+              >
+                {complaint?.complaint_type || "--"}
               </Typography>
             </Box>
           </Box>

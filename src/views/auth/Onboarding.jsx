@@ -1,4 +1,4 @@
-import { Box, Typography, Button } from "@mui/material";
+import { Box, Typography, Button, Link } from "@mui/material";
 import Logo from "../../assets/nhia-logo.png";
 import KairoiLogo from "../../assets/kairoi-logo.png";
 import { useNavigate } from "react-router-dom";
@@ -41,9 +41,9 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
   const handleValidateAndNext = () => {
     const newErrors = {};
 
-    if (!stateInfo) {
-      newErrors.state = "Please select a state.";
-    }
+    // if (!stateInfo) {
+    //   newErrors.state = "Please select a state.";
+    // }
 
     setErrors(newErrors);
 
@@ -199,7 +199,7 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
                 mb: 2,
               }}
             >
-              Select NHIA
+              Select State
             </Typography>
             <Typography
               sx={{
@@ -228,7 +228,7 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
               )}
             </Box>
 
-            {/* <Link
+            <Link
               href="/enrollee-complaint-review"
               sx={{
                 fontSize: "16px",
@@ -236,12 +236,12 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
                 lineHeight: { xs: "21.6px", md: "27px" },
                 color: "#038F3E",
                 textDecoration: "none",
-                my: 2
+                my: 2,
                 // '&:hover': { textDecoration: 'underline' }
               }}
             >
               Review of existing complaint or request
-            </Link> */}
+            </Link>
           </Box>
 
           <Box

@@ -1,16 +1,70 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 // import { Helmet } from "react-helmet-async";
-import { Box, Typography, Stack, CircularProgress } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Stack,
+  CircularProgress,
+  TextField,
+  Button,
+} from "@mui/material";
 import { TabButton } from "../../../shared/TabPanel";
 import ReusableTable from "../../../shared/Table";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getComplaints } from "../../../services/general";
+import { FiFilter } from "react-icons/fi";
+import { getRegions, getStates } from "../../../services/settings";
+import { useMemo } from "react";
+import { complaintCategories, complaintType } from "../../../mock/type";
+
+const initialFilters = {
+  type: "",
+  category: "",
+  status: "",
+  state_id: "",
+  region_id: "",
+  start_date: "",
+  end_date: "",
+};
 
 // CentralComplaints Component
 const CentralComplaints = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("all");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [filters, setFilters] = useState(initialFilters);
+  const filterButtonRef = useRef(null);
+  const popoverRef = useRef(null);
+
+  const { data: statesData, isLoading: isLoadingStates } = useQuery({
+    queryKey: ["states"],
+    queryFn: () => getStates(),
+  });
+
+  const states = useMemo(
+    () =>
+      statesData?.results?.map((t) => ({
+        value: t.id,
+        label: t.name,
+      })) || [],
+    [statesData]
+  );
+
+  const { data: regionsData, isLoading: isLoadingRegions } = useQuery({
+    queryKey: ["regions"],
+    queryFn: () => getRegions({}),
+  });
+
+  const regions = useMemo(
+    () =>
+      regionsData?.results?.map((t) => ({
+        value: t.id,
+        label: t.name,
+      })) || [],
+    [regionsData]
+  );
 
   const {
     data: complaints,
@@ -18,13 +72,50 @@ const CentralComplaints = () => {
     isError,
     error,
   } = useQuery({
-    queryKey: ["complaints"],
-    queryFn: () => getComplaints({ page: 1, pageSize: 10 }),
+    queryKey: ["complaints", filters, page],
+    queryFn: () =>
+      getComplaints({
+        page,
+        pageSize,
+        ...filters,
+      }),
   });
-
+  console.log(page, "pageee");
   const handleTabClick = (tab) => {
-    setActiveTab(tab);
+    // setActiveTab(tab);
+    setFilters((prev) => ({ ...prev, status: tab }));
+    setPage(1);
   };
+
+  const handleFilterClick = () => {
+    setIsFilterOpen((prev) => !prev);
+  };
+
+  const handleFilterChange = (event) => {
+    const { name, value } = event.target;
+    setFilters((prev) => ({ ...prev, [name]: value }));
+    setPage(1);
+  };
+
+  const handleResetFilters = () => {
+    setFilters(initialFilters);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        isFilterOpen &&
+        popoverRef.current &&
+        !popoverRef.current.contains(event.target) &&
+        filterButtonRef.current &&
+        !filterButtonRef.current.contains(event.target)
+      ) {
+        setIsFilterOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isFilterOpen]);
 
   const getColumns = () => [
     { label: "Date", field: "created_at", align: "center" },
@@ -44,14 +135,33 @@ const CentralComplaints = () => {
       id: user.id,
       status: user.status,
     })) || [];
+  console.log(transformedRows, "transformedRows");
 
-  const filteredRows = transformedRows.filter((row) => {
-    if (activeTab === "new") return row.status === "pending";
-    if (activeTab === "act") return row.status === "active";
-    if (activeTab === "com") return row.status === "closed";
-    if (activeTab === "esc") return row.status === "escalated";
-    return true;
-  });
+  // const filteredRows = transformedRows.filter((row) => {
+  //   // Tab filter
+  //   let tabMatch = true;
+  //   if (activeTab === "new") tabMatch = row.status === "pending";
+  //   else if (activeTab === "act") tabMatch = row.status === "active";
+  //   else if (activeTab === "com") tabMatch = row.status === "closed";
+  //   else if (activeTab === "esc") tabMatch = row.status === "escalated";
+
+  //   // // Popover filters
+  //   // const categoryMatch = filters.category
+  //   //   ? row.type === filters.category
+  //   //   : true;
+  //   // const statusMatch = filters.status ? row.status === filters.status : true;
+
+  //   // const rowDate = new Date(row.created_at);
+  //   // const dateFromMatch = filters.start_date
+  //   //   ? rowDate >= new Date(filters.start_date)
+  //   //   : true;
+  //   // const dateToMatch = filters.end_date
+  //   //   ? rowDate <= new Date(filters.end_date)
+  //   //   : true;
+
+  //   return tabMatch;
+  //   //  && categoryMatch && statusMatch && dateFromMatch && dateToMatch
+  // });
 
   const handleViewComplaint = (row) => {
     navigate(`/admin/complaint/${row.complaint_no}`, {
@@ -59,14 +169,14 @@ const CentralComplaints = () => {
     });
   };
   const buttonTextMapping = {
-    all: "View Complaint",
-    new: "View Complaint",
-    act: "View Complaint",
-    com: "View Resolution",
-    esc: "View Complaint",
+    "": "View Complaint",
+    pending: "View Complaint",
+    active: "View Complaint",
+    closed: "View Resolution",
+    escalated: "View Complaint",
   };
 
-  if (isLoading) {
+  if (isLoading || isLoadingStates || isLoadingRegions) {
     return (
       <Box
         sx={{
@@ -98,7 +208,7 @@ const CentralComplaints = () => {
   }
 
   return (
-    <Box>
+    <Box aria-hidden={false}>
       <Box
         sx={{
           display: "flex",
@@ -121,73 +231,252 @@ const CentralComplaints = () => {
         >
           <Stack direction="row" spacing={2}>
             <TabButton
-              tab="all"
-              activeTab={activeTab}
+              tab=""
+              activeTab={filters.status}
               label="All Complaints"
               onClick={handleTabClick}
             />
             <TabButton
-              tab="new"
-              activeTab={activeTab}
+              tab="pending"
+              activeTab={filters.status}
               label="New Complaints"
               onClick={handleTabClick}
             />
             <TabButton
-              tab="act"
-              activeTab={activeTab}
+              tab="active"
+              activeTab={filters.status}
               label="Active Complaints"
               onClick={handleTabClick}
             />
             <TabButton
-              tab="com"
-              activeTab={activeTab}
+              tab="closed"
+              activeTab={filters.status}
               label="Completed Complaints"
               onClick={handleTabClick}
             />
             <TabButton
-              tab="esc"
-              activeTab={activeTab}
+              tab="escalated"
+              activeTab={filters.status}
               label="Escalated Complaints"
               onClick={handleTabClick}
             />
           </Stack>
-          {/* <Box
-            // color="primary"
-            sx={{
-              display: "flex",
-              gap: 1,
-              borderRadius: "4px",
-              border: "1px solid #F2F4F7",
-              backgroundColor: "#F2F4F7",
-              p: 1,
-              cursor: "pointer",
-            }}
-            onClick={() => alert("Filter clicked")}
-          >
-            <FiFilter size={20} style={{ color: "#64748B" }} />
-            <Typography
+
+          <Box sx={{ position: "relative" }}>
+            <Box
+              ref={filterButtonRef}
+              onClick={handleFilterClick}
               sx={{
-                fontSize: "16px",
-                fontWeight: 500,
-                lineHeight: "21.6px",
-                color: "#64748B",
+                display: "flex",
+                gap: 1,
+                borderRadius: "4px",
+                border: "1px solid #F2F4F7",
+                backgroundColor: "#F2F4F7",
+                p: 1,
+                cursor: "pointer",
               }}
             >
-              Filter
-            </Typography>
-          </Box> */}
+              <FiFilter size={20} style={{ color: "#64748B" }} />
+              <Typography
+                sx={{
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "21.6px",
+                  color: "#64748B",
+                }}
+              >
+                Filter
+              </Typography>
+            </Box>
+            {isFilterOpen && (
+              <Box
+                ref={popoverRef}
+                sx={{
+                  position: "absolute",
+                  top: "calc(100% + 8px)", // Position below the button with a small gap
+                  right: 0,
+                  backgroundColor: "white",
+                  borderRadius: "8px",
+                  boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.15)",
+                  p: 2,
+                  zIndex: 10,
+                  minWidth: "250px",
+                  border: "1px solid #E0E0E0",
+                }}
+              >
+                <Typography variant="subtitle1" gutterBottom>
+                  Filter Options
+                </Typography>
+                <Stack spacing={2}>
+                  <select
+                    id="status-filter"
+                    value={filters.status}
+                    name="status"
+                    onChange={handleFilterChange}
+                    style={{
+                      width: "100%",
+                      padding: "8px",
+                      borderRadius: "4px",
+                      border: "1px solid #ccc",
+                    }}
+                  >
+                    <option value="">All Complaints</option>
+                    <option value="pending">Pending</option>
+                    <option value="active">Active</option>
+                    <option value="closed">Closed</option>
+                    <option value="escalated">Escalated</option>
+                  </select>
+
+                  <select
+                    id="type-filter"
+                    value={filters.type}
+                    name="type"
+                    onChange={handleFilterChange}
+                    style={{
+                      width: "100%",
+                      padding: "8px",
+                      borderRadius: "4px",
+                      border: "1px solid #ccc",
+                    }}
+                  >
+                    <option value="">All Types</option>
+                    {complaintType
+                      .filter((type) => type.value !== "Other")
+                      .map((type) => (
+                        <option key={type.value} value={type.value}>
+                          {type.label}
+                        </option>
+                      ))}
+                  </select>
+                  <select
+                    id="category-filter"
+                    value={filters.category}
+                    name="category"
+                    onChange={handleFilterChange}
+                    style={{
+                      width: "100%",
+                      padding: "8px",
+                      borderRadius: "4px",
+                      border: "1px solid #ccc",
+                    }}
+                  >
+                    <option value="">All Categories</option>
+                    {complaintCategories
+                      .filter((cat) => cat.value !== "Other")
+                      .map((cat) => (
+                        <option key={cat.value} value={cat.value}>
+                          {cat.label}
+                        </option>
+                      ))}
+                  </select>
+
+                  <select
+                    id="region-filter"
+                    value={filters.region_id}
+                    name="region_id"
+                    onChange={handleFilterChange}
+                    style={{
+                      width: "100%",
+                      padding: "8px",
+                      borderRadius: "4px",
+                      border: "1px solid #ccc",
+                    }}
+                  >
+                    <option value="">All Regions</option>
+                    {regions.map((region) => (
+                      <option key={region.value} value={region.value}>
+                        {region.label}
+                      </option>
+                    ))}
+                  </select>
+
+                  <select
+                    id="state-filter"
+                    value={filters.state_id}
+                    name="state_id"
+                    onChange={handleFilterChange}
+                    style={{
+                      width: "100%",
+                      padding: "8px",
+                      borderRadius: "4px",
+                      border: "1px solid #ccc",
+                    }}
+                  >
+                    <option value="">All States</option>
+                    {states.map((state) => (
+                      <option key={state.value} value={state.value}>
+                        {state.label}
+                      </option>
+                    ))}
+                  </select>
+
+                  <Typography
+                    variant="body2"
+                    sx={{ pt: 1, color: "text.secondary" }}
+                  >
+                    Date Range
+                  </Typography>
+                  <TextField
+                    id="start_date"
+                    label="From"
+                    type="date"
+                    size="small"
+                    name="start_date"
+                    value={filters.start_date}
+                    onChange={handleFilterChange}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                  <TextField
+                    id="end_date"
+                    label="To"
+                    type="date"
+                    size="small"
+                    name="end_date"
+                    value={filters.end_date}
+                    onChange={handleFilterChange}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                  <Button
+                    variant="outlined"
+                    onClick={handleResetFilters}
+                    sx={{
+                      mt: 2,
+                      fontSize: "14px",
+                      fontWeight: 500,
+                      backgroundColor: "transparent",
+                      border: "1px solid #038F3E",
+                      color: "#038F3E",
+                      textTransform: "none",
+                      "&:hover": { backgroundColor: "#027A3B", color: "#fff" },
+                    }}
+                  >
+                    Reset Filters
+                  </Button>
+                </Stack>
+              </Box>
+            )}
+          </Box>
         </Stack>
 
         {/* Table */}
         <ReusableTable
           columns={getColumns()}
-          rows={filteredRows}
+          rows={transformedRows}
           onViewClick={handleViewComplaint}
           showActions={true}
           showStatus={true}
           pagination={true}
           headerBackgroundColor="#20201E"
-          actionButtonText={buttonTextMapping[activeTab]}
+          actionButtonText={buttonTextMapping[filters.status]}
+          totalPages={complaints?.total_pages}
+          page={page}
+          setPage={(page) => {
+            setPage(page);
+          }}
+          pageSize={pageSize}
+          setPageSize={(pageSize) => {
+            setPageSize(pageSize);
+          }}
         />
       </Box>
     </Box>

@@ -6,13 +6,22 @@ import { BsCloudUpload } from "react-icons/bs";
 import { AiOutlineFile } from "react-icons/ai";
 import PropTypes from "prop-types";
 import ReactSelect from "react-select";
-import { complaintType, nhiaProgram } from "../../../mock/type";
+import {
+  complaintCategories,
+  complaintType,
+  enrolleeComplaints,
+  hmoComplaints,
+  nhiaProgram,
+  providerComplaints,
+} from "../../../mock/type";
 import { selectStyles, textFieldStyles } from "../../../utils/style";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
+import { useMemo } from "react";
 
 const SecondForm = ({
   complaintInfo,
   setComplaintInfo,
+  firstInfo,
   onNext,
   onBack,
   btn,
@@ -20,6 +29,29 @@ const SecondForm = ({
   const maxFiles = 5;
   const [errors, setErrors] = useState({});
 
+  const complaintOptions =
+    firstInfo.complaint_against === "Provider"
+      ? providerComplaints
+      : firstInfo.complaint_against === "HMO"
+      ? hmoComplaints
+      : enrolleeComplaints;
+
+  const mappedComplaintOptions = useMemo(
+    () =>
+      complaintOptions?.map((option) => ({
+        value: option.description,
+        label: option.description,
+      })) || [],
+    [complaintOptions]
+  );
+
+  console.log(
+    complaintOptions,
+    complaintOptions.find(
+      (type) => type.description === complaintInfo.description
+    ),
+    "complaintInfo"
+  );
   const onDrop = (acceptedFiles) => {
     // console.log("Accepted Files:", acceptedFiles);
     const currentFilesLength = complaintInfo.files?.length || 0;
@@ -68,12 +100,57 @@ const SecondForm = ({
   };
 
   const handleInputChange = (e) => {
+    console.log(complaintInfo, "eee");
     const { name, value } = e.target;
     setComplaintInfo({ ...complaintInfo, [name]: value });
+    // if (name === "otherDescription") {
+    //   setComplaintInfo({
+    //     ...complaintInfo,
+    //     description: value,
+    //   });
+    // }
   };
 
-  const handleComplaintChange = (selectedOption) => {
-    setComplaintInfo({ ...complaintInfo, complaint: selectedOption.value });
+  const handleComplaintTypeChange = (selectedOption) => {
+    console.log(selectedOption, complaintInfo, "complaintType");
+    setComplaintInfo({
+      ...complaintInfo,
+      complaint_type: selectedOption.value,
+    });
+  };
+  const handleComplaintCategoryChange = (selectedOption) => {
+    console.log(selectedOption, "selectedOption");
+    setComplaintInfo({
+      ...complaintInfo,
+      complaint_category: selectedOption.value,
+    });
+  };
+  const handleComplaintDescriptionChange = (selectedOption) => {
+    if (selectedOption.value !== "Others") {
+      complaintInfo["otherDescription"] = "";
+      const complaint = complaintOptions.find(
+        (type) => type.description === selectedOption.value
+      );
+      complaintInfo["complaint_type"] = complaint.complaint_type;
+      complaintInfo["complaint_category"] = complaint.complaint_category;
+      // setComplaintInfo({
+      //   ...complaintInfo,
+      //   complaint_type: complaint.complaint_type,
+      //   complaint_category: complaint.complaint_category,
+      // });
+      console.log(complaint, complaintInfo, "complaintType");
+      // setComplaintInfo({
+      //   ...complaintInfo,
+      // });
+      // ?.map((option) => ({
+      //   value: option.complaint_type,
+      //   label: option.complaint_type,
+      // }));
+    }
+    setComplaintInfo({
+      ...complaintInfo,
+      description: selectedOption.value,
+    });
   };
 
   const handleProgramChange = (selectedOption) => {
@@ -88,10 +165,17 @@ const SecondForm = ({
     if (!complaintInfo.time?.trim()) newErrors.time = "Time is required.";
     if (!complaintInfo.programme?.trim())
       newErrors.programme = "Nhia programme is required.";
-    if (!complaintInfo.complaint)
-      newErrors.complaint = "Please select a complaint type.";
+    if (!complaintInfo.complaint_type)
+      newErrors.complaint_type = "Please select a complaint type.";
+    if (!complaintInfo.complaint_category)
+      newErrors.complaint_category = "Please select a complaint category.";
     if (!complaintInfo.description?.trim())
       newErrors.description = "Description is required.";
+    if (
+      complaintInfo.description?.trim() === "Others" &&
+      !complaintInfo.otherDescription?.trim()
+    )
+      newErrors.otherDescription = "Description is required.";
     if (!complaintInfo.files || complaintInfo.files?.length === 0)
       newErrors.files = "Please provide attachments to support your claim.";
 
@@ -155,7 +239,7 @@ const SecondForm = ({
                   my: 4,
                 }}
               >
-                Complainant Details
+                Complaint Details
               </Typography>
               <form>
                 <Box
@@ -223,13 +307,6 @@ const SecondForm = ({
                       helperText={errors.time}
                     />
                   </Box>
-                </Box>
-                <Box
-                  display="flex"
-                  flexDirection={{ xs: "column", md: "row" }}
-                  gap={2}
-                  mt={2}
-                >
                   <Box
                     flex={1}
                     sx={{ display: "flex", flexDirection: "column", gap: 1 }}
@@ -264,6 +341,92 @@ const SecondForm = ({
                       </Typography>
                     )}
                   </Box>
+                </Box>
+                <Box
+                  display="flex"
+                  flexDirection={{ xs: "column", md: "column" }}
+                  // gap={2}
+                  mt={2}
+                >
+                  <Box
+                    flex={1}
+                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                  >
+                    <Typography
+                      sx={{
+                        color: "#595959",
+                        fontSize: "16px",
+                        fontWeight: 500,
+                        lineHeight: "24px",
+                      }}
+                    >
+                      Description
+                      <span style={{ color: "#099243", marginLeft: "6px" }}>
+                        *
+                      </span>
+                    </Typography>
+                    <ReactSelect
+                      styles={selectStyles}
+                      value={mappedComplaintOptions.find(
+                        (el) => el.value === complaintInfo.description
+                      )}
+                      name="description"
+                      onChange={handleComplaintDescriptionChange}
+                      options={mappedComplaintOptions}
+                      placeholder='Select the option that best describes your complaint. Select "Others" if your complaint is not there.'
+                    />
+                    {errors.description && (
+                      <Typography
+                        sx={{ color: "red", fontSize: "13px", mt: 0.5 }}
+                      >
+                        {errors.description}
+                      </Typography>
+                    )}
+                  </Box>
+                  {complaintInfo.description === "Others" && (
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 1,
+                        mt: 2,
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          color: "#595959",
+                          fontSize: "16px",
+                          fontWeight: 500,
+                          lineHeight: "24px",
+                        }}
+                      >
+                        Complaint Description
+                        <span style={{ color: "#099243", marginLeft: "6px" }}>
+                          *
+                        </span>
+                      </Typography>
+                      <TextField
+                        name="otherDescription"
+                        fullWidth
+                        variant="outlined"
+                        multiline
+                        rows={4}
+                        required
+                        placeholder="enter complaint description"
+                        value={complaintInfo.otherDescription}
+                        onChange={handleInputChange}
+                        error={!!errors.otherDescription}
+                        helperText={errors.otherDescription}
+                      />
+                    </Box>
+                  )}
+                </Box>
+                <Box
+                  display="flex"
+                  flexDirection={{ xs: "column", md: "row" }}
+                  gap={2}
+                  mt={2}
+                >
                   <Box
                     flex={1}
                     sx={{ display: "flex", flexDirection: "column", gap: 1 }}
@@ -283,57 +446,85 @@ const SecondForm = ({
                     </Typography>
                     <ReactSelect
                       styles={selectStyles}
-                      value={complaintType.find(
-                        (type) => type.id === complaintInfo.complaint
-                      )}
-                      onChange={handleComplaintChange}
+                      value={
+                        complaintInfo.description !== "Others"
+                          ? complaintOptions
+                              .filter(
+                                (type) =>
+                                  type.description === complaintInfo.description
+                              )
+                              ?.map((option) => ({
+                                value: option.complaint_type,
+                                label: option.complaint_type,
+                              }))
+                          : complaintType.find(
+                              (type) =>
+                                type.value === complaintInfo.complaint_type
+                            )
+                      }
+                      onChange={handleComplaintTypeChange}
                       options={complaintType}
                       placeholder="Select option"
+                      isDisabled={complaintInfo.description !== "Others"}
                     />
-                    {errors.complaint && (
+                    {errors.complaint_type && (
                       <Typography
                         sx={{ color: "red", fontSize: "13px", mt: 0.5 }}
                       >
-                        {errors.complaint}
+                        {errors.complaint_type}
+                      </Typography>
+                    )}
+                  </Box>
+                  <Box
+                    flex={1}
+                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                  >
+                    <Typography
+                      sx={{
+                        color: "#595959",
+                        fontSize: "16px",
+                        fontWeight: 500,
+                        lineHeight: "24px",
+                      }}
+                    >
+                      Complaint Category
+                      <span style={{ color: "#099243", marginLeft: "6px" }}>
+                        *
+                      </span>
+                    </Typography>
+                    <ReactSelect
+                      styles={selectStyles}
+                      value={
+                        complaintInfo.description !== "Others"
+                          ? complaintOptions
+                              .filter(
+                                (cat) =>
+                                  cat.description === complaintInfo.description
+                              )
+                              ?.map((option) => ({
+                                value: option.complaint_category,
+                                label: option.complaint_category,
+                              }))
+                          : complaintCategories.find(
+                              (cat) =>
+                                cat.value === complaintInfo.complaint_category
+                            )
+                      }
+                      onChange={handleComplaintCategoryChange}
+                      options={complaintCategories}
+                      placeholder="Select option"
+                      isDisabled={complaintInfo.description !== "Others"}
+                    />
+                    {errors.complaint_category && (
+                      <Typography
+                        sx={{ color: "red", fontSize: "13px", mt: 0.5 }}
+                      >
+                        {errors.complaint_category}
                       </Typography>
                     )}
                   </Box>
                 </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 1,
-                    mt: 2,
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      color: "#595959",
-                      fontSize: "16px",
-                      fontWeight: 500,
-                      lineHeight: "24px",
-                    }}
-                  >
-                    Complaint Description
-                    <span style={{ color: "#099243", marginLeft: "6px" }}>
-                      *
-                    </span>
-                  </Typography>
-                  <TextField
-                    name="description"
-                    fullWidth
-                    variant="outlined"
-                    multiline
-                    rows={4}
-                    required
-                    placeholder="enter complaint description"
-                    value={complaintInfo.description}
-                    onChange={handleInputChange}
-                    error={!!errors.description}
-                    helperText={errors.description}
-                  />
-                </Box>
+
                 <Box
                   sx={{
                     display: "flex",
@@ -553,10 +744,13 @@ SecondForm.propTypes = {
     date: PropTypes.string,
     time: PropTypes.string,
     programme: PropTypes.string,
-    complaint: PropTypes.string,
+    complaint_type: PropTypes.string,
+    complaint_category: PropTypes.string,
     description: PropTypes.string,
+    otherDescription: PropTypes.string,
   }),
   setComplaintInfo: PropTypes.func.isRequired,
+  firstInfo: PropTypes.object,
   onNext: PropTypes.func,
   onBack: PropTypes.func,
   btn: PropTypes.any,
