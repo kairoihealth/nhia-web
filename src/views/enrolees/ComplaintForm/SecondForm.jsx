@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Logo from "../../../assets/nhia-logo.png";
+import Logo from "../../../assets/nhia-logo.png"; // eslint-disable-line
 import { Box, TextField, Button, FormControl, Typography } from "@mui/material";
 import { useDropzone } from "react-dropzone";
 import { BsCloudUpload } from "react-icons/bs";
@@ -17,6 +17,7 @@ import {
 import { selectStyles, textFieldStyles } from "../../../utils/style";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { useMemo } from "react";
+import { useHandleError } from "../../../hooks/useToastHandler";
 
 const SecondForm = ({
   complaintInfo,
@@ -26,9 +27,11 @@ const SecondForm = ({
   onBack,
   btn,
 }) => {
+  const handleError = useHandleError();
   const maxFiles = 5;
   const [errors, setErrors] = useState({});
 
+  // eslint-disable-next-line
   const complaintOptions =
     firstInfo.complaint_against === "Provider"
       ? providerComplaints
@@ -45,16 +48,9 @@ const SecondForm = ({
     [complaintOptions]
   );
 
-  console.log(
-    complaintOptions,
-    complaintOptions.find(
-      (type) => type.description === complaintInfo.description
-    ),
-    "complaintInfo"
-  );
   const onDrop = (acceptedFiles) => {
-    // console.log("Accepted Files:", acceptedFiles);
     const currentFilesLength = complaintInfo.files?.length || 0;
+
     if (currentFilesLength + acceptedFiles.length <= maxFiles) {
       const filesWithPreview = acceptedFiles.map((file) => ({
         ...file,
@@ -68,27 +64,46 @@ const SecondForm = ({
       }));
       setComplaintInfo((prev) => {
         const updatedFiles = [...(prev.files || []), ...filesWithPreview];
-        // console.log("Updated complaintInfo.files:", updatedFiles);
         return {
           ...prev,
           files: updatedFiles,
         };
       });
     } else {
-      alert(`You can only upload a maximum of ${maxFiles} files`);
+      handleError(`You can only upload a maximum of ${maxFiles} files`);
     }
+  };
+
+  const onDropRejected = (fileRejections) => {
+    fileRejections.forEach(({ file, errors }) => {
+      errors.forEach((error) => {
+        if (error.code === "file-too-large") {
+          setErrors({
+            ...errors,
+            files: `File "${file.name}" is too large. Maximum file size is 10MB.`,
+          });
+          // handleError(
+          //   `File "${file.name}" is too large. Maximum file size is 10MB.`
+          // );
+          // alert(`File "${file.name}" is too large. Maximum file size is 10MB.`);
+        }
+      });
+    });
   };
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
+    onDropRejected,
     accept: {
       "image/*": [],
       "application/pdf": [],
       "application/msword": [],
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
         [],
+      "video/*": [],
     },
     maxFiles: 5 - (complaintInfo.files?.length || 0),
+    maxSize: 10485760, // 10MB in bytes
   });
   const removeFile = (fileToRemove) => {
     setComplaintInfo((prev) => {
@@ -100,26 +115,17 @@ const SecondForm = ({
   };
 
   const handleInputChange = (e) => {
-    console.log(complaintInfo, "eee");
     const { name, value } = e.target;
     setComplaintInfo({ ...complaintInfo, [name]: value });
-    // if (name === "otherDescription") {
-    //   setComplaintInfo({
-    //     ...complaintInfo,
-    //     description: value,
-    //   });
-    // }
   };
 
   const handleComplaintTypeChange = (selectedOption) => {
-    console.log(selectedOption, complaintInfo, "complaintType");
     setComplaintInfo({
       ...complaintInfo,
       complaint_type: selectedOption.value,
     });
   };
   const handleComplaintCategoryChange = (selectedOption) => {
-    console.log(selectedOption, "selectedOption");
     setComplaintInfo({
       ...complaintInfo,
       complaint_category: selectedOption.value,
@@ -133,19 +139,6 @@ const SecondForm = ({
       );
       complaintInfo["complaint_type"] = complaint.complaint_type;
       complaintInfo["complaint_category"] = complaint.complaint_category;
-      // setComplaintInfo({
-      //   ...complaintInfo,
-      //   complaint_type: complaint.complaint_type,
-      //   complaint_category: complaint.complaint_category,
-      // });
-      console.log(complaint, complaintInfo, "complaintType");
-      // setComplaintInfo({
-      //   ...complaintInfo,
-      // });
-      // ?.map((option) => ({
-      //   value: option.complaint_type,
-      //   label: option.complaint_type,
-      // }));
     }
     setComplaintInfo({
       ...complaintInfo,
@@ -157,11 +150,15 @@ const SecondForm = ({
     setComplaintInfo({ ...complaintInfo, programme: selectedOption.value });
   };
 
-  console.log(complaintInfo, "complaintInfo");
   const validateFields = () => {
     const newErrors = {};
 
-    if (!complaintInfo.date?.trim()) newErrors.date = "Date is required.";
+    if (!complaintInfo.date?.trim()) {
+      newErrors.date = "Date is required.";
+    } else if (new Date(complaintInfo.date) > new Date()) {
+      newErrors.date = "Date of incident cannot be in the future.";
+    }
+
     if (!complaintInfo.time?.trim()) newErrors.time = "Time is required.";
     if (!complaintInfo.programme?.trim())
       newErrors.programme = "Nhia programme is required.";
@@ -271,6 +268,10 @@ const SecondForm = ({
                       variant="outlined"
                       required
                       sx={textFieldStyles}
+                      InputLabelProps={{ shrink: true }}
+                      inputProps={{
+                        max: new Date().toISOString().split("T")[0],
+                      }}
                       value={complaintInfo.date}
                       onChange={handleInputChange}
                       error={!!errors.date}
@@ -301,6 +302,7 @@ const SecondForm = ({
                       variant="outlined"
                       required
                       sx={textFieldStyles}
+                      InputLabelProps={{ shrink: true }}
                       value={complaintInfo.time}
                       onChange={handleInputChange}
                       error={!!errors.time}
@@ -573,11 +575,17 @@ const SecondForm = ({
                         <br />
                         <span>SVG, PNG, JPG, or GIF (max. 800x400px)</span>
                         <br />
+                        <span style={{ fontWeight: 600 }}>
+                          File size shouldn't exceed 10MB.
+                        </span>
+                        <br />
                         Upload max. 5 documents in total
                       </Typography>
                     </Box>
                     {errors?.files && (
-                      <Typography sx={{ color: "red" }}>
+                      <Typography
+                        sx={{ color: "red", fontSize: "13px", mt: 1 }}
+                      >
                         {errors?.files}
                       </Typography>
                     )}
@@ -745,6 +753,7 @@ SecondForm.propTypes = {
     time: PropTypes.string,
     programme: PropTypes.string,
     complaint_type: PropTypes.string,
+    timePeriod: PropTypes.string,
     complaint_category: PropTypes.string,
     description: PropTypes.string,
     otherDescription: PropTypes.string,
