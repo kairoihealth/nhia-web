@@ -106,11 +106,34 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
       newErrors.contactAddress = "Contact address is required.";
     if (!firstInfo.email?.trim()) newErrors.email = "Email is required.";
     if (!firstInfo.phone?.trim()) newErrors.phone = "Phone number is required.";
-    if (!firstInfo.nhiaNo?.trim())
-      newErrors.nhiaNo = "NHIA number is required.";
+    else if (firstInfo.phone.length !== 13) {
+      // '234' country code + 10 digits
+      newErrors.phone = "Phone number is invalid.";
+    }
+
+    if (firstInfo.phone?.trim() === firstInfo.altPhone?.trim())
+      newErrors.altPhone =
+        "Alternative phone number must be different from phone number.";
+    if (firstInfo.altPhone?.trim() && firstInfo.altPhone.length !== 13) {
+      newErrors.altPhone = "Alternative phone number is invalid.";
+    }
+
+    if (!firstInfo.nhiaNo?.trim()) newErrors.nhiaNo = "NHIA number is required";
+    else if (!/^KAI-\d{8}$/.test(firstInfo.nhiaNo)) {
+      newErrors.nhiaNo = "NHIA number must be in the format KAI-12345678";
+    }
     if (!firstInfo.complaint_against)
       newErrors.complaint_against = "Please select a complaint option.";
-
+    if (firstInfo.complaint_against === "Enrollee") {
+      if (!firstInfo.enrollee?.trim()) {
+        newErrors.enrollee = "Enrollee NHIA number is required.";
+      } else if (!/^KAI-\d{8}$/.test(firstInfo.enrollee)) {
+        newErrors.enrollee =
+          "Enrollee NHIA number must be in the format KAI-12345678";
+      } else if (firstInfo.nhiaNo?.trim() === firstInfo.enrollee?.trim()) {
+        newErrors.enrollee = "You cannot file a complaint against yourself.";
+      }
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -424,7 +447,7 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                       fullWidth
                       variant="outlined"
                       required
-                      placeholder="enter NHIA number"
+                      placeholder="KAI-12345678"
                       sx={textFieldStyles}
                       value={firstInfo.nhiaNo}
                       onChange={handleInputChange}
@@ -459,6 +482,13 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                         value={firstInfo.altPhone || ""}
                         onChange={handleAltPhoneChange}
                       />
+                      {errors.altPhone && (
+                        <Typography
+                          sx={{ color: "red", fontSize: "13px", mt: 0.5 }}
+                        >
+                          {errors.altPhone}
+                        </Typography>
+                      )}
                     </FormControl>
                   </Box>
                 </Box>
@@ -614,7 +644,7 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                         fullWidth
                         variant="outlined"
                         required
-                        placeholder="enter Enrollee NHIA number"
+                        placeholder="KAI-12345678"
                         sx={textFieldStyles}
                         value={firstInfo.enrollee}
                         onChange={handleInputChange}
