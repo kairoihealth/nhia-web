@@ -1,13 +1,6 @@
 import { Box, Card, CircularProgress, Typography } from "@mui/material";
 import { FiArrowRight } from "react-icons/fi";
 import PieChart from "../../../shared/PieChart";
-import {
-  centralBarData,
-  complaintColor,
-  complaintData,
-  complaintDatabyRegion,
-  dataByRegionColor,
-} from "../../../mock/chartData";
 import { barOptions, options } from "../../../utils/config";
 import GaugeChart from "../../../shared/SofaChart";
 import BarChart from "../../../shared/BarChart";
@@ -80,7 +73,9 @@ const CentralAnalysis = () => {
   });
 
   const pieComplaintAgainstColors = [
+    { complaint_against: "Enrollee", color: "#FA7A5D" },
     { complaint_against: "HMO", color: "#72F172" },
+    { complaint_against: "NHIA", color: "#FCE500" },
     { complaint_against: "Provider", color: "#071C42" },
   ];
   const filteredPieComplaintAgainst = useMemo(
@@ -399,7 +394,9 @@ const CentralAnalysis = () => {
               options={options}
             />
           </Box>
-          <Box sx={{ display: "flex", alignItems: "center", px: 8 }}>
+          <Box
+            sx={{ display: "flex", alignItems: "center", alignSelf: "center" }}
+          >
             {filteredPieComplaintAgainst?.map((t, index) => (
               <Box key={index} sx={{ display: "flex", alignItems: "center" }}>
                 <Box
@@ -474,8 +471,8 @@ const CentralAnalysis = () => {
               display: "flex",
               flexWrap: "wrap",
               alignItems: "center",
+              alignSelf: "center",
               gap: 2,
-              px: 12,
             }}
           >
             {filteredPieComplaintByRegion?.map((t, index) => (

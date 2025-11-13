@@ -326,7 +326,7 @@ const FormPreview = ({
                         lineHeight: "18.9px",
                       }}
                     >
-                      {firstInfo?.complaint_against} Name
+                      {firstInfo?.complaint_against}:
                     </Typography>
                     <Typography
                       sx={{
@@ -336,7 +336,8 @@ const FormPreview = ({
                         lineHeight: "24px",
                       }}
                     >
-                      {firstInfo?.selectedHmoOrProviderName}
+                      {firstInfo?.selectedHmoOrProviderName ||
+                        firstInfo?.enrolleeNo}
                     </Typography>
                   </Box>
                   <Box
@@ -623,6 +624,7 @@ FormPreview.propTypes = {
     nhiaNo: PropTypes.string,
     complaint_against: PropTypes.string,
     selectedHmoOrProviderName: PropTypes.string,
+    enrolleeNo: PropTypes.string,
   }),
   complaintInfo: PropTypes.shape({
     files: PropTypes.arrayOf(
