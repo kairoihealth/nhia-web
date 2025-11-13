@@ -103,6 +103,28 @@ export const getComplaintResponses = async (id) => {
   }
 };
 
+export const getSingleComplaintByCaseId = async (case_id) => {
+  try {
+    const response = await Api.get(e.GET_SINGLE_COMPLAINT_BY_CASE_ID(case_id));
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch complaint:", error);
+    throw error;
+  }
+};
+
+export const getComplaintResponsesByCaseId = async (case_id) => {
+  try {
+    const response = await Api.get(
+      e.GET_COMPLAINT_RESPONSES_BY_CASE_ID(case_id)
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch complaint responses", error);
+    throw error;
+  }
+};
+
 export const addComplaint = async (payload) => {
   try {
     const response = await Api.post(e.ADD_COMPLAINTS, payload);
@@ -129,6 +151,16 @@ export const updateComplaintStatus = async ({ id, payload }) => {
     return response;
   } catch (error) {
     console.error("Failed to update complaint status:", error);
+    throw error;
+  }
+};
+
+export const rateComplaint = async ({ id, payload }) => {
+  try {
+    const response = await Api.post(e.RATE_COMPLAINT(id), payload);
+    return response;
+  } catch (error) {
+    console.error("Failed to rate complaint:", error);
     throw error;
   }
 };

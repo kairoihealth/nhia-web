@@ -60,6 +60,7 @@ const Enrollee = () => {
         nhia_programme: complaintInfo.programme,
         complaint_type: complaintInfo.complaint_type,
         complaint_category: complaintInfo.complaint_category,
+        enrolleeNo: complaintInfo.enrolleeNo,
         description:
           complaintInfo.otherDescription || complaintInfo.description,
         hmo: firstInfo.hmoId || "",

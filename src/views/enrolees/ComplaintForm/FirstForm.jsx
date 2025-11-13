@@ -125,13 +125,13 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
     if (!firstInfo.complaint_against)
       newErrors.complaint_against = "Please select a complaint option.";
     if (firstInfo.complaint_against === "Enrollee") {
-      if (!firstInfo.enrollee?.trim()) {
-        newErrors.enrollee = "Enrollee NHIA number is required.";
-      } else if (!/^KAI-\d{8}$/.test(firstInfo.enrollee)) {
-        newErrors.enrollee =
+      if (!firstInfo.enrolleeNo?.trim()) {
+        newErrors.enrolleeNo = "Enrollee NHIA number is required.";
+      } else if (!/^KAI-\d{8}$/.test(firstInfo.enrolleeNo)) {
+        newErrors.enrolleeNo =
           "Enrollee NHIA number must be in the format KAI-12345678";
-      } else if (firstInfo.nhiaNo?.trim() === firstInfo.enrollee?.trim()) {
-        newErrors.enrollee = "You cannot file a complaint against yourself.";
+      } else if (firstInfo.nhiaNo?.trim() === firstInfo.enrolleeNo?.trim()) {
+        newErrors.enrolleeNo = "You cannot file a complaint against yourself.";
       }
     }
     setErrors(newErrors);
@@ -145,9 +145,9 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
         hmoId: selectedHmo?.value || null,
         providerId: selectedProvider?.value || null,
         selectedHmoOrProviderName: selectedHmoOrProviderName || null,
-        enrollee:
-          firstInfo.complaint_against === "enrollee"
-            ? firstInfo.enrollee
+        enrolleeNo:
+          firstInfo.complaint_against === "Enrollee"
+            ? firstInfo.enrolleeNo
             : null,
       }));
       onNext();
@@ -640,16 +640,16 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                     </Typography>
                     <Box>
                       <TextField
-                        name="enrollee"
+                        name="enrolleeNo"
                         fullWidth
                         variant="outlined"
                         required
                         placeholder="KAI-12345678"
                         sx={textFieldStyles}
-                        value={firstInfo.enrollee}
+                        value={firstInfo.enrolleeNo}
                         onChange={handleInputChange}
-                        error={!!errors.enrollee}
-                        helperText={errors.enrollee}
+                        error={!!errors.enrolleeNo}
+                        helperText={errors.enrolleeNo}
                       />
                       {errors.provider && (
                         <Typography

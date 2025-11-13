@@ -7,6 +7,7 @@ import {
   CircularProgress,
   TextField,
   Button,
+  IconButton,
 } from "@mui/material";
 import { FiFilter } from "react-icons/fi";
 import { TabButton } from "../../../shared/TabPanel";
@@ -17,6 +18,7 @@ import { getComplaints } from "../../../services/general";
 import { useRef } from "react";
 import { useEffect } from "react";
 import { complaintCategories, complaintType } from "../../../mock/type";
+import InfoIcon from "@mui/icons-material/Info";
 
 const initialFilters = {
   type: "",
@@ -53,7 +55,6 @@ const StateComplaints = () => {
       }),
   });
 
-  console.log(page, "pageee");
   const handleTabClick = (tab) => {
     // setActiveTab(tab);
     setFilters((prev) => ({ ...prev, status: tab }));
@@ -95,22 +96,80 @@ const StateComplaints = () => {
   // };
 
   const getColumns = () => [
+    {
+      label: "",
+      field: "isOverdue",
+      align: "center",
+      format: (isOverdue) => {
+        if (isOverdue) {
+          const tooltipStyle = {
+            visibility: "hidden",
+            width: "160px",
+            backgroundColor: "black",
+            color: "#fff",
+            textAlign: "center",
+            borderRadius: "6px",
+            padding: "5px 0",
+            position: "absolute",
+            zIndex: 1,
+            bottom: "-24%",
+            left: "100%",
+            opacity: 1,
+            transition: "opacity 0.3s",
+          };
+
+          const tooltipContainerStyle = {
+            position: "relative",
+            display: "inline-block",
+          };
+
+          return (
+            <div
+              style={tooltipContainerStyle}
+              onMouseOver={(e) => {
+                e.currentTarget.children[1].style.visibility = "visible";
+                e.currentTarget.children[1].style.opacity = 1;
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.children[1].style.visibility = "hidden";
+                e.currentTarget.children[1].style.opacity = 0;
+              }}
+            >
+              <IconButton size="small">
+                <InfoIcon sx={{ color: "red" }} />
+              </IconButton>
+              <span style={tooltipStyle}>
+                This complaint has exceeded 15 hours.
+              </span>
+            </div>
+          );
+        }
+        return null;
+      },
+    },
     { label: "Date", field: "created_at", align: "center" },
     { label: "Complainant", field: "name", align: "center" },
     { label: "Complaint no", field: "complaint_no", align: "center" },
     { label: "Complaint type", field: "type", align: "center" },
-    { label: "Location", field: "location", align: "center" },
   ];
 
+  const isOverdue = (createdAt) => {
+    const complaintDate = new Date(createdAt);
+    const now = new Date();
+    const diffInHours =
+      (now.getTime() - complaintDate.getTime()) / (1000 * 60 * 60);
+    return diffInHours > 15;
+  };
+
   const transformedRows =
-    complaints?.results?.map((user) => ({
-      created_at: new Date(user.created_at).toLocaleDateString(),
-      name: `${user.firstname || ""} ${user.lastname || ""}`.trim(),
-      complaint_no: user.case_id,
-      type: user.complaint_type,
-      location: user?.state?.name,
-      id: user.id,
-      status: user.status,
+    complaints?.results?.map((complaint) => ({
+      created_at: new Date(complaint.created_at).toLocaleDateString(),
+      name: `${complaint.firstname || ""} ${complaint.lastname || ""}`.trim(),
+      complaint_no: complaint.case_id,
+      type: complaint.complaint_type,
+      id: complaint.id,
+      status: complaint.status,
+      isOverdue: isOverdue(complaint.created_at),
     })) || [];
 
   const handleViewComplaint = (row) => {

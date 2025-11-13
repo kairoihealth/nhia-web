@@ -9,6 +9,10 @@ import {
 import Logo from "../../../assets/nhia-logo.png";
 import KairoiLogo from "../../../assets/kairoi-logo.png";
 import { FiArrowLeft } from "react-icons/fi";
+import { getSingleComplaintByCaseId } from "../../../services/general";
+import { useHandleError } from "../../../hooks/useToastHandler";
+import { useState } from "react";
+import ComplaintStatusModal from "./ComplaintStatusModal";
 
 const textFieldStyles = {
   "& .MuiOutlinedInput-root": {
@@ -23,6 +27,48 @@ const textFieldStyles = {
 };
 
 const ReviewForm = () => {
+  const handleError = useHandleError();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [caseId, setCaseId] = useState("");
+  const [complaintDetails, setComplaintDetails] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  const handleChange = (e) => {
+    setCaseId(e.target.value);
+  };
+
+  const validateFields = () => {
+    const newErrors = {};
+
+    if (!caseId?.trim()) newErrors.caseId = "Complaint number is required";
+    else if (!/^KAI-\d{8}$/.test(caseId)) {
+      newErrors.caseId = "Complaint number must be in the format KAI-12345678";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleReviewComplaintStatus = async () => {
+    if (!validateFields()) return;
+    setIsSubmitting(true);
+
+    try {
+      const res = await getSingleComplaintByCaseId(caseId);
+      console.log(res, "res");
+      setComplaintDetails(res);
+      setCaseId("");
+      setIsModalOpen(true);
+    } catch (error) {
+      handleError("Failed to send response:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  console.log(errors, "errors");
+
   return (
     <Box
       sx={{
@@ -124,6 +170,11 @@ const ReviewForm = () => {
 
       {/* Right Column */}
       <Box
+        component="form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleReviewComplaintStatus();
+        }}
         sx={{
           flex: 1,
           display: "flex",
@@ -215,10 +266,16 @@ const ReviewForm = () => {
             <TextField
               variant="outlined"
               fullWidth
-              placeholder="KAI-"
-              // required
+              placeholder="KAI-12345678"
+              value={caseId}
+              onChange={handleChange}
               sx={textFieldStyles}
             />
+            {errors.caseId && (
+              <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
+                {errors.caseId}
+              </Typography>
+            )}
           </Box>
 
           {/* Sample Format */}
@@ -230,15 +287,15 @@ const ReviewForm = () => {
               lineHeight: "21.6px",
             }}
           >
-            Sample: KAI-HMO/26/211024/1
+            Sample: KAI-12345678
           </Typography>
         </Box>
 
         {/* Review Status Button */}
         <Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}>
           <Button
+            type="submit"
             variant="contained"
-            href="/"
             sx={{
               width: "300px",
               height: "48px",
@@ -250,11 +307,18 @@ const ReviewForm = () => {
               fontWeight: 500,
               "&:hover": { backgroundColor: "#027A3B" },
             }}
+            // disabled={isSubmitting}
+            loading={isSubmitting}
           >
             Review Status
           </Button>
         </Box>
       </Box>
+      <ComplaintStatusModal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        complaint={complaintDetails}
+      />
     </Box>
   );
 };

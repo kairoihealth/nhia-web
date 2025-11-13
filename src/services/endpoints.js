@@ -26,7 +26,11 @@ export const ENDPOINTS = {
   GET_COMPLAINT_TRENDS_BY_ORG: "/complaints/trends-by-organisation/",
   GET_SINGLE_COMPLAINT: (id) => `/complaints/${id}/`,
   GET_COMPLAINT_RESPONSES: (id) => `/complaints/${id}/responses/`,
+  GET_SINGLE_COMPLAINT_BY_CASE_ID: (case_id) => `/complaints/case/${case_id}/`,
+  GET_COMPLAINT_RESPONSES_BY_CASE_ID: (case_id) =>
+    `/complaints/case/${case_id}/responses/`,
   ADD_COMPLAINTS: "/complaints/",
   UPDATE_COMPLAINT_STATUS: (id) => `/complaints/${id}/status/`,
+  RATE_COMPLAINT: (id) => `/complaints/${id}/rate/`,
   RESPOND_TO_COMPLAINTS: "/complaints/respond/",
 };

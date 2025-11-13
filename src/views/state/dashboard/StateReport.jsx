@@ -970,7 +970,7 @@ const StateReports = () => {
               ) : null}
 
               {/* Location */}
-              <Box
+              {/* <Box
                 sx={{
                   display: "flex",
                   flexDirection: "column",
@@ -1016,21 +1016,8 @@ const StateReports = () => {
                         </option>
                       ))}
                   </select>
-                  {/* <Select
-                    labelId="location-label"
-                    id="location"
-                    value={filters.location}
-                    name="location"
-                    onChange={handleFilterChange}
-                    // label="Location"
-                    sx={styles}
-                  >
-                    <MenuItem value="">Select Region</MenuItem>
-                    <MenuItem value="Lagos">Lagos</MenuItem>
-                    <MenuItem value="Kaduna">Kaduna</MenuItem>
-                  </Select> */}
                 </FormControl>
-              </Box>
+              </Box> */}
 
               {/* Duration */}
               <Box

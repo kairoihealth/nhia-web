@@ -1,4 +1,4 @@
-import { Box, Typography, CircularProgress } from "@mui/material";
+import { Box, Typography, CircularProgress, Button } from "@mui/material";
 import ReusableTable from "../../../shared/Table";
 import { useNavigate } from "react-router-dom";
 import SearchFilter from "../../../shared/SearchAndFilter";
@@ -48,9 +48,9 @@ const StateInviteByCentral = () => {
     { value: "HMO", label: "HMO" },
   ];
 
-  // const handleAddUser = () => {
-  //   navigate(`add-user`);
-  // };
+  const handleAddUser = () => {
+    navigate(`add-user`);
+  };
 
   // Define table columns dynamically based on activeTab
   const getColumns = () => {
@@ -138,7 +138,7 @@ const StateInviteByCentral = () => {
           >
             State Invites
           </Typography>
-          {/* <Button
+          <Button
             variant="contained"
             size="medium"
             onClick={handleAddUser}
@@ -152,11 +152,11 @@ const StateInviteByCentral = () => {
               py: "12px",
               px: "23px",
               textTransform: "none",
-              "&:hover": { backgroundColor: "#027A3B" }
+              "&:hover": { backgroundColor: "#027A3B" },
             }}
           >
             Send Invitation
-          </Button> */}
+          </Button>
         </Box>
 
         {/* Search and Sort */}
