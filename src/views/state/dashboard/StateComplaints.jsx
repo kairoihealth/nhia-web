@@ -139,7 +139,7 @@ const StateComplaints = () => {
                 <InfoIcon sx={{ color: "red" }} />
               </IconButton>
               <span style={tooltipStyle}>
-                This complaint has exceeded 15 hours.
+                This complaint has exceeded 15 days.
               </span>
             </div>
           );
@@ -153,12 +153,13 @@ const StateComplaints = () => {
     { label: "Complaint type", field: "type", align: "center" },
   ];
 
-  const isOverdue = (createdAt) => {
+  const isOverdue = (createdAt, status) => {
+    if (status !== "pending") return false;
     const complaintDate = new Date(createdAt);
     const now = new Date();
     const diffInHours =
       (now.getTime() - complaintDate.getTime()) / (1000 * 60 * 60);
-    return diffInHours > 15;
+    return diffInHours > 360;
   };
 
   const transformedRows =
@@ -169,7 +170,7 @@ const StateComplaints = () => {
       type: complaint.complaint_type,
       id: complaint.id,
       status: complaint.status,
-      isOverdue: isOverdue(complaint.created_at),
+      isOverdue: isOverdue(complaint.created_at, complaint.status),
     })) || [];
 
   const handleViewComplaint = (row) => {

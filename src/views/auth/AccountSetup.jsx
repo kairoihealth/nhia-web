@@ -9,34 +9,37 @@ import {
   IconButton,
   Link,
   OutlinedInput,
-  FormControl
+  FormControl,
 } from "@mui/material";
 import Logo from "../../assets/nhia-logo.png";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useHandleError } from "../../hooks/useToastHandler";
+import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
 import { setUpAccount } from "../../services/auth/auth";
 import { validateAccountForm } from "../../utils/accountValidation";
 import { jwtDecode } from "jwt-decode";
 import { formControlStyles, textFieldStyles } from "../../utils/style";
+import { acceptInvitation } from "../../services/general";
 
 const AccountSetup = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const handleError = useHandleError();
+  const handleSuccess = useHandleSuccess();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     phone: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
   const [, setDecodedToken] = useState(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
 
   const togglePasswordVisibility = () => {
@@ -51,31 +54,32 @@ const AccountSetup = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const token = searchParams.get("token");
+  // useEffect(() => {
+  //   const searchParams = new URLSearchParams(location.search);
+  //   const token = searchParams.get("token");
 
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        setDecodedToken(decoded);
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          email: decoded.email || ""
-        }));
-      } catch (error) {
-        console.error("Error decoding token:", error);
-        handleError("Invalid or expired invitation link.", error);
-        navigate("/login");
-      }
-    } else {
-      handleError("No invitation link provided.", null);
-      navigate("/login");
-    }
-  }, [location, navigate, handleError]);
+  //   if (token) {
+  //     try {
+  //       const decoded = jwtDecode(token);
+  //       setDecodedToken(decoded);
+  //       setFormData((prevFormData) => ({
+  //         ...prevFormData,
+  //         email: decoded.email || "",
+  //       }));
+  //     } catch (error) {
+  //       console.error("Error decoding token:", error);
+  //       handleError("Invalid or expired invitation link.", error);
+  //       // navigate("/login");
+  //     }
+  //   } else {
+  //     handleError("No invitation link provided.", null);
+  //     navigate("/login");
+  //   }
+  // }, [location, navigate, handleError]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
       const { isValid, errors: validationErrors } =
         validateAccountForm(formData);
@@ -84,6 +88,7 @@ const AccountSetup = () => {
         setErrors(validationErrors);
         return;
       }
+      console.log(isValid, validationErrors, "isValid");
 
       const token = new URLSearchParams(location.search).get("token") || "";
 
@@ -93,21 +98,25 @@ const AccountSetup = () => {
         firstname: formData.firstName,
         lastname: formData.lastName,
         phone: formData.phone,
-        password: formData.password
+        password: formData.password,
+        confirm_password: formData.confirmPassword,
       };
 
-      await setUpAccount(payload);
+      await acceptInvitation(payload);
+      handleSuccess("Registration successful!");
       setFormData({
         firstName: "",
         lastName: "",
         email: "",
         phone: "",
         password: "",
-        confirmPassword: ""
+        confirmPassword: "",
       });
       navigate("/login");
     } catch (error) {
       handleError("Registration failed. Please try again.", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -120,7 +129,7 @@ const AccountSetup = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          py: { xs: 2, md: 6 }
+          py: { xs: 2, md: 6 },
         }}
       >
         <Container maxWidth="sm">
@@ -131,7 +140,7 @@ const AccountSetup = () => {
               textAlign: "center",
               width: "100%",
               maxWidth: "720px",
-              borderRadius: "25px"
+              borderRadius: "25px",
             }}
           >
             <Box
@@ -146,7 +155,7 @@ const AccountSetup = () => {
                 fontWeight: 500,
                 lineHeight: "32.4px",
                 color: "#038F3E",
-                mt: 2
+                mt: 2,
               }}
               gutterBottom
             >
@@ -161,7 +170,7 @@ const AccountSetup = () => {
                   flexDirection: "column",
                   alignItems: "flex-start",
                   gap: 1,
-                  my: 2
+                  my: 2,
                 }}
               >
                 <Typography
@@ -169,7 +178,7 @@ const AccountSetup = () => {
                     color: "#595959",
                     fontSize: "16px",
                     fontWeight: 500,
-                    lineHeight: "24px"
+                    lineHeight: "24px",
                   }}
                 >
                   First name
@@ -195,7 +204,7 @@ const AccountSetup = () => {
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "flex-start",
-                  gap: 1
+                  gap: 1,
                 }}
               >
                 <Typography
@@ -203,7 +212,7 @@ const AccountSetup = () => {
                     color: "#595959",
                     fontSize: "16px",
                     fontWeight: 500,
-                    lineHeight: "24px"
+                    lineHeight: "24px",
                   }}
                 >
                   Last name
@@ -231,7 +240,7 @@ const AccountSetup = () => {
                   flexDirection: "column",
                   alignItems: "flex-start",
                   gap: 1,
-                  my: 2
+                  my: 2,
                 }}
               >
                 <Typography
@@ -239,7 +248,7 @@ const AccountSetup = () => {
                     color: "#595959",
                     fontSize: "16px",
                     fontWeight: 500,
-                    lineHeight: "24px"
+                    lineHeight: "24px",
                   }}
                 >
                   Official Email Address
@@ -266,7 +275,7 @@ const AccountSetup = () => {
                   flexDirection: "column",
                   alignItems: "flex-start",
                   gap: 1,
-                  mb: 3
+                  mb: 3,
                 }}
               >
                 <Typography
@@ -274,7 +283,7 @@ const AccountSetup = () => {
                     color: "#595959",
                     fontSize: "16px",
                     fontWeight: 500,
-                    lineHeight: "24px"
+                    lineHeight: "24px",
                   }}
                 >
                   Official Phone Number
@@ -290,8 +299,8 @@ const AccountSetup = () => {
                     inputStyle={{
                       ...formControlStyles,
                       "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "#038F3E"
-                      }
+                        borderColor: "#038F3E",
+                      },
                     }}
                     // onChange={handleChange}
                   />
@@ -310,7 +319,7 @@ const AccountSetup = () => {
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "flex-start",
-                  gap: 1
+                  gap: 1,
                 }}
               >
                 <Typography
@@ -318,7 +327,7 @@ const AccountSetup = () => {
                     color: "#595959",
                     fontSize: "16px",
                     fontWeight: 500,
-                    lineHeight: "24px"
+                    lineHeight: "24px",
                   }}
                 >
                   Password
@@ -353,8 +362,8 @@ const AccountSetup = () => {
                   sx={{
                     ...textFieldStyles,
                     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#038F3E"
-                    }
+                      borderColor: "#038F3E",
+                    },
                   }}
                   onChange={handleChange}
                   error={!!errors.password}
@@ -374,7 +383,7 @@ const AccountSetup = () => {
                   flexDirection: "column",
                   alignItems: "flex-start",
                   gap: 1,
-                  my: 2
+                  my: 2,
                 }}
               >
                 <Typography
@@ -382,7 +391,7 @@ const AccountSetup = () => {
                     color: "#595959",
                     fontSize: "16px",
                     fontWeight: 500,
-                    lineHeight: "24px"
+                    lineHeight: "24px",
                   }}
                 >
                   Confirm Password
@@ -417,8 +426,8 @@ const AccountSetup = () => {
                   sx={{
                     ...textFieldStyles,
                     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#038F3E"
-                    }
+                      borderColor: "#038F3E",
+                    },
                   }}
                   onChange={handleChange}
                   error={!!errors.confirmPassword}
@@ -447,9 +456,10 @@ const AccountSetup = () => {
                   my: 3,
                   py: "12px",
                   px: "8px",
-                  textTransform: "capitalize"
+                  textTransform: "capitalize",
                 }}
                 type="submit"
+                loading={isSubmitting}
                 onClick={handleSubmit}
               >
                 Create Account

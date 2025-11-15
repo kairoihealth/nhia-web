@@ -3,7 +3,7 @@ import { ENDPOINTS as e } from "../../services/endpoints";
 
 export const inviteStateUser = async (payload) => {
   try {
-    const response = await Api.post(e.INVITE_STATE, payload);
+    const response = await Api.post(e.SEND_INVITATION, payload);
     return response;
   } catch (error) {
     console.error("Invite user failed:", error);

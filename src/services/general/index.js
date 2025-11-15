@@ -282,3 +282,13 @@ export const getComplaintTrendsByOrganisation = async ({
     throw error;
   }
 };
+
+export const acceptInvitation = async (payload) => {
+  try {
+    const response = await Api.post(e.ACCEPT_INVITATION, payload);
+    return response;
+  } catch (error) {
+    console.error("Failed:", error);
+    throw error;
+  }
+};
