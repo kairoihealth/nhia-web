@@ -36,18 +36,17 @@ function App() {
       <Route path="/account-setup" element={<AccountSetup />} />
       <Route path="/email-verification" element={<EmailVerification />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
-
       {/*Enrollee routes*/}
       {/* <Route path="enrollee/*" element={<EnrolleeRoutes />} /> */}
       {/* <Route path="/enrollee-complaint-first-form" element={<FirstForm />} />
       <Route path="/enrollee-complaint-second-form" element={<SecondForm />} />
       <Route path="/enrollee-form-preview" element={<FormPreview />} />*/}
+      <Route path="/accept-invitation" element={<AccountSetup />} />
       <Route path="/enrollee-complaint-review" element={<ReviewForm />} />
       <Route
         path="/enrollee-submission-status"
         element={<SubmissionStatus />}
       />
-
       <Route path="hmo-register" element={<HmoRegisterPage />} />
       {/* Protect all dashboard routes */}
       <Route element={<ProtectedRoute />}>
@@ -61,7 +60,6 @@ function App() {
           <Route path="admin/*" element={<CentralRoutes />} />
         </Route>
       </Route>
-
       {/* 404 Page */}
       <Route path="*" element={<ErrorPage />} />
     </Routes>

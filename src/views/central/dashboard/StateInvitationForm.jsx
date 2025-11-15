@@ -3,11 +3,11 @@ import {
   Button,
   CircularProgress,
   TextField,
-  Typography
+  Typography,
 } from "@mui/material";
 import SuccessModal from "../../../shared/SuccessModal";
 import { useMemo, useState } from "react";
-import { getRegions, getStatesByRegion } from "../../../services/settings";
+import { getStates } from "../../../services/settings";
 import ReactSelect from "react-select";
 import { selectStyles, textFieldStyles } from "../../../utils/style";
 import { useHandleError } from "../../../hooks/useToastHandler";
@@ -19,56 +19,28 @@ const StateInvitationForm = () => {
   const handleError = useHandleError();
   // const { user } = useAuth();
   const [email, setEmail] = useState("");
-  const [selectedRegion, setSelectedRegion] = useState("");
   const [selectedState, setSelectedState] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const regionsQueryKey = useMemo(() => ["regions"], []);
-  const { data: regionsData, isLoading: regionsLoading } = useQuery({
-    queryKey: regionsQueryKey,
-    queryFn: () => getRegions({ page: 1, pageSize: 100 })
-  });
-
-  const regions = useMemo(
-    () =>
-      regionsData?.results?.map((region) => ({
-        value: region.id,
-        label: region.name
-      })) || [],
-    [regionsData]
-  );
-
-  const statesQueryKey = useMemo(
-    () => ["states", selectedRegion?.value],
-    [selectedRegion?.value]
-  );
   const { data: statesData, isLoading: statesLoading } = useQuery({
-    queryKey: statesQueryKey,
+    queryKey: ["statesQueryKey"],
     queryFn: () =>
-      selectedRegion
-        ? getStatesByRegion({
-            page: 1,
-            pageSize: 100,
-            region: selectedRegion.value
-          })
-        : null,
-    enabled: !!selectedRegion // Only run if selectedRegion exists
+      getStates({
+        page: 1,
+        pageSize: 100,
+      }),
   });
 
   const states = useMemo(
     () =>
       statesData?.results?.map((state) => ({
         value: state.id,
-        label: state.name
+        label: state.name,
       })) || [],
     [statesData]
   );
-
-  const handleRegionChange = (selectedOption) => {
-    setSelectedRegion(selectedOption);
-    setSelectedState(null);
-  };
 
   const handleStateChange = (selectedOption) => {
     setSelectedState(selectedOption);
@@ -82,7 +54,6 @@ const StateInvitationForm = () => {
     const newErrors = {};
 
     if (!email?.trim()) newErrors.email = "Email is required.";
-    if (!selectedRegion) newErrors.region = "Region is required.";
     if (!selectedState) newErrors.state = "State is required.";
 
     setErrors(newErrors);
@@ -90,6 +61,7 @@ const StateInvitationForm = () => {
   };
 
   const handleSubmit = async () => {
+    setIsSubmitting(true);
     try {
       if (!validateFields()) {
         return;
@@ -98,17 +70,19 @@ const StateInvitationForm = () => {
       const payload = {
         email: email,
         role: "StateAdmin",
-        state: selectedState.value
+        state: selectedState.value,
       };
 
       await inviteStateUser(payload);
       setModalOpen(true);
-      // Optionally reset form fields after successful submission
-      setEmail("");
-      setSelectedRegion(null);
-      setSelectedState(null);
+      // setTimeout(() => {
+      //   setEmail("");
+      //   setSelectedState(null);
+      // }, 500);
     } catch (error) {
-      handleError("Failed to send invitation:", error);
+      handleError(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -119,7 +93,7 @@ const StateInvitationForm = () => {
           fontSize: "18px",
           fontWeight: 500,
           lineHeight: "28px",
-          color: "#101828"
+          color: "#101828",
         }}
       >
         Send Invite
@@ -132,7 +106,7 @@ const StateInvitationForm = () => {
           flexDirection: "column",
           gap: 2,
           width: "40%",
-          py: 4
+          py: 4,
         }}
       >
         <Box flex={1} sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
@@ -141,7 +115,7 @@ const StateInvitationForm = () => {
               color: "#595959",
               fontSize: "16px",
               fontWeight: 500,
-              lineHeight: "24px"
+              lineHeight: "24px",
             }}
           >
             Official Email Address
@@ -166,39 +140,7 @@ const StateInvitationForm = () => {
               color: "#595959",
               fontSize: "16px",
               fontWeight: 500,
-              lineHeight: "24px"
-            }}
-          >
-            Region
-            <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
-          </Typography>
-          {regionsLoading ? (
-            <CircularProgress size={24} />
-          ) : (
-            <Box>
-              <ReactSelect
-                styles={selectStyles}
-                value={selectedRegion}
-                onChange={handleRegionChange}
-                options={regions}
-                placeholder="Select Region"
-              />
-              {errors.region && (
-                <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
-                  {errors.region}
-                </Typography>
-              )}
-            </Box>
-          )}
-        </Box>
-
-        <Box flex={1} sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-          <Typography
-            sx={{
-              color: "#595959",
-              fontSize: "16px",
-              fontWeight: 500,
-              lineHeight: "24px"
+              lineHeight: "24px",
             }}
           >
             State
@@ -214,7 +156,6 @@ const StateInvitationForm = () => {
                 onChange={handleStateChange}
                 options={states}
                 placeholder="Select State"
-                isDisabled={!selectedRegion}
               />
               {errors.state && (
                 <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
@@ -242,8 +183,9 @@ const StateInvitationForm = () => {
               py: "12px",
               px: "8px",
               textTransform: "none",
-              "&:hover": { backgroundColor: "#027A3B" }
+              "&:hover": { backgroundColor: "#027A3B" },
             }}
+            loading={isSubmitting}
           >
             Send Invitation
           </Button>
@@ -255,7 +197,7 @@ const StateInvitationForm = () => {
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         title="Invite Sent"
-        message="You have successfully sent an invite to"
+        message={"You have successfully sent an invite to"}
         recipient={`${email}`}
       />
     </Box>

@@ -348,13 +348,26 @@ const StateDashboard = () => {
               >
                 Complaints Status
               </Typography>
-              <Box sx={{ display: "flex", alignItems: "center", px: 10 }}>
-                <PieChart
-                  title="Pie Chart Example"
-                  data={pieStatusData}
-                  options={options}
-                />
-              </Box>
+              {pieStatusData?.labels?.length > 0 &&
+              pieStatusData?.datasets?.[0]?.data?.length > 0 ? (
+                <Box sx={{ display: "flex", alignItems: "center", px: 10 }}>
+                  <PieChart
+                    title="Pie Chart Example"
+                    data={pieStatusData}
+                    options={options}
+                  />
+                </Box>
+              ) : (
+                <Typography
+                  sx={{
+                    mt: 6,
+                    fontSize: "14px",
+                    color: "#475467",
+                  }}
+                >
+                  No data available
+                </Typography>
+              )}
               <Box sx={{ display: "flex", justifySelf: "center" }}>
                 {filteredPieStatus?.map((t) => (
                   <Box
@@ -408,13 +421,26 @@ const StateDashboard = () => {
               >
                 Category of Complaints
               </Typography>
-              <Box sx={{ display: "flex", alignItems: "center", px: 10 }}>
-                <PieChart
-                  title="Pie Chart Example"
-                  data={pieCategoryData}
-                  options={options}
-                />
-              </Box>
+              {pieCategoryData?.labels?.length > 0 &&
+              pieStatusData?.datasets?.[0]?.data?.length > 0 ? (
+                <Box sx={{ display: "flex", alignItems: "center", px: 10 }}>
+                  <PieChart
+                    title="Pie Chart Example"
+                    data={pieCategoryData}
+                    options={options}
+                  />
+                </Box>
+              ) : (
+                <Typography
+                  sx={{
+                    mt: 6,
+                    fontSize: "14px",
+                    color: "#475467",
+                  }}
+                >
+                  No data available
+                </Typography>
+              )}
               <Box sx={{ display: "flex", alignItems: "center", px: 3 }}>
                 {filteredPieCategories?.map((t) => (
                   <Box
@@ -574,73 +600,35 @@ const StateDashboard = () => {
             >
               Most Complaints respondents
             </Typography>
-            {complaintTrendsByOrganisation?.HMO?.organisations?.map((t) => (
-              <Box
-                key={t.id}
-                sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-              >
-                <Typography
-                  sx={{
-                    fontSize: "16px",
-                    fontWeight: 500,
-                    lineHeight: "21.6px",
-                    color: "#111827",
-                  }}
-                >
-                  {t.name}
-                </Typography>
-                <Box sx={{ display: "flex", gap: 1 }}>
-                  <Typography
-                    sx={{
-                      fontSize: "14px",
-                      fontWeight: 400,
-                      lineHeight: "16.94px",
-                      color: "#000000",
-                    }}
+            {complaintTrendsByOrganisation?.total > 0 ? (
+              <>
+                {complaintTrendsByOrganisation?.HMO?.organisations?.map((t) => (
+                  <Box
+                    key={t.id}
+                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
                   >
-                    {t.count} Complaints
-                  </Typography>
-                  {/* <Typography
-                    sx={{
-                      fontSize: "14px",
-                      fontWeight: 400,
-                      lineHeight: "16.94px",
-                      color: "#000000",
-                    }}
-                  >
-                    &bull; {t.reason}
-                  </Typography> */}
-                </Box>
-              </Box>
-            ))}
-            {complaintTrendsByOrganisation?.Provider?.organisations?.map(
-              (t) => (
-                <Box
-                  key={t.id}
-                  sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-                >
-                  <Typography
-                    sx={{
-                      fontSize: "16px",
-                      fontWeight: 500,
-                      lineHeight: "21.6px",
-                      color: "#111827",
-                    }}
-                  >
-                    {t.name}
-                  </Typography>
-                  <Box sx={{ display: "flex", gap: 1 }}>
                     <Typography
                       sx={{
-                        fontSize: "14px",
-                        fontWeight: 400,
-                        lineHeight: "16.94px",
-                        color: "#000000",
+                        fontSize: "16px",
+                        fontWeight: 500,
+                        lineHeight: "21.6px",
+                        color: "#111827",
                       }}
                     >
-                      {t.count} Complaints
+                      {t.name}
                     </Typography>
-                    {/* <Typography
+                    <Box sx={{ display: "flex", gap: 1 }}>
+                      <Typography
+                        sx={{
+                          fontSize: "14px",
+                          fontWeight: 400,
+                          lineHeight: "16.94px",
+                          color: "#000000",
+                        }}
+                      >
+                        {t.count} Complaints
+                      </Typography>
+                      {/* <Typography
                     sx={{
                       fontSize: "14px",
                       fontWeight: 400,
@@ -650,9 +638,61 @@ const StateDashboard = () => {
                   >
                     &bull; {t.reason}
                   </Typography> */}
+                    </Box>
                   </Box>
-                </Box>
-              )
+                ))}
+                {complaintTrendsByOrganisation?.Provider?.organisations?.map(
+                  (t) => (
+                    <Box
+                      key={t.id}
+                      sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                    >
+                      <Typography
+                        sx={{
+                          fontSize: "16px",
+                          fontWeight: 500,
+                          lineHeight: "21.6px",
+                          color: "#111827",
+                        }}
+                      >
+                        {t.name}
+                      </Typography>
+                      <Box sx={{ display: "flex", gap: 1 }}>
+                        <Typography
+                          sx={{
+                            fontSize: "14px",
+                            fontWeight: 400,
+                            lineHeight: "16.94px",
+                            color: "#000000",
+                          }}
+                        >
+                          {t.count} Complaints
+                        </Typography>
+                        {/* <Typography
+                     sx={{
+                       fontSize: "14px",
+                       fontWeight: 400,
+                       lineHeight: "16.94px",
+                       color: "#000000",
+                     }}
+                   >
+                     &bull; {t.reason}
+                   </Typography> */}
+                      </Box>
+                    </Box>
+                  )
+                )}
+              </>
+            ) : (
+              <Typography
+                sx={{
+                  mt: 4,
+                  fontSize: "14px",
+                  color: "#475467",
+                }}
+              >
+                No data available
+              </Typography>
             )}
           </Card>
           <Card

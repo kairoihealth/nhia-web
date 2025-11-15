@@ -33,4 +33,12 @@ export const ENDPOINTS = {
   UPDATE_COMPLAINT_STATUS: (id) => `/complaints/${id}/status/`,
   RATE_COMPLAINT: (id) => `/complaints/${id}/rate/`,
   RESPOND_TO_COMPLAINTS: "/complaints/respond/",
+
+  //INVITATIONS
+  SEND_INVITATION: "/invitations/",
+  GET_INVITATIONS: "/invitations/",
+  ACCEPT_INVITATION: `/invitations/accept/`,
+  GET_SINGLE_INVITATION: (id) => `/invitations/${id}/`,
+  RESEND_INVITATION: (id) => `/invitations/${id}/resend/`,
+  CANCEL_INVITATION: (id) => `/invitations/${id}/cancel/`,
 };
