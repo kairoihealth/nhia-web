@@ -1,16 +1,19 @@
-import { Box, Typography, CircularProgress } from "@mui/material";
+import { Box, Typography, CircularProgress, Button } from "@mui/material";
 import ReusableTable from "../../../shared/Table";
 import SearchFilter from "../../../shared/SearchAndFilter";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getUsers } from "../../../services/central";
+import { useNavigate } from "react-router-dom";
+import { getInvitations } from "../../../services/general";
 
 const InvitationsByState = () => {
+  const navigate = useNavigate();
   const stateId = localStorage.getItem("stateId");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(100);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
 
   const {
     data: users,
@@ -19,23 +22,29 @@ const InvitationsByState = () => {
     error,
     refetch,
   } = useQuery({
-    queryKey: ["users"],
+    queryKey: ["users", page, pageSize, filter],
     queryFn: () =>
-      getUsers({ page: 1, pageSize: 10, search: searchTerm, role: filter }),
+      getInvitations({
+        page,
+        pageSize,
+        search: searchTerm,
+        role: filter,
+        state: stateId,
+      }),
   });
-
-  const handleFilter = async (roleFilter = "") => {
-    setIsLoading(true);
-    const params = {
-      page: 1,
-      pageSize: 10,
-      search: searchTerm,
-      role: roleFilter,
-    };
-    const u = await getUsers(params);
-    setFilteredUsers(u || []);
-    setIsLoading(false);
-  };
+  console.log(users, "users");
+  // const handleFilter = async (roleFilter = "") => {
+  //   setIsLoading(true);
+  //   const params = {
+  //     page: 1,
+  //     pageSize: 10,
+  //     search: searchTerm,
+  //     role: roleFilter,
+  //   };
+  //   const u = await getUsers(params);
+  //   setFilteredUsers(u || []);
+  //   setIsLoading(false);
+  // };
 
   const filterOptions = [
     { value: "", label: "All" },
@@ -43,9 +52,9 @@ const InvitationsByState = () => {
     { value: "HMO", label: "HMO" },
   ];
 
-  // const handleAddUser = () => {
-  //   navigate(`add-policy-user`);
-  // };
+  const handleAddUser = () => {
+    navigate(`add-policy-user`);
+  };
 
   // Define table columns dynamically based on activeTab
   const getColumns = () => {
@@ -70,7 +79,7 @@ const InvitationsByState = () => {
         id: user.id,
         email: user.email,
         type: user.role,
-        status: user.verified === true ? "active" : "pending",
+        status: user.status === "accepted" ? "active" : "request sent",
       })) || [];
 
   if (isUsersLoading) {
@@ -135,7 +144,7 @@ const InvitationsByState = () => {
           >
             Providers & HMO
           </Typography>
-          {/* <Button
+          <Button
             variant="contained"
             size="medium"
             onClick={handleAddUser}
@@ -153,7 +162,7 @@ const InvitationsByState = () => {
             }}
           >
             Send Invitation
-          </Button> */}
+          </Button>
         </Box>
 
         {/* Search and Sort */}
@@ -171,14 +180,19 @@ const InvitationsByState = () => {
             filterValue={filter}
             onFilterChange={(e) => {
               setFilter(e.target.value);
-              handleFilter(e.target.value);
+              if (e.target.value === "") {
+                refetch();
+              }
+              // setPageSize(10);
+              setPage(1);
+              // handleFilter(e.target.value);
             }}
             filterOptions={filterOptions}
             handleSearch={() => {
               setFilteredUsers([]);
               refetch();
             }}
-            isLoading={isLoading || isUsersLoading}
+            isLoading={isUsersLoading}
           />
         </Box>
 
@@ -192,6 +206,15 @@ const InvitationsByState = () => {
           statusLabel={"Status"}
           pagination={true}
           headerBackgroundColor="#20201E"
+          totalPages={users?.total_pages}
+          page={page}
+          setPage={(page) => {
+            setPage(page);
+          }}
+          pageSize={pageSize}
+          setPageSize={(pageSize) => {
+            setPageSize(pageSize);
+          }}
         />
       </Box>
     </Box>

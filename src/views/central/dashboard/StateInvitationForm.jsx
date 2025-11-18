@@ -12,10 +12,12 @@ import ReactSelect from "react-select";
 import { selectStyles, textFieldStyles } from "../../../utils/style";
 import { useHandleError } from "../../../hooks/useToastHandler";
 // import useAuth from "../../../hooks/useAuth";
-import { inviteStateUser } from "../../../services/central";
+import { inviteUser } from "../../../services/central";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 const StateInvitationForm = () => {
+  const navigate = useNavigate();
   const handleError = useHandleError();
   // const { user } = useAuth();
   const [email, setEmail] = useState("");
@@ -73,12 +75,13 @@ const StateInvitationForm = () => {
         state: selectedState.value,
       };
 
-      await inviteStateUser(payload);
+      await inviteUser(payload);
       setModalOpen(true);
-      // setTimeout(() => {
-      //   setEmail("");
-      //   setSelectedState(null);
-      // }, 500);
+      setTimeout(() => {
+        navigate("/admin/state/invite");
+        setEmail("");
+        setSelectedState(null);
+      }, 4000);
     } catch (error) {
       handleError(error);
     } finally {

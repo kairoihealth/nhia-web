@@ -1,7 +1,7 @@
 import Api from "../../api/Api";
 import { ENDPOINTS as e } from "../../services/endpoints";
 
-export const inviteStateUser = async (payload) => {
+export const inviteUser = async (payload) => {
   try {
     const response = await Api.post(e.SEND_INVITATION, payload);
     return response;
