@@ -292,3 +292,30 @@ export const acceptInvitation = async (payload) => {
     throw error;
   }
 };
+
+export const getInvitations = async ({
+  ordering,
+  page,
+  page_size,
+  role,
+  state,
+  status,
+  search,
+}) => {
+  const params = new URLSearchParams();
+  if (ordering) params.append("ordering", ordering);
+  if (page) params.append("page", page);
+  if (page_size) params.append("page_size", page_size);
+  if (role) params.append("role", role);
+  if (state) params.append("state", state);
+  if (status) params.append("status", status);
+  if (search) params.append("search", search);
+
+  try {
+    const response = await Api.get(e.GET_INVITATIONS, { params });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch invitations:", error);
+    throw error;
+  }
+};

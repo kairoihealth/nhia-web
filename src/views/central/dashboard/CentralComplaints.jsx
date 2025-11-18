@@ -198,7 +198,6 @@ const CentralComplaints = () => {
       status: complaint.status,
       isOverdue: isOverdue(complaint.created_at, complaint.status),
     })) || [];
-  console.log(transformedRows, "transformedRows");
 
   // const filteredRows = transformedRows.filter((row) => {
   //   // Tab filter

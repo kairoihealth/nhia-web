@@ -10,7 +10,7 @@ import {
   IconButton,
   InputAdornment,
   Checkbox,
-  FormControlLabel
+  FormControlLabel,
 } from "@mui/material";
 import { VisibilityOutlined, VisibilityOffOutlined } from "@mui/icons-material";
 // import { Helmet } from "react-helmet-async";
@@ -21,8 +21,9 @@ import DeleteOutlineTwoToneIcon from "@mui/icons-material/DeleteOutlineTwoTone";
 import {
   hmoAdmin,
   hmoAdminLevel,
-  hmoAdminLevelPermissions
+  hmoAdminLevelPermissions,
 } from "../../../mock/hmoAdmins";
+import ReactSelect from "react-select";
 
 const textFieldStyles = {
   "& .MuiOutlinedInput-root": {
@@ -31,9 +32,9 @@ const textFieldStyles = {
     color: "#000000",
     border: "0.5px solid #DADADA",
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#038F3E"
-    }
-  }
+      borderColor: "#038F3E",
+    },
+  },
 };
 
 const selectStyles = {
@@ -45,8 +46,8 @@ const selectStyles = {
   fontSize: "16px",
   outline: "none",
   "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-    borderColor: "#038F3E" // Green border color
-  }
+    borderColor: "#038F3E", // Green border color
+  },
 };
 
 const CentralSettings = () => {
@@ -76,7 +77,7 @@ const CentralSettings = () => {
               fontWeight: 500,
               lineHeight: "28px",
               color: "#101828",
-              mb: 4
+              mb: 4,
             }}
             gutterBottom
           >
@@ -90,7 +91,7 @@ const CentralSettings = () => {
               flexDirection: "column",
               width: "80%",
               gap: 2,
-              mb: 4
+              mb: 4,
             }}
           >
             <Button
@@ -106,9 +107,9 @@ const CentralSettings = () => {
                   activeTab === "add" ? "#20201E" : "transparent",
                 color: activeTab === "add" ? "#FFFFFF" : "#000000",
                 "&:hover": {
-                  backgroundColor: activeTab === "add" ? "#20201E" : "#F5F5F5"
+                  backgroundColor: activeTab === "add" ? "#20201E" : "#F5F5F5",
                 },
-                border: "1px solid #000000"
+                border: "1px solid #000000",
               }}
             >
               <Typography
@@ -119,7 +120,7 @@ const CentralSettings = () => {
               <ArrowForwardIosIcon
                 sx={{
                   color: activeTab === "add" ? "#FFFFFF" : "#000000",
-                  fontSize: "16px"
+                  fontSize: "16px",
                 }}
               />
             </Button>
@@ -136,9 +137,9 @@ const CentralSettings = () => {
                   activeTab === "edit" ? "#20201E" : "transparent",
                 color: activeTab === "edit" ? "#FFFFFF" : "#000000",
                 "&:hover": {
-                  backgroundColor: activeTab === "edit" ? "#20201E" : "#F5F5F5"
+                  backgroundColor: activeTab === "edit" ? "#20201E" : "#F5F5F5",
                 },
-                border: "1px solid #000000"
+                border: "1px solid #000000",
               }}
             >
               <Typography
@@ -149,7 +150,7 @@ const CentralSettings = () => {
               <ArrowForwardIosIcon
                 sx={{
                   color: activeTab === "edit" ? "#FFFFFF" : "#000000",
-                  fontSize: "16px"
+                  fontSize: "16px",
                 }}
               />
             </Button>
@@ -167,9 +168,9 @@ const CentralSettings = () => {
                 color: activeTab === "manage" ? "#FFFFFF" : "#000000",
                 "&:hover": {
                   backgroundColor:
-                    activeTab === "manage" ? "#000000" : "#F5F5F5"
+                    activeTab === "manage" ? "#000000" : "#F5F5F5",
                 },
-                border: "1px solid #000000"
+                border: "1px solid #000000",
               }}
             >
               <Typography
@@ -180,7 +181,7 @@ const CentralSettings = () => {
               <ArrowForwardIosIcon
                 sx={{
                   color: activeTab === "manage" ? "#FFFFFF" : "#000000",
-                  fontSize: "16px"
+                  fontSize: "16px",
                 }}
               />
             </Button>
@@ -215,7 +216,7 @@ const AddAdminForm = () => {
           fontSize: "16px",
           fontWeight: 500,
           lineHeight: "28px",
-          color: "#000000"
+          color: "#000000",
         }}
         gutterBottom
       >
@@ -226,7 +227,7 @@ const AddAdminForm = () => {
         sx={{
           display: "flex",
           flexDirection: "column",
-          gap: 3
+          gap: 3,
         }}
       >
         {/* First Name */}
@@ -236,7 +237,7 @@ const AddAdminForm = () => {
               color: "#595959",
               fontSize: "16px",
               fontWeight: 500,
-              lineHeight: "24px"
+              lineHeight: "24px",
             }}
           >
             First Name
@@ -257,7 +258,7 @@ const AddAdminForm = () => {
               color: "#595959",
               fontSize: "16px",
               fontWeight: 500,
-              lineHeight: "24px"
+              lineHeight: "24px",
             }}
           >
             Middle Name
@@ -278,7 +279,7 @@ const AddAdminForm = () => {
               color: "#595959",
               fontSize: "16px",
               fontWeight: 500,
-              lineHeight: "24px"
+              lineHeight: "24px",
             }}
           >
             Last Name
@@ -299,7 +300,7 @@ const AddAdminForm = () => {
               color: "#595959",
               fontSize: "16px",
               fontWeight: 500,
-              lineHeight: "24px"
+              lineHeight: "24px",
             }}
           >
             Email Address
@@ -321,7 +322,7 @@ const AddAdminForm = () => {
               color: "#595959",
               fontSize: "16px",
               fontWeight: 500,
-              lineHeight: "24px"
+              lineHeight: "24px",
             }}
           >
             Designation
@@ -342,7 +343,7 @@ const AddAdminForm = () => {
               color: "#595959",
               fontSize: "16px",
               fontWeight: 500,
-              lineHeight: "24px"
+              lineHeight: "24px",
             }}
           >
             Create Password
@@ -365,7 +366,7 @@ const AddAdminForm = () => {
                     )}
                   </IconButton>
                 </InputAdornment>
-              )
+              ),
             }}
             sx={textFieldStyles}
           />
@@ -378,19 +379,30 @@ const AddAdminForm = () => {
               color: "#595959",
               fontSize: "16px",
               fontWeight: 500,
-              lineHeight: "24px"
+              lineHeight: "24px",
             }}
           >
             Admin status
           </Typography>
           <FormControl fullWidth variant="outlined">
-            <Select sx={selectStyles}>
+            <ReactSelect
+              styles={selectStyles}
+              // value={selectedType}
+              // onChange={handleTypeChange}
+              options={[
+                { id: "Admin I", label: "Admin I", value: "Admin I" },
+                { id: "Admin II", label: "Admin II", value: "Admin II" },
+                { id: "Admin III", label: "Admin III", value: "Admin III" },
+              ]}
+              placeholder="Select Admin Status"
+            />
+            {/* <Select sx={selectStyles}>
               <MenuItem
                 value=""
                 sx={{
                   fontSize: "16px",
                   fontWeight: 500,
-                  color: "#000000"
+                  color: "#000000",
                 }}
               >
                 Select option
@@ -398,7 +410,7 @@ const AddAdminForm = () => {
               <MenuItem value="hmo">Admin I</MenuItem>
               <MenuItem value="provider">Admin II</MenuItem>
               <MenuItem value="nhia">Admin III</MenuItem>
-            </Select>
+            </Select> */}
           </FormControl>
         </Box>
 
@@ -417,8 +429,8 @@ const AddAdminForm = () => {
               py: 1.5,
               borderRadius: "8px",
               "&:hover": {
-                backgroundColor: "#027A3B"
-              }
+                backgroundColor: "#027A3B",
+              },
             }}
           >
             Add Admin
@@ -440,7 +452,7 @@ const EditAdminForm = () => {
           fontSize: "16px",
           fontWeight: 500,
           lineHeight: "28px",
-          color: "#000000"
+          color: "#000000",
         }}
         gutterBottom
       >
@@ -463,8 +475,8 @@ const EditAdminForm = () => {
               borderRadius: "8px",
               cursor: "pointer",
               "&:hover": {
-                border: "2px solid #038F3E"
-              }
+                border: "2px solid #038F3E",
+              },
             }}
             onClick={() => setSelectedAdmin(t)}
           >
@@ -478,7 +490,7 @@ const EditAdminForm = () => {
                 fontSize: "16px",
                 fontWeight: 500,
                 lineHeight: "24px",
-                color: "#000000"
+                color: "#000000",
               }}
             >
               {t.firstname} {t.lastname}
@@ -488,7 +500,7 @@ const EditAdminForm = () => {
                 fontSize: "14px",
                 fontWeight: 500,
                 lineHeight: "24px",
-                color: "#304262"
+                color: "#304262",
               }}
             >
               {t.role}
@@ -504,7 +516,7 @@ const EditAdminForm = () => {
             alignItems: "flex-start",
             gap: 1,
             mt: 6,
-            mb: 3
+            mb: 3,
           }}
         >
           <Typography
@@ -512,7 +524,7 @@ const EditAdminForm = () => {
               fontSize: "16px",
               fontWeight: 500,
               lineHeight: "24px",
-              color: "#000000"
+              color: "#000000",
             }}
           >
             {selectedAdmin.firstname} {selectedAdmin.lastname}
@@ -527,7 +539,7 @@ const EditAdminForm = () => {
               fontSize: "14px",
               fontWeight: 500,
               lineHeight: "24px",
-              color: "#304262"
+              color: "#304262",
             }}
           >
             {selectedAdmin.role}
@@ -542,7 +554,7 @@ const EditAdminForm = () => {
           sx={{
             display: "flex",
             flexDirection: "column",
-            gap: 3
+            gap: 3,
           }}
         >
           {/* First Name */}
@@ -555,7 +567,7 @@ const EditAdminForm = () => {
                 color: "#595959",
                 fontSize: "16px",
                 fontWeight: 500,
-                lineHeight: "24px"
+                lineHeight: "24px",
               }}
             >
               First Name
@@ -580,7 +592,7 @@ const EditAdminForm = () => {
                 color: "#595959",
                 fontSize: "16px",
                 fontWeight: 500,
-                lineHeight: "24px"
+                lineHeight: "24px",
               }}
             >
               Middle Name
@@ -605,7 +617,7 @@ const EditAdminForm = () => {
                 color: "#595959",
                 fontSize: "16px",
                 fontWeight: 500,
-                lineHeight: "24px"
+                lineHeight: "24px",
               }}
             >
               Last Name
@@ -630,7 +642,7 @@ const EditAdminForm = () => {
                 color: "#595959",
                 fontSize: "16px",
                 fontWeight: 500,
-                lineHeight: "24px"
+                lineHeight: "24px",
               }}
             >
               Email Address
@@ -656,7 +668,7 @@ const EditAdminForm = () => {
                 color: "#595959",
                 fontSize: "16px",
                 fontWeight: 500,
-                lineHeight: "24px"
+                lineHeight: "24px",
               }}
             >
               Designation
@@ -681,7 +693,7 @@ const EditAdminForm = () => {
                 color: "#595959",
                 fontSize: "16px",
                 fontWeight: 500,
-                lineHeight: "24px"
+                lineHeight: "24px",
               }}
             >
               Admin Status
@@ -693,7 +705,7 @@ const EditAdminForm = () => {
                   sx={{
                     fontSize: "16px",
                     fontWeight: 500,
-                    color: "#000000"
+                    color: "#000000",
                   }}
                 >
                   Select option
@@ -720,8 +732,8 @@ const EditAdminForm = () => {
                 py: 1.5,
                 borderRadius: "8px",
                 "&:hover": {
-                  backgroundColor: "#027A3B"
-                }
+                  backgroundColor: "#027A3B",
+                },
               }}
             >
               Update Admin
@@ -781,7 +793,7 @@ const ManageAdminRoles = () => {
                 fontSize: "16px",
                 fontWeight: 500,
                 lineHeight: "28px",
-                color: "#000000"
+                color: "#000000",
               }}
               gutterBottom
             >
@@ -797,7 +809,7 @@ const ManageAdminRoles = () => {
                   fontSize: "16px",
                   fontWeight: 500,
                   lineHeight: "28px",
-                  color: "#000000"
+                  color: "#000000",
                 }}
               >
                 Add admin level
@@ -818,7 +830,7 @@ const ManageAdminRoles = () => {
                   border: "0.5px solid #DADADA",
                   backgroundColor: "#F5F5F5",
                   p: 1.5,
-                  cursor: "pointer"
+                  cursor: "pointer",
                 }}
                 onClick={() => handleLevelClick(t)}
               >
@@ -827,7 +839,7 @@ const ManageAdminRoles = () => {
                     fontSize: "16px",
                     fontWeight: 500,
                     lineHeight: "28px",
-                    color: "#000000"
+                    color: "#000000",
                   }}
                 >
                   {t.title}
@@ -852,7 +864,7 @@ const ManageAdminRoles = () => {
                   color: "#595959",
                   fontSize: "16px",
                   fontWeight: 500,
-                  lineHeight: "28px"
+                  lineHeight: "28px",
                 }}
               >
                 {selectedLevel ? "Back" : "Admin level name"}
@@ -866,7 +878,7 @@ const ManageAdminRoles = () => {
                     fontSize: "16px",
                     fontWeight: 500,
                     lineHeight: "28px",
-                    color: "#EB001B"
+                    color: "#EB001B",
                   }}
                 >
                   Delete Admin level
@@ -886,7 +898,7 @@ const ManageAdminRoles = () => {
                   color: "#595959",
                   fontSize: "16px",
                   fontWeight: 500,
-                  lineHeight: "24px"
+                  lineHeight: "24px",
                 }}
               >
                 Admin level name
@@ -908,7 +920,7 @@ const ManageAdminRoles = () => {
                   fontSize: "16px",
                   fontWeight: 500,
                   lineHeight: "24px",
-                  color: "#000000"
+                  color: "#000000",
                 }}
               >
                 Select Permissions
@@ -923,7 +935,7 @@ const ManageAdminRoles = () => {
                   key={permission.id}
                   sx={{
                     display: "flex",
-                    alignItems: "flex-start"
+                    alignItems: "flex-start",
                   }}
                   control={
                     <Checkbox
@@ -937,7 +949,7 @@ const ManageAdminRoles = () => {
                       }
                       sx={{
                         color: "#000000",
-                        "&.Mui-checked": { color: "#000000" }
+                        "&.Mui-checked": { color: "#000000" },
                       }}
                     />
                   }
@@ -948,7 +960,7 @@ const ManageAdminRoles = () => {
                         fontWeight: 600,
                         lineHeight: "28px",
                         color: "#595959",
-                        mt: 0.8
+                        mt: 0.8,
                       }}
                     >
                       {permission.title}:{" "}
@@ -976,8 +988,8 @@ const ManageAdminRoles = () => {
                   py: 1.5,
                   borderRadius: "8px",
                   "&:hover": {
-                    backgroundColor: "#027A3B"
-                  }
+                    backgroundColor: "#027A3B",
+                  },
                 }}
               >
                 {newLevel ? "Add Level" : "Save changes"}

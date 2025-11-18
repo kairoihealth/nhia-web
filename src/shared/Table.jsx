@@ -176,17 +176,19 @@ const ReusableTable = ({
                       backgroundColor:
                         row.status === "pending"
                           ? "#FFF3E7"
-                          : row.status === "closed"
+                          : row.status === "closed" ||
+                            row.status === "request sent"
                           ? "#D6EBFF"
-                          : row.status === "active"
+                          : row.status === "active" || row.status === "accepted"
                           ? "#E8F8EE"
                           : "#FFF3E7",
                       color:
                         row.status === "pending"
                           ? "#EDB378"
-                          : row.status === "closed"
+                          : row.status === "closed" ||
+                            row.status === "request sent"
                           ? "#4B95DD"
-                          : row.status === "active"
+                          : row.status === "active" || row.status === "accepted"
                           ? "#096F35"
                           : "red",
                     }}

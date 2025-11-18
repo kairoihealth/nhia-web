@@ -6,14 +6,17 @@ import { selectStyles, textFieldStyles } from "../../../utils/style";
 import { useQuery } from "@tanstack/react-query";
 import { getAllHmo, getAllProviders } from "../../../services/settings";
 import { useHandleError } from "../../../hooks/useToastHandler";
-import { inviteStateUser } from "../../../services/central";
+import { inviteUser } from "../../../services/central";
+import { useNavigate } from "react-router-dom";
 
 const accountType = [
   { id: "HMO", label: "Hmo", value: "HMO" },
-  { id: "Provider", label: "Provider", value: "Provider" }
+  { id: "Provider", label: "Provider", value: "Provider" },
 ];
 const InvitationForm = () => {
+  const navigate = useNavigate();
   const handleError = useHandleError();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [email, setEmail] = useState("");
   const [selectedType, setSelectedType] = useState("");
   const [selectedHmo, setSelectedHmo] = useState("");
@@ -24,14 +27,14 @@ const InvitationForm = () => {
   const hmosQueryKey = useMemo(() => ["hmos"], []);
   const { data: hmosData } = useQuery({
     queryKey: hmosQueryKey,
-    queryFn: () => getAllHmo({ page: 1, pageSize: 100 })
+    queryFn: () => getAllHmo({ page: 1, pageSize: 100 }),
   });
 
   const hmos = useMemo(
     () =>
       hmosData?.results?.map((hmo) => ({
         value: hmo.id,
-        label: hmo.name
+        label: hmo.name,
       })) || [],
     [hmosData]
   );
@@ -39,14 +42,14 @@ const InvitationForm = () => {
   const providersQueryKey = useMemo(() => ["providers"], []);
   const { data: providersData } = useQuery({
     queryKey: providersQueryKey,
-    queryFn: () => getAllProviders({ page: 1, pageSize: 100 })
+    queryFn: () => getAllProviders({ page: 1, pageSize: 100 }),
   });
 
   const providers = useMemo(
     () =>
       providersData?.results?.map((provider) => ({
         value: provider.id,
-        label: provider.name
+        label: provider.name,
       })) || [],
     [providersData]
   );
@@ -72,37 +75,48 @@ const InvitationForm = () => {
 
     if (!email?.trim()) newErrors.email = "Email is required.";
     if (!selectedType) newErrors.type = "Account type is required.";
-    if (!selectedHmo) newErrors.hmo = "Please select an HMO";
-    if (!selectedProvider) newErrors.provider = "Please select a Provider";
+    if (selectedType.value === "HMO" && !selectedHmo)
+      newErrors.hmo = "Please select an HMO";
+    if (selectedType.value === "Provider" && !selectedProvider)
+      newErrors.provider = "Please select a Provider";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
   const handleSubmit = async () => {
+    setIsSubmitting(true);
     try {
       if (!validateFields()) {
         return;
       }
+
       const payload = {
         email: email,
         role: selectedType.value === "HMO" ? "HMO" : "Provider",
         ...(selectedType.value === "HMO" && { hmo: selectedHmo.value }),
         ...(selectedType.value === "Provider" && {
-          provider: selectedProvider.value
-        })
+          provider: selectedProvider.value,
+        }),
       };
 
-      await inviteStateUser(payload);
+      await inviteUser(payload);
+
       setModalOpen(true);
-      // Optionally reset form fields after successful submission
-      setEmail("");
-      setSelectedType(null);
-      setSelectedHmo(null);
-      setSelectedProvider(null);
+      setTimeout(() => {
+        navigate("/stateadmin/invitations");
+        setEmail("");
+        setSelectedType(null);
+        setSelectedHmo(null);
+        setSelectedProvider(null);
+      }, 4000);
     } catch (error) {
-      handleError("Failed to send invitation:", error);
+      handleError(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  console.log(errors, "payload");
 
   return (
     <Box sx={{ p: 4 }}>
@@ -111,7 +125,7 @@ const InvitationForm = () => {
           fontSize: "18px",
           fontWeight: 500,
           lineHeight: "28px",
-          color: "#101828"
+          color: "#101828",
         }}
       >
         Send Invite
@@ -124,7 +138,7 @@ const InvitationForm = () => {
           flexDirection: "column",
           gap: 2,
           width: "40%",
-          py: 4
+          py: 4,
         }}
       >
         <Box flex={1} sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
@@ -133,7 +147,7 @@ const InvitationForm = () => {
               color: "#595959",
               fontSize: "16px",
               fontWeight: 500,
-              lineHeight: "24px"
+              lineHeight: "24px",
             }}
           >
             Official Email Address
@@ -158,7 +172,7 @@ const InvitationForm = () => {
               color: "#595959",
               fontSize: "16px",
               fontWeight: 500,
-              lineHeight: "24px"
+              lineHeight: "24px",
             }}
           >
             Select account type
@@ -191,7 +205,7 @@ const InvitationForm = () => {
                 color: "#595959",
                 fontSize: "16px",
                 fontWeight: 500,
-                lineHeight: "24px"
+                lineHeight: "24px",
               }}
             >
               HMO Name
@@ -222,7 +236,7 @@ const InvitationForm = () => {
                 color: "#595959",
                 fontSize: "16px",
                 fontWeight: 500,
-                lineHeight: "24px"
+                lineHeight: "24px",
               }}
             >
               Providers Name
@@ -262,8 +276,9 @@ const InvitationForm = () => {
               py: "12px",
               px: "8px",
               textTransform: "none",
-              "&:hover": { backgroundColor: "#027A3B" }
+              "&:hover": { backgroundColor: "#027A3B" },
             }}
+            loading={isSubmitting}
           >
             Send Invitation
           </Button>
