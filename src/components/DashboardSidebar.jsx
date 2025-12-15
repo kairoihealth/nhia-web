@@ -123,12 +123,12 @@ const menuData = {
       link: "/admin/state/invite",
     },
     { id: 5, label: "Profile", icon: <FiUser />, link: "/admin/profile" },
-    // {
-    //   id: 6,
-    //   label: "Settings",
-    //   icon: <FiSettings />,
-    //   link: "/admin/settings"
-    // }
+    {
+      id: 6,
+      label: "Settings",
+      icon: <FiSettings />,
+      link: "/admin/settings",
+    },
   ],
 };
 

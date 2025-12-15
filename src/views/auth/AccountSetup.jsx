@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Box,
   Container,
@@ -17,11 +17,12 @@ import "react-phone-input-2/lib/style.css";
 import { VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
-import { setUpAccount } from "../../services/auth/auth";
 import { validateAccountForm } from "../../utils/accountValidation";
-import { jwtDecode } from "jwt-decode";
 import { formControlStyles, textFieldStyles } from "../../utils/style";
 import { acceptInvitation } from "../../services/general";
+import { setUpAccount } from "../../services/auth/auth";
+import { useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 
 const AccountSetup = () => {
   const navigate = useNavigate();
@@ -54,29 +55,32 @@ const AccountSetup = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // useEffect(() => {
-  //   const searchParams = new URLSearchParams(location.search);
-  //   const token = searchParams.get("token");
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const token = searchParams.get("token");
 
-  //   if (token) {
-  //     try {
-  //       const decoded = jwtDecode(token);
-  //       setDecodedToken(decoded);
-  //       setFormData((prevFormData) => ({
-  //         ...prevFormData,
-  //         email: decoded.email || "",
-  //       }));
-  //     } catch (error) {
-  //       console.error("Error decoding token:", error);
-  //       handleError("Invalid or expired invitation link.", error);
-  //       // navigate("/login");
-  //     }
-  //   } else {
-  //     handleError("No invitation link provided.", null);
-  //     navigate("/login");
-  //   }
-  // }, [location, navigate, handleError]);
+    if (token) {
+      try {
+        const decoded = jwtDecode(
+          "tJXnXPv1Lq11fXU7seDLa7l8tizuHK5S7tXe4DRRmiVW7a67VBDhwGxpdBBF9tMD70iLURC0FKVbUdbnQXY0XmCCMHAOsAzrgptCnOmGgLvIqkqb7Mo64xJcrzcvvj2we7dehh2x3uke8j1s176579"
+        );
+        setDecodedToken(decoded);
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          email: decoded.email || "",
+        }));
+      } catch (error) {
+        console.error("Error decoding token:", error);
+        handleError("Invalid or expired invitation link.", error);
+        // navigate("/login");
+      }
+    } else {
+      handleError("No invitation link provided.", null);
+      navigate("/login");
+    }
+  }, []);
 
+  console.log(formData, "formData");
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -102,7 +106,8 @@ const AccountSetup = () => {
         confirm_password: formData.confirmPassword,
       };
 
-      await acceptInvitation(payload);
+      await setUpAccount(payload);
+      // await acceptInvitation(payload);
       handleSuccess("Registration successful!");
       setFormData({
         firstName: "",

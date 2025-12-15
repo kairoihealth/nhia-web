@@ -16,7 +16,7 @@ const DashboardLayout = ({ username, role }) => {
         backgroundColor: "#FAFAFA",
         height: "100vh",
         width: "100%",
-        overflow: "hidden"
+        overflow: "hidden",
       }}
     >
       {/* Sidebar */}
@@ -26,7 +26,7 @@ const DashboardLayout = ({ username, role }) => {
           width: "269px",
           height: "auto",
           zIndex: 1000,
-          overflowY: "auto"
+          overflowY: "auto",
         }}
       >
         <DashboardSidebar role={userRole} />
@@ -39,21 +39,23 @@ const DashboardLayout = ({ username, role }) => {
           ml: "269px", // Offset for the sidebar width
           height: "100%",
           display: "flex",
-          flexDirection: "column"
+          flexDirection: "column",
         }}
       >
         {/* Topbar */}
         <Box
-          sx={{
-            height: "70px", // Fixed height for the topbar
-            // px: 3,
-            py: 2,
-            backgroundColor: "#038F3E",
-            color: "#ffffff",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between"
-          }}
+          sx={
+            {
+              // height: "70px", // Fixed height for the topbar
+              // // px: 3,
+              // // py: 2,
+              // backgroundColor: "#038F3E",
+              // color: "#ffffff",
+              // display: "flex",
+              // alignItems: "center",
+              // justifyContent: "space-between",
+            }
+          }
         >
           <DashboardTopbar username={fullname} role={userRole} />
         </Box>
@@ -66,7 +68,8 @@ const DashboardLayout = ({ username, role }) => {
             p: 2.5,
             overflowY: "auto",
             height: "calc(100% - 64px)",
-            zIndex: 9999
+            zIndex: 9999,
+            backgroundColor: "#ffffff",
           }}
         >
           <Outlet />
@@ -79,7 +82,7 @@ const DashboardLayout = ({ username, role }) => {
 DashboardLayout.propTypes = {
   children: PropTypes.node,
   role: PropTypes.string,
-  username: PropTypes.string
+  username: PropTypes.string,
 };
 
 export default DashboardLayout;

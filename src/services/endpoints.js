@@ -9,6 +9,17 @@ export const ENDPOINTS = {
   CHANGE_PASSWORD: "/users/change-password/",
   GET_USERS: "/users/",
   GET_SINGLE_USER: (id) => `/users/${id}/`,
+  ADD_USER: "/users/register-user/",
+  UPDATE_ADMIN: (id) => `/users/${id}/admin-update/`,
+  GET_ADMINS: "/users/admins/",
+
+  // ADMIN STATUSES
+  GET_ADMIN_STATUSES: "/admin-statuses/",
+  UPDATE_ADMIN_STATUS: (id) => `/admin-statuses/${id}/`,
+  ADD_ADMIN_STATUS: "/admin-statuses/",
+  DELETE_ADMIN_STATUS: (id) => `/admin-statuses/${id}/`,
+  GET_SINGLE_ADMIN_STATUS: (id) => `/admin-statuses/${id}/`,
+  GET_ADMIN_STATUS_USERS: (id) => `/admin-statuses/${id}/users/`,
 
   // SETTINGS
   GET_REGIONS: "/settings/regions/",

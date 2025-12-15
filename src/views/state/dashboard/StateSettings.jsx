@@ -7,12 +7,10 @@ import {
   FormControl,
   Select,
   MenuItem,
-  IconButton,
-  InputAdornment,
   Checkbox,
   FormControlLabel,
 } from "@mui/material";
-import { VisibilityOutlined, VisibilityOffOutlined } from "@mui/icons-material";
+
 // import { Helmet } from "react-helmet-async";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
@@ -24,9 +22,35 @@ import {
   hmoAdminLevelPermissions,
 } from "../../../mock/hmoAdmins";
 import ReactSelect from "react-select";
+import { selectStyles } from "../../../utils/style";
+import {
+  useHandleError,
+  useHandleSuccess,
+} from "../../../hooks/useToastHandler";
+import {
+  addAdminStatus,
+  addNewAdmin,
+  getAdmins,
+  getAdminStatuses,
+  updateAdmin,
+  updateAdminStatus,
+} from "../../../services/adminSettings";
+import { useQuery } from "@tanstack/react-query";
+import { FaCircleUser } from "react-icons/fa6";
+import { useMemo } from "react";
+import { useEffect } from "react";
 
 const textFieldStyles = {
   "& .MuiOutlinedInput-root": {
+    borderRadius: "8px",
+    backgroundColor: "#F5F5F5",
+    color: "#000000",
+    border: "0",
+    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+      border: "0",
+    },
+  },
+  "& .MuiOutlinedInput-input": {
     borderRadius: "8px",
     backgroundColor: "#F5F5F5",
     color: "#000000",
@@ -37,18 +61,20 @@ const textFieldStyles = {
   },
 };
 
-const selectStyles = {
-  width: "100%",
-  borderRadius: "8px",
-  backgroundColor: "#F5F5F5",
-  color: "#000000",
-  border: "0.5px solid #DADADA",
-  fontSize: "16px",
-  outline: "none",
-  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-    borderColor: "#038F3E", // Green border color
-  },
-};
+// const selectStyles = {
+//   width: "100%",
+//   borderRadius: "8px",
+//   backgroundColor: "#F5F5F5",
+//   color: "#000000",
+//   border: "0.5px solid #DADADA",
+//   fontSize: "16px",
+//   outline: "none",
+//   "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+//     borderColor: "#038F3E", // Green border color
+//   },
+// };
+
+const getUserRole = () => localStorage.getItem("userRole");
 
 const StateSettings = () => {
   const [activeTab, setActiveTab] = useState("add");
@@ -58,40 +84,50 @@ const StateSettings = () => {
   };
 
   return (
-    <Box>
+    <Box
+      sx={{
+        px: 3,
+      }}
+    >
       {/* <Helmet>
-        <title>State Settings</title>
-        <meta name="State Settings" content=" " />
-        <link rel="canonical" href="/settings" />
-      </Helmet> */}
+         <title>Central Settings</title>
+         <meta name="Central Settings" content=" " />
+         <link rel="canonical" href="/settings" />
+       </Helmet> */}
+
+      {/* Title */}
+      <Typography
+        sx={{
+          fontSize: "18px",
+          fontWeight: 500,
+          lineHeight: "28px",
+          color: "#101828",
+          mb: 3,
+        }}
+        gutterBottom
+      >
+        Settings
+      </Typography>
 
       {/* Main Content Area */}
       <Box
-        sx={{ display: "flex", justifyContent: "space-around", mt: 6, px: 3 }}
+        sx={{
+          display: "flex",
+          justifyContent: "space-around",
+          gap: "2rem",
+        }}
       >
         <Box sx={{ width: "40%" }}>
-          {/* Title */}
-          <Typography
-            sx={{
-              fontSize: "18px",
-              fontWeight: 500,
-              lineHeight: "28px",
-              color: "#101828",
-              mb: 4,
-            }}
-            gutterBottom
-          >
-            Settings
-          </Typography>
-
           {/* Tab Buttons */}
           <Box
             sx={{
               display: "flex",
               flexDirection: "column",
-              width: "80%",
+              // width: "80%",
+              padding: "20px",
               gap: 2,
               mb: 4,
+              background: "#FAFAFA",
             }}
           >
             <Button
@@ -109,7 +145,9 @@ const StateSettings = () => {
                 "&:hover": {
                   backgroundColor: activeTab === "add" ? "#20201E" : "#F5F5F5",
                 },
-                border: "1px solid #000000",
+                border: `1px solid ${
+                  activeTab === "add" ? "#20201E" : "#DADADA"
+                }`,
               }}
             >
               <Typography
@@ -139,7 +177,9 @@ const StateSettings = () => {
                 "&:hover": {
                   backgroundColor: activeTab === "edit" ? "#20201E" : "#F5F5F5",
                 },
-                border: "1px solid #000000",
+                border: `1px solid ${
+                  activeTab === "edit" ? "#20201E" : "#DADADA"
+                }`,
               }}
             >
               <Typography
@@ -170,7 +210,9 @@ const StateSettings = () => {
                   backgroundColor:
                     activeTab === "manage" ? "#000000" : "#F5F5F5",
                 },
-                border: "1px solid #000000",
+                border: `1px solid ${
+                  activeTab === "manage" ? "#20201E" : "#DADADA"
+                }`,
               }}
             >
               <Typography
@@ -188,8 +230,8 @@ const StateSettings = () => {
           </Box>
         </Box>
 
-        <Box sx={{ width: "60%" }}>
-          <Box sx={{ width: "70%" }}>
+        <Box sx={{ width: "100%" }}>
+          <Box sx={{ width: "90%" }}>
             {/* Dynamic Content Based on Active Tab */}
             {activeTab === "add" && <AddAdminForm />}
             {activeTab === "edit" && <EditAdminForm />}
@@ -203,20 +245,67 @@ const StateSettings = () => {
 
 // Add Admin Form Component
 const AddAdminForm = () => {
-  const [passwordVisible, setPasswordVisible] = useState(false);
+  const userRole = getUserRole();
+  const handleError = useHandleError();
+  const handleSuccess = useHandleSuccess();
+  const [formData, setFormData] = useState({
+    email: "",
+    designation: "",
+    admin_status: "",
+  });
 
-  const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const {
+    data: statuses,
+    // isLoading,
+    // isError,
+    // error,
+  } = useQuery({
+    queryKey: ["statuses"],
+    queryFn: () => getAdminStatuses({ page: 1, pageSize: 10 }),
+  });
+
+  console.log(formData, "statuses");
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const payload = {
+        email: formData.email,
+        designation: formData.designation,
+        admin_status: formData.admin_status.value,
+        role: userRole,
+      };
+      console.log(payload, "submitted");
+      await addNewAdmin(payload);
+      handleSuccess("Admin added successfully!");
+      setFormData({
+        email: "",
+        designation: "",
+        admin_status: "",
+      });
+    } catch (error) {
+      handleError("Registration failed. Please try again.", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <Box sx={{ mt: 4 }}>
+    <Box sx={{ background: "#FAFAFA", padding: "20px" }}>
       <Typography
         sx={{
           fontSize: "16px",
           fontWeight: 500,
           lineHeight: "28px",
           color: "#000000",
+          mb: "24px",
         }}
         gutterBottom
       >
@@ -229,69 +318,28 @@ const AddAdminForm = () => {
           flexDirection: "column",
           gap: 3,
         }}
+        onSubmit={handleSubmit}
       >
-        {/* First Name */}
-        <Box flex={1} sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-          <Typography
-            sx={{
-              color: "#595959",
-              fontSize: "16px",
-              fontWeight: 500,
-              lineHeight: "24px",
-            }}
-          >
-            First Name
-          </Typography>
-          <TextField
-            fullWidth
-            variant="outlined"
-            required
-            placeholder="enter first name"
-            sx={textFieldStyles}
-          />
-        </Box>
-
         {/* Middle Name */}
-        <Box flex={1} sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-          <Typography
-            sx={{
-              color: "#595959",
-              fontSize: "16px",
-              fontWeight: 500,
-              lineHeight: "24px",
-            }}
-          >
-            Middle Name
-          </Typography>
-          <TextField
-            fullWidth
-            variant="outlined"
-            required
-            placeholder="enter first name"
-            sx={textFieldStyles}
-          />
-        </Box>
-
-        {/* Last Name */}
-        <Box flex={1} sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-          <Typography
-            sx={{
-              color: "#595959",
-              fontSize: "16px",
-              fontWeight: 500,
-              lineHeight: "24px",
-            }}
-          >
-            Last Name
-          </Typography>
-          <TextField
-            fullWidth
-            variant="outlined"
-            required
-            placeholder="enter first name"
-            sx={textFieldStyles}
-          />
-        </Box>
+        {/* <Box flex={1} sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            <Typography
+              sx={{
+                color: "#595959",
+                fontSize: "16px",
+                fontWeight: 500,
+                lineHeight: "24px",
+              }}
+            >
+              Middle Name
+            </Typography>
+            <TextField
+              fullWidth
+              variant="outlined"
+              required
+              placeholder="enter first name"
+              sx={textFieldStyles}
+            />
+          </Box> */}
 
         {/* Email Address */}
         <Box flex={1} sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
@@ -310,8 +358,13 @@ const AddAdminForm = () => {
             type="email"
             variant="outlined"
             required
-            placeholder="enter first name"
+            placeholder="enter email address"
             sx={textFieldStyles}
+            name="email"
+            onChange={handleChange}
+            value={formData.email}
+            error={!!errors.email}
+            helperText={errors.email}
           />
         </Box>
 
@@ -331,44 +384,13 @@ const AddAdminForm = () => {
             fullWidth
             variant="outlined"
             required
-            placeholder="enter first name"
+            placeholder="enter designation"
             sx={textFieldStyles}
-          />
-        </Box>
-
-        {/* Create Password */}
-        <Box flex={1} sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-          <Typography
-            sx={{
-              color: "#595959",
-              fontSize: "16px",
-              fontWeight: 500,
-              lineHeight: "24px",
-            }}
-          >
-            Create Password
-            <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
-          </Typography>
-          <TextField
-            fullWidth
-            // label="Create Password"
-            type={passwordVisible ? "text" : "password"}
-            placeholder="*********"
-            required
-            slotProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={togglePasswordVisibility}>
-                    {passwordVisible ? (
-                      <VisibilityOutlined />
-                    ) : (
-                      <VisibilityOffOutlined />
-                    )}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            sx={textFieldStyles}
+            name="designation"
+            onChange={handleChange}
+            value={formData.designation}
+            error={!!errors.designation}
+            helperText={errors.designation}
           />
         </Box>
 
@@ -389,28 +411,15 @@ const AddAdminForm = () => {
               styles={selectStyles}
               // value={selectedType}
               // onChange={handleTypeChange}
-              options={[
-                { id: "Admin I", label: "Admin I", value: "Admin I" },
-                { id: "Admin II", label: "Admin II", value: "Admin II" },
-                { id: "Admin III", label: "Admin III", value: "Admin III" },
-              ]}
+              onChange={(e) => setFormData({ ...formData, admin_status: e })}
+              value={formData.admin_status}
+              name="admin_status"
+              options={statuses?.results?.map((status) => ({
+                value: status.id,
+                label: status.name,
+              }))}
               placeholder="Select Admin Status"
             />
-            {/* <Select sx={selectStyles}>
-              <MenuItem
-                value=""
-                sx={{
-                  fontSize: "16px",
-                  fontWeight: 500,
-                  color: "#000000",
-                }}
-              >
-                Select option
-              </MenuItem>
-              <MenuItem value="hmo">Admin I</MenuItem>
-              <MenuItem value="provider">Admin II</MenuItem>
-              <MenuItem value="nhia">Admin III</MenuItem>
-            </Select> */}
           </FormControl>
         </Box>
 
@@ -418,6 +427,7 @@ const AddAdminForm = () => {
         <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
           <Button
             variant="contained"
+            type="submit"
             sx={{
               width: "380px",
               height: "48px",
@@ -432,6 +442,7 @@ const AddAdminForm = () => {
                 backgroundColor: "#027A3B",
               },
             }}
+            loading={isSubmitting}
           >
             Add Admin
           </Button>
@@ -444,57 +455,233 @@ const AddAdminForm = () => {
 // Edit Admin Form Component
 const EditAdminForm = () => {
   const [selectedAdmin, setSelectedAdmin] = useState(null);
+  const userRole = getUserRole();
+  const handleError = useHandleError();
+  const handleSuccess = useHandleSuccess();
+  const [formData, setFormData] = useState({
+    // firstName: "",
+    // lastName: "",
+    email: "",
+    designation: "",
+    admin_status: "",
+    // password: "",
+  });
+
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const {
+    data: admins,
+    isLoading: isLoadingAdmins,
+    isError: isAdminError,
+    error: adminError,
+  } = useQuery({
+    queryKey: ["admins", isSubmitting],
+    queryFn: () => getAdmins({ page: 1, pageSize: 10 }),
+  });
+
+  const { data: statuses, isLoading } = useQuery({
+    queryKey: ["statuses"],
+    queryFn: () => getAdminStatuses({ page: 1, pageSize: 10 }),
+  });
+
+  const stateAdmins = useMemo(
+    () => admins?.data.filter((admin) => admin.role === "StateAdmin"),
+    [admins?.data]
+  );
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  useEffect(() => {
+    setFormData({
+      firstName: selectedAdmin?.firstname || "",
+      lastName: selectedAdmin?.lastname || "",
+      email: selectedAdmin?.email || "",
+      designation: selectedAdmin?.designation || "",
+      admin_status:
+        statuses?.results
+          .filter((status) => status.id === selectedAdmin?.admin_status?.id)
+          .map((status) => ({ value: status.id, label: status.name }))[0] || "",
+    });
+  }, [
+    selectedAdmin?.admin_status,
+    selectedAdmin?.designation,
+    selectedAdmin?.email,
+    selectedAdmin?.firstname,
+    selectedAdmin?.lastname,
+    statuses?.results,
+  ]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      // const { isValid, errors: validationErrors } =
+      //   validateAccountForm(formData);
+
+      // if (!isValid) {
+      //   setErrors(validationErrors);
+      //   return;
+      // }
+      // console.log(isValid, validationErrors, "isValid");
+
+      // const token = new URLSearchParams(location.search).get("token") || "";
+
+      const payload = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        designation: formData.designation,
+        admin_status: formData.admin_status.value,
+        role: userRole,
+        // password: formData.password,
+      };
+      console.log(payload, "submitted");
+      await updateAdmin(selectedAdmin?.id, payload);
+      handleSuccess("Admin updated successfully!");
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        designation: "",
+        admin_status: "",
+        // password: "",
+      });
+      setSelectedAdmin(null);
+      // navigate("/login");
+    } catch (error) {
+      handleError("Update failed. Please try again.", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
-    <Box sx={{ mt: 4 }}>
-      <Typography
-        sx={{
-          fontSize: "16px",
-          fontWeight: 500,
-          lineHeight: "28px",
-          color: "#000000",
-        }}
-        gutterBottom
-      >
-        Edit admin information
-      </Typography>
-      <Box sx={{ display: "flex", gap: 4, mt: 3 }}>
-        {hmoAdmin.map((t) => (
+    <Box>
+      <Box sx={{ background: "#FAFAFA", padding: "20px", mb: 4 }}>
+        <Typography
+          sx={{
+            fontSize: "16px",
+            fontWeight: 500,
+            lineHeight: "28px",
+            color: "#000000",
+          }}
+          gutterBottom
+        >
+          Edit admin information
+        </Typography>
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            flexWrap: "wrap",
+            gap: 4,
+            mt: 3,
+          }}
+        >
+          {isLoadingAdmins ? (
+            <Typography>Loading admins...</Typography>
+          ) : isAdminError ? (
+            <Typography color="red">
+              Error: {adminError.message || "Failed to load admins"}
+            </Typography>
+          ) : !stateAdmins?.length ? (
+            <Typography>No admins available</Typography>
+          ) : null}
+          {stateAdmins?.map((t) => (
+            <Box
+              key={t.id}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: 1,
+                outline:
+                  selectedAdmin?.id === t.id
+                    ? "1px solid #071C42"
+                    : "transparent",
+                padding: 2,
+                borderRadius: "8px",
+                textAlign: "center",
+                background: "#ffffff",
+                cursor: "pointer",
+                "&:hover": {
+                  outline: "1px solid #071C42",
+                },
+              }}
+              onClick={() => setSelectedAdmin(t)}
+            >
+              {t.image ? (
+                <img
+                  src={t.image}
+                  alt=""
+                  style={{ width: "67px", height: "67px" }}
+                />
+              ) : (
+                <FaCircleUser style={{ width: "67px", height: "67px" }} />
+              )}
+              <Typography
+                sx={{
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                  color: "#000000",
+                }}
+              >
+                {t.firstname} {t.lastname}
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: "14px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                  color: "#304262",
+                }}
+              >
+                {t.admin_status?.name || "No Status"}
+              </Typography>
+            </Box>
+          ))}
+        </Box>
+      </Box>
+      {selectedAdmin && (
+        <Box
+          sx={{
+            background: "#FAFAFA",
+            padding: "20px",
+          }}
+        >
           <Box
-            key={t.id}
             sx={{
               display: "flex",
               flexDirection: "column",
-              alignItems: "center",
+              alignItems: "flex-start",
               gap: 1,
-              border:
-                selectedAdmin?.id === t.id
-                  ? "2px solid #038F3E"
-                  : "transparent",
-              padding: 2,
-              borderRadius: "8px",
-              cursor: "pointer",
-              "&:hover": {
-                border: "2px solid #038F3E",
-              },
+              mb: 3,
             }}
-            onClick={() => setSelectedAdmin(t)}
           >
-            <img
-              src={t.icon}
-              alt=""
-              style={{ width: "67px", height: "67px" }}
-            />
             <Typography
               sx={{
                 fontSize: "16px",
                 fontWeight: 500,
                 lineHeight: "24px",
                 color: "#000000",
+                mb: 3,
               }}
             >
-              {t.firstname} {t.lastname}
+              {selectedAdmin.firstname} {selectedAdmin.lastname}
             </Typography>
+            {selectedAdmin.image ? (
+              <img
+                src={selectedAdmin.image}
+                alt=""
+                style={{ width: "50px", height: "50px" }}
+              />
+            ) : (
+              <FaCircleUser style={{ width: "50px", height: "50px" }} />
+            )}
             <Typography
               sx={{
                 fontSize: "14px",
@@ -503,241 +690,216 @@ const EditAdminForm = () => {
                 color: "#304262",
               }}
             >
-              {t.role}
+              {selectedAdmin.admin_status?.name || "No Status"}
             </Typography>
           </Box>
-        ))}
-      </Box>
-      {selectedAdmin && (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-start",
-            gap: 1,
-            mt: 6,
-            mb: 3,
-          }}
-        >
-          <Typography
+          {/*Form */}
+
+          <Box
+            component="form"
             sx={{
-              fontSize: "16px",
-              fontWeight: 500,
-              lineHeight: "24px",
-              color: "#000000",
+              display: "flex",
+              flexDirection: "column",
+              gap: 3,
             }}
+            onSubmit={handleSubmit}
           >
-            {selectedAdmin.firstname} {selectedAdmin.lastname}
-          </Typography>
-          <img
-            src={selectedAdmin.icon}
-            alt=""
-            style={{ width: "67px", height: "67px" }}
-          />
-          <Typography
-            sx={{
-              fontSize: "14px",
-              fontWeight: 500,
-              lineHeight: "24px",
-              color: "#304262",
-            }}
-          >
-            {selectedAdmin.role}
-          </Typography>
-        </Box>
-      )}
-
-      {/*Form */}
-      {selectedAdmin && (
-        <Box
-          component="form"
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 3,
-          }}
-        >
-          {/* First Name */}
-          <Box
-            flex={1}
-            sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-          >
-            <Typography
-              sx={{
-                color: "#595959",
-                fontSize: "16px",
-                fontWeight: 500,
-                lineHeight: "24px",
-              }}
+            {/* First Name */}
+            <Box
+              flex={1}
+              sx={{ display: "flex", flexDirection: "column", gap: 1 }}
             >
-              First Name
-            </Typography>
-            <TextField
-              fullWidth
-              variant="outlined"
-              required
-              placeholder="enter first name"
-              sx={textFieldStyles}
-              value={selectedAdmin.firstname}
-            />
-          </Box>
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                First Name
+              </Typography>
+              <TextField
+                fullWidth
+                variant="outlined"
+                required
+                placeholder="enter first name"
+                focused={true}
+                sx={textFieldStyles}
+                name="firstName"
+                onChange={handleChange}
+                value={formData.firstName}
+                error={!!errors.firstName}
+                helperText={errors.firstName}
+              />
+            </Box>
 
-          {/* Middle Name */}
-          <Box
-            flex={1}
-            sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-          >
-            <Typography
-              sx={{
-                color: "#595959",
-                fontSize: "16px",
-                fontWeight: 500,
-                lineHeight: "24px",
-              }}
-            >
-              Middle Name
-            </Typography>
-            <TextField
-              fullWidth
-              variant="outlined"
-              required
-              placeholder="enter first name"
-              sx={textFieldStyles}
-              value={selectedAdmin.middlename}
-            />
-          </Box>
+            {/* Middle Name */}
+            {/* <Box flex={1} sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+           <Typography
+             sx={{
+               color: "#595959",
+               fontSize: "16px",
+               fontWeight: 500,
+               lineHeight: "24px",
+             }}
+           >
+             Middle Name
+           </Typography>
+           <TextField
+             fullWidth
+             variant="outlined"
+             required
+             placeholder="enter first name"
+             sx={textFieldStyles}
+           />
+         </Box> */}
 
-          {/* Last Name */}
-          <Box
-            flex={1}
-            sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-          >
-            <Typography
-              sx={{
-                color: "#595959",
-                fontSize: "16px",
-                fontWeight: 500,
-                lineHeight: "24px",
-              }}
+            {/* Last Name */}
+            <Box
+              flex={1}
+              sx={{ display: "flex", flexDirection: "column", gap: 1 }}
             >
-              Last Name
-            </Typography>
-            <TextField
-              fullWidth
-              variant="outlined"
-              required
-              placeholder="enter first name"
-              sx={textFieldStyles}
-              value={selectedAdmin.lastname}
-            />
-          </Box>
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                Last Name
+              </Typography>
+              <TextField
+                fullWidth
+                variant="outlined"
+                required
+                placeholder="enter last name"
+                sx={textFieldStyles}
+                name="lastName"
+                onChange={handleChange}
+                value={formData.lastName}
+                error={!!errors.lastName}
+                helperText={errors.lastName}
+              />
+            </Box>
 
-          {/* Email Address */}
-          <Box
-            flex={1}
-            sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-          >
-            <Typography
-              sx={{
-                color: "#595959",
-                fontSize: "16px",
-                fontWeight: 500,
-                lineHeight: "24px",
-              }}
+            {/* Email Address */}
+            <Box
+              flex={1}
+              sx={{ display: "flex", flexDirection: "column", gap: 1 }}
             >
-              Email Address
-            </Typography>
-            <TextField
-              fullWidth
-              type="email"
-              variant="outlined"
-              required
-              placeholder="enter first name"
-              sx={textFieldStyles}
-              value={selectedAdmin.email}
-            />
-          </Box>
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                Email Address
+              </Typography>
+              <TextField
+                fullWidth
+                type="email"
+                variant="outlined"
+                required
+                placeholder="enter email address"
+                sx={textFieldStyles}
+                name="email"
+                onChange={handleChange}
+                value={formData.email}
+                error={!!errors.email}
+                helperText={errors.email}
+              />
+            </Box>
 
-          {/* Designation */}
-          <Box
-            flex={1}
-            sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-          >
-            <Typography
-              sx={{
-                color: "#595959",
-                fontSize: "16px",
-                fontWeight: 500,
-                lineHeight: "24px",
-              }}
+            {/* Designation */}
+            <Box
+              flex={1}
+              sx={{ display: "flex", flexDirection: "column", gap: 1 }}
             >
-              Designation
-            </Typography>
-            <TextField
-              fullWidth
-              variant="outlined"
-              required
-              placeholder="enter first name"
-              sx={textFieldStyles}
-              value={selectedAdmin.designation}
-            />
-          </Box>
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                Designation
+              </Typography>
+              <TextField
+                fullWidth
+                variant="outlined"
+                required
+                placeholder="enter designation"
+                sx={textFieldStyles}
+                name="designation"
+                onChange={handleChange}
+                value={formData.designation}
+                error={!!errors.designation}
+                helperText={errors.designation}
+              />
+            </Box>
 
-          {/* Admin Status */}
-          <Box
-            flex={1}
-            sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-          >
-            <Typography
-              sx={{
-                color: "#595959",
-                fontSize: "16px",
-                fontWeight: 500,
-                lineHeight: "24px",
-              }}
+            {/* Admin Status */}
+            <Box
+              flex={1}
+              sx={{ display: "flex", flexDirection: "column", gap: 1 }}
             >
-              Admin Status
-            </Typography>
-            <FormControl fullWidth variant="outlined">
-              <Select sx={selectStyles}>
-                <MenuItem
-                  value={selectedAdmin.role}
-                  sx={{
-                    fontSize: "16px",
-                    fontWeight: 500,
-                    color: "#000000",
-                  }}
-                >
-                  Select option
-                </MenuItem>
-                <MenuItem value="hmo">HMO</MenuItem>
-                <MenuItem value="provider">Providers</MenuItem>
-                <MenuItem value="nhia">NHIA</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                Admin status
+              </Typography>
+              <FormControl fullWidth variant="outlined">
+                <ReactSelect
+                  styles={selectStyles}
+                  onChange={(e) =>
+                    setFormData({ ...formData, admin_status: e })
+                  }
+                  value={formData.admin_status}
+                  name="admin_status"
+                  options={statuses?.results?.map((status) => ({
+                    value: status.id,
+                    label: status.name,
+                  }))}
+                  placeholder="Select Admin Status"
+                  loading={isLoading}
+                />
+              </FormControl>
+            </Box>
 
-          {/* Submit Button */}
-          <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-            <Button
-              variant="contained"
-              sx={{
-                width: "380px",
-                height: "48px",
-                backgroundColor: "#038F3E",
-                color: "#FFFFFF",
-                textTransform: "none",
-                fontSize: "16px",
-                fontWeight: "bold",
-                py: 1.5,
-                borderRadius: "8px",
-                "&:hover": {
-                  backgroundColor: "#027A3B",
-                },
-              }}
-            >
-              Update Admin
-            </Button>
+            {/* Submit Button */}
+            <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+              <Button
+                variant="contained"
+                type="submit"
+                sx={{
+                  width: "380px",
+                  height: "48px",
+                  backgroundColor: "#038F3E",
+                  color: "#FFFFFF",
+                  textTransform: "none",
+                  fontSize: "16px",
+                  fontWeight: "bold",
+                  py: 1.5,
+                  borderRadius: "8px",
+                  "&:hover": {
+                    backgroundColor: "#027A3B",
+                  },
+                }}
+                loading={isSubmitting}
+              >
+                Update Admin
+              </Button>
+            </Box>
           </Box>
         </Box>
       )}
@@ -747,14 +909,27 @@ const EditAdminForm = () => {
 
 // Manage Admin Roles Component
 const ManageAdminRoles = () => {
+  const userRole = getUserRole();
+  const handleError = useHandleError();
+  const handleSuccess = useHandleSuccess();
   const [newLevel, setNewLevel] = useState(false);
+  const [levelName, setLevelName] = useState("");
   const [selectedLevel, setSelectedLevel] = useState(null);
   const [newLevelPermissions, setNewLevelPermissions] = useState([]);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // const [adminRoleName, setAdminRoleName] = useState("");
+
+  const { data: statuses, isLoading } = useQuery({
+    queryKey: ["statuses"],
+    queryFn: () => getAdminStatuses({ page: 1, pageSize: 10 }),
+  });
 
   const handleLevelClick = (level) => {
     setSelectedLevel(level); // Set the selected admin level
     setNewLevel(false); // Exit "add new level" mode
+    setLevelName(level.name); // Pre-fill the level name
   };
 
   const handlePermissionChange = (permissionId, checked) => {
@@ -783,24 +958,55 @@ const ManageAdminRoles = () => {
     }
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const payload = {
+        name: levelName,
+        permissions: newLevel
+          ? newLevelPermissions
+          : selectedLevel?.permissions,
+        // level: 1,
+      };
+
+      await (newLevel
+        ? addAdminStatus(payload)
+        : updateAdminStatus(selectedLevel?.id, payload));
+      handleSuccess("Admin level updated successfully!");
+      setLevelName("");
+      setNewLevel(false);
+      setSelectedLevel(null);
+    } catch (error) {
+      handleError("Update failed. Please try again.", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    <Box sx={{ mt: 4 }}>
+    <Box sx={{ background: "#FAFAFA", padding: "20px" }}>
       {!newLevel && !selectedLevel ? (
         <Box>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
             <Typography
               sx={{
                 fontSize: "16px",
                 fontWeight: 500,
                 lineHeight: "28px",
                 color: "#000000",
+                mb: 0,
               }}
-              gutterBottom
             >
               Manage admin roles
             </Typography>
             <Box
-              sx={{ display: "flex", gap: 1, cursor: "pointer" }}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 0.6,
+                cursor: "pointer",
+              }}
               onClick={() => setNewLevel(true)}
             >
               <AddCircleOutlineIcon sx={{ color: "#071C42" }} />
@@ -819,13 +1025,13 @@ const ManageAdminRoles = () => {
 
           {/* List of Admin Levels */}
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
-            {hmoAdminLevel.map((t) => (
+            {statuses?.results?.map((t) => (
               <Box
                 key={t.id}
                 sx={{
                   display: "flex",
                   justifyContent: "space-between",
-                  width: "495px",
+                  maxWidth: "560px",
                   height: "52px",
                   border: "0.5px solid #DADADA",
                   backgroundColor: "#F5F5F5",
@@ -842,7 +1048,7 @@ const ManageAdminRoles = () => {
                     color: "#000000",
                   }}
                 >
-                  {t.title}
+                  {t.name}
                 </Typography>
                 <ArrowForwardIosIcon sx={{ color: "#292D32" }} />
               </Box>
@@ -850,15 +1056,24 @@ const ManageAdminRoles = () => {
           </Box>
         </Box>
       ) : (
-        <Box>
+        <Box component="form" onSubmit={handleSubmit}>
           <Box
             sx={{ display: "flex", justifyContent: "space-between" }}
             onClick={() =>
               selectedLevel ? setSelectedLevel(null) : setNewLevel(false)
             }
           >
-            <Box sx={{ display: "flex", gap: 1, cursor: "pointer" }}>
-              <ArrowBackIosNewIcon sx={{ color: "#292D32" }} />
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                cursor: "pointer",
+              }}
+            >
+              <ArrowBackIosNewIcon
+                sx={{ color: "#292D32", fontSize: "16px" }}
+              />
               <Typography
                 sx={{
                   color: "#595959",
@@ -867,7 +1082,7 @@ const ManageAdminRoles = () => {
                   lineHeight: "28px",
                 }}
               >
-                {selectedLevel ? "Back" : "Admin level name"}
+                {selectedLevel ? "Back" : selectedLevel?.name || "Back"}
               </Typography>
             </Box>
             {!newLevel && (
@@ -909,6 +1124,11 @@ const ManageAdminRoles = () => {
                 required
                 placeholder="enter level name"
                 sx={textFieldStyles}
+                name="levelName"
+                onChange={(e) => setLevelName(e.target.value)}
+                value={levelName}
+                error={!levelName}
+                helperText={!levelName ? "Level name is required" : ""}
               />
             </Box>
           )}
@@ -942,7 +1162,7 @@ const ManageAdminRoles = () => {
                       checked={
                         newLevel
                           ? newLevelPermissions.includes(permission.id) // Check permissions based on new level's state
-                          : selectedLevel?.permissions.includes(permission.id)
+                          : selectedLevel?.permissions?.includes(permission.id)
                       }
                       onChange={(e) =>
                         handlePermissionChange(permission.id, e.target.checked)
@@ -977,6 +1197,7 @@ const ManageAdminRoles = () => {
             <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
               <Button
                 variant="contained"
+                type="submit"
                 sx={{
                   width: "380px",
                   height: "48px",
@@ -991,6 +1212,12 @@ const ManageAdminRoles = () => {
                     backgroundColor: "#027A3B",
                   },
                 }}
+                loading={isSubmitting}
+                disabled={
+                  newLevel
+                    ? !levelName || newLevelPermissions?.length === 0
+                    : !levelName || selectedLevel?.permissions?.length === 0
+                }
               >
                 {newLevel ? "Add Level" : "Save changes"}
               </Button>
