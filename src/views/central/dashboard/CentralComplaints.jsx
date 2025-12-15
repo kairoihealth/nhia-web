@@ -82,7 +82,7 @@ const CentralComplaints = () => {
         ...filters,
       }),
   });
-  console.log(page, "pageee");
+
   const handleTabClick = (tab) => {
     // setActiveTab(tab);
     setFilters((prev) => ({ ...prev, status: tab }));

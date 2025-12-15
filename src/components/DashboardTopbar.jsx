@@ -4,13 +4,13 @@ import {
   Typography,
   IconButton,
   TextField,
-  InputAdornment
+  InputAdornment,
 } from "@mui/material";
 import { FiBell } from "react-icons/fi";
 import SearchIcon from "@mui/icons-material/Search";
 
 const DashboardTopbar = ({
-  username
+  username,
   // role
 }) => {
   return (
@@ -23,9 +23,11 @@ const DashboardTopbar = ({
         color: "#000000",
         padding: "1rem",
         width: "100%",
+        height: "88px",
         px: 2,
         // borderRadius: "0px 0px 8px 8px",
-        borderBottom: "1px solid #12203B17"
+        boxShadow: "0px 1px 0px 0px #12203B17",
+        // borderBottom: "1px solid #E0E0E0",
       }}
     >
       {/* Welcome Message */}
@@ -47,15 +49,15 @@ const DashboardTopbar = ({
               borderRadius: "10px",
               backgroundColor: "#f9f9f9",
               "& fieldset": {
-                borderColor: "#E4E4E7"
+                borderColor: "#E4E4E7",
               },
               "&:hover fieldset": {
-                borderColor: "#cccccc"
+                borderColor: "#cccccc",
               },
               "&.Mui-focused fieldset": {
-                borderColor: "#E4E4E7"
-              }
-            }
+                borderColor: "#E4E4E7",
+              },
+            },
           }}
           slotProps={{
             input: {
@@ -63,8 +65,8 @@ const DashboardTopbar = ({
                 <InputAdornment position="start">
                   <SearchIcon />
                 </InputAdornment>
-              )
-            }
+              ),
+            },
           }}
         />
       </Box>
@@ -88,5 +90,5 @@ export default DashboardTopbar;
 
 DashboardTopbar.propTypes = {
   username: PropTypes.string,
-  role: PropTypes.string
+  role: PropTypes.string,
 };

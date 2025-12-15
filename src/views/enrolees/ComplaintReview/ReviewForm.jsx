@@ -236,7 +236,7 @@ const ReviewForm = () => {
             mb: { xs: 4, md: 10 },
           }}
         >
-          Track and manage your complaints on the Kairoi CMS platform at your
+          Track and manage your complaints on the NHIA platform at your
           fingertips.
         </Typography>
 
