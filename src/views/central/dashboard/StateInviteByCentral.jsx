@@ -5,6 +5,7 @@ import SearchFilter from "../../../shared/SearchAndFilter";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getInvitations } from "../../../services/general";
+import { getUsers } from "../../../services/central";
 
 const StateInviteByCentral = () => {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ const StateInviteByCentral = () => {
   } = useQuery({
     queryKey: ["users", page, pageSize, filter],
     queryFn: () =>
-      getInvitations({ page, pageSize, search: searchTerm, role: filter }),
+      getUsers({ page, pageSize, search: searchTerm, role: filter }),
   });
 
   // const handleFilter = async (roleFilter = "") => {
@@ -74,7 +75,7 @@ const StateInviteByCentral = () => {
         id: user.id,
         email: user.email,
         state: user?.state?.name || "N/A",
-        status: user.status === "accepted" ? "active" : "request sent",
+        status: user.is_active ? "active" : "request sent",
       })) || [];
 
   // console.log("Transformed Rows (Before Render):", transformedRows);

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState } from "react";
 import {
   Box,
@@ -33,6 +34,7 @@ import { selectStyles } from "../../../utils/style";
 import { useEffect } from "react";
 import { useMemo } from "react";
 import { FaCircleUser } from "react-icons/fa6";
+import { getUsers } from "../../../services/central";
 
 const textFieldStyles = {
   "& .MuiOutlinedInput-root": {
@@ -261,6 +263,10 @@ const AddAdminForm = () => {
     queryFn: () => getAdminStatuses({ page: 1, pageSize: 10 }),
   });
 
+  const activeStatuses = statuses?.results?.filter(
+    (status) => status?.is_active
+  );
+
   console.log(formData, "statuses");
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -408,7 +414,7 @@ const AddAdminForm = () => {
               onChange={(e) => setFormData({ ...formData, admin_status: e })}
               value={formData.admin_status}
               name="admin_status"
-              options={statuses?.results?.map((status) => ({
+              options={activeStatuses?.map((status) => ({
                 value: status.id,
                 label: status.name,
               }))}
@@ -436,6 +442,11 @@ const AddAdminForm = () => {
                 backgroundColor: "#027A3B",
               },
             }}
+            disabled={
+              !formData.admin_status.value ||
+              !formData.email ||
+              !formData.designation
+            }
             loading={isSubmitting}
           >
             Add Admin
@@ -464,14 +475,29 @@ const EditAdminForm = () => {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // const {
+  //   data: admins,
+  //   isLoading: isLoadingAdmins,
+  //   isError: isAdminError,
+  //   error: adminError,
+  // } = useQuery({
+  //   queryKey: ["admins", isSubmitting],
+  //   queryFn: () => getAdmins({ page: 1, pageSize: 10 }),
+  // });
+
   const {
     data: admins,
     isLoading: isLoadingAdmins,
     isError: isAdminError,
     error: adminError,
   } = useQuery({
-    queryKey: ["admins", isSubmitting],
-    queryFn: () => getAdmins({ page: 1, pageSize: 10 }),
+    queryKey: ["users", isSubmitting],
+    queryFn: () =>
+      getUsers({
+        page: 1,
+        pageSize: 100,
+        role: "Admin",
+      }),
   });
 
   const { data: statuses, isLoading } = useQuery({
@@ -479,10 +505,11 @@ const EditAdminForm = () => {
     queryFn: () => getAdminStatuses({ page: 1, pageSize: 10 }),
   });
 
-  const fedAdmins = useMemo(
-    () => admins?.data.filter((admin) => admin.role === "Admin"),
-    [admins?.data]
+  const activeStatuses = statuses?.results?.filter(
+    (status) => status?.is_active
   );
+
+  const fedAdmins = useMemo(() => admins?.result, [admins?.result]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -495,9 +522,10 @@ const EditAdminForm = () => {
       email: selectedAdmin?.email || "",
       designation: selectedAdmin?.designation || "",
       admin_status:
-        statuses?.results
-          .filter((status) => status.id === selectedAdmin?.admin_status?.id)
-          .map((status) => ({ value: status.id, label: status.name }))[0] || "",
+        activeStatuses
+          ?.filter((status) => status.id === selectedAdmin?.admin_status?.id)
+          ?.map((status) => ({ value: status.id, label: status.name }))[0] ||
+        "",
     });
   }, [
     selectedAdmin?.admin_status,
@@ -505,7 +533,6 @@ const EditAdminForm = () => {
     selectedAdmin?.email,
     selectedAdmin?.firstname,
     selectedAdmin?.lastname,
-    statuses?.results,
   ]);
 
   const handleSubmit = async (e) => {
@@ -634,7 +661,7 @@ const EditAdminForm = () => {
                   color: "#304262",
                 }}
               >
-                {t.admin_status?.name || "No Status"}
+                {t.admin_status?.name || "No role assigned"}
               </Typography>
             </Box>
           ))}
@@ -684,7 +711,7 @@ const EditAdminForm = () => {
                 color: "#304262",
               }}
             >
-              {selectedAdmin.admin_status?.name || "No Status"}
+              {selectedAdmin.admin_status?.name || "No role assigned"}
             </Typography>
           </Box>
           {/*Form */}
@@ -860,7 +887,7 @@ const EditAdminForm = () => {
                   }
                   value={formData.admin_status}
                   name="admin_status"
-                  options={statuses?.results?.map((status) => ({
+                  options={activeStatuses?.map((status) => ({
                     value: status.id,
                     label: status.name,
                   }))}
@@ -903,7 +930,6 @@ const EditAdminForm = () => {
 
 // Manage Admin Roles Component
 const ManageAdminRoles = () => {
-  const userRole = getUserRole();
   const handleError = useHandleError();
   const handleSuccess = useHandleSuccess();
   const [newLevel, setNewLevel] = useState(false);
@@ -911,7 +937,6 @@ const ManageAdminRoles = () => {
   const [selectedLevel, setSelectedLevel] = useState(null);
   const [newLevelPermissions, setNewLevelPermissions] = useState([]);
 
-  const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // const [adminRoleName, setAdminRoleName] = useState("");
@@ -920,6 +945,10 @@ const ManageAdminRoles = () => {
     queryKey: ["statuses"],
     queryFn: () => getAdminStatuses({ page: 1, pageSize: 10 }),
   });
+
+  const activeStatuses = statuses?.results?.filter(
+    (status) => status?.is_active
+  );
 
   const handleLevelClick = (level) => {
     setSelectedLevel(level); // Set the selected admin level
@@ -1019,34 +1048,47 @@ const ManageAdminRoles = () => {
 
           {/* List of Admin Levels */}
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
-            {statuses?.results?.map((t) => (
-              <Box
-                key={t.id}
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  maxWidth: "560px",
-                  height: "52px",
-                  border: "0.5px solid #DADADA",
-                  backgroundColor: "#F5F5F5",
-                  p: 1.5,
-                  cursor: "pointer",
-                }}
-                onClick={() => handleLevelClick(t)}
-              >
-                <Typography
+            {activeStatuses?.length ? (
+              activeStatuses?.map((t) => (
+                <Box
+                  key={t.id}
                   sx={{
-                    fontSize: "16px",
-                    fontWeight: 500,
-                    lineHeight: "28px",
-                    color: "#000000",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    maxWidth: "560px",
+                    height: "52px",
+                    border: "0.5px solid #DADADA",
+                    backgroundColor: "#F5F5F5",
+                    p: 1.5,
+                    cursor: "pointer",
                   }}
+                  onClick={() => handleLevelClick(t)}
                 >
-                  {t.name}
-                </Typography>
-                <ArrowForwardIosIcon sx={{ color: "#292D32" }} />
-              </Box>
-            ))}
+                  <Typography
+                    sx={{
+                      fontSize: "16px",
+                      fontWeight: 500,
+                      lineHeight: "28px",
+                      color: "#000000",
+                    }}
+                  >
+                    {t.name}
+                  </Typography>
+                  <ArrowForwardIosIcon sx={{ color: "#292D32" }} />
+                </Box>
+              ))
+            ) : (
+              <Typography
+                sx={{
+                  fontSize: "15px",
+                  fontWeight: 400,
+                  lineHeight: "28px",
+                  color: "#555555",
+                }}
+              >
+                No admin roles found.
+              </Typography>
+            )}
           </Box>
         </Box>
       ) : (

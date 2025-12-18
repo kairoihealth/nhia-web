@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { getInvitations } from "../../../services/general";
+import { getUsers } from "../../../services/central";
 
 const InvitationsByState = () => {
   const navigate = useNavigate();
@@ -24,12 +25,12 @@ const InvitationsByState = () => {
   } = useQuery({
     queryKey: ["users", page, pageSize, filter],
     queryFn: () =>
-      getInvitations({
+      getUsers({
         page,
         pageSize,
         search: searchTerm,
         role: filter,
-        state: stateId,
+        state_id: stateId,
       }),
   });
   console.log(users, "users");
@@ -79,7 +80,7 @@ const InvitationsByState = () => {
         id: user.id,
         email: user.email,
         type: user.role,
-        status: user.status === "accepted" ? "active" : "request sent",
+        status: user.is_active ? "active" : "request sent",
       })) || [];
 
   if (isUsersLoading) {

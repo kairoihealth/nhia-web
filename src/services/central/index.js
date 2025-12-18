@@ -11,6 +11,16 @@ export const inviteUser = async (payload) => {
   }
 };
 
+export const inviteStateUser = async (payload) => {
+  try {
+    const response = await Api.post(e.INVITE_STATE, payload);
+    return response;
+  } catch (error) {
+    console.error("Invite user failed:", error);
+    throw error;
+  }
+};
+
 export const getUsers = async ({
   is_active,
   ordering,
@@ -18,6 +28,7 @@ export const getUsers = async ({
   pageSize,
   role,
   search,
+  state_id,
 }) => {
   try {
     const params = new URLSearchParams();
@@ -27,6 +38,7 @@ export const getUsers = async ({
     if (pageSize) params.append("page_size", pageSize.toString());
     if (role) params.append("role", role.toString());
     if (search) params.append("search", search);
+    if (state_id) params.append("state", state_id.toString());
 
     const response = await Api.get(e.GET_USERS, { params });
     return response.data;
