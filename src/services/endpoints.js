@@ -10,6 +10,7 @@ export const ENDPOINTS = {
   GET_USERS: "/users/",
   GET_SINGLE_USER: (id) => `/users/${id}/`,
   ADD_USER: "/users/register-user/",
+  UPDATE_USER: (id) => `/users/${id}/`,
   UPDATE_ADMIN: (id) => `/users/${id}/admin-update/`,
   GET_ADMINS: "/users/admins/",
 

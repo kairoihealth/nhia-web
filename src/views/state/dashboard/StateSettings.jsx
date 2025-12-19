@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState } from "react";
 import {
   Box,
@@ -16,11 +17,7 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import DeleteOutlineTwoToneIcon from "@mui/icons-material/DeleteOutlineTwoTone";
-import {
-  hmoAdmin,
-  hmoAdminLevel,
-  hmoAdminLevelPermissions,
-} from "../../../mock/hmoAdmins";
+import { hmoAdminLevelPermissions } from "../../../mock/hmoAdmins";
 import ReactSelect from "react-select";
 import { selectStyles } from "../../../utils/style";
 import {
@@ -30,7 +27,7 @@ import {
 import {
   addAdminStatus,
   addNewAdmin,
-  getAdmins,
+  deleteAdminStatus,
   getAdminStatuses,
   updateAdmin,
   updateAdminStatus,
@@ -39,6 +36,7 @@ import { useQuery } from "@tanstack/react-query";
 import { FaCircleUser } from "react-icons/fa6";
 import { useMemo } from "react";
 import { useEffect } from "react";
+import { getUsers } from "../../../services/central";
 
 const textFieldStyles = {
   "& .MuiOutlinedInput-root": {
@@ -245,6 +243,7 @@ const StateSettings = () => {
 
 // Add Admin Form Component
 const AddAdminForm = () => {
+  const stateId = localStorage.getItem("stateId");
   const userRole = getUserRole();
   const handleError = useHandleError();
   const handleSuccess = useHandleSuccess();
@@ -267,7 +266,10 @@ const AddAdminForm = () => {
     queryFn: () => getAdminStatuses({ page: 1, pageSize: 10 }),
   });
 
-  console.log(formData, "statuses");
+  const activeStatuses = statuses?.results?.filter(
+    (status) => status?.is_active
+  );
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -281,6 +283,7 @@ const AddAdminForm = () => {
         designation: formData.designation,
         admin_status: formData.admin_status.value,
         role: userRole,
+        state: stateId,
       };
       console.log(payload, "submitted");
       await addNewAdmin(payload);
@@ -414,7 +417,7 @@ const AddAdminForm = () => {
               onChange={(e) => setFormData({ ...formData, admin_status: e })}
               value={formData.admin_status}
               name="admin_status"
-              options={statuses?.results?.map((status) => ({
+              options={activeStatuses?.map((status) => ({
                 value: status.id,
                 label: status.name,
               }))}
@@ -442,6 +445,11 @@ const AddAdminForm = () => {
                 backgroundColor: "#027A3B",
               },
             }}
+            disabled={
+              !formData.admin_status.value ||
+              !formData.email ||
+              !formData.designation
+            }
             loading={isSubmitting}
           >
             Add Admin
@@ -454,6 +462,8 @@ const AddAdminForm = () => {
 
 // Edit Admin Form Component
 const EditAdminForm = () => {
+  const stateId = localStorage.getItem("stateId");
+  const userId = localStorage.getItem("userId");
   const [selectedAdmin, setSelectedAdmin] = useState(null);
   const userRole = getUserRole();
   const handleError = useHandleError();
@@ -470,14 +480,30 @@ const EditAdminForm = () => {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // const {
+  //   data: admins,
+  //   isLoading: isLoadingAdmins,
+  //   isError: isAdminError,
+  //   error: adminError,
+  // } = useQuery({
+  //   queryKey: ["admins", isSubmitting],
+  //   queryFn: () => getAdmins({ page: 1, pageSize: 10 }),
+  // });
+
   const {
     data: admins,
     isLoading: isLoadingAdmins,
     isError: isAdminError,
     error: adminError,
   } = useQuery({
-    queryKey: ["admins", isSubmitting],
-    queryFn: () => getAdmins({ page: 1, pageSize: 10 }),
+    queryKey: ["users", isSubmitting],
+    queryFn: () =>
+      getUsers({
+        page: 1,
+        pageSize: 100,
+        role: "StateAdmin",
+        state: stateId,
+      }),
   });
 
   const { data: statuses, isLoading } = useQuery({
@@ -485,10 +511,11 @@ const EditAdminForm = () => {
     queryFn: () => getAdminStatuses({ page: 1, pageSize: 10 }),
   });
 
-  const stateAdmins = useMemo(
-    () => admins?.data.filter((admin) => admin.role === "StateAdmin"),
-    [admins?.data]
+  const activeStatuses = statuses?.results?.filter(
+    (status) => status?.is_active
   );
+
+  const stateAdmins = useMemo(() => admins?.results, [admins?.results]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -501,9 +528,10 @@ const EditAdminForm = () => {
       email: selectedAdmin?.email || "",
       designation: selectedAdmin?.designation || "",
       admin_status:
-        statuses?.results
-          .filter((status) => status.id === selectedAdmin?.admin_status?.id)
-          .map((status) => ({ value: status.id, label: status.name }))[0] || "",
+        activeStatuses
+          ?.filter((status) => status.id === selectedAdmin?.admin_status?.id)
+          ?.map((status) => ({ value: status.id, label: status.name }))[0] ||
+        "",
     });
   }, [
     selectedAdmin?.admin_status,
@@ -511,7 +539,6 @@ const EditAdminForm = () => {
     selectedAdmin?.email,
     selectedAdmin?.firstname,
     selectedAdmin?.lastname,
-    statuses?.results,
   ]);
 
   const handleSubmit = async (e) => {
@@ -624,13 +651,13 @@ const EditAdminForm = () => {
               )}
               <Typography
                 sx={{
-                  fontSize: "16px",
-                  fontWeight: 500,
+                  fontSize: "14px",
+                  fontWeight: 400,
                   lineHeight: "24px",
                   color: "#000000",
                 }}
               >
-                {t.firstname} {t.lastname}
+                {t.firstname} {t.lastname} {t.id === userId && "(You)"}
               </Typography>
               <Typography
                 sx={{
@@ -640,8 +667,23 @@ const EditAdminForm = () => {
                   color: "#304262",
                 }}
               >
-                {t.admin_status?.name || "No Status"}
+                {t.admin_status?.name || "No role assigned"}
               </Typography>
+              {!t.verified && (
+                <Typography
+                  sx={{
+                    fontSize: "12px",
+                    fontWeight: 500,
+                    lineHeight: "24px",
+                    color: "#FF8C00",
+                    background: "#FFF4E5",
+                    px: 1,
+                    borderRadius: "4px",
+                  }}
+                >
+                  Pending
+                </Typography>
+              )}
             </Box>
           ))}
         </Box>
@@ -690,7 +732,7 @@ const EditAdminForm = () => {
                 color: "#304262",
               }}
             >
-              {selectedAdmin.admin_status?.name || "No Status"}
+              {selectedAdmin.admin_status?.name || "No role assigned"}
             </Typography>
           </Box>
           {/*Form */}
@@ -866,7 +908,7 @@ const EditAdminForm = () => {
                   }
                   value={formData.admin_status}
                   name="admin_status"
-                  options={statuses?.results?.map((status) => ({
+                  options={activeStatuses?.map((status) => ({
                     value: status.id,
                     label: status.name,
                   }))}
@@ -895,6 +937,14 @@ const EditAdminForm = () => {
                     backgroundColor: "#027A3B",
                   },
                 }}
+                disabled={
+                  !selectedAdmin ||
+                  !formData.admin_status ||
+                  !formData.email ||
+                  !formData.designation ||
+                  !formData.firstName ||
+                  !formData.lastName
+                }
                 loading={isSubmitting}
               >
                 Update Admin
@@ -909,11 +959,11 @@ const EditAdminForm = () => {
 
 // Manage Admin Roles Component
 const ManageAdminRoles = () => {
-  const userRole = getUserRole();
   const handleError = useHandleError();
   const handleSuccess = useHandleSuccess();
   const [newLevel, setNewLevel] = useState(false);
   const [levelName, setLevelName] = useState("");
+  const [levelRank, setLevelRank] = useState("");
   const [selectedLevel, setSelectedLevel] = useState(null);
   const [newLevelPermissions, setNewLevelPermissions] = useState([]);
 
@@ -922,14 +972,19 @@ const ManageAdminRoles = () => {
   // const [adminRoleName, setAdminRoleName] = useState("");
 
   const { data: statuses, isLoading } = useQuery({
-    queryKey: ["statuses"],
+    queryKey: ["statuses", isSubmitting],
     queryFn: () => getAdminStatuses({ page: 1, pageSize: 10 }),
   });
+
+  const activeStatuses = statuses?.results?.filter(
+    (status) => status?.is_active
+  );
 
   const handleLevelClick = (level) => {
     setSelectedLevel(level); // Set the selected admin level
     setNewLevel(false); // Exit "add new level" mode
     setLevelName(level.name); // Pre-fill the level name
+    setLevelRank(level.level); // Pre-fill the level rank
   };
 
   const handlePermissionChange = (permissionId, checked) => {
@@ -967,7 +1022,7 @@ const ManageAdminRoles = () => {
         permissions: newLevel
           ? newLevelPermissions
           : selectedLevel?.permissions,
-        // level: 1,
+        level: levelRank,
       };
 
       await (newLevel
@@ -975,10 +1030,27 @@ const ManageAdminRoles = () => {
         : updateAdminStatus(selectedLevel?.id, payload));
       handleSuccess("Admin level updated successfully!");
       setLevelName("");
+      setLevelRank("");
       setNewLevel(false);
       setSelectedLevel(null);
     } catch (error) {
       handleError("Update failed. Please try again.", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteAdmin = async () => {
+    setIsSubmitting(true);
+    try {
+      await deleteAdminStatus(selectedLevel?.id);
+      handleSuccess("Admin level deleted successfully!");
+      setLevelName("");
+      setLevelRank("");
+      setNewLevel(false);
+      setSelectedLevel(null);
+    } catch (error) {
+      handleError("Failed to delete. Please try again.", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -1025,34 +1097,50 @@ const ManageAdminRoles = () => {
 
           {/* List of Admin Levels */}
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
-            {statuses?.results?.map((t) => (
-              <Box
-                key={t.id}
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  maxWidth: "560px",
-                  height: "52px",
-                  border: "0.5px solid #DADADA",
-                  backgroundColor: "#F5F5F5",
-                  p: 1.5,
-                  cursor: "pointer",
-                }}
-                onClick={() => handleLevelClick(t)}
-              >
-                <Typography
+            {activeStatuses?.length ? (
+              activeStatuses?.map((t) => (
+                <Box
+                  key={t.id}
                   sx={{
-                    fontSize: "16px",
-                    fontWeight: 500,
-                    lineHeight: "28px",
-                    color: "#000000",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    maxWidth: "560px",
+                    height: "52px",
+                    border: "0.5px solid #DADADA",
+                    backgroundColor: "#F5F5F5",
+                    p: 1.5,
+                    cursor: "pointer",
                   }}
+                  onClick={() => handleLevelClick(t)}
                 >
-                  {t.name}
-                </Typography>
-                <ArrowForwardIosIcon sx={{ color: "#292D32" }} />
-              </Box>
-            ))}
+                  <Typography
+                    sx={{
+                      fontSize: "16px",
+                      fontWeight: 500,
+                      lineHeight: "28px",
+                      color: "#000000",
+                    }}
+                  >
+                    {t.name}
+                  </Typography>
+                  <ArrowForwardIosIcon
+                    sx={{ color: "#292D32", fontSize: "16px" }}
+                  />
+                </Box>
+              ))
+            ) : (
+              <Typography
+                sx={{
+                  fontSize: "15px",
+                  fontWeight: 400,
+                  lineHeight: "28px",
+                  color: "#555555",
+                }}
+              >
+                No admin roles found.
+              </Typography>
+            )}
           </Box>
         </Box>
       ) : (
@@ -1082,7 +1170,7 @@ const ManageAdminRoles = () => {
                   lineHeight: "28px",
                 }}
               >
-                {selectedLevel ? "Back" : selectedLevel?.name || "Back"}
+                {selectedLevel ? selectedLevel?.name : "Back"}
               </Typography>
             </Box>
             {!newLevel && (
@@ -1095,6 +1183,8 @@ const ManageAdminRoles = () => {
                     lineHeight: "28px",
                     color: "#EB001B",
                   }}
+                  role="button"
+                  onClick={handleDeleteAdmin}
                 >
                   Delete Admin level
                 </Typography>
@@ -1133,6 +1223,35 @@ const ManageAdminRoles = () => {
             </Box>
           )}
 
+          <Box
+            flex={1}
+            sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 3 }}
+          >
+            <Typography
+              sx={{
+                color: "#595959",
+                fontSize: "16px",
+                fontWeight: 500,
+                lineHeight: "24px",
+              }}
+            >
+              Admin level
+            </Typography>
+            <TextField
+              fullWidth
+              variant="outlined"
+              type="number"
+              min="1"
+              required
+              placeholder="enter level"
+              sx={textFieldStyles}
+              name="levelRank"
+              onChange={(e) => setLevelRank(e.target.value)}
+              value={levelRank}
+              error={!levelRank}
+              helperText={!levelRank ? "Level rank is required" : ""}
+            />
+          </Box>
           <Box sx={{ mt: 3 }}>
             {newLevel && (
               <Typography

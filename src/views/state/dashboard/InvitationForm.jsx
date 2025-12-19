@@ -6,7 +6,7 @@ import { selectStyles, textFieldStyles } from "../../../utils/style";
 import { useQuery } from "@tanstack/react-query";
 import { getAllHmo, getAllProviders } from "../../../services/settings";
 import { useHandleError } from "../../../hooks/useToastHandler";
-import { inviteUser } from "../../../services/central";
+import { inviteStateUser, inviteUser } from "../../../services/central";
 import { useNavigate } from "react-router-dom";
 
 const accountType = [
@@ -99,7 +99,8 @@ const InvitationForm = () => {
         }),
       };
 
-      await inviteUser(payload);
+      await inviteStateUser(payload);
+      // await inviteUser(payload);
 
       setModalOpen(true);
       setTimeout(() => {

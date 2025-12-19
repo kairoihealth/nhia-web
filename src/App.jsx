@@ -41,7 +41,7 @@ function App() {
       {/* <Route path="/enrollee-complaint-first-form" element={<FirstForm />} />
       <Route path="/enrollee-complaint-second-form" element={<SecondForm />} />
       <Route path="/enrollee-form-preview" element={<FormPreview />} />*/}
-      <Route path="/accept-invitation" element={<AccountSetup />} />
+      <Route path="/verify-user" element={<AccountSetup />} />
       <Route path="/enrollee-complaint-review" element={<ReviewForm />} />
       <Route
         path="/enrollee-submission-status"

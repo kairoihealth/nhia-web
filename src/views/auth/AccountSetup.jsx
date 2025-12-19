@@ -55,30 +55,28 @@ const AccountSetup = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const token = searchParams.get("token");
+  // useEffect(() => {
+  //   const searchParams = new URLSearchParams(location.search);
+  //   const token = searchParams.get("token");
 
-    if (token) {
-      try {
-        const decoded = jwtDecode(
-          "tJXnXPv1Lq11fXU7seDLa7l8tizuHK5S7tXe4DRRmiVW7a67VBDhwGxpdBBF9tMD70iLURC0FKVbUdbnQXY0XmCCMHAOsAzrgptCnOmGgLvIqkqb7Mo64xJcrzcvvj2we7dehh2x3uke8j1s176579"
-        );
-        setDecodedToken(decoded);
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          email: decoded.email || "",
-        }));
-      } catch (error) {
-        console.error("Error decoding token:", error);
-        handleError("Invalid or expired invitation link.", error);
-        // navigate("/login");
-      }
-    } else {
-      handleError("No invitation link provided.", null);
-      navigate("/login");
-    }
-  }, []);
+  //   if (token) {
+  //     try {
+  //       const decoded = jwtDecode(token);
+  //       setDecodedToken(decoded);
+  //       setFormData((prevFormData) => ({
+  //         ...prevFormData,
+  //         email: decoded.email || "",
+  //       }));
+  //     } catch (error) {
+  //       console.error("Error decoding token:", error);
+  //       handleError("Invalid or expired invitation link.", error);
+  //       // navigate("/login");
+  //     }
+  //   } else {
+  //     handleError("No invitation link provided.", null);
+  //     navigate("/login");
+  //   }
+  // }, []);
 
   console.log(formData, "formData");
   const handleSubmit = async (e) => {
