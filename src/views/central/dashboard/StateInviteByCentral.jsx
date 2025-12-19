@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import SearchFilter from "../../../shared/SearchAndFilter";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getInvitations } from "../../../services/general";
 import { getUsers } from "../../../services/central";
 
 const StateInviteByCentral = () => {
@@ -24,7 +23,12 @@ const StateInviteByCentral = () => {
   } = useQuery({
     queryKey: ["users", page, pageSize, filter],
     queryFn: () =>
-      getUsers({ page, pageSize, search: searchTerm, role: filter }),
+      getUsers({
+        page,
+        pageSize,
+        search: searchTerm,
+        role: filter,
+      }),
   });
 
   // const handleFilter = async (roleFilter = "") => {

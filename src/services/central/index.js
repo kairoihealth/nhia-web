@@ -28,7 +28,9 @@ export const getUsers = async ({
   pageSize,
   role,
   search,
-  state_id,
+  state,
+  hmo,
+  provider,
 }) => {
   try {
     const params = new URLSearchParams();
@@ -38,7 +40,9 @@ export const getUsers = async ({
     if (pageSize) params.append("page_size", pageSize.toString());
     if (role) params.append("role", role.toString());
     if (search) params.append("search", search);
-    if (state_id) params.append("state", state_id.toString());
+    if (state) params.append("state", state.toString());
+    if (hmo) params.append("hmo", hmo.toString());
+    if (provider) params.append("provider", provider.toString());
 
     const response = await Api.get(e.GET_USERS, { params });
     return response.data;

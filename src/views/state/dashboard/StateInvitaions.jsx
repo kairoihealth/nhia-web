@@ -30,7 +30,7 @@ const InvitationsByState = () => {
         pageSize,
         search: searchTerm,
         role: filter,
-        state_id: stateId,
+        state: stateId,
       }),
   });
   console.log(users, "users");

@@ -27,6 +27,7 @@ import {
 import {
   addAdminStatus,
   addNewAdmin,
+  deleteAdminStatus,
   getAdminStatuses,
   updateAdmin,
   updateAdminStatus,
@@ -242,6 +243,7 @@ const StateSettings = () => {
 
 // Add Admin Form Component
 const AddAdminForm = () => {
+  const stateId = localStorage.getItem("stateId");
   const userRole = getUserRole();
   const handleError = useHandleError();
   const handleSuccess = useHandleSuccess();
@@ -281,6 +283,7 @@ const AddAdminForm = () => {
         designation: formData.designation,
         admin_status: formData.admin_status.value,
         role: userRole,
+        state: stateId,
       };
       console.log(payload, "submitted");
       await addNewAdmin(payload);
@@ -460,6 +463,7 @@ const AddAdminForm = () => {
 // Edit Admin Form Component
 const EditAdminForm = () => {
   const stateId = localStorage.getItem("stateId");
+  const userId = localStorage.getItem("userId");
   const [selectedAdmin, setSelectedAdmin] = useState(null);
   const userRole = getUserRole();
   const handleError = useHandleError();
@@ -498,7 +502,7 @@ const EditAdminForm = () => {
         page: 1,
         pageSize: 100,
         role: "StateAdmin",
-        state_id: stateId,
+        state: stateId,
       }),
   });
 
@@ -653,7 +657,7 @@ const EditAdminForm = () => {
                   color: "#000000",
                 }}
               >
-                {t.firstname} {t.lastname}
+                {t.firstname} {t.lastname} {t.id === userId && "(You)"}
               </Typography>
               <Typography
                 sx={{
@@ -665,6 +669,21 @@ const EditAdminForm = () => {
               >
                 {t.admin_status?.name || "No role assigned"}
               </Typography>
+              {!t.verified && (
+                <Typography
+                  sx={{
+                    fontSize: "12px",
+                    fontWeight: 500,
+                    lineHeight: "24px",
+                    color: "#FF8C00",
+                    background: "#FFF4E5",
+                    px: 1,
+                    borderRadius: "4px",
+                  }}
+                >
+                  Pending
+                </Typography>
+              )}
             </Box>
           ))}
         </Box>
@@ -940,11 +959,11 @@ const EditAdminForm = () => {
 
 // Manage Admin Roles Component
 const ManageAdminRoles = () => {
-  const userRole = getUserRole();
   const handleError = useHandleError();
   const handleSuccess = useHandleSuccess();
   const [newLevel, setNewLevel] = useState(false);
   const [levelName, setLevelName] = useState("");
+  const [levelRank, setLevelRank] = useState("");
   const [selectedLevel, setSelectedLevel] = useState(null);
   const [newLevelPermissions, setNewLevelPermissions] = useState([]);
 
@@ -953,7 +972,7 @@ const ManageAdminRoles = () => {
   // const [adminRoleName, setAdminRoleName] = useState("");
 
   const { data: statuses, isLoading } = useQuery({
-    queryKey: ["statuses"],
+    queryKey: ["statuses", isSubmitting],
     queryFn: () => getAdminStatuses({ page: 1, pageSize: 10 }),
   });
 
@@ -965,6 +984,7 @@ const ManageAdminRoles = () => {
     setSelectedLevel(level); // Set the selected admin level
     setNewLevel(false); // Exit "add new level" mode
     setLevelName(level.name); // Pre-fill the level name
+    setLevelRank(level.level); // Pre-fill the level rank
   };
 
   const handlePermissionChange = (permissionId, checked) => {
@@ -1002,7 +1022,7 @@ const ManageAdminRoles = () => {
         permissions: newLevel
           ? newLevelPermissions
           : selectedLevel?.permissions,
-        // level: 1,
+        level: levelRank,
       };
 
       await (newLevel
@@ -1010,10 +1030,27 @@ const ManageAdminRoles = () => {
         : updateAdminStatus(selectedLevel?.id, payload));
       handleSuccess("Admin level updated successfully!");
       setLevelName("");
+      setLevelRank("");
       setNewLevel(false);
       setSelectedLevel(null);
     } catch (error) {
       handleError("Update failed. Please try again.", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteAdmin = async () => {
+    setIsSubmitting(true);
+    try {
+      await deleteAdminStatus(selectedLevel?.id);
+      handleSuccess("Admin level deleted successfully!");
+      setLevelName("");
+      setLevelRank("");
+      setNewLevel(false);
+      setSelectedLevel(null);
+    } catch (error) {
+      handleError("Failed to delete. Please try again.", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -1067,6 +1104,7 @@ const ManageAdminRoles = () => {
                   sx={{
                     display: "flex",
                     justifyContent: "space-between",
+                    alignItems: "center",
                     maxWidth: "560px",
                     height: "52px",
                     border: "0.5px solid #DADADA",
@@ -1086,7 +1124,9 @@ const ManageAdminRoles = () => {
                   >
                     {t.name}
                   </Typography>
-                  <ArrowForwardIosIcon sx={{ color: "#292D32" }} />
+                  <ArrowForwardIosIcon
+                    sx={{ color: "#292D32", fontSize: "16px" }}
+                  />
                 </Box>
               ))
             ) : (
@@ -1130,7 +1170,7 @@ const ManageAdminRoles = () => {
                   lineHeight: "28px",
                 }}
               >
-                {selectedLevel ? "Back" : selectedLevel?.name || "Back"}
+                {selectedLevel ? selectedLevel?.name : "Back"}
               </Typography>
             </Box>
             {!newLevel && (
@@ -1143,6 +1183,8 @@ const ManageAdminRoles = () => {
                     lineHeight: "28px",
                     color: "#EB001B",
                   }}
+                  role="button"
+                  onClick={handleDeleteAdmin}
                 >
                   Delete Admin level
                 </Typography>
@@ -1152,35 +1194,66 @@ const ManageAdminRoles = () => {
 
           {/* add level */}
           {newLevel && (
-            <Box
-              flex={1}
-              sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 3 }}
-            >
-              <Typography
-                sx={{
-                  color: "#595959",
-                  fontSize: "16px",
-                  fontWeight: 500,
-                  lineHeight: "24px",
-                }}
+            <>
+              <Box
+                flex={1}
+                sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 3 }}
               >
-                Admin level name
-              </Typography>
-              <TextField
-                fullWidth
-                variant="outlined"
-                required
-                placeholder="enter level name"
-                sx={textFieldStyles}
-                name="levelName"
-                onChange={(e) => setLevelName(e.target.value)}
-                value={levelName}
-                error={!levelName}
-                helperText={!levelName ? "Level name is required" : ""}
-              />
-            </Box>
+                <Typography
+                  sx={{
+                    color: "#595959",
+                    fontSize: "16px",
+                    fontWeight: 500,
+                    lineHeight: "24px",
+                  }}
+                >
+                  Admin level name
+                </Typography>
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  required
+                  placeholder="enter level name"
+                  sx={textFieldStyles}
+                  name="levelName"
+                  onChange={(e) => setLevelName(e.target.value)}
+                  value={levelName}
+                  error={!levelName}
+                  helperText={!levelName ? "Level name is required" : ""}
+                />
+              </Box>
+            </>
           )}
 
+          <Box
+            flex={1}
+            sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 3 }}
+          >
+            <Typography
+              sx={{
+                color: "#595959",
+                fontSize: "16px",
+                fontWeight: 500,
+                lineHeight: "24px",
+              }}
+            >
+              Admin level
+            </Typography>
+            <TextField
+              fullWidth
+              variant="outlined"
+              type="number"
+              min="1"
+              required
+              placeholder="enter level"
+              sx={textFieldStyles}
+              name="levelRank"
+              onChange={(e) => setLevelRank(e.target.value)}
+              value={levelRank}
+              error={!levelRank}
+              helperText={!levelRank ? "Level rank is required" : ""}
+            />
+          </Box>
           <Box sx={{ mt: 3 }}>
             {newLevel && (
               <Typography
