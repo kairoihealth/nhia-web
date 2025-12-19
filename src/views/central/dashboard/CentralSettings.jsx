@@ -24,6 +24,7 @@ import {
   updateAdmin,
   addAdminStatus,
   updateAdminStatus,
+  deleteAdminStatus,
 } from "../../../services/adminSettings";
 import {
   useHandleError,
@@ -934,6 +935,7 @@ const ManageAdminRoles = () => {
   const handleSuccess = useHandleSuccess();
   const [newLevel, setNewLevel] = useState(false);
   const [levelName, setLevelName] = useState("");
+  const [levelRank, setLevelRank] = useState("");
   const [selectedLevel, setSelectedLevel] = useState(null);
   const [newLevelPermissions, setNewLevelPermissions] = useState([]);
 
@@ -954,6 +956,7 @@ const ManageAdminRoles = () => {
     setSelectedLevel(level); // Set the selected admin level
     setNewLevel(false); // Exit "add new level" mode
     setLevelName(level.name); // Pre-fill the level name
+    setLevelRank(level.level); // Pre-fill the level rank
   };
 
   const handlePermissionChange = (permissionId, checked) => {
@@ -998,10 +1001,27 @@ const ManageAdminRoles = () => {
         : updateAdminStatus(selectedLevel?.id, payload));
       handleSuccess("Admin level updated successfully!");
       setLevelName("");
+      setLevelRank("");
       setNewLevel(false);
       setSelectedLevel(null);
     } catch (error) {
       handleError("Update failed. Please try again.", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteAdmin = async () => {
+    setIsSubmitting(true);
+    try {
+      await deleteAdminStatus(selectedLevel?.id);
+      handleSuccess("Admin level deleted successfully!");
+      setLevelName("");
+      setLevelRank("");
+      setNewLevel(false);
+      setSelectedLevel(null);
+    } catch (error) {
+      handleError("Failed to delete. Please try again.", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -1168,6 +1188,36 @@ const ManageAdminRoles = () => {
               />
             </Box>
           )}
+
+          <Box
+            flex={1}
+            sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 3 }}
+          >
+            <Typography
+              sx={{
+                color: "#595959",
+                fontSize: "16px",
+                fontWeight: 500,
+                lineHeight: "24px",
+              }}
+            >
+              Admin level
+            </Typography>
+            <TextField
+              fullWidth
+              variant="outlined"
+              type="number"
+              min="1"
+              required
+              placeholder="enter level"
+              sx={textFieldStyles}
+              name="levelRank"
+              onChange={(e) => setLevelRank(e.target.value)}
+              value={levelRank}
+              error={!levelRank}
+              helperText={!levelRank ? "Level rank is required" : ""}
+            />
+          </Box>
 
           <Box sx={{ mt: 3 }}>
             {newLevel && (

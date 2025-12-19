@@ -1194,35 +1194,33 @@ const ManageAdminRoles = () => {
 
           {/* add level */}
           {newLevel && (
-            <>
-              <Box
-                flex={1}
-                sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 3 }}
+            <Box
+              flex={1}
+              sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 3 }}
+            >
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
               >
-                <Typography
-                  sx={{
-                    color: "#595959",
-                    fontSize: "16px",
-                    fontWeight: 500,
-                    lineHeight: "24px",
-                  }}
-                >
-                  Admin level name
-                </Typography>
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  required
-                  placeholder="enter level name"
-                  sx={textFieldStyles}
-                  name="levelName"
-                  onChange={(e) => setLevelName(e.target.value)}
-                  value={levelName}
-                  error={!levelName}
-                  helperText={!levelName ? "Level name is required" : ""}
-                />
-              </Box>
-            </>
+                Admin level name
+              </Typography>
+              <TextField
+                fullWidth
+                variant="outlined"
+                required
+                placeholder="enter level name"
+                sx={textFieldStyles}
+                name="levelName"
+                onChange={(e) => setLevelName(e.target.value)}
+                value={levelName}
+                error={!levelName}
+                helperText={!levelName ? "Level name is required" : ""}
+              />
+            </Box>
           )}
 
           <Box
