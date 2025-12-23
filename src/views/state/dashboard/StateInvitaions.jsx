@@ -30,7 +30,7 @@ const InvitationsByState = () => {
         pageSize,
         search: searchTerm,
         role: filter,
-        state: stateId,
+        // state: stateId,
       }),
   });
   console.log(users, "users");
@@ -71,8 +71,11 @@ const InvitationsByState = () => {
   const transformedRows =
     (filteredUsers?.results?.length ? filteredUsers : users)?.results
       ?.filter(
-        (u) => u.role === "Provider" || u.role === "HMO"
-        // && u?.state?.id === stateId
+        (u) =>
+          (u.role === "Provider" || u.role === "HMO") &&
+          (u?.state?.id === stateId ||
+            u?.hmo?.state === stateId ||
+            u?.provider?.state === stateId)
       )
       ?.map((user) => ({
         name: `${user?.provider?.name || user?.hmo?.name}`.trim(),

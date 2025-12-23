@@ -7,6 +7,7 @@ import ProvidersProfile from "../dashboard/ProvidersProfile";
 import ProvidersSingleComplaint from "../../../components/Providers/ProvidersSingleComplaint";
 import ProvidersComplaintThread from "../../../components/Providers/ProvidersComplaintThread";
 import ProvidersReplyComplaint from "../../../components/Providers/ProvidersReplyComplaint";
+import ProvidersSettings from "../dashboard/ProvidersSettings";
 const ProviderRoutes = () => {
   return (
     <Routes>
@@ -14,7 +15,7 @@ const ProviderRoutes = () => {
       <Route path="complaints" element={<ProviderComplaints />} />
       <Route path="reports" element={<ProvidersReport />} />
       <Route path="profile" element={<ProvidersProfile />} />
-      {/* <Route path="settings" element={<ProvidersSettings />} /> */}
+      <Route path="settings" element={<ProvidersSettings />} />
       <Route path="complaint/:id" element={<ProvidersSingleComplaint />} />
       <Route
         path="complaint/:id/thread"

@@ -39,7 +39,7 @@ const menuData = {
       link: "/hmo/reports",
     },
     { id: 4, label: "Profile", icon: <FiUser />, link: "/hmo/profile" },
-    // { id: 5, label: "Settings", icon: <FiSettings />, link: "/hmo/settings" }
+    { id: 5, label: "Settings", icon: <FiSettings />, link: "/hmo/settings" }
   ],
   Provider: [
     {
@@ -61,12 +61,12 @@ const menuData = {
       link: "/provider/reports",
     },
     { id: 4, label: "Profile", icon: <FiUser />, link: "/provider/profile" },
-    // {
-    //   id: 5,
-    //   label: "Settings",
-    //   icon: <FiSettings />,
-    //   link: "/provider/settings"
-    // }
+    {
+      id: 5,
+      label: "Settings",
+      icon: <FiSettings />,
+      link: "/provider/settings"
+    }
   ],
   StateAdmin: [
     {

@@ -1151,6 +1151,8 @@ const ManageAdminRoles = () => {
                     lineHeight: "28px",
                     color: "#EB001B",
                   }}
+                  role="button"
+                  onClick={handleDeleteAdmin}
                 >
                   Delete Admin level
                 </Typography>

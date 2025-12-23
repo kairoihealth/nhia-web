@@ -75,6 +75,12 @@ const LoginPage = () => {
         if (userDetails?.state?.id) {
           localStorage.setItem("stateId", userDetails?.state?.id);
         }
+        if (userDetails?.hmo?.id) {
+          localStorage.setItem("hmoId", userDetails?.hmo?.id);
+        }
+        if (userDetails?.provider?.id) {
+          localStorage.setItem("providerId", userDetails?.provider?.id);
+        }
 
         Auth.setToken(accessToken);
 

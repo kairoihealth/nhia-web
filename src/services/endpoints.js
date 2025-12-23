@@ -29,6 +29,14 @@ export const ENDPOINTS = {
   GET_SINGLE_STATE: (id) => `/settings/states/${id}/`,
   GET_ALL_HMO: "/settings/hmos/",
   GET_ALL_PROVIDERS: "/settings/providers/",
+  ADD_HMO: "/settings/hmos/",
+  ADD_PROVIDER: "/settings/providers/",
+  UPDATE_HMO: (id) => `/settings/hmos/${id}/`,
+  UPDATE_PROVIDER: (id) => `/settings/providers/${id}/`,
+  GET_SINGLE_HMO: (id) => `/settings/hmos/${id}/`,
+  GET_SINGLE_PROVIDER: (id) => `/settings/providers/${id}/`,
+  ADD_STATE: "/settings/states/",
+  UPDATE_STATE: (id) => `/settings/states/${id}/`,
 
   // COMPLAINTS
   GET_COMPLAINTS: "/complaints/",

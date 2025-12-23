@@ -4,8 +4,6 @@ import {
   Typography,
   TextField,
   FormControl,
-  InputAdornment,
-  IconButton,
   Button,
   // Link,
 } from "@mui/material";
@@ -23,11 +21,14 @@ import {
 } from "../../../hooks/useToastHandler";
 
 const textFieldStyles = {
+  width: "100%",
+
   "& .MuiOutlinedInput-root": {
     borderRadius: "8px",
     backgroundColor: "#F5F5F5",
     color: "#000000",
     border: "0.5px solid #DADADA",
+    width: "100%",
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
       borderColor: "#038F3E",
     },
@@ -57,7 +58,7 @@ const StateProfile = () => {
   const userRole = getUserRole();
   const fullname = getUsername();
   const userId = getUserId();
-  // const [passwordVisible, setPasswordVisible] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   // const [toggleEditProfile, setToggleEditProfile] = useState(false);
   const [profileValues, setProfileValues] = useState({
@@ -94,9 +95,9 @@ const StateProfile = () => {
     }
   }, [user]);
 
-  // const togglePasswordVisibility = () => {
-  //   setPasswordVisible(!passwordVisible);
-  // };
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
 
   const toggleConfirmPasswordVisibility = () => {
     setConfirmPasswordVisible(!confirmPasswordVisible);
@@ -106,8 +107,13 @@ const StateProfile = () => {
     setIsCurrentlySubmitting("profile");
     try {
       let res = await userUpdateProfile({ id: userId, payload: profileValues });
-
+      console.log(res, "sss");
+      localStorage.setItem(
+        "fullname",
+        res.data.data?.firstname + " " + res.data.data?.lastname
+      );
       handleSuccess(res.data?.message || "Response sent successfully");
+      window.location.reload();
     } catch (error) {
       handleError("Failed to send response:", error);
     } finally {
@@ -508,46 +514,39 @@ const StateProfile = () => {
                         *
                       </span>
                     </Typography>
-                    <TextField
-                      type="password"
-                      variant="outlined"
-                      required
-                      placeholder="enter your password"
-                      sx={textFieldStyles}
-                      name="current_password"
-                      value={passwordValues.current_password}
-                      onChange={(e) =>
-                        setPassowrdValues({
-                          ...passwordValues,
-                          current_password: e.target.value,
-                        })
-                      }
-                      slotProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              onClick={toggleConfirmPasswordVisibility}
-                            >
-                              {confirmPasswordVisible ? (
-                                <VisibilityOffOutlined />
-                              ) : (
-                                <VisibilityOutlined />
-                              )}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                    {/* <Typography
-                       sx={{
-                         color: "#595959",
-                         fontSize: "16px",
-                         fontWeight: 500,
-                         lineHeight: "24px",
-                       }}
-                     >
-                       Can&apos;t remember your password?
-                     </Typography> */}
+                    <Box sx={{ position: "relative" }}>
+                      <TextField
+                        type={passwordVisible ? "text" : "password"}
+                        variant="outlined"
+                        required
+                        placeholder="enter your password"
+                        sx={textFieldStyles}
+                        name="current_password"
+                        value={passwordValues.current_password}
+                        onChange={(e) =>
+                          setPassowrdValues({
+                            ...passwordValues,
+                            current_password: e.target.value,
+                          })
+                        }
+                      />
+                      <span
+                        onClick={togglePasswordVisibility}
+                        style={{
+                          cursor: "pointer",
+                          position: "absolute",
+                          right: "10px",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                        }}
+                      >
+                        {passwordVisible ? (
+                          <VisibilityOffOutlined />
+                        ) : (
+                          <VisibilityOutlined />
+                        )}
+                      </span>
+                    </Box>
                   </Box>
 
                   {/* New Password and Confirm Password */}
@@ -571,37 +570,40 @@ const StateProfile = () => {
                           *
                         </span>
                       </Typography>
-                      <TextField
-                        fullWidth
-                        type="password"
-                        variant="outlined"
-                        required
-                        placeholder="Enter new password"
-                        sx={textFieldStyles}
-                        name="new_password"
-                        value={passwordValues.new_password}
-                        onChange={(e) =>
-                          setPassowrdValues({
-                            ...passwordValues,
-                            new_password: e.target.value,
-                          })
-                        }
-                        slotProps={{
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <IconButton
-                                onClick={toggleConfirmPasswordVisibility}
-                              >
-                                {confirmPasswordVisible ? (
-                                  <VisibilityOffOutlined />
-                                ) : (
-                                  <VisibilityOutlined />
-                                )}
-                              </IconButton>
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
+                      <Box sx={{ position: "relative" }}>
+                        <TextField
+                          fullWidth
+                          type={confirmPasswordVisible ? "text" : "password"}
+                          variant="outlined"
+                          required
+                          placeholder="Enter new password"
+                          sx={textFieldStyles}
+                          name="new_password"
+                          value={passwordValues.new_password}
+                          onChange={(e) =>
+                            setPassowrdValues({
+                              ...passwordValues,
+                              new_password: e.target.value,
+                            })
+                          }
+                        />
+                        <span
+                          onClick={toggleConfirmPasswordVisibility}
+                          style={{
+                            cursor: "pointer",
+                            position: "absolute",
+                            right: "10px",
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                          }}
+                        >
+                          {confirmPasswordVisible ? (
+                            <VisibilityOffOutlined />
+                          ) : (
+                            <VisibilityOutlined />
+                          )}
+                        </span>
+                      </Box>
                     </Box>
                     <Box
                       flex={1}
@@ -620,37 +622,40 @@ const StateProfile = () => {
                           *
                         </span>
                       </Typography>
-                      <TextField
-                        fullWidth
-                        type="password"
-                        variant="outlined"
-                        required
-                        placeholder="Confirm new password"
-                        sx={textFieldStyles}
-                        name="confirm_password"
-                        value={passwordValues.confirm_password}
-                        onChange={(e) =>
-                          setPassowrdValues({
-                            ...passwordValues,
-                            confirm_password: e.target.value,
-                          })
-                        }
-                        slotProps={{
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <IconButton
-                                onClick={toggleConfirmPasswordVisibility}
-                              >
-                                {confirmPasswordVisible ? (
-                                  <VisibilityOffOutlined />
-                                ) : (
-                                  <VisibilityOutlined />
-                                )}
-                              </IconButton>
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
+                      <Box sx={{ position: "relative" }}>
+                        <TextField
+                          fullWidth
+                          type={confirmPasswordVisible ? "text" : "password"}
+                          variant="outlined"
+                          required
+                          placeholder="Confirm new password"
+                          sx={textFieldStyles}
+                          name="confirm_password"
+                          value={passwordValues.confirm_password}
+                          onChange={(e) =>
+                            setPassowrdValues({
+                              ...passwordValues,
+                              confirm_password: e.target.value,
+                            })
+                          }
+                        />
+                        <span
+                          onClick={toggleConfirmPasswordVisibility}
+                          style={{
+                            cursor: "pointer",
+                            position: "absolute",
+                            right: "10px",
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                          }}
+                        >
+                          {confirmPasswordVisible ? (
+                            <VisibilityOffOutlined />
+                          ) : (
+                            <VisibilityOutlined />
+                          )}
+                        </span>
+                      </Box>
                     </Box>
                   </Box>
                   <Box
