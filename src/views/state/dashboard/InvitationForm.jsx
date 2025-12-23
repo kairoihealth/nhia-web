@@ -4,7 +4,12 @@ import { useMemo, useState } from "react";
 import ReactSelect from "react-select";
 import { selectStyles, textFieldStyles } from "../../../utils/style";
 import { useQuery } from "@tanstack/react-query";
-import { getAllHmo, getAllProviders } from "../../../services/settings";
+import {
+  addHmo,
+  addProvider,
+  getAllHmo,
+  getAllProviders,
+} from "../../../services/settings";
 import { useHandleError } from "../../../hooks/useToastHandler";
 import { inviteStateUser, inviteUser } from "../../../services/central";
 import { useNavigate } from "react-router-dom";
@@ -14,13 +19,14 @@ const accountType = [
   { id: "Provider", label: "Provider", value: "Provider" },
 ];
 const InvitationForm = () => {
+  const stateId = localStorage.getItem("stateId");
   const navigate = useNavigate();
   const handleError = useHandleError();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [email, setEmail] = useState("");
   const [selectedType, setSelectedType] = useState("");
-  const [selectedHmo, setSelectedHmo] = useState("");
-  const [selectedProvider, setSelectedProvider] = useState("");
+  const [hmo, setHmo] = useState("");
+  const [provider, setProvider] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -54,20 +60,17 @@ const InvitationForm = () => {
     [providersData]
   );
 
-  const handleEmailChange = (event) => {
-    setEmail(event.target.value);
+  const handleInputChange = (event) => {
+    console.log(event.target.name, event.target.value, "event");
+    if (event.target.name === "email") setEmail(event.target.value);
+    else if (event.target.name === "hmo") setHmo(event.target.value);
+    else if (event.target.name === "provider") setProvider(event.target.value);
+
+    // setEmail(event.target.value);
   };
 
   const handleTypeChange = (selectedOption) => {
     setSelectedType(selectedOption);
-  };
-
-  const handleHmoChange = (selectedOption) => {
-    setSelectedHmo(selectedOption);
-  };
-
-  const handleProviderChange = (selectedOption) => {
-    setSelectedProvider(selectedOption);
   };
 
   const validateFields = () => {
@@ -75,9 +78,9 @@ const InvitationForm = () => {
 
     if (!email?.trim()) newErrors.email = "Email is required.";
     if (!selectedType) newErrors.type = "Account type is required.";
-    if (selectedType.value === "HMO" && !selectedHmo)
+    if (selectedType.value === "HMO" && !hmo)
       newErrors.hmo = "Please select an HMO";
-    if (selectedType.value === "Provider" && !selectedProvider)
+    if (selectedType.value === "Provider" && !provider)
       newErrors.provider = "Please select a Provider";
 
     setErrors(newErrors);
@@ -90,12 +93,19 @@ const InvitationForm = () => {
         return;
       }
 
+      let res;
+
+      if (selectedType.value === "HMO")
+        res = await addHmo({ name: hmo, state: stateId });
+      if (selectedType.value === "Provider")
+        res = await addProvider({ name: provider, state: stateId });
+      console.log(res, "restt");
       const payload = {
         email: email,
         role: selectedType.value === "HMO" ? "HMO" : "Provider",
-        ...(selectedType.value === "HMO" && { hmo: selectedHmo.value }),
+        ...(selectedType.value === "HMO" && { hmo: res.id }),
         ...(selectedType.value === "Provider" && {
-          provider: selectedProvider.value,
+          provider: res.id,
         }),
       };
 
@@ -107,8 +117,8 @@ const InvitationForm = () => {
         navigate("/stateadmin/invitations");
         setEmail("");
         setSelectedType(null);
-        setSelectedHmo(null);
-        setSelectedProvider(null);
+        setHmo(null);
+        setProvider(null);
       }, 4000);
     } catch (error) {
       handleError(error);
@@ -160,8 +170,9 @@ const InvitationForm = () => {
             required
             placeholder="enter@gmail.com"
             sx={textFieldStyles}
+            name="email"
             value={email}
-            onChange={handleEmailChange}
+            onChange={handleInputChange}
             error={!!errors.email}
             helperText={errors.email}
           />
@@ -213,12 +224,17 @@ const InvitationForm = () => {
               <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
             </Typography>
             <Box>
-              <ReactSelect
-                styles={selectStyles}
-                value={selectedHmo}
-                onChange={handleHmoChange}
-                options={hmos}
-                placeholder="Select HMO"
+              <TextField
+                fullWidth
+                variant="outlined"
+                required
+                placeholder="Enter HMO Name"
+                sx={textFieldStyles}
+                name="hmo"
+                value={hmo}
+                onChange={handleInputChange}
+                error={!!errors.hmo}
+                helperText={errors.hmo}
               />
               {errors.hmo && (
                 <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
@@ -244,12 +260,17 @@ const InvitationForm = () => {
               <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
             </Typography>
             <Box>
-              <ReactSelect
-                styles={selectStyles}
-                value={selectedProvider}
-                onChange={handleProviderChange}
-                options={providers}
-                placeholder="Select Provider"
+              <TextField
+                fullWidth
+                variant="outlined"
+                required
+                placeholder="Enter Provider Name"
+                sx={textFieldStyles}
+                name="provider"
+                value={provider}
+                onChange={handleInputChange}
+                error={!!errors.provider}
+                helperText={errors.provider}
               />
               {errors.provider && (
                 <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>

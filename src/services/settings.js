@@ -100,3 +100,83 @@ export const getAllProviders = async ({ ordering, page, pageSize, search }) => {
     throw error;
   }
 };
+
+export const addHmo = async (payload) => {
+  try {
+    const response = await Api.post(e.ADD_HMO, payload);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to add HMO:", error);
+    throw error;
+  }
+};
+
+export const addProvider = async (payload) => {
+  try {
+    const response = await Api.post(e.ADD_PROVIDER, payload);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to add Provider:", error);
+    throw error;
+  }
+};
+
+export const updateHmo = async (id, payload) => {
+  try {
+    const response = await Api.put(e.UPDATE_HMO(id), payload);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to update HMO:", error);
+    throw error;
+  }
+};
+
+export const updateProvider = async (id, payload) => {
+  try {
+    const response = await Api.put(e.UPDATE_PROVIDER(id), payload);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to update Provider:", error);
+    throw error;
+  }
+};
+
+export const getSingleHmo = async (id) => {
+  try {
+    const response = await Api.get(e.GET_SINGLE_HMO(id));
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch HMO:", error);
+    throw error;
+  }
+};
+
+export const getSingleProvider = async (id) => {
+  try {
+    const response = await Api.get(e.GET_SINGLE_PROVIDER(id));
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch Provider:", error);
+    throw error;
+  }
+};
+
+export const addState = async (payload) => {
+  try {
+    const response = await Api.post(e.ADD_STATE, payload);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to add State:", error);
+    throw error;
+  }
+};
+
+export const updateState = async (id, payload) => {
+  try {
+    const response = await Api.put(e.UPDATE_STATE(id), payload);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to update State:", error);
+    throw error;
+  }
+};

@@ -261,7 +261,7 @@ const ReviewForm = () => {
                 lineHeight: "24px",
               }}
             >
-              Input your complaint number to get an update
+              Input your case ID to get an update
             </Typography>
             <TextField
               variant="outlined"
