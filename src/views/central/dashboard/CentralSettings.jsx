@@ -510,7 +510,7 @@ const EditAdminForm = () => {
     (status) => status?.is_active
   );
 
-  const fedAdmins = useMemo(() => admins?.result, [admins?.result]);
+  const fedAdmins = useMemo(() => admins?.results, [admins?.results]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
