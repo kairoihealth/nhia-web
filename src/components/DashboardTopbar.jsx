@@ -13,6 +13,8 @@ const DashboardTopbar = ({
   username,
   // role
 }) => {
+  const userRole = localStorage.getItem("userRole");
+  const fullname = username || localStorage.getItem("fullname");
   return (
     <Box
       sx={{
@@ -32,7 +34,7 @@ const DashboardTopbar = ({
     >
       {/* Welcome Message */}
       <Typography variant="h6" fontWeight="bold">
-        Welcome, {username}
+        Welcome, {fullname}
         {/* {role} */}
       </Typography>
 

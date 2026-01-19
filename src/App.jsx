@@ -33,6 +33,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Enrollee />} />
       <Route path="/login" element={<LoginPage />} />
+      {/* <Route path="/accept-invitation" element={<AccountSetup />} /> */}
       <Route path="/account-setup" element={<AccountSetup />} />
       <Route path="/email-verification" element={<EmailVerification />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />

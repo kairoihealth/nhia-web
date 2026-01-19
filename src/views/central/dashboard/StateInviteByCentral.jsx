@@ -69,7 +69,7 @@ const StateInviteByCentral = () => {
     (filteredUsers?.results?.length ? filteredUsers : users)?.results
       ?.filter(
         (u) =>
-          u.role === "Provider" || u.role === "HMO" || u.role === "StateAdmin"
+          u.role === "Provider" || u.role === "HMO" || u.role === "StateAdmin",
       )
       ?.map((user) => ({
         name: `${
@@ -78,8 +78,12 @@ const StateInviteByCentral = () => {
         created_at: new Date(user.created_at).toLocaleDateString(),
         id: user.id,
         email: user.email,
-        state: user?.state?.name || "N/A",
-        status: user.is_active ? "active" : "request sent",
+        state:
+          user?.provider?.state?.name ||
+          user?.hmo?.state?.name ||
+          user?.state?.name ||
+          "N/A",
+        status: user.verified ? "active" : "request sent",
       })) || [];
 
   // console.log("Transformed Rows (Before Render):", transformedRows);

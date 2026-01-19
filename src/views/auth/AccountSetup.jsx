@@ -23,6 +23,7 @@ import { acceptInvitation } from "../../services/general";
 import { setUpAccount } from "../../services/auth/auth";
 import { useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
+import { verifyInviteToken } from "../../services/central";
 
 const AccountSetup = () => {
   const navigate = useNavigate();
@@ -59,14 +60,17 @@ const AccountSetup = () => {
   //   const searchParams = new URLSearchParams(location.search);
   //   const token = searchParams.get("token");
 
+  //   console.log(token, "tokennn");
   //   if (token) {
   //     try {
-  //       const decoded = jwtDecode(token);
-  //       setDecodedToken(decoded);
-  //       setFormData((prevFormData) => ({
-  //         ...prevFormData,
-  //         email: decoded.email || "",
-  //       }));
+  //       // const decoded = jwtDecode(token);
+  //       const res = verifyInviteToken(token);
+  //       console.log(res, "decoded token");
+  //       // setDecodedToken(decoded);
+  //       // setFormData((prevFormData) => ({
+  //       //   ...prevFormData,
+  //       //   email: decoded.email || "",
+  //       // }));
   //     } catch (error) {
   //       console.error("Error decoding token:", error);
   //       handleError("Invalid or expired invitation link.", error);
@@ -76,7 +80,7 @@ const AccountSetup = () => {
   //     handleError("No invitation link provided.", null);
   //     navigate("/login");
   //   }
-  // }, []);
+  // }, [location.search, navigate]);
 
   console.log(formData, "formData");
   const handleSubmit = async (e) => {

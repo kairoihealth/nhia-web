@@ -74,8 +74,8 @@ const InvitationsByState = () => {
         (u) =>
           (u.role === "Provider" || u.role === "HMO") &&
           (u?.state?.id === stateId ||
-            u?.hmo?.state === stateId ||
-            u?.provider?.state === stateId)
+            u?.hmo?.state?.id === stateId ||
+            u?.provider?.state?.id === stateId),
       )
       ?.map((user) => ({
         name: `${user?.provider?.name || user?.hmo?.name}`.trim(),
@@ -83,7 +83,7 @@ const InvitationsByState = () => {
         id: user.id,
         email: user.email,
         type: user.role,
-        status: user.is_active ? "active" : "request sent",
+        status: user.verified ? "active" : "request sent",
       })) || [];
 
   if (isUsersLoading) {

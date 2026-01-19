@@ -13,10 +13,25 @@ export const inviteUser = async (payload) => {
 
 export const inviteStateUser = async (payload) => {
   try {
-    const response = await Api.post(e.INVITE_STATE, payload);
+    const response = await Api.post(e.INVITE_USER, payload);
     return response;
   } catch (error) {
     console.error("Invite user failed:", error);
+    throw error;
+  }
+};
+export const verifyInviteToken = async (token) => {
+  try {
+    const response = await Api.get(e.VERIFY_INVITATION, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to verify token:", error);
     throw error;
   }
 };

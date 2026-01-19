@@ -1,7 +1,7 @@
 export const ENDPOINTS = {
   LOGIN: "/auth/login/",
 
-  INVITE_STATE: "/users/register-user/",
+  INVITE_USER: "/users/register-user/",
 
   // USERS
   SETUP_ACCOUNT: "/users/create-password/",
@@ -61,4 +61,5 @@ export const ENDPOINTS = {
   GET_SINGLE_INVITATION: (id) => `/invitations/${id}/`,
   RESEND_INVITATION: (id) => `/invitations/${id}/resend/`,
   CANCEL_INVITATION: (id) => `/invitations/${id}/cancel/`,
+  VERIFY_INVITATION: `/invitations/verify/`,
 };
