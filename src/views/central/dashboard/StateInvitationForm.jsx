@@ -12,7 +12,7 @@ import ReactSelect from "react-select";
 import { selectStyles, textFieldStyles } from "../../../utils/style";
 import { useHandleError } from "../../../hooks/useToastHandler";
 // import useAuth from "../../../hooks/useAuth";
-import { inviteUser } from "../../../services/central";
+import { inviteStateUser, inviteUser } from "../../../services/central";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
@@ -75,7 +75,7 @@ const StateInvitationForm = () => {
         state: selectedState.value,
       };
 
-      await inviteUser(payload);
+      await inviteStateUser(payload);
       setModalOpen(true);
       setTimeout(() => {
         navigate("/admin/state/invite");
