@@ -7,6 +7,8 @@ export const ENDPOINTS = {
   SETUP_ACCOUNT: "/users/create-password/",
   UPDATE_PROFILE: (id) => `/users/${id}/update-profile/`,
   CHANGE_PASSWORD: "/users/change-password/",
+  FORGOT_PASSWORD: "/users/reset-password/",
+  RESET_PASSWORD: "/users/reset-password-confirm/",
   GET_USERS: "/users/",
   GET_SINGLE_USER: (id) => `/users/${id}/`,
   ADD_USER: "/users/register-user/",

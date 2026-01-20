@@ -26,10 +26,11 @@ import {
 } from "../../utils/style";
 import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
 import { convertToBase64 } from "../../utils/convertTobase64";
+import WithAuthorization from "../auth/withAuthorization";
 // import { convertFileToBase64 } from "../../utils/convertTobase64";
 // import { getAllHmo } from "../../services/settings";
 
-const CentralReplyComplaint = () => {
+const CentralReplyComplaintPage = () => {
   const handleError = useHandleError();
   const handleSuccess = useHandleSuccess();
   const navigate = useNavigate();
@@ -86,7 +87,7 @@ const CentralReplyComplaint = () => {
   // Function to remove an attachment
   const handleRemoveAttachment = (index) => {
     setAttachments((prevAttachments) =>
-      prevAttachments.filter((_, i) => i !== index)
+      prevAttachments.filter((_, i) => i !== index),
     );
   };
 
@@ -100,7 +101,7 @@ const CentralReplyComplaint = () => {
         attachments?.map(async (attachment) => {
           const base64 = await convertToBase64(attachment.file);
           return { document: base64 };
-        })
+        }),
       );
 
       const data = {
@@ -519,5 +520,11 @@ const CentralReplyComplaint = () => {
     </Box>
   );
 };
+
+const CentralReplyComplaint = WithAuthorization(CentralReplyComplaintPage, [
+  "can_view_all_complaints",
+  "can_view_complaint_details",
+  "can_respond_to_complaints",
+]);
 
 export default CentralReplyComplaint;

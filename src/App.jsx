@@ -20,6 +20,8 @@ import Enrollee from "./views/auth/Enrollee";
 import HmoRegisterPage from "./views/hmo/auth/HmoRegisterPage";
 import ReviewForm from "./views/enrolees/ComplaintReview/ReviewForm";
 import SubmissionStatus from "./views/enrolees/ComplaintSubmission/SubmissionStatus";
+import { AuthProvider } from "./components/auth/AuthContext";
+import ResetPassword from "./components/ResetPassword";
 // import NotFound from "./components/NotFound";
 
 const getUserRole = () => localStorage.getItem("userRole");
@@ -30,40 +32,43 @@ function App() {
   const fullname = getUsername();
 
   return (
-    <Routes>
-      <Route path="/" element={<Enrollee />} />
-      <Route path="/login" element={<LoginPage />} />
-      {/* <Route path="/accept-invitation" element={<AccountSetup />} /> */}
-      <Route path="/account-setup" element={<AccountSetup />} />
-      <Route path="/email-verification" element={<EmailVerification />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      {/*Enrollee routes*/}
-      {/* <Route path="enrollee/*" element={<EnrolleeRoutes />} /> */}
-      {/* <Route path="/enrollee-complaint-first-form" element={<FirstForm />} />
+    <AuthProvider>
+      <Routes>
+        <Route path="/" element={<Enrollee />} />
+        <Route path="/login" element={<LoginPage />} />
+        {/* <Route path="/accept-invitation" element={<AccountSetup />} /> */}
+        <Route path="/account-setup" element={<AccountSetup />} />
+        <Route path="/email-verification" element={<EmailVerification />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        {/*Enrollee routes*/}
+        {/* <Route path="enrollee/*" element={<EnrolleeRoutes />} /> */}
+        {/* <Route path="/enrollee-complaint-first-form" element={<FirstForm />} />
       <Route path="/enrollee-complaint-second-form" element={<SecondForm />} />
       <Route path="/enrollee-form-preview" element={<FormPreview />} />*/}
-      <Route path="/verify-user" element={<AccountSetup />} />
-      <Route path="/enrollee-complaint-review" element={<ReviewForm />} />
-      <Route
-        path="/enrollee-submission-status"
-        element={<SubmissionStatus />}
-      />
-      <Route path="hmo-register" element={<HmoRegisterPage />} />
-      {/* Protect all dashboard routes */}
-      <Route element={<ProtectedRoute />}>
+        <Route path="/verify-user" element={<AccountSetup />} />
+        <Route path="/enrollee-complaint-review" element={<ReviewForm />} />
         <Route
-          path="/"
-          element={<DashboardLayout username={fullname} role={userRole} />}
-        >
-          <Route path="hmo/*" element={<HMORoutes />} />
-          <Route path="stateadmin/*" element={<StateRoutes />} />
-          <Route path="provider/*" element={<ProviderRoutes />} />
-          <Route path="admin/*" element={<CentralRoutes />} />
+          path="/enrollee-submission-status"
+          element={<SubmissionStatus />}
+        />
+        <Route path="hmo-register" element={<HmoRegisterPage />} />
+        {/* Protect all dashboard routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route
+            path="/"
+            element={<DashboardLayout username={fullname} role={userRole} />}
+          >
+            <Route path="hmo/*" element={<HMORoutes />} />
+            <Route path="stateadmin/*" element={<StateRoutes />} />
+            <Route path="provider/*" element={<ProviderRoutes />} />
+            <Route path="admin/*" element={<CentralRoutes />} />
+          </Route>
         </Route>
-      </Route>
-      {/* 404 Page */}
-      <Route path="*" element={<ErrorPage />} />
-    </Routes>
+        {/* 404 Page */}
+        <Route path="*" element={<ErrorPage />} />
+      </Routes>
+    </AuthProvider>
   );
 }
 

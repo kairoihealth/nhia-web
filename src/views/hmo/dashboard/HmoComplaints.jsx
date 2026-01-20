@@ -18,6 +18,7 @@ import { useRef } from "react";
 import { FiFilter } from "react-icons/fi";
 import { complaintCategories, complaintType } from "../../../mock/type";
 import { useEffect } from "react";
+import WithAuthorization from "../../../components/auth/withAuthorization";
 
 const initialFilters = {
   type: "",
@@ -28,7 +29,7 @@ const initialFilters = {
 };
 
 // HmoComplaints Component
-const HmoComplaints = () => {
+const HmoComplaintsPage = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -379,5 +380,10 @@ const HmoComplaints = () => {
     </Box>
   );
 };
+
+const HmoComplaints = WithAuthorization(
+  HmoComplaintsPage,
+  "can_view_all_complaints",
+);
 
 export default HmoComplaints;

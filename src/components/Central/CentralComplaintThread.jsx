@@ -20,6 +20,7 @@ import {
 } from "../../services/general";
 import { isImage } from "../../utils/general";
 import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
+import WithAuthorization from "../auth/withAuthorization";
 
 // const data = {
 //   id: 1,
@@ -37,7 +38,7 @@ import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
 //   ]
 // };
 
-const CentralComplaintThread = () => {
+const CentralComplaintThreadPage = () => {
   const handleError = useHandleError();
   const handleSuccess = useHandleSuccess();
   const location = useLocation();
@@ -196,18 +197,18 @@ const CentralComplaintThread = () => {
                         complaint?.status === "pending"
                           ? "#FFF3E7"
                           : complaint?.status === "closed"
-                          ? "#D6EBFF"
-                          : complaint?.status === "active"
-                          ? "#E8F8EE"
-                          : "#FFF2F4",
+                            ? "#D6EBFF"
+                            : complaint?.status === "active"
+                              ? "#E8F8EE"
+                              : "#FFF2F4",
                       color:
                         complaint?.status === "pending"
                           ? "#EDB378"
                           : complaint?.status === "closed"
-                          ? "#4B95DD"
-                          : complaint?.status === "active"
-                          ? "#096F35"
-                          : "#EB001B",
+                            ? "#4B95DD"
+                            : complaint?.status === "active"
+                              ? "#096F35"
+                              : "#EB001B",
                     }}
                   >
                     &bull; {complaint?.status || "N/A"}
@@ -538,7 +539,7 @@ const CentralComplaintThread = () => {
                           Date:{" "}
                           <span>
                             {new Date(
-                              centralNhiaResponse?.created_at
+                              centralNhiaResponse?.created_at,
                             ).toLocaleDateString() || "--"}
                           </span>
                         </Typography>
@@ -653,8 +654,8 @@ const CentralComplaintThread = () => {
                           {t.response_by.role === "StateAdmin"
                             ? `From: ${t.response_by.firstname} ${t.response_by.lastname} (State NHIA)`
                             : t.response_by.role === "Admin"
-                            ? `From: ${t.response_by.firstname} ${t.response_by.lastname} (Central NHIA)`
-                            : "From: Respondent"}
+                              ? `From: ${t.response_by.firstname} ${t.response_by.lastname} (Central NHIA)`
+                              : "From: Respondent"}
                         </Typography>
                         <Typography
                           sx={{
@@ -676,11 +677,11 @@ const CentralComplaintThread = () => {
                                 },
                               ${complaint.firstname} ${complaint.lastname}`
                               : t.response_recipient === "Complainant"
-                              ? `${complaint.firstname} ${complaint.lastname} (Complainant)`
-                              : `${
-                                  complaint?.hmo?.name ||
-                                  complaint?.provider?.name
-                                }`}
+                                ? `${complaint.firstname} ${complaint.lastname} (Complainant)`
+                                : `${
+                                    complaint?.hmo?.name ||
+                                    complaint?.provider?.name
+                                  }`}
                           </span>
                         </Typography>
                       </Box>
@@ -987,5 +988,11 @@ const CentralComplaintThread = () => {
     </Box>
   );
 };
+
+const CentralComplaintThread = WithAuthorization(CentralComplaintThreadPage, [
+  "can_view_all_complaints",
+  "can_view_complaint_details",
+  "can_respond_to_complaints",
+]);
 
 export default CentralComplaintThread;

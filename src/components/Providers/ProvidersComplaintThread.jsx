@@ -20,8 +20,9 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { isImage } from "../../utils/general";
 import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
+import WithAuthorization from "../auth/withAuthorization";
 
-const ProvidersComplaintThread = () => {
+const ProvidersComplaintThreadPage = () => {
   const handleError = useHandleError();
   const handleSuccess = useHandleSuccess();
   const location = useLocation();
@@ -989,6 +990,12 @@ const ProvidersComplaintThread = () => {
     </Box>
   );
 };
+
+const ProvidersComplaintThread = WithAuthorization(ProvidersComplaintThreadPage, [
+  "can_view_all_complaints",
+  "can_view_complaint_details",
+  "can_respond_to_complaints",
+]);
 
 export default ProvidersComplaintThread;
 

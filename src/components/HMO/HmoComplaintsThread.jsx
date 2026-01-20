@@ -20,8 +20,9 @@ import {
 } from "../../services/general";
 import { isImage } from "../../utils/general";
 import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
+import WithAuthorization from "../auth/withAuthorization";
 
-const HmoComplaintsThread = () => {
+const HmoComplaintsThreadPage = () => {
   const handleError = useHandleError();
   const handleSuccess = useHandleSuccess();
   const location = useLocation();
@@ -989,5 +990,11 @@ const HmoComplaintsThread = () => {
     </Box>
   );
 };
+
+const HmoComplaintsThread = WithAuthorization(HmoComplaintsThreadPage, [
+  "can_view_all_complaints",
+  "can_view_complaint_details",
+  "can_respond_to_complaints",
+]);
 
 export default HmoComplaintsThread;

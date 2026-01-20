@@ -265,7 +265,7 @@ const AddAdminForm = () => {
   });
 
   const activeStatuses = statuses?.results?.filter(
-    (status) => status?.is_active
+    (status) => status?.is_active,
   );
 
   console.log(formData, "statuses");
@@ -285,14 +285,14 @@ const AddAdminForm = () => {
       };
       console.log(payload, "submitted");
       await addNewAdmin(payload);
-      handleSuccess("Admin added successfully!");
+      handleSuccess("An invite has been sent successfully!");
       setFormData({
         email: "",
         designation: "",
         admin_status: "",
       });
     } catch (error) {
-      handleError("Registration failed. Please try again.", error);
+      handleError(error || "Failed to add admin. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -507,7 +507,7 @@ const EditAdminForm = () => {
   });
 
   const activeStatuses = statuses?.results?.filter(
-    (status) => status?.is_active
+    (status) => status?.is_active,
   );
 
   const fedAdmins = useMemo(() => admins?.results, [admins?.results]);
@@ -574,7 +574,7 @@ const EditAdminForm = () => {
       setSelectedAdmin(null);
       // navigate("/login");
     } catch (error) {
-      handleError("Update failed. Please try again.", error);
+      handleError(error || "Update failed. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -949,7 +949,7 @@ const ManageAdminRoles = () => {
   });
 
   const activeStatuses = statuses?.results?.filter(
-    (status) => status?.is_active
+    (status) => status?.is_active,
   );
 
   const handleLevelClick = (level) => {
@@ -967,7 +967,7 @@ const ManageAdminRoles = () => {
         updatedPermissions = [...updatedPermissions, permissionId]; // Add permission
       } else {
         updatedPermissions = updatedPermissions.filter(
-          (id) => id !== permissionId
+          (id) => id !== permissionId,
         ); // Remove permission
       }
       setNewLevelPermissions(updatedPermissions);
@@ -978,7 +978,7 @@ const ManageAdminRoles = () => {
         updatedPermissions = [...updatedPermissions, permissionId];
       } else {
         updatedPermissions = updatedPermissions.filter(
-          (id) => id !== permissionId
+          (id) => id !== permissionId,
         );
       }
       setSelectedLevel({ ...selectedLevel, permissions: updatedPermissions });
@@ -1005,7 +1005,7 @@ const ManageAdminRoles = () => {
       setNewLevel(false);
       setSelectedLevel(null);
     } catch (error) {
-      handleError("Update failed. Please try again.", error);
+      handleError(error || "Update failed. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -1021,7 +1021,7 @@ const ManageAdminRoles = () => {
       setNewLevel(false);
       setSelectedLevel(null);
     } catch (error) {
-      handleError("Failed to delete. Please try again.", error);
+      handleError(error || "Failed to delete. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

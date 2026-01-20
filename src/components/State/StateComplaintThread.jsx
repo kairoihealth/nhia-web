@@ -20,6 +20,7 @@ import {
 } from "../../services/general";
 import { isImage } from "../../utils/general";
 import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
+import WithAuthorization from "../auth/withAuthorization";
 
 // const data = {
 //   id: 1,
@@ -37,7 +38,7 @@ import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
 //   ]
 // };
 
-const StateComplaintThread = () => {
+const StateComplaintThreadPage = () => {
   const handleError = useHandleError();
   const handleSuccess = useHandleSuccess();
   const location = useLocation();
@@ -905,5 +906,11 @@ const StateComplaintThread = () => {
     </Box>
   );
 };
+
+const StateComplaintThread = WithAuthorization(StateComplaintThreadPage, [
+  "can_view_all_complaints",
+  "can_view_complaint_details",
+  "can_respond_to_complaints",
+]);
 
 export default StateComplaintThread;

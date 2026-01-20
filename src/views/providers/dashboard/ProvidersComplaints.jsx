@@ -17,6 +17,7 @@ import { getComplaints } from "../../../services/general";
 import { useEffect } from "react";
 import { useRef } from "react";
 import { complaintCategories, complaintType } from "../../../mock/type";
+import WithAuthorization from "../../../components/auth/withAuthorization";
 
 const initialFilters = {
   type: "",
@@ -27,7 +28,7 @@ const initialFilters = {
 };
 
 // ProviderComplaints Component
-const ProviderComplaints = () => {
+const ProviderComplaintsPage = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -378,5 +379,10 @@ const ProviderComplaints = () => {
     </Box>
   );
 };
+
+const ProviderComplaints = WithAuthorization(
+  ProviderComplaintsPage,
+  "can_view_all_complaints",
+);
 
 export default ProviderComplaints;

@@ -2,8 +2,9 @@ import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getSingleComplaint } from "../../services/general";
+import WithAuthorization from "../auth/withAuthorization";
 
-const StateSingleComplaint = () => {
+const StateSingleComplaintPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const slug = location?.state.complaint;
@@ -413,5 +414,10 @@ const StateSingleComplaint = () => {
     </Box>
   );
 };
+
+const StateSingleComplaint = WithAuthorization(StateSingleComplaintPage, [
+  "can_view_complaint_details",
+  "can_respond_to_complaints",
+]);
 
 export default StateSingleComplaint;
