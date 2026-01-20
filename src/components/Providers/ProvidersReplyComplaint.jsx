@@ -18,6 +18,7 @@ import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
 import { useQuery } from "@tanstack/react-query";
 import { convertToBase64 } from "../../utils/convertTobase64";
 import { getSingleUser } from "../../services/central";
+import WithAuthorization from "../auth/withAuthorization";
 
 const textFieldStyles = {
   "& .MuiOutlinedInput-root": {
@@ -50,7 +51,7 @@ const multiLineStyles = {
 
 const getUserId = () => localStorage.getItem("userId");
 
-const ProvidersReplyComplaint = () => {
+const ProvidersReplyComplaintPage = () => {
   const userId = getUserId();
   const handleError = useHandleError();
   const handleSuccess = useHandleSuccess();
@@ -589,5 +590,11 @@ const ProvidersReplyComplaint = () => {
     </Box>
   );
 };
+
+const ProvidersReplyComplaint = WithAuthorization(ProvidersReplyComplaintPage, [
+  "can_view_all_complaints",
+  "can_view_complaint_details",
+  "can_respond_to_complaints",
+]);
 
 export default ProvidersReplyComplaint;

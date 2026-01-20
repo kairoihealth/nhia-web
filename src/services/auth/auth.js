@@ -13,7 +13,7 @@ export const userLogin = async (email, password) => {
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
     return response;
   } catch (error) {
@@ -38,6 +38,26 @@ export const userChangePassword = async (payload) => {
     return response;
   } catch (error) {
     console.error("Password change failed:", error);
+    throw error;
+  }
+};
+
+export const userForgotPassword = async (email) => {
+  try {
+    const response = await Api.post(e.FORGOT_PASSWORD, { email });
+    return response;
+  } catch (error) {
+    console.error("Forgot password request failed:", error);
+    throw error;
+  }
+};
+
+export const userResetPassword = async (payload) => {
+  try {
+    const response = await Api.post(e.RESET_PASSWORD, payload);
+    return response;
+  } catch (error) {
+    console.error("Password reset failed:", error);
     throw error;
   }
 };

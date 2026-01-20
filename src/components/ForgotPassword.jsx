@@ -4,12 +4,13 @@ import {
   Container,
   Typography,
   TextField,
-  Button
+  Button,
   // Link
 } from "@mui/material";
 import Logo from "../assets/nhia-logo.png";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { userForgotPassword } from "../services/auth/auth";
+import { useHandleError, useHandleSuccess } from "../hooks/useToastHandler";
 
 const textFieldStyles = {
   "& .MuiOutlinedInput-root": {
@@ -17,23 +18,35 @@ const textFieldStyles = {
     backgroundColor: "#F5F5F5",
     color: "#000000",
     border: "0.5px solid #DADADA",
-    mb: 3
-  }
+    mb: 3,
+  },
 };
 const ForgotPassword = () => {
-  const [email, setEmail] = useState("");
-  const navigate = useNavigate();
+  const handleError = useHandleError();
+  const handleSuccess = useHandleSuccess();
 
-  const handleSubmit = () => {
-    if (!email) {
-      alert("Please enter your email address.");
-      return;
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [email, setEmail] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      if (!email) {
+        handleError("Please enter your email address.");
+        return;
+      }
+
+      await userForgotPassword(email);
+
+      handleSuccess("Password reset link sent to your email.");
+
+      // navigate(`/reset-password?email=${encodeURIComponent(email)}`);
+    } catch (error) {
+      handleError(error || "Request failed. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
-    navigate(
-      `/email-verification?from=forgot-password&email=${encodeURIComponent(
-        email
-      )}`
-    );
   };
 
   return (
@@ -49,7 +62,7 @@ const ForgotPassword = () => {
           justifyContent: "center",
           alignItems: "center",
           backgroundColor: "#038F3E",
-          height: "100vh"
+          height: "100vh",
         }}
       >
         <Container maxWidth="sm">
@@ -60,7 +73,7 @@ const ForgotPassword = () => {
               textAlign: "center",
               width: "100%",
               maxWidth: 500,
-              borderRadius: "25px"
+              borderRadius: "25px",
             }}
           >
             <Box
@@ -83,7 +96,7 @@ const ForgotPassword = () => {
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "flex-start",
-                  gap: 1
+                  gap: 1,
                 }}
               >
                 <Typography
@@ -91,7 +104,7 @@ const ForgotPassword = () => {
                     color: "#595959",
                     fontSize: "16px",
                     fontWeight: 500,
-                    lineHeight: "24px"
+                    lineHeight: "24px",
                   }}
                 >
                   Email Address
@@ -125,8 +138,10 @@ const ForgotPassword = () => {
                   mb: 3,
                   py: "12px",
                   px: "8px",
-                  textTransform: "capitalize"
+                  textTransform: "capitalize",
                 }}
+                loading={isSubmitting}
+                disabled={isSubmitting}
                 onClick={handleSubmit}
               >
                 Reset Password

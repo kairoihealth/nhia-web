@@ -19,6 +19,7 @@ import { useRef } from "react";
 import { useEffect } from "react";
 import { complaintCategories, complaintType } from "../../../mock/type";
 import InfoIcon from "@mui/icons-material/Info";
+import WithAuthorization from "../../../components/auth/withAuthorization";
 
 const initialFilters = {
   type: "",
@@ -29,7 +30,7 @@ const initialFilters = {
 };
 
 // StateComplaints Component
-const StateComplaints = () => {
+const StateComplaintsPage = () => {
   const navigate = useNavigate();
   const stateId = localStorage.getItem("stateId");
   const [page, setPage] = useState(1);
@@ -443,5 +444,10 @@ const StateComplaints = () => {
     </Box>
   );
 };
+
+const StateComplaints = WithAuthorization(
+  StateComplaintsPage,
+  "can_view_all_complaints",
+);
 
 export default StateComplaints;

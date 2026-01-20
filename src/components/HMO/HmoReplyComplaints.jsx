@@ -17,6 +17,7 @@ import { convertToBase64 } from "../../utils/convertTobase64";
 import { useQuery } from "@tanstack/react-query";
 import { getSingleComplaint, respondToComplaint } from "../../services/general";
 import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
+import WithAuthorization from "../auth/withAuthorization";
 
 const textFieldStyles = {
   "& .MuiOutlinedInput-root": {
@@ -46,7 +47,7 @@ const multiLineStyles = {
     },
   },
 };
-const HmoReplyComplaints = () => {
+const HmoReplyComplaintsPage = () => {
   const handleError = useHandleError();
   const handleSuccess = useHandleSuccess();
   const navigate = useNavigate();
@@ -567,5 +568,11 @@ const HmoReplyComplaints = () => {
     </Box>
   );
 };
+
+const HmoReplyComplaints = WithAuthorization(HmoReplyComplaintsPage, [
+  "can_view_all_complaints",
+  "can_view_complaint_details",
+  "can_respond_to_complaints",
+]);
 
 export default HmoReplyComplaints;

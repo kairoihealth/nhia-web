@@ -3,38 +3,30 @@ import {
   Box,
   Container,
   Typography,
-  TextField,
   Button,
   InputAdornment,
   IconButton,
-  Link,
   OutlinedInput,
-  FormControl,
 } from "@mui/material";
-import Logo from "../../assets/nhia-logo.png";
-import PhoneInput from "react-phone-input-2";
+import Logo from "../assets/nhia-logo.png";
 import "react-phone-input-2/lib/style.css";
 import { VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
-import { validateAccountForm } from "../../utils/accountValidation";
-import { formControlStyles, textFieldStyles } from "../../utils/style";
-import { setUpAccount } from "../../services/auth/auth";
+import { useHandleError, useHandleSuccess } from "../hooks/useToastHandler";
+import { validatePasswordResetForm } from "../utils/accountValidation";
+import { textFieldStyles } from "../utils/style";
+import { userResetPassword } from "../services/auth/auth";
 
-const AccountSetup = () => {
+const ResetPassword = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const handleError = useHandleError();
   const handleSuccess = useHandleSuccess();
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
     password: "",
     confirmPassword: "",
   });
-  const [, setDecodedToken] = useState(null);
+  //   const [, setDecodedToken] = useState(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -84,7 +76,7 @@ const AccountSetup = () => {
     setIsSubmitting(true);
     try {
       const { isValid, errors: validationErrors } =
-        validateAccountForm(formData);
+        validatePasswordResetForm(formData);
 
       if (!isValid) {
         setErrors(validationErrors);
@@ -96,28 +88,20 @@ const AccountSetup = () => {
 
       const payload = {
         token: token,
-        email: formData.email,
-        firstname: formData.firstName,
-        lastname: formData.lastName,
-        phone: formData.phone,
         password: formData.password,
         confirm_password: formData.confirmPassword,
       };
 
-      await setUpAccount(payload);
+      await userResetPassword(payload);
       // await acceptInvitation(payload);
-      handleSuccess("Registration successful!");
+      handleSuccess("Password reset successful!");
       setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: "",
         password: "",
         confirmPassword: "",
       });
       navigate("/login");
     } catch (error) {
-      handleError("Registration failed. Please try again.", error);
+      handleError(error || "Password reset failed. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -162,159 +146,9 @@ const AccountSetup = () => {
               }}
               gutterBottom
             >
-              Setup your account
+              Reset your password
             </Typography>
-            <Box component="form" sx={{ mt: 3 }}>
-              {/* HMO Name Field */}
-              <Box
-                flex={1}
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                  gap: 1,
-                  my: 2,
-                }}
-              >
-                <Typography
-                  sx={{
-                    color: "#595959",
-                    fontSize: "16px",
-                    fontWeight: 500,
-                    lineHeight: "24px",
-                  }}
-                >
-                  First name
-                  <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
-                </Typography>
-                <TextField
-                  fullWidth
-                  type="text"
-                  name="firstName"
-                  placeholder="Jessica"
-                  required
-                  sx={textFieldStyles}
-                  onChange={handleChange}
-                  value={formData.firstName}
-                  error={!!errors.firstName}
-                  helperText={errors.firstName}
-                />
-              </Box>
-
-              <Box
-                flex={1}
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                  gap: 1,
-                }}
-              >
-                <Typography
-                  sx={{
-                    color: "#595959",
-                    fontSize: "16px",
-                    fontWeight: 500,
-                    lineHeight: "24px",
-                  }}
-                >
-                  Last name
-                  <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
-                </Typography>
-                <TextField
-                  fullWidth
-                  type="text"
-                  name="lastName"
-                  placeholder="Jessica"
-                  required
-                  sx={textFieldStyles}
-                  onChange={handleChange}
-                  value={formData.lastName}
-                  error={!!errors.lastName}
-                  helperText={errors.lastName}
-                />
-              </Box>
-
-              {/* Email Field */}
-              <Box
-                flex={1}
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                  gap: 1,
-                  my: 2,
-                }}
-              >
-                <Typography
-                  sx={{
-                    color: "#595959",
-                    fontSize: "16px",
-                    fontWeight: 500,
-                    lineHeight: "24px",
-                  }}
-                >
-                  Official Email Address
-                  <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
-                </Typography>
-                <TextField
-                  fullWidth
-                  type="email"
-                  name="email"
-                  placeholder="example@example.com"
-                  required
-                  sx={textFieldStyles}
-                  onChange={handleChange}
-                  error={!!errors.email}
-                  helperText={errors.email}
-                />
-              </Box>
-
-              {/* Phone Number Field */}
-              <Box
-                flex={1}
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                  gap: 1,
-                  mb: 3,
-                }}
-              >
-                <Typography
-                  sx={{
-                    color: "#595959",
-                    fontSize: "16px",
-                    fontWeight: 500,
-                    lineHeight: "24px",
-                  }}
-                >
-                  Official Phone Number
-                  <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
-                </Typography>
-                <FormControl fullWidth>
-                  <PhoneInput
-                    country={"ng"}
-                    name="phone"
-                    value={formData.phone}
-                    onChange={(phone) => setFormData({ ...formData, phone })}
-                    // inputStyle={formControlStyles}
-                    inputStyle={{
-                      ...formControlStyles,
-                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "#038F3E",
-                      },
-                    }}
-                    // onChange={handleChange}
-                  />
-                </FormControl>
-                {errors.phone && (
-                  <Typography variant="caption" color="error">
-                    {errors.phone}
-                  </Typography>
-                )}
-              </Box>
-
+            <Box component="form" sx={{ mt: 3 }} onSubmit={handleSubmit}>
               {/* Password Field */}
               <Box
                 flex={1}
@@ -337,7 +171,7 @@ const AccountSetup = () => {
                   <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
                 </Typography>
                 <OutlinedInput
-                  id="outlined-adornment-password"
+                  id="password"
                   name="password"
                   type={passwordVisible ? "text" : "password"}
                   placeholder="********"
@@ -401,7 +235,7 @@ const AccountSetup = () => {
                   <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
                 </Typography>
                 <OutlinedInput
-                  id="outlined-adornment-password"
+                  id="confirmPassword"
                   name="confirmPassword"
                   type={confirmPasswordVisible ? "text" : "password"}
                   placeholder="*********"
@@ -463,30 +297,11 @@ const AccountSetup = () => {
                 }}
                 type="submit"
                 loading={isSubmitting}
+                disabled={isSubmitting}
                 onClick={handleSubmit}
               >
-                Create Account
+                Reset Password
               </Button>
-
-              {/* Terms and Privacy Policy */}
-              <Typography variant="body2" align="center" sx={{ mb: 2 }}>
-                By signing up you agree to our{" "}
-                <Link href="/" underline="hover" color="error.main">
-                  Terms
-                </Link>{" "}
-                &amp;{" "}
-                <Link href="/" underline="hover" color="error.main">
-                  Privacy Policy Statement
-                </Link>
-              </Typography>
-
-              {/* Login Link */}
-              <Typography variant="body2" align="center">
-                I have an account?&nbsp;
-                <Link href="/login" underline="hover" color="#038F3E">
-                  Log In
-                </Link>
-              </Typography>
             </Box>
           </Box>
         </Container>
@@ -495,4 +310,4 @@ const AccountSetup = () => {
   );
 };
 
-export default AccountSetup;
+export default ResetPassword;

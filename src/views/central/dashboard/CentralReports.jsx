@@ -23,6 +23,8 @@ import {
   getStates,
 } from "../../../services/settings";
 import Logo from "../../../assets/nhia-logo.png";
+import { useAuth } from "../../../components/auth/AuthContext";
+import WithAuthorization from "../../../components/auth/withAuthorization";
 
 // const styles = {
 //   borderRadius: "8px",
@@ -59,7 +61,8 @@ const campaignAgainstOptions = [
   { value: "Enrollee", label: "Enrollee" },
 ];
 
-const CentralReports = () => {
+const CentralReportsPage = () => {
+  const { hasPermission } = useAuth();
   const handleError = useHandleError();
   const [pieData, setPieData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -102,7 +105,7 @@ const CentralReports = () => {
         value: hmo.id,
         label: hmo.name,
       })) || [],
-    [hmosData]
+    [hmosData],
   );
 
   const providersQueryKey = useMemo(() => ["providers"], []);
@@ -117,7 +120,7 @@ const CentralReports = () => {
         value: provider.id,
         label: provider.name,
       })) || [],
-    [providersData]
+    [providersData],
   );
 
   const handleGenerateReport = async () => {
@@ -133,10 +136,10 @@ const CentralReports = () => {
       complaint_against === "HMO"
         ? "hmo_id"
         : complaint_against === "Provider"
-        ? "provider_id"
-        : complaint_against === "Enrollee"
-        ? "enrollee"
-        : null;
+          ? "provider_id"
+          : complaint_against === "Enrollee"
+            ? "enrollee"
+            : null;
 
     try {
       setIsLoading(true);
@@ -265,7 +268,7 @@ const CentralReports = () => {
 
         // Color box
         doc.setFillColor(
-          ...convertHexColorToRGB(pieColors[index % pieColors.length])
+          ...convertHexColorToRGB(pieColors[index % pieColors.length]),
         );
         doc.rect(x + radius + 15, legendY - 3, 5, 5, "F");
 
@@ -276,7 +279,7 @@ const CentralReports = () => {
         doc.text(
           `${item.status}: ${item.total} (${percentage}%)`,
           x + radius + 23,
-          legendY + 2
+          legendY + 2,
         );
 
         legendY += 8;
@@ -316,7 +319,7 @@ const CentralReports = () => {
         }
       } else if (filters.complaint_against === "Provider") {
         const providerName = providers.find(
-          (p) => p.value === filters.name
+          (p) => p.value === filters.name,
         )?.label;
         if (providerName) {
           activeFilters.push(`Provider: ${providerName}`);
@@ -328,7 +331,7 @@ const CentralReports = () => {
 
     if (filters.location) {
       const locationName = states?.results?.find(
-        (s) => s.id === filters.location
+        (s) => s.id === filters.location,
       )?.name;
       if (locationName) {
         activeFilters.push(`State: ${locationName}`);
@@ -340,7 +343,7 @@ const CentralReports = () => {
           year: "numeric",
           month: "long",
           day: "numeric",
-        })}`
+        })}`,
       );
     }
     if (filters.endDate) {
@@ -349,7 +352,7 @@ const CentralReports = () => {
           year: "numeric",
           month: "long",
           day: "numeric",
-        })}`
+        })}`,
       );
     }
 
@@ -499,7 +502,7 @@ const CentralReports = () => {
       doc.text(
         `Count: ${item.total}  |  ${percentage}% of total`,
         25,
-        yPosition + 9
+        yPosition + 9,
       );
 
       // Add insight badge
@@ -533,18 +536,18 @@ const CentralReports = () => {
       // Find highest and lowest
       const highest = dataWithoutAll.reduce(
         (max, d) => (d.total > max.total ? d : max),
-        dataWithoutAll[0]
+        dataWithoutAll[0],
       );
       const lowest = dataWithoutAll.reduce(
         (min, d) => (d.total < min.total ? d : min),
-        dataWithoutAll[0]
+        dataWithoutAll[0],
       );
       const highestPercentage = (
         (highest.total / totalComplaints) *
         100
       ).toFixed(1);
       const lowestPercentage = ((lowest.total / totalComplaints) * 100).toFixed(
-        1
+        1,
       );
 
       doc.setFontSize(10);
@@ -574,7 +577,7 @@ const CentralReports = () => {
       doc.text("• Distribution Pattern:", 25, yPosition);
       doc.setFont("helvetica", "normal");
       const avgPerCategory = (totalComplaints / dataWithoutAll.length).toFixed(
-        1
+        1,
       );
       const insight3 = `Average complaints per category: ${avgPerCategory}. Categories significantly above this threshold require strategic intervention.`;
       const splitInsight3 = doc.splitTextToSize(insight3, pageWidth - 50);
@@ -620,13 +623,13 @@ const CentralReports = () => {
       "National Health Insurance Authority - Enforcement Department",
       pageWidth / 2,
       pageHeight - 12,
-      { align: "center" }
+      { align: "center" },
     );
     doc.text(
       "297 Shehu Yar'adua Way, Utako District, Abuja, Nigeria",
       pageWidth / 2,
       pageHeight - 6,
-      { align: "center" }
+      { align: "center" },
     );
 
     // Add page numbers
@@ -666,7 +669,7 @@ const CentralReports = () => {
             title: s.status,
           };
         }),
-    [pieData]
+    [pieData],
   );
 
   const pieStatusData = {
@@ -1282,30 +1285,32 @@ const CentralReports = () => {
                   </Card>
                 ) : null}
               </Box>
-              <Box
-                sx={{
-                  py: 4,
-                }}
-              >
-                <Button
-                  variant="contained"
+              {hasPermission("can_export_complaint_data") && (
+                <Box
                   sx={{
-                    width: "249px",
-                    height: "51px",
-                    borderRadius: "8px",
-                    backgroundColor: "#038F3E",
-                    fontSize: "16px",
-                    fontWeight: 500,
-                    lineHeight: "19.36px",
-                    textTransform: "none",
-                    color: "#FFFFFF",
+                    py: 4,
                   }}
-                  onClick={handleDownloadReport}
-                  disabled={!pieData || pieData.length === 0}
                 >
-                  Download as pdf
-                </Button>
-              </Box>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      width: "249px",
+                      height: "51px",
+                      borderRadius: "8px",
+                      backgroundColor: "#038F3E",
+                      fontSize: "16px",
+                      fontWeight: 500,
+                      lineHeight: "19.36px",
+                      textTransform: "none",
+                      color: "#FFFFFF",
+                    }}
+                    onClick={handleDownloadReport}
+                    disabled={!pieData || pieData.length === 0}
+                  >
+                    Download as pdf
+                  </Button>
+                </Box>
+              )}
             </Box>
           </Box>
         </Box>
@@ -1313,5 +1318,10 @@ const CentralReports = () => {
     </Box>
   );
 };
+
+const CentralReports = WithAuthorization(
+  CentralReportsPage,
+  "can_access_advanced_reporting",
+);
 
 export default CentralReports;

@@ -19,6 +19,7 @@ import { getRegions, getStates } from "../../../services/settings";
 import { useMemo } from "react";
 import { complaintCategories, complaintType } from "../../../mock/type";
 import InfoIcon from "@mui/icons-material/Info";
+import WithAuthorization from "../../../components/auth/withAuthorization";
 
 const initialFilters = {
   type: "",
@@ -31,7 +32,7 @@ const initialFilters = {
 };
 
 // CentralComplaints Component
-const CentralComplaints = () => {
+const CentralComplaintsPage = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -51,7 +52,7 @@ const CentralComplaints = () => {
         value: t.id,
         label: t.name,
       })) || [],
-    [statesData]
+    [statesData],
   );
 
   const { data: regionsData, isLoading: isLoadingRegions } = useQuery({
@@ -65,7 +66,7 @@ const CentralComplaints = () => {
         value: t.id,
         label: t.name,
       })) || [],
-    [regionsData]
+    [regionsData],
   );
 
   const {
@@ -544,5 +545,10 @@ const CentralComplaints = () => {
     </Box>
   );
 };
+
+const CentralComplaints = WithAuthorization(
+  CentralComplaintsPage,
+  "can_view_all_complaints",
+);
 
 export default CentralComplaints;

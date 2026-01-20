@@ -18,6 +18,8 @@ import { useHandleError } from "../../../hooks/useToastHandler";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { getStates } from "../../../services/settings";
+import WithAuthorization from "../../../components/auth/withAuthorization";
+import { useAuth } from "../../../components/auth/AuthContext";
 
 // const styles = {
 //   borderRadius: "8px",
@@ -46,7 +48,8 @@ const textStyles = {
   },
 };
 
-const ProvidersReport = () => {
+const ProvidersReportPage = () => {
+  const { hasPermission } = useAuth();
   const handleError = useHandleError();
   const [pieData, setPieData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -171,7 +174,7 @@ const ProvidersReport = () => {
             title: s.status,
           };
         }),
-    [pieData]
+    [pieData],
   );
 
   const pieStatusData = {
@@ -594,30 +597,33 @@ const ProvidersReport = () => {
                   </Card>
                 ) : null}
               </Box>
-              <Box
-                sx={{
-                  py: 4,
-                }}
-              >
-                <Button
-                  variant="contained"
+
+              {hasPermission("can_export_complaint_data") && (
+                <Box
                   sx={{
-                    width: "249px",
-                    height: "51px",
-                    borderRadius: "8px",
-                    backgroundColor: "#038F3E",
-                    fontSize: "16px",
-                    fontWeight: 500,
-                    lineHeight: "19.36px",
-                    textTransform: "none",
-                    color: "#FFFFFF",
+                    py: 4,
                   }}
-                  onClick={handleDownloadReport}
-                  disabled={!pieData || pieData.length === 0}
                 >
-                  Download as pdf
-                </Button>
-              </Box>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      width: "249px",
+                      height: "51px",
+                      borderRadius: "8px",
+                      backgroundColor: "#038F3E",
+                      fontSize: "16px",
+                      fontWeight: 500,
+                      lineHeight: "19.36px",
+                      textTransform: "none",
+                      color: "#FFFFFF",
+                    }}
+                    onClick={handleDownloadReport}
+                    disabled={!pieData || pieData.length === 0}
+                  >
+                    Download as pdf
+                  </Button>
+                </Box>
+              )}
             </Box>
           </Box>
         </Box>
@@ -625,5 +631,10 @@ const ProvidersReport = () => {
     </Box>
   );
 };
+
+const ProvidersReport = WithAuthorization(
+  ProvidersReportPage,
+  "can_access_advanced_reporting",
+);
 
 export default ProvidersReport;

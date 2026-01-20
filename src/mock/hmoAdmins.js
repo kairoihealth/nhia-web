@@ -70,10 +70,10 @@ export const hmoAdminLevelPermissions = [
     description:
       "Allow admins to export complaint data in various formats (e.g., CSV, Excel) for further analysis or sharing with relevant stakeholders.",
   },
-  {
-    id: "can_manage_complaint_categories",
-    title: "Manage complaint categories",
-    description:
-      "Admins can add, edit, or delete complaint categories used for classifying incoming complaints.",
-  },
+  // {
+  //   id: "can_manage_complaint_categories",
+  //   title: "Manage complaint categories",
+  //   description:
+  //     "Admins can add, edit, or delete complaint categories used for classifying incoming complaints.",
+  // },
 ];

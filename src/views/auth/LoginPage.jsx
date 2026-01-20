@@ -18,7 +18,7 @@ import { jwtDecode } from "jwt-decode";
 import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
 import { textFieldStyles } from "../../utils/style";
 import Auth from "../../utils/Auth";
-import { getSingleUser, getSingleUserWithToken } from "../../services/central";
+import { getSingleUserWithToken } from "../../services/central";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -72,6 +72,13 @@ const LoginPage = () => {
         localStorage.setItem("fullname", username);
         localStorage.setItem("userId", userId);
         const userDetails = await getSingleUserWithToken(userId, accessToken);
+        console.log(userDetails, "userDetails");
+        if (userDetails?.admin_status?.permissions) {
+          localStorage.setItem(
+            "permissions",
+            JSON.stringify(userDetails?.admin_status?.permissions),
+          );
+        }
         if (userDetails?.state?.id) {
           localStorage.setItem("stateId", userDetails?.state?.id);
         }
