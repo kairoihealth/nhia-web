@@ -86,6 +86,7 @@ const InvitationsByState = () => {
         status: user.verified ? "active" : "request sent",
       })) || [];
 
+  console.log(filteredUsers, users, "filteredUsers");
   if (isUsersLoading) {
     return (
       <Box

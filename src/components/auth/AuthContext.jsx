@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
     // In a real-world app, you might fetch permissions from an API after login.
     // For this example, we'll retrieve them from localStorage.
     try {
-      const storedPermissions = localStorage.getItem("userPermissions");
+      const storedPermissions = localStorage.getItem("permissions");
       if (storedPermissions) {
         setPermissions(JSON.parse(storedPermissions));
       }
@@ -47,7 +47,6 @@ export const AuthProvider = ({ children }) => {
     const required = Array.isArray(requiredPermissions)
       ? requiredPermissions
       : [requiredPermissions];
-
     // Check if the user's permissions array includes ALL of the required permissions.
     return required.every((permission) => permissions.includes(permission));
   };

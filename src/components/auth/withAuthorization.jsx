@@ -11,7 +11,6 @@ import { useAuth } from "./AuthContext";
 const WithAuthorization = (WrappedComponent, requiredPermission) => {
   const AuthorizedComponent = (props) => {
     const { hasPermission } = useAuth();
-
     if (hasPermission(requiredPermission)) {
       return <WrappedComponent {...props} />;
     }
