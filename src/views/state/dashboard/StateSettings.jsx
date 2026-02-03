@@ -267,7 +267,7 @@ const AddAdminForm = () => {
   });
 
   const activeStatuses = statuses?.results?.filter(
-    (status) => status?.is_active
+    (status) => status?.is_active,
   );
 
   const handleChange = (e) => {
@@ -285,9 +285,9 @@ const AddAdminForm = () => {
         role: userRole,
         state: stateId,
       };
-      console.log(payload, "submitted");
+
       await addNewAdmin(payload);
-      handleSuccess("Admin added successfully!");
+      handleSuccess("Invite sent successfully!");
       setFormData({
         email: "",
         designation: "",
@@ -512,7 +512,7 @@ const EditAdminForm = () => {
   });
 
   const activeStatuses = statuses?.results?.filter(
-    (status) => status?.is_active
+    (status) => status?.is_active,
   );
 
   const stateAdmins = useMemo(() => admins?.results, [admins?.results]);
@@ -579,7 +579,10 @@ const EditAdminForm = () => {
       setSelectedAdmin(null);
       // navigate("/login");
     } catch (error) {
-      handleError("Update failed. Please try again.", error);
+      console.log(error, "error");
+      handleError(
+        error?.response?.data?.message || "Update failed. Please try again.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -973,11 +976,11 @@ const ManageAdminRoles = () => {
 
   const { data: statuses, isLoading } = useQuery({
     queryKey: ["statuses", isSubmitting],
-    queryFn: () => getAdminStatuses({ page: 1, pageSize: 10 }),
+    queryFn: () => getAdminStatuses({ page: 1, pageSize: 1000 }),
   });
 
   const activeStatuses = statuses?.results?.filter(
-    (status) => status?.is_active
+    (status) => status?.is_active,
   );
 
   const handleLevelClick = (level) => {
@@ -995,7 +998,7 @@ const ManageAdminRoles = () => {
         updatedPermissions = [...updatedPermissions, permissionId]; // Add permission
       } else {
         updatedPermissions = updatedPermissions.filter(
-          (id) => id !== permissionId
+          (id) => id !== permissionId,
         ); // Remove permission
       }
       setNewLevelPermissions(updatedPermissions);
@@ -1006,7 +1009,7 @@ const ManageAdminRoles = () => {
         updatedPermissions = [...updatedPermissions, permissionId];
       } else {
         updatedPermissions = updatedPermissions.filter(
-          (id) => id !== permissionId
+          (id) => id !== permissionId,
         );
       }
       setSelectedLevel({ ...selectedLevel, permissions: updatedPermissions });
@@ -1280,7 +1283,7 @@ const ManageAdminRoles = () => {
                     <Checkbox
                       checked={
                         newLevel
-                          ? newLevelPermissions.includes(permission.id) // Check permissions based on new level's state
+                          ? newLevelPermissions?.includes(permission.id) // Check permissions based on new level's state
                           : selectedLevel?.permissions?.includes(permission.id)
                       }
                       onChange={(e) =>

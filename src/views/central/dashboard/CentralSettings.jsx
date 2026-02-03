@@ -283,7 +283,7 @@ const AddAdminForm = () => {
         admin_status: formData.admin_status.value,
         role: userRole,
       };
-      console.log(payload, "submitted");
+
       await addNewAdmin(payload);
       handleSuccess("An invite has been sent successfully!");
       setFormData({
@@ -944,8 +944,8 @@ const ManageAdminRoles = () => {
   // const [adminRoleName, setAdminRoleName] = useState("");
 
   const { data: statuses, isLoading } = useQuery({
-    queryKey: ["statuses"],
-    queryFn: () => getAdminStatuses({ page: 1, pageSize: 10 }),
+    queryKey: ["statuses", isSubmitting],
+    queryFn: () => getAdminStatuses({ page: 1, pageSize: 1000 }),
   });
 
   const activeStatuses = statuses?.results?.filter(
@@ -994,7 +994,7 @@ const ManageAdminRoles = () => {
         permissions: newLevel
           ? newLevelPermissions
           : selectedLevel?.permissions,
-        // level: 1,
+        level: levelRank,
       };
       await (newLevel
         ? addAdminStatus(payload)
@@ -1249,7 +1249,7 @@ const ManageAdminRoles = () => {
                     <Checkbox
                       checked={
                         newLevel
-                          ? newLevelPermissions.includes(permission.id) // Check permissions based on new level's state
+                          ? newLevelPermissions?.includes(permission.id) // Check permissions based on new level's state
                           : selectedLevel?.permissions?.includes(permission.id)
                       }
                       onChange={(e) =>

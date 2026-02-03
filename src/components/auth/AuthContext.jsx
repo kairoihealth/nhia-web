@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 const AuthContext = createContext({
   permissions: [],
   hasPermission: () => false,
+  setAuthPermissions: () => {}, // Add a setter function to the context
 });
 
 /**
@@ -16,6 +17,12 @@ export const AuthProvider = ({ children }) => {
     children: PropTypes.node.isRequired,
   };
   const [permissions, setPermissions] = useState([]);
+
+  // Function to update permissions, to be called after login
+  const setAuthPermissions = (newPermissions) => {
+    setPermissions(newPermissions);
+    localStorage.setItem("permissions", JSON.stringify(newPermissions));
+  };
 
   useEffect(() => {
     // In a real-world app, you might fetch permissions from an API after login.
@@ -40,15 +47,19 @@ export const AuthProvider = ({ children }) => {
    * @returns {boolean} - True if the user has the required permission(s).
    */
   const hasPermission = (requiredPermissions) => {
-    if (!requiredPermissions) {
+    console.log(JSON.stringify(requiredPermissions), "requiredPermissions");
+    if (!requiredPermissions || requiredPermissions?.length === 0) {
       return true; // No specific permission is required, so access is granted.
+    }
+    if (JSON.stringify(permissions) === "{}") {
+      return false; // User has no permissions, so access is denied.
     }
 
     const required = Array.isArray(requiredPermissions)
       ? requiredPermissions
       : [requiredPermissions];
     // Check if the user's permissions array includes ALL of the required permissions.
-    return required.every((permission) => permissions.includes(permission));
+    return required.every((permission) => permissions?.includes(permission));
   };
 
   // Use useMemo to prevent re-creating the context value on every render
@@ -56,6 +67,7 @@ export const AuthProvider = ({ children }) => {
     () => ({
       permissions,
       hasPermission,
+      setAuthPermissions, // Include the setter in the context value
     }),
     [permissions],
   );
