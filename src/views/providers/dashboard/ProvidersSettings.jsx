@@ -499,7 +499,7 @@ const EditAdminForm = () => {
       getUsers({
         page: 1,
         pageSize: 100,
-        role: "provider",
+        role: "Provider",
         provider: providerId,
       }),
   });

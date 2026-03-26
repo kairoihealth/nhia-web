@@ -116,7 +116,7 @@ export const getSingleComplaintByCaseId = async (case_id) => {
 export const getComplaintResponsesByCaseId = async (case_id) => {
   try {
     const response = await Api.get(
-      e.GET_COMPLAINT_RESPONSES_BY_CASE_ID(case_id)
+      e.GET_COMPLAINT_RESPONSES_BY_CASE_ID(case_id),
     );
     return response.data;
   } catch (error) {
