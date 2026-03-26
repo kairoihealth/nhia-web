@@ -261,7 +261,7 @@ const AddAdminForm = () => {
     // error,
   } = useQuery({
     queryKey: ["statuses"],
-    queryFn: () => getAdminStatuses({ page: 1, pageSize: 10 }),
+    queryFn: () => getAdminStatuses({ page: 1, pageSize: 100 }),
   });
 
   const activeStatuses = statuses?.results?.filter(
@@ -283,7 +283,7 @@ const AddAdminForm = () => {
         admin_status: formData.admin_status.value,
         role: userRole,
       };
-      console.log(payload, "submitted");
+
       await addNewAdmin(payload);
       handleSuccess("An invite has been sent successfully!");
       setFormData({
@@ -497,13 +497,13 @@ const EditAdminForm = () => {
       getUsers({
         page: 1,
         pageSize: 100,
-        role: "Admin",
+        // role: "Admin",
       }),
   });
 
   const { data: statuses, isLoading } = useQuery({
     queryKey: ["statuses"],
-    queryFn: () => getAdminStatuses({ page: 1, pageSize: 10 }),
+    queryFn: () => getAdminStatuses({ page: 1, pageSize: 100 }),
   });
 
   const activeStatuses = statuses?.results?.filter(
@@ -557,7 +557,7 @@ const EditAdminForm = () => {
         email: formData.email,
         designation: formData.designation,
         admin_status: formData.admin_status.value,
-        role: userRole,
+        // role: userRole,
         // password: formData.password,
       };
       console.log(payload, "submitted");
@@ -597,7 +597,7 @@ const EditAdminForm = () => {
         <Box
           sx={{
             display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
+            gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
             flexWrap: "wrap",
             gap: 4,
             mt: 3,
@@ -619,7 +619,7 @@ const EditAdminForm = () => {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                gap: 1,
+                // gap: 1,
                 outline:
                   selectedAdmin?.id === t.id
                     ? "1px solid #071C42"
@@ -653,6 +653,16 @@ const EditAdminForm = () => {
                 }}
               >
                 {t.firstname} {t.lastname}
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: "14px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                  color: "#000000",
+                }}
+              >
+                {t.email}
               </Typography>
               <Typography
                 sx={{
@@ -944,8 +954,8 @@ const ManageAdminRoles = () => {
   // const [adminRoleName, setAdminRoleName] = useState("");
 
   const { data: statuses, isLoading } = useQuery({
-    queryKey: ["statuses"],
-    queryFn: () => getAdminStatuses({ page: 1, pageSize: 10 }),
+    queryKey: ["statuses", isSubmitting],
+    queryFn: () => getAdminStatuses({ page: 1, pageSize: 1000 }),
   });
 
   const activeStatuses = statuses?.results?.filter(
@@ -994,7 +1004,7 @@ const ManageAdminRoles = () => {
         permissions: newLevel
           ? newLevelPermissions
           : selectedLevel?.permissions,
-        // level: 1,
+        level: levelRank,
       };
       await (newLevel
         ? addAdminStatus(payload)
@@ -1249,7 +1259,7 @@ const ManageAdminRoles = () => {
                     <Checkbox
                       checked={
                         newLevel
-                          ? newLevelPermissions.includes(permission.id) // Check permissions based on new level's state
+                          ? newLevelPermissions?.includes(permission.id) // Check permissions based on new level's state
                           : selectedLevel?.permissions?.includes(permission.id)
                       }
                       onChange={(e) =>

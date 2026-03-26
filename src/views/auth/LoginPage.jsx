@@ -19,6 +19,7 @@ import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
 import { textFieldStyles } from "../../utils/style";
 import Auth from "../../utils/Auth";
 import { getSingleUserWithToken } from "../../services/central";
+import { useAuth } from "../../components/auth/AuthContext";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -29,6 +30,7 @@ const LoginPage = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { setAuthPermissions } = useAuth();
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -74,10 +76,11 @@ const LoginPage = () => {
         const userDetails = await getSingleUserWithToken(userId, accessToken);
         console.log(userDetails, "userDetails");
         if (userDetails?.admin_status?.permissions) {
-          localStorage.setItem(
-            "permissions",
-            JSON.stringify(userDetails?.admin_status?.permissions),
-          );
+          setAuthPermissions(userDetails?.admin_status?.permissions);
+          // localStorage.setItem(
+          //   "permissions",
+          //   JSON.stringify(userDetails?.admin_status?.permissions),
+          // );
         }
         if (userDetails?.state?.id) {
           localStorage.setItem("stateId", userDetails?.state?.id);
