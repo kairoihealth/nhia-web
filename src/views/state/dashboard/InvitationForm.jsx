@@ -13,6 +13,7 @@ import {
 import { useHandleError } from "../../../hooks/useToastHandler";
 import { inviteStateUser, inviteUser } from "../../../services/central";
 import { useNavigate } from "react-router-dom";
+import { getAdminStatuses } from "../../../services/adminSettings";
 
 const accountType = [
   { id: "HMO", label: "Hmo", value: "HMO" },
@@ -42,7 +43,7 @@ const InvitationForm = () => {
         value: hmo.id,
         label: hmo.name,
       })) || [],
-    [hmosData]
+    [hmosData],
   );
 
   const providersQueryKey = useMemo(() => ["providers"], []);
@@ -57,7 +58,20 @@ const InvitationForm = () => {
         value: provider.id,
         label: provider.name,
       })) || [],
-    [providersData]
+    [providersData],
+  );
+
+  const { data: statuses, isLoading } = useQuery({
+    queryKey: ["statuses"],
+    queryFn: () => getAdminStatuses({ page: 1, pageSize: 10 }),
+  });
+
+  const activeStatuses = statuses?.results?.filter(
+    (status) => status?.is_active,
+  );
+
+  const topStatus = activeStatuses?.find(
+    (status) => status?.permissions?.length === 6,
   );
 
   const handleInputChange = (event) => {
@@ -107,6 +121,7 @@ const InvitationForm = () => {
         ...(selectedType.value === "Provider" && {
           provider: res.id,
         }),
+        admin_status: topStatus?.id,
       };
 
       await inviteStateUser(payload);
@@ -127,7 +142,7 @@ const InvitationForm = () => {
     }
   };
 
-  console.log(errors, "payload");
+  console.log(topStatus, "activeStatuses");
 
   return (
     <Box sx={{ p: 4 }}>

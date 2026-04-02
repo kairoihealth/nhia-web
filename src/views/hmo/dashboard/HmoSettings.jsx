@@ -29,6 +29,7 @@ import {
   getAdminStatuses,
   updateAdmin,
   updateAdminStatus,
+  updateUser,
 } from "../../../services/adminSettings";
 import { useQuery } from "@tanstack/react-query";
 import { FaCircleUser } from "react-icons/fa6";
@@ -565,6 +566,7 @@ const EditAdminForm = () => {
       };
       console.log(payload, "submitted");
       await updateAdmin(selectedAdmin?.id, payload);
+      // await updateUser(selectedAdmin?.id, payload);
       handleSuccess("Admin updated successfully!");
       setFormData({
         firstName: "",
