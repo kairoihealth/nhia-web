@@ -11,6 +11,16 @@ export const addNewAdmin = async (payload) => {
   }
 };
 
+export const updateUser = async (id, payload) => {
+  try {
+    const response = await Api.put(e.UPDATE_USER(id), payload);
+    return response;
+  } catch (error) {
+    console.error("Failed to update user:", error);
+    throw error;
+  }
+};
+
 export const updateAdmin = async (id, payload) => {
   try {
     const response = await Api.put(e.UPDATE_ADMIN(id), payload);

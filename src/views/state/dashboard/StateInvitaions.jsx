@@ -72,10 +72,11 @@ const InvitationsByState = () => {
     (filteredUsers?.results?.length ? filteredUsers : users)?.results
       ?.filter(
         (u) =>
-          (u.role === "Provider" || u.role === "HMO") &&
-          (u?.state?.id === stateId ||
-            u?.hmo?.state?.id === stateId ||
-            u?.provider?.state?.id === stateId),
+          (u.role === "Provider" || u.role === "HMO") 
+        // &&
+        //   (u?.state?.id === stateId ||
+        //     u?.hmo?.state?.id === stateId ||
+        //     u?.provider?.state?.id === stateId),
       )
       ?.map((user) => ({
         name: `${user?.provider?.name || user?.hmo?.name}`.trim(),
