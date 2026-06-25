@@ -175,7 +175,7 @@ const StateComplaintsPage = () => {
     })) || [];
 
   const handleViewComplaint = (row) => {
-    navigate(`/stateadmin/complaint/${row.complaint_no}`, {
+    navigate(`/stateadmin/complaint/${row.id}`, {
       state: { complaint: row?.id },
     });
   };

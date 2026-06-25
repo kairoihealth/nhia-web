@@ -126,7 +126,7 @@ const StateReplyComplaintPage = () => {
       setAttachments({});
       handleSuccess(res.data?.message || "Response sent successfully");
       if (res.data?.id) {
-        navigate(`/stateadmin/complaint/${complaint?.case_id}/thread`, {
+        navigate(`/stateadmin/complaint/${complaint?.id}/thread`, {
           state: { thread: complaint?.id },
         });
       }

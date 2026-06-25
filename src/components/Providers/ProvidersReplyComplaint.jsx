@@ -162,7 +162,7 @@ const ProvidersReplyComplaintPage = () => {
       setAttachments({});
       handleSuccess(res.data?.message || "Response sent successfully");
       if (res.data?.id) {
-        navigate(`/provider/complaint/${complaint?.case_id}/thread`, {
+        navigate(`/provider/complaint/${complaint?.id}/thread`, {
           state: { thread: complaint?.id },
         });
       }

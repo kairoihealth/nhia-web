@@ -88,7 +88,7 @@ const StateComplaintThreadPage = () => {
   };
 
   const handleReply = (to) => {
-    navigate(`/stateadmin/complaint/${case_id}/reply`, {
+    navigate(`/stateadmin/complaint/${complaint?.id}/reply`, {
       state: {
         thread,
         to,
@@ -170,7 +170,7 @@ const StateComplaintThreadPage = () => {
                   <Typography
                     role="button"
                     onClick={() =>
-                      navigate(`/stateadmin/complaint/${complaint.case_id}`, {
+                      navigate(`/stateadmin/complaint/${complaint?.id}`, {
                         state: { complaint: complaint?.id },
                       })
                     }
@@ -194,18 +194,18 @@ const StateComplaintThreadPage = () => {
                         complaint?.status === "pending"
                           ? "#FFF3E7"
                           : complaint?.status === "closed"
-                          ? "#D6EBFF"
-                          : complaint?.status === "active"
-                          ? "#E8F8EE"
-                          : "#FFF2F4",
+                            ? "#D6EBFF"
+                            : complaint?.status === "active"
+                              ? "#E8F8EE"
+                              : "#FFF2F4",
                       color:
                         complaint?.status === "pending"
                           ? "#EDB378"
                           : complaint?.status === "closed"
-                          ? "#4B95DD"
-                          : complaint?.status === "active"
-                          ? "#096F35"
-                          : "#EB001B",
+                            ? "#4B95DD"
+                            : complaint?.status === "active"
+                              ? "#096F35"
+                              : "#EB001B",
                     }}
                   >
                     &bull; {complaint?.status || "N/A"}
@@ -572,8 +572,8 @@ const StateComplaintThreadPage = () => {
                           {t.response_by.role === "StateAdmin"
                             ? `From: ${t.response_by.firstname} ${t.response_by.lastname} (State NHIA)`
                             : t.response_by.role === "Admin"
-                            ? `From: ${t.response_by.firstname} ${t.response_by.lastname} (Central NHIA)`
-                            : "From: Respondent"}
+                              ? `From: ${t.response_by.firstname} ${t.response_by.lastname} (Central NHIA)`
+                              : "From: Respondent"}
                         </Typography>
                         <Typography
                           sx={{
@@ -591,15 +591,16 @@ const StateComplaintThreadPage = () => {
                             {t.response_recipient === "All"
                               ? `${
                                   complaint?.hmo?.name ||
-                                  complaint?.provider?.name
+                                  complaint?.provider?.name ||
+                                  complaint?.complaint_against
                                 },
                               ${complaint.firstname} ${complaint.lastname}`
                               : t.response_recipient === "Complainant"
-                              ? `${complaint.firstname} ${complaint.lastname} (Complainant)`
-                              : `${
-                                  complaint?.hmo?.name ||
-                                  complaint?.provider?.name
-                                }`}
+                                ? `${complaint.firstname} ${complaint.lastname} (Complainant)`
+                                : `${
+                                    complaint?.hmo?.name ||
+                                    complaint?.provider?.name
+                                  }`}
                           </span>
                         </Typography>
                       </Box>

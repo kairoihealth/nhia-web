@@ -26,7 +26,7 @@ const CentralSingleComplaintPage = () => {
   });
 
   const handleCompliant = () => {
-    navigate(`/admin/complaint/${complaint?.case_id}/thread`, {
+    navigate(`/admin/complaint/${complaint?.id}/thread`, {
       state: { thread: complaint?.id },
     });
   };

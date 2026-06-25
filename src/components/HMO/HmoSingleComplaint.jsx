@@ -20,7 +20,7 @@ const HmoSingleComplaintPage = () => {
   });
 
   const handleCompliant = () => {
-    navigate(`/hmo/complaint/${complaint?.case_id}/thread`, {
+    navigate(`/hmo/complaint/${complaint?.id}/thread`, {
       state: { thread: complaint?.id },
     });
   };

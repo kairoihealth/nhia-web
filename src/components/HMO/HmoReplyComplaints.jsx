@@ -140,7 +140,7 @@ const HmoReplyComplaintsPage = () => {
       setAttachments({});
       handleSuccess(res.data?.message || "Response sent successfully");
       if (res.data?.id) {
-        navigate(`/hmo/complaint/${complaint?.case_id}/thread`, {
+        navigate(`/hmo/complaint/${complaint?.id}/thread`, {
           state: { thread: complaint?.id },
         });
       }
