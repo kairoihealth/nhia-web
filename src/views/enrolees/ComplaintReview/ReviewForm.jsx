@@ -42,8 +42,13 @@ const ReviewForm = () => {
     const newErrors = {};
 
     if (!caseId?.trim()) newErrors.caseId = "Complaint number is required";
-    else if (!/^KAI-\d{8}$/.test(caseId)) {
-      newErrors.caseId = "Complaint number must be in the format KAI-12345678";
+    //format ENF/NHIA/BA/JUN26/0001
+    else if (
+      !/^[A-Z]{3}\/[A-Z]{3,4}\/[A-Z]{2}\/[A-Z]{3}\d{2}\/\d{4,}$/.test(caseId)
+    ) {
+      // else if (!/^KAI-\d{8}$/.test(caseId)) {
+      newErrors.caseId =
+        "Complaint number must be in the format AAA/BBB/CC/DDD11/0000";
     }
 
     setErrors(newErrors);
@@ -55,7 +60,7 @@ const ReviewForm = () => {
     setIsSubmitting(true);
 
     try {
-      const res = await getSingleComplaintByCaseId(caseId);
+      const res = await getSingleComplaintByCaseId(encodeURIComponent(caseId));
       console.log(res, "res");
       setComplaintDetails(res);
       setCaseId("");
@@ -287,7 +292,7 @@ const ReviewForm = () => {
               lineHeight: "21.6px",
             }}
           >
-            Sample: KAI-12345678
+            Sample: AAA/BBB/CC/DDD11/2222
           </Typography>
         </Box>
 

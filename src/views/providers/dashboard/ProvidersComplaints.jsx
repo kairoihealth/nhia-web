@@ -110,7 +110,7 @@ const ProviderComplaintsPage = () => {
     })) || [];
 
   const handleViewComplaint = (row) => {
-    navigate(`/provider/complaint/${row.complaint_no}`, {
+    navigate(`/provider/complaint/${row.id}`, {
       state: { complaint: row?.id },
     });
   };

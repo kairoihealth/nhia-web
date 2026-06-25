@@ -59,17 +59,17 @@ const ProvidersComplaintThreadPage = () => {
 
   const stateNhiaResponse =
     responses?.find(
-      (response) => response.response_by?.role === "StateAdmin"
+      (response) => response.response_by?.role === "StateAdmin",
     ) || {};
 
   const nhiaResponse = centralNhiaResponse?.response
     ? centralNhiaResponse
     : stateNhiaResponse?.response
-    ? stateNhiaResponse
-    : null;
+      ? stateNhiaResponse
+      : null;
 
   const respondentResponses = responses?.filter(
-    (response) => response.response_by?.role === "Provider"
+    (response) => response.response_by?.role === "Provider",
   );
 
   const handleUpdateStatus = async (status) => {
@@ -90,7 +90,9 @@ const ProvidersComplaintThreadPage = () => {
   };
 
   const handleReply = () => {
-    navigate(`/provider/complaint/${case_id}/reply`, { state: { thread } });
+    navigate(`/provider/complaint/${complaint?.id}/reply`, {
+      state: { thread },
+    });
   };
 
   if (isLoading || isLoadingg) {
@@ -168,7 +170,7 @@ const ProvidersComplaintThreadPage = () => {
                 <Typography
                   role="button"
                   onClick={() =>
-                    navigate(`/stateadmin/complaint/${complaint.case_id}`, {
+                    navigate(`/stateadmin/complaint/${complaint?.id}`, {
                       state: { complaint: complaint?.id },
                     })
                   }
@@ -192,18 +194,18 @@ const ProvidersComplaintThreadPage = () => {
                       complaint?.status === "pending"
                         ? "#FFF3E7"
                         : complaint?.status === "closed"
-                        ? "#D6EBFF"
-                        : complaint?.status === "active"
-                        ? "#E8F8EE"
-                        : "#FFF2F4",
+                          ? "#D6EBFF"
+                          : complaint?.status === "active"
+                            ? "#E8F8EE"
+                            : "#FFF2F4",
                     color:
                       complaint?.status === "pending"
                         ? "#EDB378"
                         : complaint?.status === "closed"
-                        ? "#4B95DD"
-                        : complaint?.status === "active"
-                        ? "#096F35"
-                        : "#EB001B",
+                          ? "#4B95DD"
+                          : complaint?.status === "active"
+                            ? "#096F35"
+                            : "#EB001B",
                   }}
                 >
                   &bull; {complaint?.status || "N/A"}
@@ -526,7 +528,7 @@ const ProvidersComplaintThreadPage = () => {
                       Date:{" "}
                       <span>
                         {new Date(
-                          nhiaResponse?.created_at
+                          nhiaResponse?.created_at,
                         ).toLocaleDateString() || "--"}
                       </span>
                     </Typography>
@@ -928,7 +930,7 @@ const ProvidersComplaintThreadPage = () => {
                                   }}
                                 >
                                   {new Date(
-                                    nhiaResponse?.created_at
+                                    nhiaResponse?.created_at,
                                   ).toLocaleDateString() || "--"}
                                 </Typography>
                               </Box>
@@ -991,11 +993,14 @@ const ProvidersComplaintThreadPage = () => {
   );
 };
 
-const ProvidersComplaintThread = WithAuthorization(ProvidersComplaintThreadPage, [
-  "can_view_all_complaints",
-  "can_view_complaint_details",
-  "can_respond_to_complaints",
-]);
+const ProvidersComplaintThread = WithAuthorization(
+  ProvidersComplaintThreadPage,
+  [
+    "can_view_all_complaints",
+    "can_view_complaint_details",
+    "can_respond_to_complaints",
+  ],
+);
 
 export default ProvidersComplaintThread;
 

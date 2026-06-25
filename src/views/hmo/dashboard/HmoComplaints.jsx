@@ -92,7 +92,7 @@ const HmoComplaintsPage = () => {
   }, [isFilterOpen]);
 
   const handleViewComplaint = (row) => {
-    navigate(`/hmo/complaint/${row.complaint_no}`, {
+    navigate(`/hmo/complaint/${row.id}`, {
       state: { complaint: row?.id },
     });
   };
