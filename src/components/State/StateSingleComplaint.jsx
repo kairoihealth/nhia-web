@@ -20,7 +20,7 @@ const StateSingleComplaintPage = () => {
   });
 
   const handleCompliant = () => {
-    navigate(`/stateadmin/complaint/${complaint?.case_id}/thread`, {
+    navigate(`/stateadmin/complaint/${complaint?.id}/thread`, {
       state: { thread: complaint?.id },
     });
   };

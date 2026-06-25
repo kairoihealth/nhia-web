@@ -59,17 +59,17 @@ const HmoComplaintsThreadPage = () => {
 
   const stateNhiaResponse =
     responses?.find(
-      (response) => response.response_by?.role === "StateAdmin"
+      (response) => response.response_by?.role === "StateAdmin",
     ) || {};
 
   const nhiaResponse = centralNhiaResponse?.response
     ? centralNhiaResponse
     : stateNhiaResponse?.response
-    ? stateNhiaResponse
-    : null;
+      ? stateNhiaResponse
+      : null;
 
   const respondentResponses = responses?.filter(
-    (response) => response.response_by?.role === "HMO"
+    (response) => response.response_by?.role === "HMO",
   );
 
   const handleUpdateStatus = async (status) => {
@@ -90,7 +90,7 @@ const HmoComplaintsThreadPage = () => {
   };
 
   const handleReply = () => {
-    navigate(`/hmo/complaint/${case_id}/reply`, { state: { thread } });
+    navigate(`/hmo/complaint/${complaint?.id}/reply`, { state: { thread } });
   };
 
   if (isLoading || isLoadingg) {
@@ -168,7 +168,7 @@ const HmoComplaintsThreadPage = () => {
                 <Typography
                   role="button"
                   onClick={() =>
-                    navigate(`/stateadmin/complaint/${complaint.case_id}`, {
+                    navigate(`/stateadmin/complaint/${complaint?.id}`, {
                       state: { complaint: complaint?.id },
                     })
                   }
@@ -192,18 +192,18 @@ const HmoComplaintsThreadPage = () => {
                       complaint?.status === "pending"
                         ? "#FFF3E7"
                         : complaint?.status === "closed"
-                        ? "#D6EBFF"
-                        : complaint?.status === "active"
-                        ? "#E8F8EE"
-                        : "#FFF2F4",
+                          ? "#D6EBFF"
+                          : complaint?.status === "active"
+                            ? "#E8F8EE"
+                            : "#FFF2F4",
                     color:
                       complaint?.status === "pending"
                         ? "#EDB378"
                         : complaint?.status === "closed"
-                        ? "#4B95DD"
-                        : complaint?.status === "active"
-                        ? "#096F35"
-                        : "#EB001B",
+                          ? "#4B95DD"
+                          : complaint?.status === "active"
+                            ? "#096F35"
+                            : "#EB001B",
                   }}
                 >
                   &bull; {complaint?.status || "N/A"}
@@ -526,7 +526,7 @@ const HmoComplaintsThreadPage = () => {
                       Date:{" "}
                       <span>
                         {new Date(
-                          nhiaResponse?.created_at
+                          nhiaResponse?.created_at,
                         ).toLocaleDateString() || "--"}
                       </span>
                     </Typography>
@@ -928,7 +928,7 @@ const HmoComplaintsThreadPage = () => {
                                   }}
                                 >
                                   {new Date(
-                                    nhiaResponse?.created_at
+                                    nhiaResponse?.created_at,
                                   ).toLocaleDateString() || "--"}
                                 </Typography>
                               </Box>
