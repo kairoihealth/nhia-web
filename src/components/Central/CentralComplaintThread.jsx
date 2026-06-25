@@ -91,7 +91,7 @@ const CentralComplaintThreadPage = () => {
   };
 
   const handleReply = (to) => {
-    navigate(`/stateadmin/complaint/${case_id}/reply`, {
+    navigate(`/admin/complaint/${complaint?.id}/reply`, {
       state: {
         thread,
         to,
@@ -173,7 +173,7 @@ const CentralComplaintThreadPage = () => {
                   <Typography
                     role="button"
                     onClick={() =>
-                      navigate(`/stateadmin/complaint/${complaint.case_id}`, {
+                      navigate(`/admin/complaint/${complaint.id}`, {
                         state: { complaint: complaint?.id },
                       })
                     }
@@ -652,9 +652,9 @@ const CentralComplaintThreadPage = () => {
                           }}
                         >
                           {t.response_by.role === "StateAdmin"
-                            ? `From: ${t.response_by.firstname} ${t.response_by.lastname} (State NHIA)`
+                            ? `From: ${t.response_by.firstname || t.response_by.email} ${t.response_by.lastname || ""} (State NHIA)`
                             : t.response_by.role === "Admin"
-                              ? `From: ${t.response_by.firstname} ${t.response_by.lastname} (Central NHIA)`
+                              ? `From: ${t.response_by.firstname || t.response_by.email} ${t.response_by.lastname || ""} (Central NHIA)`
                               : "From: Respondent"}
                         </Typography>
                         <Typography
@@ -673,7 +673,8 @@ const CentralComplaintThreadPage = () => {
                             {t.response_recipient === "All"
                               ? `${
                                   complaint?.hmo?.name ||
-                                  complaint?.provider?.name
+                                  complaint?.provider?.name ||
+                                  complaint?.complaint_against
                                 },
                               ${complaint.firstname} ${complaint.lastname}`
                               : t.response_recipient === "Complainant"

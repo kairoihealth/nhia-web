@@ -227,7 +227,7 @@ const CentralComplaintsPage = () => {
   // });
 
   const handleViewComplaint = (row) => {
-    navigate(`/admin/complaint/${row.complaint_no}`, {
+    navigate(`/admin/complaint/${row.id}`, {
       state: { complaint: row?.id },
     });
   };
