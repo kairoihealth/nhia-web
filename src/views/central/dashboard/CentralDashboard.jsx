@@ -531,13 +531,29 @@ const CentralDashboard = () => {
                 <ArrowRightAltTwoToneIcon sx={{ color: "#038F3E" }} />
               </Typography>
             </Box>
-            <ReusableTable
-              columns={columns}
-              rows={transformedRows}
-              onViewClick={handleViewComplaint}
-              showActions={false}
-              showStatus={false}
-            />
+
+            {transformedRows?.length === 0 ? (
+              <Typography
+                sx={{
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "21.6px",
+                  color: "#475467",
+                  mb: 2,
+                  px: 2,
+                }}
+              >
+                No new Complaints Found
+              </Typography>
+            ) : (
+              <ReusableTable
+                columns={columns}
+                rows={transformedRows}
+                onViewClick={handleViewComplaint}
+                showActions={false}
+                showStatus={false}
+              />
+            )}
           </Box>
         </Box>
 

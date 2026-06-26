@@ -143,7 +143,7 @@ const StateDashboard = () => {
           title: s.status,
         };
       }),
-    [complaintStats?.status]
+    [complaintStats?.status],
   );
 
   const pieStatusData = {
@@ -166,7 +166,7 @@ const StateDashboard = () => {
         color: categoryColors[index],
         title: type.complaint_type,
       })),
-    [complaintStats?.complaint_type]
+    [complaintStats?.complaint_type],
   );
 
   const pieCategoryData = {
@@ -186,7 +186,7 @@ const StateDashboard = () => {
       complaintTrends?.[filters.trend]?.map((trend) =>
         trend.day
           ? truncateDay(trend.day)
-          : trend?.state__name || trend?.complaint_against
+          : trend?.state__name || trend?.complaint_against,
       ) || [],
     datasets: [
       {
@@ -269,23 +269,23 @@ const StateDashboard = () => {
     <Box>
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
+          display: "grid",
+          gridTemplateColumns: { xs: "1fr", lg: "2fr 1fr" },
           alignItems: "flex-start",
           mt: 2,
           gap: 4,
-          px: 4,
+          px: { xs: 1, md: 4 },
         }}
       >
         {/*Left side*/}
-        <Box sx={{ width: "100%" }}>
+        <Box sx={{ width: "100%", overflow: "hidden" }}>
           {/* Top Cards */}
           <Box
             sx={{
-              display: "flex",
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)" },
               width: "100%",
               gap: 4,
-              flexWrap: "wrap",
               mb: 4,
             }}
           >
@@ -298,8 +298,8 @@ const StateDashboard = () => {
                 alignItems: "flex-start",
                 borderRadius: "12px",
                 backgroundColor: "#FFFFFF",
-                width: "313px",
-                height: "209px",
+                width: "100%",
+                minHeight: "209px",
               }}
             >
               <Typography
@@ -333,8 +333,8 @@ const StateDashboard = () => {
                 alignItems: "flex-start",
                 borderRadius: "12px",
                 backgroundColor: "#FFFFFF",
-                width: "313px",
-                height: "209px",
+                width: "100%",
+                minHeight: "209px",
               }}
             >
               <Typography
@@ -350,7 +350,14 @@ const StateDashboard = () => {
               </Typography>
               {pieStatusData?.labels?.length > 0 &&
               pieStatusData?.datasets?.[0]?.data?.length > 0 ? (
-                <Box sx={{ display: "flex", alignItems: "center", px: 10 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexGrow: 1,
+                  }}
+                >
                   <PieChart
                     title="Pie Chart Example"
                     data={pieStatusData}
@@ -368,7 +375,14 @@ const StateDashboard = () => {
                   No data available
                 </Typography>
               )}
-              <Box sx={{ display: "flex", justifySelf: "center" }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  flexWrap: "wrap",
+                  gap: 1,
+                }}
+              >
                 {filteredPieStatus?.map((t) => (
                   <Box
                     key={t.id}
@@ -388,6 +402,7 @@ const StateDashboard = () => {
                         fontSize: "12px",
                         fontWeight: 500,
                         lineHeight: "16px",
+                        textTransform: "capitalize",
                         color: "#475467",
                       }}
                     >
@@ -406,8 +421,8 @@ const StateDashboard = () => {
                 alignItems: "flex-start",
                 borderRadius: "12px",
                 backgroundColor: "#FFFFFF",
-                width: "313px",
-                height: "209px",
+                width: "100%",
+                minHeight: "209px",
               }}
             >
               <Typography
@@ -423,7 +438,14 @@ const StateDashboard = () => {
               </Typography>
               {pieCategoryData?.labels?.length > 0 &&
               pieStatusData?.datasets?.[0]?.data?.length > 0 ? (
-                <Box sx={{ display: "flex", alignItems: "center", px: 10 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexGrow: 1,
+                  }}
+                >
                   <PieChart
                     title="Pie Chart Example"
                     data={pieCategoryData}
@@ -441,7 +463,15 @@ const StateDashboard = () => {
                   No data available
                 </Typography>
               )}
-              <Box sx={{ display: "flex", alignItems: "center", px: 3 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexWrap: "wrap",
+                  gap: 1,
+                }}
+              >
                 {filteredPieCategories?.map((t) => (
                   <Box
                     key={t.id}
@@ -461,6 +491,7 @@ const StateDashboard = () => {
                         fontSize: "12px",
                         fontWeight: 500,
                         lineHeight: "16px",
+                        textTransform: "capitalize",
                         color: "#475467",
                       }}
                     >
@@ -479,8 +510,8 @@ const StateDashboard = () => {
                 alignItems: "flex-start",
                 borderRadius: "12px",
                 backgroundColor: "#FFFFFF",
-                width: "313px",
-                height: "209px",
+                width: "100%",
+                minHeight: "209px",
               }}
             >
               <Typography
@@ -558,20 +589,22 @@ const StateDashboard = () => {
                 <ArrowRightAltTwoToneIcon sx={{ color: "#038F3E" }} />
               </Typography>
             </Box>
-            <ReusableTable
-              columns={columns}
-              rows={transformedRows}
-              onViewClick={handleViewComplaint}
-              showActions={false}
-              showStatus={false}
-            />
+            <Box sx={{ width: "100%", overflowX: "auto" }}>
+              <ReusableTable
+                columns={columns}
+                rows={transformedRows}
+                onViewClick={handleViewComplaint}
+                showActions={false}
+                showStatus={false}
+              />
+            </Box>
           </Box>
         </Box>
 
         {/*Right side*/}
         <Box
           sx={{
-            width: "40%",
+            width: "100%",
             display: "flex",
             flexDirection: "column",
             gap: 4,
@@ -586,8 +619,8 @@ const StateDashboard = () => {
               alignItems: "flex-start",
               borderRadius: "12px",
               backgroundColor: "#FFFFFF",
-              width: "360px",
-              height: "451px",
+              width: "100%",
+              minHeight: "451px",
             }}
           >
             <Typography
@@ -680,7 +713,7 @@ const StateDashboard = () => {
                    </Typography> */}
                       </Box>
                     </Box>
-                  )
+                  ),
                 )}
               </>
             ) : (
@@ -704,8 +737,7 @@ const StateDashboard = () => {
               alignItems: "flex-start",
               borderRadius: "12px",
               backgroundColor: "#FFFFFF",
-              width: "360px",
-              // height: "313px",
+              width: "100%",
             }}
           >
             <Box
@@ -838,7 +870,13 @@ const StateDashboard = () => {
                 )}
               </Box>
             </Box>
-            <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "flex-start",
+                width: "100%",
+              }}
+            >
               <LineChart
                 title="Line Chart Example"
                 data={lineData}

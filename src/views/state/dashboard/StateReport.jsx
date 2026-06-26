@@ -26,7 +26,6 @@ import Logo from "../../../assets/nhia-logo.png";
 import WithAuthorization from "../../../components/auth/withAuthorization";
 import { useAuth } from "../../../components/auth/AuthContext";
 
-
 // const styles = {
 //   borderRadius: "8px",
 //   "& .MuiOutlinedInput-notchedOutline": {
@@ -753,7 +752,7 @@ const StateReportsPage = () => {
                 sx={{
                   display: "flex",
                   flexDirection: "column",
-                  width: "200px",
+                  width: { xs: "100%", sm: "200px" },
                   gap: 1,
                 }}
               >
@@ -797,7 +796,7 @@ const StateReportsPage = () => {
                 sx={{
                   display: "flex",
                   flexDirection: "column",
-                  width: "200px",
+                  width: { xs: "100%", sm: "200px" },
                   gap: 1,
                 }}
               >
@@ -844,7 +843,7 @@ const StateReportsPage = () => {
                   sx={{
                     display: "flex",
                     flexDirection: "column",
-                    width: "200px",
+                    width: { xs: "100%", sm: "200px" },
                     gap: 1,
                   }}
                 >
@@ -893,7 +892,7 @@ const StateReportsPage = () => {
                   sx={{
                     display: "flex",
                     flexDirection: "column",
-                    width: "200px",
+                    width: { xs: "100%", sm: "200px" },
                     gap: 1,
                   }}
                 >
@@ -942,7 +941,7 @@ const StateReportsPage = () => {
                   sx={{
                     display: "flex",
                     flexDirection: "column",
-                    width: "200px",
+                    width: { xs: "100%", sm: "200px" },
                     gap: 1,
                   }}
                 >
@@ -1028,7 +1027,7 @@ const StateReportsPage = () => {
                 sx={{
                   display: "flex",
                   flexDirection: "column",
-                  width: "265px",
+                  width: { xs: "100%", sm: "265px" },
                   gap: 1,
                 }}
               >
@@ -1048,7 +1047,7 @@ const StateReportsPage = () => {
                     display: "flex",
                     gap: 2,
                     alignItems: "center",
-                    height: "51px",
+                    flexDirection: { xs: "column", sm: "row" },
                   }}
                 >
                   <TextField
@@ -1059,8 +1058,8 @@ const StateReportsPage = () => {
                     onChange={handleFilterChange}
                     // label="From"
                     variant="outlined"
-                    sx={textStyles}
-                    style={{ height: "100%" }}
+                    sx={{ ...textStyles, width: { xs: "100%", sm: "auto" } }}
+                    style={{ height: "51px" }}
                   />
                   <TextField
                     type="date"
@@ -1073,8 +1072,8 @@ const StateReportsPage = () => {
                     slotProps={{
                       placeholder: "To", // This sets the placeholder text
                     }}
-                    sx={textStyles}
-                    style={{ height: "100%" }}
+                    sx={{ ...textStyles, width: { xs: "100%", sm: "auto" } }}
+                    style={{ height: "51px" }}
                   />
                 </Box>
               </Box>
@@ -1083,7 +1082,7 @@ const StateReportsPage = () => {
               <Button
                 variant="contained"
                 sx={{
-                  width: "135px",
+                  width: { xs: "100%", sm: "135px" },
                   height: "51px",
                   backgroundColor: "#038F3E",
                   color: "#FFFFFF",
@@ -1117,7 +1116,7 @@ const StateReportsPage = () => {
                   justifyContent: "center",
                   alignItems: "center",
                   flexDirection: "column",
-                  width: "1044px",
+                  width: "100%",
                   minHeight: "300px",
                   borderRadius: "8px",
                   backgroundColor: "#F5F5F5",
@@ -1132,7 +1131,7 @@ const StateReportsPage = () => {
                       flexDirection: "column",
                       alignItems: "center",
                       gap: 2,
-                      width: "700px",
+                      width: "100%",
                     }}
                   >
                     <table
@@ -1175,7 +1174,7 @@ const StateReportsPage = () => {
                                   fontWeight: 500,
                                   lineHeight: "16px",
                                   color: "#ffffff",
-                                  px: 4,
+                                  // px: 4,
                                   textTransform: "capitalize",
                                 }}
                               >
@@ -1210,7 +1209,7 @@ const StateReportsPage = () => {
                                   fontWeight: 500,
                                   lineHeight: "16px",
                                   color: "#000000",
-                                  px: 4,
+                                  // px: 4,
                                 }}
                               >
                                 {d?.total}
@@ -1233,11 +1232,17 @@ const StateReportsPage = () => {
                       alignItems: "center",
                       borderRadius: "12px",
                       backgroundColor: "#FFFFFF",
-                      width: "500px",
+                      width: { xs: "100%", md: "500px" },
                       // height: "350px",
                     }}
                   >
-                    <Box sx={{ display: "flex", alignItems: "center", px: 10 }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        px: { xs: 2, sm: 10 },
+                      }}
+                    >
                       <PieChart
                         title="Pie Chart Example"
                         data={pieStatusData}
@@ -1246,7 +1251,15 @@ const StateReportsPage = () => {
                         width="209px"
                       />
                     </Box>
-                    <Box sx={{ display: "flex", gap: 1.2, mt: 5 }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        justifyContent: "center",
+                        gap: 1.2,
+                        mt: 5,
+                      }}
+                    >
                       {filteredPieStatus?.map((t) => (
                         <Box
                           key={t.title}
@@ -1288,7 +1301,7 @@ const StateReportsPage = () => {
                   <Button
                     variant="contained"
                     sx={{
-                      width: "249px",
+                      width: { xs: "100%", sm: "249px" },
                       height: "51px",
                       borderRadius: "8px",
                       backgroundColor: "#038F3E",
