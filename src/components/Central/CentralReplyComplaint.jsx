@@ -168,12 +168,12 @@ const CentralReplyComplaintPage = () => {
   }
 
   return (
-    <Box sx={{ display: "flex", p: 4, background: "#ffffff" }}>
+    <Box sx={{ p: { xs: 1, md: 4 }, background: "#ffffff" }}>
       <Box
         sx={{
           display: "flex",
           flexDirection: "column",
-          width: "90%",
+          width: "100%",
           height: "auto",
         }}
       >
@@ -186,14 +186,14 @@ const CentralReplyComplaintPage = () => {
             backgroundColor: "#20201E",
             borderTopLeftRadius: "10px",
             borderTopRightRadius: "10px",
-            px: 4,
+            p: { xs: 2, md: 4 },
           }}
         >
           <Typography
             sx={{
-              fontSize: "24px",
+              fontSize: { xs: "15px", md: "24px" },
               fontWeight: 500,
-              lineHeight: "32.4px",
+              lineHeight: "24px",
               color: "#FFFFFF",
             }}
           >
@@ -207,12 +207,12 @@ const CentralReplyComplaintPage = () => {
             display: "flex",
             flexDirection: "column",
             gap: 2,
-            width: "1032px",
+            width: "100%",
             mt: 2,
-            px: 5,
+            p: { xs: 2, md: 4 },
           }}
         >
-          <Box sx={{ width: "972px" }}>
+          <Box sx={{ width: "100%" }}>
             <Typography
               sx={{
                 fontSize: "20px",
@@ -243,7 +243,7 @@ const CentralReplyComplaintPage = () => {
             display: "flex",
             flexDirection: "column",
             gap: 3,
-            p: 4,
+            p: { xs: 2, md: 4 },
             mt: 5,
             background: "#FAFAFA",
           }}
@@ -328,17 +328,18 @@ const CentralReplyComplaintPage = () => {
           <Box
             sx={{
               display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-start",
+              flexDirection: { xs: "column-reverse", md: "row" },
+              justifyContent: { xs: "center", md: "space-between" },
+              alignItems: { xs: "center", md: "flex-start" },
               gap: 4,
-              mt: 3,
+              mt: { xs: 5, md: 3 },
             }}
           >
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                width: "60%",
+                width: { xs: "100%", md: "60%" },
                 gap: 1,
               }}
               onClick={handleAddAttachmentClick}
@@ -350,8 +351,8 @@ const CentralReplyComplaintPage = () => {
                 </Typography>
               )}
               {attachments?.length > 0 && (
-                <Box sx={{ width: "523px", my: 2 }}>
-                  <Box sx={{ display: "flex", gap: 1 }}>
+                <Box sx={{ width: "100%", my: 2 }}>
+                  <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
                     {attachments?.map((file, index) => (
                       <Card
                         key={index}
@@ -497,16 +498,15 @@ const CentralReplyComplaintPage = () => {
               <Button
                 variant="contained"
                 sx={{
-                  width: "261px",
+                  width: { xs: "100%", sm: "261px" },
                   backgroundColor: "#038F3E",
                   color: "#FFFFFF",
                   fontWeight: 500,
                   fontSize: "16px",
                   lineHeight: "24px",
                   textTransform: "capitalize",
-                  padding: "12px 24px",
+                  p: "12px 24px",
                   borderRadius: "50px",
-                  mb: 6,
                 }}
                 onClick={handleSubmit}
                 loading={isSubmitting}

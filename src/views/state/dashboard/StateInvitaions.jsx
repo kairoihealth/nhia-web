@@ -134,8 +134,10 @@ const InvitationsByState = () => {
         <Box
           sx={{
             display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
             justifyContent: "space-between",
-            alignItems: "center",
+            alignItems: { xs: "flex-start", sm: "center" },
+            gap: 2,
           }}
         >
           <Typography
@@ -202,25 +204,27 @@ const InvitationsByState = () => {
         </Box>
 
         {/* Table */}
-        <ReusableTable
-          columns={getColumns()}
-          rows={transformedRows}
-          //   onViewClick={handleViewComplaint}
-          showActions={false}
-          showStatus={true}
-          statusLabel={"Status"}
-          pagination={true}
-          headerBackgroundColor="#20201E"
-          totalPages={users?.total_pages}
-          page={page}
-          setPage={(page) => {
-            setPage(page);
-          }}
-          pageSize={pageSize}
-          setPageSize={(pageSize) => {
-            setPageSize(pageSize);
-          }}
-        />
+        <Box sx={{ width: "100%", overflowX: "auto" }}>
+          <ReusableTable
+            columns={getColumns()}
+            rows={transformedRows}
+            //   onViewClick={handleViewComplaint}
+            showActions={false}
+            showStatus={true}
+            statusLabel={"Status"}
+            pagination={true}
+            headerBackgroundColor="#20201E"
+            totalPages={users?.total_pages}
+            page={page}
+            setPage={(page) => {
+              setPage(page);
+            }}
+            pageSize={pageSize}
+            setPageSize={(pageSize) => {
+              setPageSize(pageSize);
+            }}
+          />
+        </Box>
       </Box>
     </Box>
   );

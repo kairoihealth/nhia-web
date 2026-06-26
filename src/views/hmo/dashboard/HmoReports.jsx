@@ -239,13 +239,20 @@ const HmoReportPage = () => {
             </Typography>
 
             {/* Filters Section */}
-            <Box sx={{ display: "flex", alignItems: "flex-end", gap: 4 }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "flex-end",
+                gap: 3,
+                flexWrap: "wrap",
+              }}
+            >
               {/* Report Type */}
               <Box
                 sx={{
                   display: "flex",
                   flexDirection: "column",
-                  width: "318px",
+                  width: { xs: "100%", sm: "318px" },
                   gap: 1,
                 }}
               >
@@ -259,7 +266,10 @@ const HmoReportPage = () => {
                 >
                   Report Type
                 </Typography>
-                <FormControl fullWidth sx={{ maxWidth: "318px" }}>
+                <FormControl
+                  fullWidth
+                  sx={{ maxWidth: { xs: "100%", sm: "318px" } }}
+                >
                   <select
                     id="report-type"
                     value={filters.reportType}
@@ -299,7 +309,7 @@ const HmoReportPage = () => {
                 sx={{
                   display: "flex",
                   flexDirection: "column",
-                  width: "243px",
+                  width: { xs: "100%", sm: "243px" },
                   gap: 1,
                 }}
               >
@@ -313,7 +323,10 @@ const HmoReportPage = () => {
                 >
                   Location
                 </Typography>
-                <FormControl fullWidth sx={{ maxWidth: "243px" }}>
+                <FormControl
+                  fullWidth
+                  sx={{ maxWidth: { xs: "100%", sm: "243px" } }}
+                >
                   <select
                     id="location"
                     value={filters.location}
@@ -358,7 +371,7 @@ const HmoReportPage = () => {
                 sx={{
                   display: "flex",
                   flexDirection: "column",
-                  width: "265px",
+                  width: { xs: "100%", sm: "265px" },
                   gap: 1,
                 }}
               >
@@ -373,7 +386,13 @@ const HmoReportPage = () => {
                   Duration
                 </Typography>
 
-                <Box sx={{ display: "flex", gap: 2 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: 2,
+                    flexDirection: { xs: "column", sm: "row" },
+                  }}
+                >
                   <TextField
                     type="date"
                     placeholder="From"
@@ -382,7 +401,7 @@ const HmoReportPage = () => {
                     onChange={handleFilterChange}
                     // label="From"
                     variant="outlined"
-                    sx={textStyles}
+                    sx={{ ...textStyles, width: { xs: "100%", sm: "auto" } }}
                   />
                   <TextField
                     type="date"
@@ -395,7 +414,7 @@ const HmoReportPage = () => {
                     slotProps={{
                       placeholder: "To", // This sets the placeholder text
                     }}
-                    sx={textStyles}
+                    sx={{ ...textStyles, width: { xs: "100%", sm: "auto" } }}
                   />
                 </Box>
               </Box>
@@ -404,7 +423,7 @@ const HmoReportPage = () => {
               <Button
                 variant="contained"
                 sx={{
-                  width: "135px",
+                  width: { xs: "100%", sm: "135px" },
                   height: "51px",
                   backgroundColor: "#038F3E",
                   color: "#FFFFFF",
@@ -438,7 +457,7 @@ const HmoReportPage = () => {
                   justifyContent: "center",
                   alignItems: "center",
                   flexDirection: "column",
-                  width: "1044px",
+                  width: "100%",
                   minHeight: "300px",
                   borderRadius: "8px",
                   backgroundColor: "#F5F5F5",
@@ -453,7 +472,7 @@ const HmoReportPage = () => {
                       flexDirection: "column",
                       alignItems: "center",
                       gap: 2,
-                      width: "700px",
+                      width: "100%",
                     }}
                   >
                     <table
@@ -554,11 +573,17 @@ const HmoReportPage = () => {
                       alignItems: "center",
                       borderRadius: "12px",
                       backgroundColor: "#FFFFFF",
-                      width: "500px",
+                      width: { xs: "100%", md: "500px" },
                       // height: "350px",
                     }}
                   >
-                    <Box sx={{ display: "flex", alignItems: "center", px: 10 }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        px: { xs: 2, sm: 10 },
+                      }}
+                    >
                       <PieChart
                         title="Pie Chart Example"
                         data={pieStatusData}
@@ -567,7 +592,15 @@ const HmoReportPage = () => {
                         width="209px"
                       />
                     </Box>
-                    <Box sx={{ display: "flex", gap: 1.2, mt: 5 }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        justifyContent: "center",
+                        gap: 1.2,
+                        mt: 5,
+                      }}
+                    >
                       {filteredPieStatus?.map((t) => (
                         <Box
                           key={t.title}
@@ -608,7 +641,7 @@ const HmoReportPage = () => {
                   <Button
                     variant="contained"
                     sx={{
-                      width: "249px",
+                      width: { xs: "100%", sm: "249px" },
                       height: "51px",
                       borderRadius: "8px",
                       backgroundColor: "#038F3E",

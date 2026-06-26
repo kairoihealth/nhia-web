@@ -91,10 +91,10 @@ const CentralSingleComplaintPage = () => {
             sx={{
               display: "flex",
               flexDirection: "column",
-              width: "40%",
+              width: { xs: "100%", md: "60%" },
               gap: 2,
               mt: 4,
-              px: 2,
+              px: { xs: 0, sm: 2 },
             }}
           >
             <Box flex={1} sx={{ display: "flex", gap: 2 }}>
@@ -213,10 +213,10 @@ const CentralSingleComplaintPage = () => {
             sx={{
               display: "flex",
               flexDirection: "column",
-              width: "40%",
+              width: { xs: "100%", md: "60%" },
               gap: 2,
               mt: 4,
-              px: 2,
+              px: { xs: 0, sm: 2 },
             }}
           >
             <Box flex={1} sx={{ display: "flex", gap: 2 }}>
@@ -396,7 +396,7 @@ const CentralSingleComplaintPage = () => {
           <Button
             variant="contained"
             sx={{
-              width: "50%",
+              width: { xs: "100%", md: "50%" },
               backgroundColor: "#038F3E",
               color: "#FFFFFF",
               fontWeight: 500,

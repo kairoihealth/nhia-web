@@ -149,8 +149,8 @@ const ReusableTable = ({
                       borderRadius: "8px",
                       backgroundColor: "#038F3E",
                       color: "#FFFFFF",
-                      py: "12px",
-                      px: "23px",
+                      py: { xs: "8px", md: "12px" },
+                      px: { xs: "16px", md: "23px" },
                       textTransform: "none",
                       "&:hover": { backgroundColor: "#027A3B" },
                     }}
@@ -177,20 +177,22 @@ const ReusableTable = ({
                         row.status === "pending"
                           ? "#FFF3E7"
                           : row.status === "closed" ||
-                            row.status === "request sent"
-                          ? "#D6EBFF"
-                          : row.status === "active" || row.status === "accepted"
-                          ? "#E8F8EE"
-                          : "#FFF3E7",
+                              row.status === "request sent"
+                            ? "#D6EBFF"
+                            : row.status === "active" ||
+                                row.status === "accepted"
+                              ? "#E8F8EE"
+                              : "#FFF3E7",
                       color:
                         row.status === "pending"
                           ? "#EDB378"
                           : row.status === "closed" ||
-                            row.status === "request sent"
-                          ? "#4B95DD"
-                          : row.status === "active" || row.status === "accepted"
-                          ? "#096F35"
-                          : "red",
+                              row.status === "request sent"
+                            ? "#4B95DD"
+                            : row.status === "active" ||
+                                row.status === "accepted"
+                              ? "#096F35"
+                              : "red",
                     }}
                   >
                     &bull; {row.status || "N/A"}
@@ -273,7 +275,7 @@ ReusableTable.propTypes = {
       field: PropTypes.string.isRequired,
       align: PropTypes.string,
       format: PropTypes.func,
-    })
+    }),
   ).isRequired,
   rows: PropTypes.arrayOf(PropTypes.object).isRequired,
   onViewClick: PropTypes.func,

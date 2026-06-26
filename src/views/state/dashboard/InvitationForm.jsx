@@ -163,7 +163,7 @@ const InvitationForm = () => {
           display: "flex",
           flexDirection: "column",
           gap: 2,
-          width: "40%",
+          width: { xs: "100%", md: "40%" },
           py: 4,
         }}
       >
@@ -309,7 +309,7 @@ const InvitationForm = () => {
               borderRadius: "8px",
               backgroundColor: "#038F3E",
               color: "#FFFFFF",
-              width: "347px",
+              width: { xs: "100%", sm: "347px" },
               py: "12px",
               px: "8px",
               textTransform: "none",
