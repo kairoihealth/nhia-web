@@ -745,7 +745,7 @@ const CentralReportsPage = () => {
                 sx={{
                   display: "flex",
                   flexDirection: "column",
-                  width: "200px",
+                  width: { xs: "100%", sm: "200px" },
                   gap: 1,
                 }}
               >
@@ -759,7 +759,10 @@ const CentralReportsPage = () => {
                 >
                   Report Type
                 </Typography>
-                <FormControl fullWidth sx={{ maxWidth: "200px" }}>
+                <FormControl
+                  fullWidth
+                  sx={{ maxWidth: { xs: "100%", sm: "243px" } }}
+                >
                   <select
                     id="report-type"
                     value={filters.reportType}
@@ -795,7 +798,7 @@ const CentralReportsPage = () => {
                 sx={{
                   display: "flex",
                   flexDirection: "column",
-                  width: "200px",
+                  width: { xs: "100%", sm: "200px" },
                   gap: 1,
                 }}
               >
@@ -842,7 +845,7 @@ const CentralReportsPage = () => {
                   sx={{
                     display: "flex",
                     flexDirection: "column",
-                    width: "200px",
+                    width: { xs: "100%", sm: "200px" },
                     gap: 1,
                   }}
                 >
@@ -891,7 +894,7 @@ const CentralReportsPage = () => {
                   sx={{
                     display: "flex",
                     flexDirection: "column",
-                    width: "200px",
+                    width: { xs: "100%", sm: "200px" },
                     gap: 1,
                   }}
                 >
@@ -940,7 +943,7 @@ const CentralReportsPage = () => {
                   sx={{
                     display: "flex",
                     flexDirection: "column",
-                    width: "200px",
+                    width: { xs: "100%", sm: "200px" },
                     gap: 1,
                   }}
                 >
@@ -976,7 +979,7 @@ const CentralReportsPage = () => {
                 sx={{
                   display: "flex",
                   flexDirection: "column",
-                  width: "243px",
+                  width: { xs: "100%", sm: "243px" },
                   gap: 1,
                 }}
               >
@@ -990,7 +993,10 @@ const CentralReportsPage = () => {
                 >
                   Location
                 </Typography>
-                <FormControl fullWidth sx={{ maxWidth: "243px" }}>
+                <FormControl
+                  fullWidth
+                  sx={{ maxWidth: { xs: "100%", sm: "243px" } }}
+                >
                   <select
                     id="location"
                     value={filters.location}
@@ -1035,7 +1041,7 @@ const CentralReportsPage = () => {
                 sx={{
                   display: "flex",
                   flexDirection: "column",
-                  width: "265px",
+                  width: { xs: "100%", sm: "265px" },
                   gap: 1,
                 }}
               >
@@ -1055,7 +1061,8 @@ const CentralReportsPage = () => {
                     display: "flex",
                     gap: 2,
                     alignItems: "center",
-                    height: "51px",
+                    flexDirection: { xs: "column", sm: "row" },
+                    // flexWrap: "wrap",
                   }}
                 >
                   <TextField
@@ -1066,8 +1073,8 @@ const CentralReportsPage = () => {
                     onChange={handleFilterChange}
                     // label="From"
                     variant="outlined"
-                    sx={textStyles}
-                    style={{ height: "100%" }}
+                    sx={{ ...textStyles, width: { xs: "100%", sm: "auto" } }}
+                    style={{ height: "51px" }}
                   />
                   <TextField
                     type="date"
@@ -1080,8 +1087,8 @@ const CentralReportsPage = () => {
                     slotProps={{
                       placeholder: "To", // This sets the placeholder text
                     }}
-                    sx={textStyles}
-                    style={{ height: "100%" }}
+                    sx={{ ...textStyles, width: { xs: "100%", sm: "auto" } }}
+                    style={{ height: "51px" }}
                   />
                 </Box>
               </Box>
@@ -1090,7 +1097,7 @@ const CentralReportsPage = () => {
               <Button
                 variant="contained"
                 sx={{
-                  width: "135px",
+                  width: { xs: "100%", sm: "135px" },
                   height: "51px",
                   backgroundColor: "#038F3E",
                   color: "#FFFFFF",
@@ -1124,7 +1131,7 @@ const CentralReportsPage = () => {
                   justifyContent: "center",
                   alignItems: "center",
                   flexDirection: "column",
-                  width: "1044px",
+                  width: "100%",
                   minHeight: "300px",
                   borderRadius: "8px",
                   backgroundColor: "#F5F5F5",
@@ -1139,7 +1146,7 @@ const CentralReportsPage = () => {
                       flexDirection: "column",
                       alignItems: "center",
                       gap: 2,
-                      width: "700px",
+                      width: "100%",
                     }}
                   >
                     <table
@@ -1182,7 +1189,7 @@ const CentralReportsPage = () => {
                                   fontWeight: 500,
                                   lineHeight: "16px",
                                   color: "#ffffff",
-                                  px: 4,
+                                  // px: 4,
                                   textTransform: "capitalize",
                                 }}
                               >
@@ -1217,7 +1224,7 @@ const CentralReportsPage = () => {
                                   fontWeight: 500,
                                   lineHeight: "16px",
                                   color: "#000000",
-                                  px: 4,
+                                  // px: 4,
                                 }}
                               >
                                 {d?.total}
@@ -1240,11 +1247,11 @@ const CentralReportsPage = () => {
                       alignItems: "center",
                       borderRadius: "12px",
                       backgroundColor: "#FFFFFF",
-                      width: "500px",
+                      width: { xs: "100%", md: "500px" },
                       // height: "350px",
                     }}
                   >
-                    <Box sx={{ display: "flex", alignItems: "center", px: 10 }}>
+                    <Box sx={{ display: "flex", alignItems: "center", px: {xs: 2, sm:10} }}>
                       <PieChart
                         title="Pie Chart Example"
                         data={pieStatusData}
@@ -1294,7 +1301,7 @@ const CentralReportsPage = () => {
                   <Button
                     variant="contained"
                     sx={{
-                      width: "249px",
+                      width: { xs: "100%", sm: "249px" },
                       height: "51px",
                       borderRadius: "8px",
                       backgroundColor: "#038F3E",

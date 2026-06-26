@@ -111,17 +111,16 @@ const StateSettings = () => {
       <Box
         sx={{
           display: "flex",
-          justifyContent: "space-around",
+          flexDirection: { xs: "column", md: "row" },
           gap: "2rem",
         }}
       >
-        <Box sx={{ width: "40%" }}>
+        <Box sx={{ width: { xs: "100%", md: "40%" } }}>
           {/* Tab Buttons */}
           <Box
             sx={{
               display: "flex",
               flexDirection: "column",
-              // width: "80%",
               padding: "20px",
               gap: 2,
               mb: 4,
@@ -132,7 +131,7 @@ const StateSettings = () => {
               variant={activeTab === "add" ? "contained" : "outlined"}
               onClick={() => handleTabClick("add")}
               sx={{
-                width: "395px",
+                width: "100%",
                 height: "55px",
                 display: "flex",
                 justifyContent: "space-between",
@@ -164,7 +163,7 @@ const StateSettings = () => {
               variant={activeTab === "edit" ? "contained" : "outlined"}
               onClick={() => handleTabClick("edit")}
               sx={{
-                width: "395px",
+                width: "100%",
                 height: "55px",
                 display: "flex",
                 justifyContent: "space-between",
@@ -196,7 +195,7 @@ const StateSettings = () => {
               variant={activeTab === "manage" ? "contained" : "outlined"}
               onClick={() => handleTabClick("manage")}
               sx={{
-                width: "395px",
+                width: "100%",
                 height: "55px",
                 display: "flex",
                 justifyContent: "space-between",
@@ -228,8 +227,8 @@ const StateSettings = () => {
           </Box>
         </Box>
 
-        <Box sx={{ width: "100%" }}>
-          <Box sx={{ width: "90%" }}>
+        <Box sx={{ width: { xs: "100%", md: "60%" } }}>
+          <Box sx={{ width: "100%" }}>
             {/* Dynamic Content Based on Active Tab */}
             {activeTab === "add" && <AddAdminForm />}
             {activeTab === "edit" && <EditAdminForm />}
@@ -432,7 +431,7 @@ const AddAdminForm = () => {
             variant="contained"
             type="submit"
             sx={{
-              width: "380px",
+              width: { xs: "100%", sm: "380px" },
               height: "48px",
               backgroundColor: "#038F3E",
               color: "#FFFFFF",
@@ -605,7 +604,11 @@ const EditAdminForm = () => {
         <Box
           sx={{
             display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
+            gridTemplateColumns: {
+              xs: "1fr",
+              sm: "repeat(2, 1fr)",
+              md: "repeat(3, 1fr)",
+            },
             flexWrap: "wrap",
             gap: 4,
             mt: 3,
@@ -927,7 +930,7 @@ const EditAdminForm = () => {
                 variant="contained"
                 type="submit"
                 sx={{
-                  width: "380px",
+                  width: { xs: "100%", sm: "380px" },
                   height: "48px",
                   backgroundColor: "#038F3E",
                   color: "#FFFFFF",
@@ -1108,7 +1111,7 @@ const ManageAdminRoles = () => {
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
-                    maxWidth: "560px",
+                    width: "100%",
                     height: "52px",
                     border: "0.5px solid #DADADA",
                     backgroundColor: "#F5F5F5",
@@ -1321,7 +1324,7 @@ const ManageAdminRoles = () => {
                 variant="contained"
                 type="submit"
                 sx={{
-                  width: "380px",
+                  width: { xs: "100%", sm: "380px" },
                   height: "48px",
                   backgroundColor: "#038F3E",
                   color: "#FFFFFF",

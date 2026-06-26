@@ -132,13 +132,13 @@ const CentralComplaintThreadPage = () => {
   }
 
   return (
-    <Box sx={{ background: "#fff" }}>
+    <Box sx={{ background: "#fff", p: { xs: 1, md: 2 } }}>
       {/*Head*/}
-      <Box sx={{ px: 2 }}>
+      <Box>
         <Box sx={{ mt: 2 }}>
           <Typography
             sx={{
-              fontSize: "24px",
+              fontSize: { xs: "20px", md: "24px" },
               fontWeight: 500,
               lineHeight: "32.4px",
               color: "#1B1C1E",
@@ -156,13 +156,15 @@ const CentralComplaintThreadPage = () => {
                 sx={{
                   display: "flex",
                   justifyContent: "space-between",
-                  alignItems: "center",
+                  alignItems: { xs: "flex-start", md: "center" },
+                  flexDirection: { xs: "column", md: "row" },
+                  gap: 2,
                 }}
               >
                 <Box>
                   <Typography
                     sx={{
-                      fontSize: "24px",
+                      fontSize: { xs: "15px", md: "24px" },
                       fontWeight: 500,
                       lineHeight: "32.4px",
                       color: "#111827",
@@ -255,11 +257,9 @@ const CentralComplaintThreadPage = () => {
                 display: "flex",
                 flexDirection: "column",
                 gap: 2,
-                // width: "100%",
-                maxWidth: "1332px",
+                width: "100%",
                 mt: 4,
-                px: 4,
-                py: 4,
+                p: { xs: 2, md: 4 },
                 background: "#FAFAFA",
               }}
             >
@@ -279,7 +279,7 @@ const CentralComplaintThreadPage = () => {
                 >
                   <Typography
                     sx={{
-                      fontSize: "16px",
+                      fontSize: {xs: "14px", md: "16px"},
                       fontWeight: 400,
                       lineHeight: "24px",
                       color: "#292D32",
@@ -294,7 +294,7 @@ const CentralComplaintThreadPage = () => {
                   />
                   <Typography
                     sx={{
-                      fontSize: "16px",
+                      fontSize: {xs: "14px", md: "16px"},
                       fontWeight: 400,
                       lineHeight: "24px",
                       color: "#000000",
@@ -306,7 +306,7 @@ const CentralComplaintThreadPage = () => {
               </Box>
 
               {/*complaint details*/}
-              <Box sx={{ width: "972px" }}>
+              <Box sx={{ width: "100%" }}>
                 <Typography
                   sx={{
                     fontSize: "16px",
@@ -479,14 +479,14 @@ const CentralComplaintThreadPage = () => {
                     mt: 2,
                   }}
                 >
-                  <Box sx={{ width: "987px", textAlign: "center", my: 2 }}>
+                  <Box sx={{ width: "100%", textAlign: "center", my: 2 }}>
                     <Divider
                       sx={{
                         borderBottom: "1px dashed #000000",
                       }}
                     />
                   </Box>
-                  <Box sx={{ width: "972px" }}>
+                  <Box sx={{ width: "100%" }}>
                     <Typography
                       sx={{
                         fontSize: "20px",
@@ -619,7 +619,7 @@ const CentralComplaintThreadPage = () => {
             {responses?.length ? (
               <>
                 {responses?.map((t) => (
-                  <Box key={t.id}>
+                  <Box key={t.id} sx={{ width: "100%" }}>
                     <Box sx={{ width: "100%", textAlign: "center", my: 4 }}>
                       <Divider
                         sx={{
@@ -633,10 +633,8 @@ const CentralComplaintThreadPage = () => {
                         display: "flex",
                         flexDirection: "column",
                         gap: 2,
-                        // width: "1032px",
-                        maxWidth: "1332px",
-                        px: 4,
-                        py: 4,
+                        width: "100%",
+                        p: { xs: 2, md: 4 },
                         background: "#FAFAFA",
                       }}
                     >
@@ -646,7 +644,7 @@ const CentralComplaintThreadPage = () => {
                             fontSize: "16px",
                             fontWeight: 500,
                             lineHeight: "32.4px",
-                            color: "#595959",
+                            color: "#111827",
                             px: 2,
                             // px: 4,
                           }}
@@ -688,7 +686,7 @@ const CentralComplaintThreadPage = () => {
                       </Box>
 
                       {/*complaint details*/}
-                      <Box sx={{ width: "972px" }}>
+                      <Box sx={{ width: "100%" }}>
                         {/* <Typography
                     sx={{
                       fontSize: "16px",
@@ -900,15 +898,18 @@ const CentralComplaintThreadPage = () => {
             <Box
               sx={{
                 display: "flex",
-                justifyContent: "flex-start",
+                flexDirection: { xs: "column", md: "row" },
+                justifyContent: { xs: "center", md: "flex-start" },
+                alignItems: "center",
                 gap: 3,
-                px: 8,
+                px: { xs: 2, md: 8 },
+                my: 6,
               }}
             >
               <Button
                 variant="outlined"
                 sx={{
-                  width: "20%",
+                  width: { xs: "70%", md: "auto" },
                   border: "1px solid #038F3E",
                   color: "#038F3E",
                   fontWeight: 500,
@@ -917,8 +918,6 @@ const CentralComplaintThreadPage = () => {
                   textTransform: "capitalize",
                   padding: "12px 24px",
                   borderRadius: "50px",
-                  mt: 8,
-                  mb: 6,
                 }}
                 onClick={() => handleReply("Complainant")}
               >
@@ -927,7 +926,7 @@ const CentralComplaintThreadPage = () => {
               <Button
                 variant="outlined"
                 sx={{
-                  width: "20%",
+                  width: { xs: "70%", md: "auto" },
                   border: "1px solid #038F3E",
                   color: "#038F3E",
                   fontWeight: 500,
@@ -936,8 +935,6 @@ const CentralComplaintThreadPage = () => {
                   textTransform: "capitalize",
                   padding: "12px 24px",
                   borderRadius: "50px",
-                  mt: 8,
-                  mb: 6,
                 }}
                 onClick={() => handleReply("Respondent")}
               >
@@ -946,7 +943,7 @@ const CentralComplaintThreadPage = () => {
               <Button
                 variant="outlined"
                 sx={{
-                  width: "20%",
+                  width: { xs: "70%", md: "auto" },
                   border: "1px solid #038F3E",
                   color: "#038F3E",
                   fontWeight: 500,
@@ -955,8 +952,6 @@ const CentralComplaintThreadPage = () => {
                   textTransform: "capitalize",
                   padding: "12px 24px",
                   borderRadius: "50px",
-                  mt: 8,
-                  mb: 6,
                 }}
                 onClick={() => handleReply("All")}
               >

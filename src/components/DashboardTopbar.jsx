@@ -6,12 +6,14 @@ import {
   TextField,
   InputAdornment,
 } from "@mui/material";
-import { FiBell } from "react-icons/fi";
+import { FiBell, FiMenu } from "react-icons/fi";
 import SearchIcon from "@mui/icons-material/Search";
+import Logo from "../assets/nhia-logo.png";
 
 const DashboardTopbar = ({
   username,
   // role
+  onMobileMenuClick,
 }) => {
   const userRole = localStorage.getItem("userRole");
   const fullname = username || localStorage.getItem("fullname");
@@ -32,13 +34,31 @@ const DashboardTopbar = ({
         // borderBottom: "1px solid #E0E0E0",
       }}
     >
-      {/* Welcome Message */}
-      <Typography variant="h6" fontWeight="bold">
-        Welcome, {fullname}
-        {/* {role} */}
-      </Typography>
+      {/* Mobile Logo */}
+      <Box
+        sx={{
+          display: { xs: "flex", md: "none" },
+          justifyContent: "center",
+        }}
+      >
+        <img src={Logo} alt="NHIA Logo" style={{ height: "40px" }} />
+      </Box>
 
-      <Box sx={{ width: "603px" }}>
+      {/* Welcome Message */}
+      <Box sx={{ display: { xs: "none", md: "block" } }}>
+        <Typography variant="h6" fontWeight="bold">
+          Welcome, {fullname}
+          {/* {role} */}
+        </Typography>
+      </Box>
+
+      {/* <Box
+        sx={{
+          maxWidth: "403px",
+          width: "40%",
+          display: { xs: "none", md: "block" },
+        }}
+      >
         <TextField
           placeholder="Type to search"
           variant="outlined"
@@ -71,10 +91,10 @@ const DashboardTopbar = ({
             },
           }}
         />
-      </Box>
+      </Box> */}
 
       {/* Actions */}
-      <Box sx={{ display: "flex", gap: 2 }}>
+      <Box sx={{ display: "flex", gap: 2, ml: { xs: 1, md: 0 } }}>
         {/* <IconButton>
           <FiSearch size={20} color="#000000" />
         </IconButton> */}
@@ -82,6 +102,14 @@ const DashboardTopbar = ({
           sx={{ backgroundColor: "#F8F8F8", border: "0.64px solid #DADADA" }}
         >
           <FiBell size={20} color="#000000" />
+        </IconButton>
+
+        {/* Mobile Menu Toggle */}
+        <IconButton
+          onClick={onMobileMenuClick}
+          sx={{ display: { xs: "inline-flex", md: "none" }, mr: 1 }}
+        >
+          <FiMenu />
         </IconButton>
       </Box>
     </Box>
@@ -93,4 +121,5 @@ export default DashboardTopbar;
 DashboardTopbar.propTypes = {
   username: PropTypes.string,
   role: PropTypes.string,
+  onMobileMenuClick: PropTypes.func,
 };

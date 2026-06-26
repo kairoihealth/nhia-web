@@ -1,7 +1,7 @@
-import { useState } from "react";
 import PropTypes from "prop-types";
 import {
   Box,
+  Drawer,
   ListItem,
   ListItemIcon,
   ListItemText,
@@ -9,13 +9,12 @@ import {
   Typography,
 } from "@mui/material";
 import {
-  FiMenu,
   FiLogOut,
-  FiX,
   FiUser,
   // FiSettings,
   FiHome,
   FiSettings,
+  FiX,
 } from "react-icons/fi";
 import Logo from "../assets/nhia-logo.png";
 import { TbReportAnalytics } from "react-icons/tb";
@@ -39,7 +38,7 @@ const menuData = {
       link: "/hmo/reports",
     },
     { id: 4, label: "Profile", icon: <FiUser />, link: "/hmo/profile" },
-    { id: 5, label: "Settings", icon: <FiSettings />, link: "/hmo/settings" }
+    { id: 5, label: "Settings", icon: <FiSettings />, link: "/hmo/settings" },
   ],
   Provider: [
     {
@@ -65,8 +64,8 @@ const menuData = {
       id: 5,
       label: "Settings",
       icon: <FiSettings />,
-      link: "/provider/settings"
-    }
+      link: "/provider/settings",
+    },
   ],
   StateAdmin: [
     {
@@ -132,52 +131,54 @@ const menuData = {
   ],
 };
 
-const DashboardSidebar = () => {
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
+const DashboardSidebar = ({ showMobileMenu, onMobileClose }) => {
   const role = localStorage.getItem("userRole");
   // const menuItems = menuData[role] || [];
-
-  const handleMobileMenuToggle = () => {
-    setShowMobileMenu(!showMobileMenu);
-  };
 
   const logout = () => {
     localStorage.clear();
     window.location.href = "/";
   };
 
-  return (
+  const content = (
     <Box
       sx={{
-        width: showMobileMenu ? "94px" : "269px",
-        transition: "width 0.3s ease",
-        backgroundColor: "#038F3E",
-        color: "#ffffff",
-        boxShadow: "0px 0px 8px rgba(0, 0, 0, 0.1)",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        height: "100vh",
-        overflowY: "auto",
-        overflowX: "hidden",
-        p: 6,
+        height: "100%",
+        p: 2,
       }}
     >
-      {/* Mobile Menu Toggle */}
-      <Box
+      <IconButton
+        aria-label="close drawer"
+        onClick={onMobileClose}
         sx={{
-          p: 2,
-          display: { xs: "flex", md: "none" },
-          justifyContent: "center",
+          display: { xs: "inline-flex", md: "none" },
+          position: "absolute",
+          top: 16,
+          right: 16,
+          color: "white",
+          zIndex: (theme) => theme.zIndex.drawer + 1,
         }}
       >
-        <IconButton onClick={handleMobileMenuToggle}>
-          {showMobileMenu ? <FiX size={24} /> : <FiMenu size={24} />}
-        </IconButton>
-      </Box>
-      <Box>
+        <FiX size={24} />
+      </IconButton>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          flexGrow: 1,
+        }}
+      >
         {/* Logo */}
-        <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            mb: 2,
+          }}
+        >
           <img src={Logo} alt="NHIA Logo" style={{ width: "74.64px" }} />
         </Box>
 
@@ -189,6 +190,7 @@ const DashboardSidebar = () => {
             gap: 2,
             mt: 3,
             cursor: "pointer",
+            flexGrow: 1,
           }}
         >
           {menuData[role]?.length > 0 ? (
@@ -197,7 +199,6 @@ const DashboardSidebar = () => {
                 key={index}
                 to={item.link}
                 style={({ isActive }) => ({
-                  width: "223px",
                   textDecoration: "none",
                   color: isActive ? "#038F3E" : "#FFFFFF",
                   backgroundColor: isActive ? "#FFFFFF" : "transparent",
@@ -205,7 +206,7 @@ const DashboardSidebar = () => {
                   borderBottomLeftRadius: "20px",
                   padding: "12px 20px",
                   display: "flex",
-                  alignItems: "flex-end",
+                  alignItems: "center",
                 })}
               >
                 {({ isActive }) => (
@@ -225,31 +226,34 @@ const DashboardSidebar = () => {
               </NavLink>
             ))
           ) : (
-            <Typography sx={{ color: "white", textAlign: "center" }}>
+            <Typography sx={{ color: "white", textAlign: "center", mt: 4 }}>
               Role not recognized
             </Typography>
           )}
         </Box>
       </Box>
-
       {/* Logout Button */}
       <Box
         sx={{
-          // position: "absolute",
-          bottom: 0,
-          width: "100%",
           borderTop: "1px solid #e0e0e0",
           cursor: "pointer",
+          mx: -2, // Counteract parent padding
+          background: "#038F3E",
+          border: "none",
+          padding: "12px 20px",
         }}
       >
         <ListItem
           component="button"
           onClick={logout}
           sx={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
             color: "#ffffff",
+            background: "#038F3E",
+            width: "100%",
+            textAlign: "left",
+            border: "none",
+            gap: 2,
+            
           }}
         >
           <ListItemIcon>
@@ -260,11 +264,48 @@ const DashboardSidebar = () => {
       </Box>
     </Box>
   );
+
+  return (
+    <>
+      {/* Mobile Sidebar */}
+      <Drawer
+        anchor="left"
+        onClose={onMobileClose}
+        open={showMobileMenu}
+        variant="temporary"
+        PaperProps={{
+          sx: {
+            width: 269,
+            backgroundColor: "#038F3E",
+            color: "#ffffff",
+          },
+        }}
+        sx={{ display: { xs: "block", md: "none" } }}
+      >
+        {content}
+      </Drawer>
+
+      {/* Desktop Sidebar */}
+      <Box
+        sx={{
+          width: 269,
+          flexShrink: 0,
+          display: { xs: "none", md: "flex" },
+          flexDirection: "column",
+          height: "100vh",
+          backgroundColor: "#038F3E",
+          color: "#ffffff",
+        }}
+      >
+        {content}
+      </Box>
+    </>
+  );
 };
 
 export default DashboardSidebar;
 
 DashboardSidebar.propTypes = {
-  menuData: PropTypes.array.isRequired,
-  role: PropTypes.string,
+  showMobileMenu: PropTypes.bool,
+  onMobileClose: PropTypes.func,
 };

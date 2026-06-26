@@ -82,7 +82,7 @@ const CentralAnalysis = () => {
     () =>
       complaintStats?.complaint_against?.map((s) => {
         const colorObj = pieComplaintAgainstColors.find(
-          (c) => c.complaint_against === s.complaint_against
+          (c) => c.complaint_against === s.complaint_against,
         );
         return {
           ...s,
@@ -90,7 +90,7 @@ const CentralAnalysis = () => {
           title: s.complaint_against,
         };
       }),
-    [complaintStats?.complaint_against]
+    [complaintStats?.complaint_against],
   );
 
   const pieComplaintAgainstData = {
@@ -117,7 +117,7 @@ const CentralAnalysis = () => {
     () =>
       complaintStats?.regions?.map((s) => {
         const colorObj = pieComplaintByRegionColors.find(
-          (c) => c.state__region__name === s.state__region__name
+          (c) => c.state__region__name === s.state__region__name,
         );
         return {
           ...s,
@@ -125,7 +125,7 @@ const CentralAnalysis = () => {
           title: s.state__region__name,
         };
       }),
-    [complaintStats?.region]
+    [complaintStats?.region],
   );
 
   const pieComplaintByRegionData = {
@@ -143,14 +143,14 @@ const CentralAnalysis = () => {
   const barData = {
     labels:
       complaintTrends?.state_trends_over_time?.map(
-        (trend) => trend.state__name
+        (trend) => trend.state__name,
       ) || [],
     datasets: [
       {
         label: "Volume",
         data:
           complaintTrends?.state_trends_over_time?.map(
-            (trend) => trend.total
+            (trend) => trend.total,
           ) || [],
         backgroundColor: ["#20201E"],
         borderColor: ["#20201E"],
@@ -201,7 +201,16 @@ const CentralAnalysis = () => {
 
   return (
     <Box>
-      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
+          justifyContent: "space-between",
+          alignItems: { xs: "flex-start", sm: "center" },
+          gap: 2,
+          mb: 3,
+        }}
+      >
         <Typography
           sx={{
             fontSize: "18px",
@@ -239,10 +248,14 @@ const CentralAnalysis = () => {
 
       <Box
         sx={{
-          display: "flex",
+          display: "grid",
+          gridTemplateColumns: {
+            xs: "1fr",
+            sm: "repeat(2, 1fr)",
+            lg: "repeat(3, 1fr)",
+          },
           width: "100%",
           gap: 4,
-          flexWrap: "wrap",
           mb: 4,
         }}
       >
@@ -255,8 +268,7 @@ const CentralAnalysis = () => {
             alignItems: "flex-start",
             borderRadius: "12px",
             backgroundColor: "#FFFFFF",
-            width: "313px",
-            height: "209px",
+            minHeight: "209px",
           }}
         >
           <Typography
@@ -310,12 +322,10 @@ const CentralAnalysis = () => {
             flexDirection: "column",
             gap: 4,
             p: 2,
-            // py: 3,
             alignItems: "flex-start",
             borderRadius: "12px",
             backgroundColor: "#FFFFFF",
-            width: "313px",
-            // height: "209px",
+            minHeight: "209px",
           }}
         >
           <Typography
@@ -372,8 +382,7 @@ const CentralAnalysis = () => {
             alignItems: "flex-start",
             borderRadius: "12px",
             backgroundColor: "#FFFFFF",
-            width: "313px",
-            // height: "209px",
+            minHeight: "209px",
           }}
         >
           <Typography
@@ -387,7 +396,15 @@ const CentralAnalysis = () => {
           >
             Complaints
           </Typography>
-          <Box sx={{ display: "flex", alignItems: "center", px: 10 }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "100%",
+              flexGrow: 1,
+            }}
+          >
             <PieChart
               title="Pie Chart Example"
               data={pieComplaintAgainstData}
@@ -395,7 +412,12 @@ const CentralAnalysis = () => {
             />
           </Box>
           <Box
-            sx={{ display: "flex", alignItems: "center", alignSelf: "center" }}
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "center",
+              gap: 1,
+            }}
           >
             {filteredPieComplaintAgainst?.map((t, index) => (
               <Box key={index} sx={{ display: "flex", alignItems: "center" }}>
@@ -426,10 +448,10 @@ const CentralAnalysis = () => {
 
       <Box
         sx={{
-          display: "flex",
+          display: "grid",
+          gridTemplateColumns: { xs: "1fr", lg: "repeat(2, 1fr)" },
           width: "100%",
           gap: 4,
-          flexWrap: "wrap",
           mb: 4,
         }}
       >
@@ -442,8 +464,7 @@ const CentralAnalysis = () => {
             alignItems: "flex-start",
             borderRadius: "12px",
             backgroundColor: "#FFFFFF",
-            width: "529px",
-            height: "401px",
+            minHeight: "401px",
           }}
         >
           <Typography
@@ -457,7 +478,15 @@ const CentralAnalysis = () => {
           >
             Complaints volume by region
           </Typography>
-          <Box sx={{ display: "flex", alignItems: "center", px: 16 }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "100%",
+              flexGrow: 1,
+            }}
+          >
             <PieChart
               title="Pie Chart Example"
               data={pieComplaintByRegionData}
@@ -470,8 +499,7 @@ const CentralAnalysis = () => {
             sx={{
               display: "flex",
               flexWrap: "wrap",
-              alignItems: "center",
-              alignSelf: "center",
+              justifyContent: "center",
               gap: 2,
             }}
           >
@@ -510,8 +538,7 @@ const CentralAnalysis = () => {
             alignItems: "flex-start",
             borderRadius: "12px",
             backgroundColor: "#FFFFFF",
-            width: "529px",
-            height: "401px",
+            minHeight: "401px",
           }}
         >
           <Typography
@@ -525,7 +552,15 @@ const CentralAnalysis = () => {
           >
             Complaints Satisfaction
           </Typography>
-          <Box sx={{ display: "flex", alignItems: "center", px: 16 }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "100%",
+              flexGrow: 1,
+            }}
+          >
             <GaugeChart value={complaintScores?.satisfaction_percentage || 0} />
           </Box>
         </Card>
@@ -533,10 +568,8 @@ const CentralAnalysis = () => {
 
       <Box
         sx={{
-          display: "flex",
           width: "100%",
           gap: 4,
-          flexWrap: "wrap",
           mb: 4,
         }}
       >
@@ -549,8 +582,7 @@ const CentralAnalysis = () => {
             alignItems: "flex-start",
             borderRadius: "12px",
             backgroundColor: "#FFFFFF",
-            width: "1007px",
-            height: "401px",
+            minHeight: "401px",
           }}
         >
           <Typography
@@ -564,12 +596,18 @@ const CentralAnalysis = () => {
           >
             Complaints volume
           </Typography>
-          <Box sx={{ display: "flex", alignItems: "flex-start ", px: 4 }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "flex-start",
+              width: "100%",
+              flexGrow: 1,
+            }}
+          >
             <BarChart
               title="Bar Chart Example"
               data={barData}
               options={barOptions}
-              width="900px"
               height="300px"
             />
           </Box>

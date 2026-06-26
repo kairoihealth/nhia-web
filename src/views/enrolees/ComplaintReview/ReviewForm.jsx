@@ -271,7 +271,7 @@ const ReviewForm = () => {
             <TextField
               variant="outlined"
               fullWidth
-              placeholder="KAI-12345678"
+              placeholder="AAA/BBB/CC/DDD11/2222"
               value={caseId}
               onChange={handleChange}
               sx={textFieldStyles}

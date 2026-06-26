@@ -130,7 +130,7 @@ const HmoProfile = () => {
       console.log(res, "sss");
       localStorage.setItem(
         "fullname",
-        res.data.data?.firstname + " " + res.data.data?.lastname
+        res.data.data?.firstname + " " + res.data.data?.lastname,
       );
       handleSuccess(res.data?.message || "Response sent successfully");
       window.location.reload();
@@ -463,7 +463,7 @@ const HmoProfile = () => {
                     type="submit"
                     variant="contained"
                     sx={{
-                      width: "144px",
+                      width: { xs: "100%", sm: "144px" },
                       height: "42px",
                       borderRadius: "12px",
                       backgroundColor: "#038F3E",
@@ -518,7 +518,7 @@ const HmoProfile = () => {
                       display: "flex",
                       flexDirection: "column",
                       gap: 1,
-                      width: "49%",
+                      width: { xs: "100%", md: "49%" },
                     }}
                   >
                     <Typography
@@ -571,7 +571,12 @@ const HmoProfile = () => {
 
                   {/* New Password and Confirm Password */}
                   <Box
-                    sx={{ display: "flex", gap: 2, mt: 2, flexWrap: "wrap" }}
+                    sx={{
+                      display: "flex",
+                      gap: 2,
+                      mt: 2,
+                      flexDirection: { xs: "column", md: "row" },
+                    }}
                   >
                     <Box
                       flex={1}
@@ -687,7 +692,7 @@ const HmoProfile = () => {
                       type="submit"
                       variant="contained"
                       sx={{
-                        // width: "144px",
+                        width: { xs: "100%", sm: "auto" },
                         height: "42px",
                         borderRadius: "12px",
                         backgroundColor: "#038F3E",
