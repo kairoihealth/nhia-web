@@ -147,7 +147,7 @@ const CentralDashboard = () => {
           title: s.status,
         };
       }),
-    [complaintStats?.status]
+    [complaintStats?.status],
   );
 
   const pieStatusData = {
@@ -165,7 +165,7 @@ const CentralDashboard = () => {
   const barData = {
     labels:
       complaintStats?.regions?.map((region) =>
-        getInitials(region.state__region__name)
+        getInitials(region.state__region__name),
       ) || [],
     datasets: [
       {
@@ -185,7 +185,7 @@ const CentralDashboard = () => {
       complaintTrends?.[filters.trend]?.map((trend) =>
         trend.day
           ? truncateDay(trend.day)
-          : trend?.state__name || trend?.complaint_against
+          : trend?.state__name || trend?.complaint_against,
       ) || [],
     datasets: [
       {
@@ -226,6 +226,8 @@ const CentralDashboard = () => {
       state: { complaint: row?.id },
     });
   };
+
+  console.log(transformedRows, "transformedRows");
 
   if (
     isLoading ||
@@ -269,23 +271,31 @@ const CentralDashboard = () => {
     <Box>
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
+          display: "grid",
+          gridTemplateColumns: {
+            xs: "1fr",
+            lg: "2fr 1fr",
+          },
+          width: "100%",
           alignItems: "flex-start",
           mt: 2,
           gap: 4,
-          px: 4,
+          px: { xs: 1, md: 4 },
         }}
       >
         {/*Left side*/}
-        <Box sx={{ width: "100%" }}>
+        <Box sx={{ width: "100%", overflow: "hidden" }}>
           {/* Top Cards */}
           <Box
             sx={{
-              display: "flex",
+              display: "grid",
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "repeat(2, 1fr)",
+              },
               width: "100%",
               gap: 4,
-              flexWrap: "wrap",
+              // flexWrap: "wrap",
               mb: 4,
             }}
           >
@@ -298,7 +308,7 @@ const CentralDashboard = () => {
                 alignItems: "flex-start",
                 borderRadius: "12px",
                 backgroundColor: "#FFFFFF",
-                width: "313px",
+                width: "100%",
                 height: "209px",
               }}
             >
@@ -333,7 +343,7 @@ const CentralDashboard = () => {
                 alignItems: "flex-start",
                 borderRadius: "12px",
                 backgroundColor: "#FFFFFF",
-                width: "313px",
+                width: "100%",
                 height: "209px",
               }}
             >
@@ -349,14 +359,28 @@ const CentralDashboard = () => {
                 Complaints Status
               </Typography>
 
-              <Box sx={{ display: "flex", alignItems: "center", px: 10 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "100%",
+                }}
+              >
                 <PieChart
                   title="Pie Chart Example"
                   data={pieStatusData}
                   options={options}
                 />
               </Box>
-              <Box sx={{ display: "flex", mt: "5px", justifySelf: "center" }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  justifyContent: "center",
+                  gap: 1,
+                }}
+              >
                 {filteredPieStatus?.map((t) => (
                   <Box
                     key={t.id}
@@ -395,7 +419,7 @@ const CentralDashboard = () => {
                 alignItems: "flex-start",
                 borderRadius: "12px",
                 backgroundColor: "#FFFFFF",
-                width: "313px",
+                width: "100%",
                 height: "209px",
               }}
             >
@@ -428,7 +452,7 @@ const CentralDashboard = () => {
                 alignItems: "flex-start",
                 borderRadius: "12px",
                 backgroundColor: "#FFFFFF",
-                width: "313px",
+                width: "100%",
                 height: "209px",
               }}
             >
@@ -520,7 +544,7 @@ const CentralDashboard = () => {
         {/*Right side*/}
         <Box
           sx={{
-            width: "40%",
+            width: "100%",
             display: "flex",
             flexDirection: "column",
             gap: 4,
@@ -535,7 +559,7 @@ const CentralDashboard = () => {
               alignItems: "flex-start",
               borderRadius: "12px",
               backgroundColor: "#FFFFFF",
-              width: "360px",
+              width: "100%",
               height: "451px",
             }}
           >
@@ -627,7 +651,7 @@ const CentralDashboard = () => {
                   </Typography> */}
                   </Box>
                 </Box>
-              )
+              ),
             )}
           </Card>
           <Card
@@ -639,7 +663,7 @@ const CentralDashboard = () => {
               alignItems: "flex-start",
               borderRadius: "12px",
               backgroundColor: "#FFFFFF",
-              width: "360px",
+              width: "100%",
               // height: "313px",
             }}
           >
@@ -773,7 +797,13 @@ const CentralDashboard = () => {
                 )}
               </Box>
             </Box>
-            <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "flex-start",
+                width: "100%",
+              }}
+            >
               <LineChart
                 title="Line Chart Example"
                 data={lineData}

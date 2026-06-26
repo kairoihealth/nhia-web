@@ -24,7 +24,7 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
         value: t.id,
         label: t.name,
       })) || [],
-    [data]
+    [data],
   );
 
   const handleStateChange = (selectedOption) => {
@@ -160,16 +160,24 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
         >
           <Box sx={{ display: "flex", flexDirection: "column" }}>
             <Box
-              sx={{ display: "flex", justifyContent: "space-between", py: 1 }}
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexWrap: "wrap",
+                gap: 2,
+                flexDirection: { xs: "column", md: "row" },
+                py: 1,
+                mb: 2,
+              }}
             >
               <Typography
                 sx={{
-                  fontSize: { xs: "24px", md: "32px" },
+                  fontSize: { xs: "24px", sm: "32px" },
                   fontWeight: 600,
                   lineHeight: { xs: "21.6px", md: "43.2px" },
                   color: "#038F3E",
                   textAlign: "left",
-                  mb: 2,
                 }}
               >
                 Create a complaint
@@ -178,10 +186,9 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
                 sx={{
                   fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
-                  lineHeight: { xs: "21.6px", md: "43.2px" },
+                  // lineHeight: { xs: "21.6px", md: "43.2px" },
                   color: "#038F3E",
                   textAlign: "left",
-                  mb: 2,
                   cursor: "pointer",
                 }}
                 onClick={handleClick}
@@ -231,12 +238,13 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
             <Link
               href="/enrollee-complaint-review"
               sx={{
-                fontSize: "16px",
+                fontSize: { xs: "14px", md: "16px" },
                 fontWeight: 500,
                 lineHeight: { xs: "21.6px", md: "27px" },
                 color: "#038F3E",
                 textDecoration: "none",
                 my: 2,
+                fontFamily: "General Sans,Arial,sans-serif",
                 // '&:hover': { textDecoration: 'underline' }
               }}
             >
@@ -248,8 +256,9 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
             sx={{
               display: "flex",
               flexDirection: "column",
-              justifyContent: "flex-end",
-              alignItems: "flex-end",
+              justifyContent: { xs: "center", md: "flex-end" },
+              alignItems: { xs: "center", md: "flex-end" },
+              mt: 2,
             }}
           >
             <Box
@@ -299,7 +308,7 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext, btn }) => {
               </Button>
             </Box>
 
-            <Box sx={{ width: "20%" }}>{btn}</Box>
+            {/* <Box sx={{ width: "20%" }}>{btn}</Box> */}
           </Box>
         </Box>
       </Box>

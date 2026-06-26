@@ -9,7 +9,7 @@ import {
   Button,
   IconButton,
 } from "@mui/material";
-import { TabButton } from "../../../shared/TabPanel";
+import { TabButton, TabDropdown } from "../../../shared/TabPanel";
 import ReusableTable from "../../../shared/Table";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -30,6 +30,14 @@ const initialFilters = {
   start_date: "",
   end_date: "",
 };
+
+const tabOptions = [
+  { tab: "", label: "All Complaints" },
+  { tab: "pending", label: "New Complaints" },
+  { tab: "active", label: "Active Complaints" },
+  { tab: "closed", label: "Completed Complaints" },
+  { tab: "escalated", label: "Escalated Complaints" },
+];
 
 // CentralComplaints Component
 const CentralComplaintsPage = () => {
@@ -289,41 +297,41 @@ const CentralComplaintsPage = () => {
 
         {/* Tabs and Filter Button */}
         <Stack
-          direction="row"
-          sx={{ justifyContent: "space-between", alignItems: "center", my: 3 }}
+          direction={"row"}
+          sx={{
+            justifyContent: "space-between",
+            alignItems: { xs: "stretch", md: "center" },
+            my: 3,
+            gap: 2,
+          }}
         >
-          <Stack direction="row" spacing={2}>
-            <TabButton
-              tab=""
+          {/* Mobile Dropdown */}
+          <Box sx={{ display: { sm: "block", md: "none" }, width: "100%" }}>
+            <TabDropdown
               activeTab={filters.status}
-              label="All Complaints"
-              onClick={handleTabClick}
+              options={tabOptions}
+              onTabClick={handleTabClick}
             />
-            <TabButton
-              tab="pending"
-              activeTab={filters.status}
-              label="New Complaints"
-              onClick={handleTabClick}
-            />
-            <TabButton
-              tab="active"
-              activeTab={filters.status}
-              label="Active Complaints"
-              onClick={handleTabClick}
-            />
-            <TabButton
-              tab="closed"
-              activeTab={filters.status}
-              label="Completed Complaints"
-              onClick={handleTabClick}
-            />
-            <TabButton
-              tab="escalated"
-              activeTab={filters.status}
-              label="Escalated Complaints"
-              onClick={handleTabClick}
-            />
-          </Stack>
+          </Box>
+
+          {/* Desktop Tabs */}
+          <Box
+            sx={{
+              display: { sm: "none", md: "block" },
+            }}
+          >
+            <Stack direction="row" spacing={2}>
+              {tabOptions.map((option) => (
+                <TabButton
+                  key={option.tab}
+                  tab={option.tab}
+                  activeTab={filters.status}
+                  label={option.label}
+                  onClick={handleTabClick}
+                />
+              ))}
+            </Stack>
+          </Box>
 
           <Box sx={{ position: "relative" }}>
             <Box
@@ -337,6 +345,7 @@ const CentralComplaintsPage = () => {
                 backgroundColor: "#F2F4F7",
                 p: 1,
                 cursor: "pointer",
+                alignSelf: { xs: "flex-start", md: "center" },
               }}
             >
               <FiFilter size={20} style={{ color: "#64748B" }} />
@@ -522,25 +531,27 @@ const CentralComplaintsPage = () => {
         </Stack>
 
         {/* Table */}
-        <ReusableTable
-          columns={getColumns()}
-          rows={transformedRows}
-          onViewClick={handleViewComplaint}
-          showActions={true}
-          showStatus={true}
-          pagination={true}
-          headerBackgroundColor="#20201E"
-          actionButtonText={buttonTextMapping[filters.status]}
-          totalPages={complaints?.total_pages}
-          page={page}
-          setPage={(page) => {
-            setPage(page);
-          }}
-          pageSize={pageSize}
-          setPageSize={(pageSize) => {
-            setPageSize(pageSize);
-          }}
-        />
+        <Box sx={{ width: "100%", overflowX: "auto" }}>
+          <ReusableTable
+            columns={getColumns()}
+            rows={transformedRows}
+            onViewClick={handleViewComplaint}
+            showActions={true}
+            showStatus={true}
+            pagination={true}
+            headerBackgroundColor="#20201E"
+            actionButtonText={buttonTextMapping[filters.status]}
+            totalPages={complaints?.total_pages}
+            page={page}
+            setPage={(page) => {
+              setPage(page);
+            }}
+            pageSize={pageSize}
+            setPageSize={(pageSize) => {
+              setPageSize(pageSize);
+            }}
+          />
+        </Box>
       </Box>
     </Box>
   );

@@ -66,7 +66,7 @@ const LoginPage = () => {
         const decodedToken = jwtDecode(accessToken);
 
         const role = decodedToken.role;
-        const username = decodedToken.name;
+        const username = decodedToken.name || "";
         const userId = decodedToken.user_id;
         localStorage.setItem("userRole", role);
         localStorage.setItem("access_token", accessToken);
@@ -273,7 +273,8 @@ const LoginPage = () => {
                 variant="contained"
                 fullWidth
                 sx={{
-                  width: "394px",
+                  maxWidth: "394px",
+                  width: "100%",
                   height: "45px",
                   borderRadius: "50px",
                   backgroundColor: email && password ? "#038F3E" : "grey",

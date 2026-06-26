@@ -321,19 +321,27 @@ const RegionStatesById = () => {
         </Typography>
       </Box>
 
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 4, p: 2, mt: 2 }}>
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: {
+            xs: "1fr",
+            sm: "repeat(2, 1fr)",
+            md: "repeat(3, 1fr)",
+            lg: "repeat(4, 1fr)",
+          },
+          gap: 2,
+          p: { xs: 1, md: 2 },
+          mt: 2,
+        }}
+      >
         {regionStates?.results?.map((state, index) => (
           <Card
             key={index}
             sx={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
               p: 2,
               borderRadius: "12px",
               backgroundColor: "#FFFFFF",
-              width: "224px",
-              height: "122px",
             }}
           >
             <Typography
@@ -342,6 +350,7 @@ const RegionStatesById = () => {
                 fontWeight: 600,
                 lineHeight: "26px",
                 color: "#101828",
+                mb: 2,
               }}
             >
               {state.name}
@@ -379,19 +388,29 @@ const RegionStatesById = () => {
         ))}
       </Box>
 
-      <Box sx={{ display: "flex", gap: 1, p: 2, mt: 2 }}>
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 4, width: "65%" }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", lg: "row" },
+          gap: 4,
+          p: { xs: 1, md: 2 },
+          mt: 2,
+        }}
+      >
+        <Box
+          sx={{
+            width: { xs: "100%", lg: "65%" },
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)" },
+            gap: 4,
+          }}
+        >
           <Card
             sx={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
               gap: 3,
               p: 2,
               borderRadius: "12px",
               backgroundColor: "#FFFFFF",
-              width: "313px",
-              height: "209px",
             }}
           >
             <Typography
@@ -414,19 +433,15 @@ const RegionStatesById = () => {
             >
               {complaintStats?.total}
             </Typography>
-            <Box></Box>
           </Card>
           <Card
             sx={{
               display: "flex",
               flexDirection: "column",
-              justifyContent: "space-between",
               gap: 0.5,
               p: 2,
               borderRadius: "12px",
               backgroundColor: "#FFFFFF",
-              width: "313px",
-              height: "209px",
             }}
           >
             <Typography
@@ -440,14 +455,28 @@ const RegionStatesById = () => {
             >
               Complaint Status
             </Typography>
-            <Box sx={{ display: "flex", alignItems: "center", px: 10 }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexGrow: 1,
+              }}
+            >
               <PieChart
                 title="Pie Chart Example"
                 data={pieStatusData}
                 options={options}
               />
             </Box>
-            <Box sx={{ display: "flex" }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                justifyContent: "center",
+                gap: 1,
+              }}
+            >
               {filteredPieStatus?.map((t, index) => (
                 <Box key={index} sx={{ display: "flex", alignItems: "center" }}>
                   <Box
@@ -478,13 +507,10 @@ const RegionStatesById = () => {
             sx={{
               display: "flex",
               flexDirection: "column",
-              justifyContent: "space-between",
               gap: 0.2,
               p: 1,
               borderRadius: "12px",
               backgroundColor: "#FFFFFF",
-              width: "313px",
-              height: "209px",
             }}
           >
             <Typography
@@ -499,7 +525,13 @@ const RegionStatesById = () => {
             >
               Top Complaint Category
             </Typography>
-            <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "flex-start",
+                width: "100%",
+              }}
+            >
               <BarChart
                 title="Bar Chart Example"
                 data={barData}
@@ -511,13 +543,10 @@ const RegionStatesById = () => {
             sx={{
               display: "flex",
               flexDirection: "column",
-              justifyContent: "space-between",
               gap: 3,
               p: 2,
               borderRadius: "12px",
               backgroundColor: "#FFFFFF",
-              width: "313px",
-              height: "209px",
             }}
           >
             <Typography
@@ -568,13 +597,10 @@ const RegionStatesById = () => {
             sx={{
               display: "flex",
               flexDirection: "column",
-              justifyContent: "space-between",
               gap: 3,
               p: 2,
               borderRadius: "12px",
               backgroundColor: "#FFFFFF",
-              width: "313px",
-              height: "135px",
             }}
           >
             <Typography
@@ -602,13 +628,10 @@ const RegionStatesById = () => {
             sx={{
               display: "flex",
               flexDirection: "column",
-              justifyContent: "space-between",
               gap: 3,
               p: 2,
               borderRadius: "12px",
               backgroundColor: "#FFFFFF",
-              width: "313px",
-              height: "135px",
             }}
           >
             <Typography
@@ -638,20 +661,17 @@ const RegionStatesById = () => {
             display: "flex",
             flexDirection: "column",
             gap: 4,
-            width: "35%",
+            width: { xs: "100%", lg: "35%" },
           }}
         >
           <Card
             sx={{
               display: "flex",
               flexDirection: "column",
-              justifyContent: "space-between",
               gap: 0.5,
               p: 2,
               borderRadius: "12px",
               backgroundColor: "#FFFFFF",
-              width: "360px",
-              height: "313px",
             }}
           >
             <Typography
@@ -664,7 +684,13 @@ const RegionStatesById = () => {
             >
               Complaints Trends
             </Typography>
-            <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "flex-start",
+                width: "100%",
+              }}
+            >
               <LineChart
                 title="Line Chart Example"
                 data={lineData}
@@ -676,13 +702,10 @@ const RegionStatesById = () => {
             sx={{
               display: "flex",
               flexDirection: "column",
-              justifyContent: "space-between",
               gap: 3,
               p: 2,
               borderRadius: "12px",
               backgroundColor: "#FFFFFF",
-              width: "361px",
-              height: "273.65px",
             }}
           >
             <Typography
@@ -696,7 +719,13 @@ const RegionStatesById = () => {
             >
               Complaints Satisfaction
             </Typography>
-            <Box sx={{ display: "flex", alignItems: "center", px: 5 }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
               <GaugeChart
                 value={complaintScores?.satisfaction_percentage || 0}
               />
