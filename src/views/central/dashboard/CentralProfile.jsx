@@ -110,7 +110,7 @@ const CentralProfile = () => {
       handleSuccess(res.data?.message || "Response sent successfully");
       localStorage.setItem(
         "fullname",
-        res?.data?.data?.firstname + " " + res?.data?.data?.lastname
+        res?.data?.data?.firstname + " " + res?.data?.data?.lastname,
       );
       window.location.reload();
     } catch (error) {
@@ -489,7 +489,14 @@ const CentralProfile = () => {
                   handleChangePassword();
                 }}
               >
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    flexWrap: "wrap",
+                    gap: 2,
+                  }}
+                >
                   {/* Current Password */}
                   <Box
                     flex={1}
@@ -497,7 +504,7 @@ const CentralProfile = () => {
                       display: "flex",
                       flexDirection: "column",
                       gap: 1,
-                      width: "49%",
+                      width: {xs: "100%", md: "49%"},
                     }}
                   >
                     <Typography
@@ -550,7 +557,7 @@ const CentralProfile = () => {
 
                   {/* New Password and Confirm Password */}
                   <Box
-                    sx={{ display: "flex", gap: 2, mt: 2, flexWrap: "wrap" }}
+                    sx={{ display: "flex", gap: 2, mt: 2, flexWrap: "wrap", flexDirection: { xs: "column", md: "row" } }}
                   >
                     <Box
                       flex={1}

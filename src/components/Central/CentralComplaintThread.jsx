@@ -279,7 +279,7 @@ const CentralComplaintThreadPage = () => {
                 >
                   <Typography
                     sx={{
-                      fontSize: "16px",
+                      fontSize: {xs: "14px", md: "16px"},
                       fontWeight: 400,
                       lineHeight: "24px",
                       color: "#292D32",
@@ -294,7 +294,7 @@ const CentralComplaintThreadPage = () => {
                   />
                   <Typography
                     sx={{
-                      fontSize: "16px",
+                      fontSize: {xs: "14px", md: "16px"},
                       fontWeight: 400,
                       lineHeight: "24px",
                       color: "#000000",

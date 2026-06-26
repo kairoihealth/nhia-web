@@ -23,11 +23,13 @@ const SearchFilter = ({
     <Box
       sx={{
         display: "flex",
-        alignItems: "center",
+        flexDirection: { xs: "column", md: "row" },
+        alignItems: { xs: "stretch", md: "center" },
         gap: 2,
         justifyContent: "space-between",
         width: "100%",
-        p: 2,
+        p: { xs: 0, md: 2 },
+        py: { xs: 2, md: 2 },
       }}
     >
       <Box
@@ -44,7 +46,7 @@ const SearchFilter = ({
           value={searchValue}
           onChange={onSearchChange}
           sx={{
-            width: { width },
+            width: { xs: "100%", md: width },
             "& .MuiOutlinedInput-root": {
               borderRadius: "8px",
               backgroundColor: "#FFFFFF",
@@ -59,7 +61,7 @@ const SearchFilter = ({
         <Button
           variant="contained"
           sx={{
-            width: "118px",
+            width: { xs: "100%", sm: "118px" },
             borderRadius: "8px",
             backgroundColor: "#038F3E",
             color: "#fff",
@@ -73,7 +75,13 @@ const SearchFilter = ({
           Search
         </Button>
       </Box>
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
+        }}
+      >
         <Typography>Sort by:</Typography>
         <select
           value={filterValue}
@@ -129,7 +137,7 @@ SearchFilter.propTypes = {
     PropTypes.shape({
       value: PropTypes.string.isRequired,
       label: PropTypes.string.isRequired,
-    })
+    }),
   ).isRequired,
   handleSearch: PropTypes.func.isRequired,
   isLoading: PropTypes.bool,

@@ -306,7 +306,7 @@ const CentralComplaintsPage = () => {
           }}
         >
           {/* Mobile Dropdown */}
-          <Box sx={{ display: { sm: "block", md: "none" }, width: "100%" }}>
+          <Box sx={{ display: { xs: "block", md: "none" }, width: "100%" }}>
             <TabDropdown
               activeTab={filters.status}
               options={tabOptions}
@@ -317,7 +317,7 @@ const CentralComplaintsPage = () => {
           {/* Desktop Tabs */}
           <Box
             sx={{
-              display: { sm: "none", md: "block" },
+              display: { xs: "none", md: "block" },
             }}
           >
             <Stack direction="row" spacing={2}>
