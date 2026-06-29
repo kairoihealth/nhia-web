@@ -15,7 +15,6 @@ import { useNavigate } from "react-router-dom";
 import { getComplaints } from "../../../services/general";
 import { useQuery } from "@tanstack/react-query";
 import { useRef } from "react";
-import { FiFilter } from "react-icons/fi";
 import { complaintCategories, complaintType } from "../../../mock/type";
 import { useEffect } from "react";
 import WithAuthorization from "../../../components/auth/withAuthorization";

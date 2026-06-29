@@ -173,8 +173,8 @@ const SecondForm = ({
       !complaintInfo.otherDescription?.trim()
     )
       newErrors.otherDescription = "Description is required.";
-    if (!complaintInfo.files || complaintInfo.files?.length === 0)
-      newErrors.files = "Please provide attachments to support your claim.";
+    // if (!complaintInfo.files || complaintInfo.files?.length === 0)
+    //   newErrors.files = "Please provide attachments to support your claim.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
