@@ -216,6 +216,32 @@ const FormPreview = ({
                       {firstInfo?.nhiaNo}
                     </Typography>
                   </Box>
+                  {firstInfo.organization && (
+                    <Box flex={1} sx={{ display: "flex", gap: 2 }}>
+                      <Typography
+                        sx={{
+                          color: "#595959",
+                          fontSize: { xs: "14px", md: "16px" },
+                          fontWeight: 500,
+                          lineHeight: "24px",
+                          width: "40%",
+                        }}
+                      >
+                        Organization:
+                      </Typography>
+                      <Typography
+                        sx={{
+                          color: "#1B1C1E",
+                          fontSize: { xs: "14px", md: "16px" },
+                          fontWeight: 500,
+                          lineHeight: "24px",
+                          width: "60%",
+                        }}
+                      >
+                        {firstInfo?.organization}
+                      </Typography>
+                    </Box>
+                  )}
                 </Box>
               </Box>
 
@@ -625,6 +651,7 @@ FormPreview.propTypes = {
     complaint_against: PropTypes.string,
     selectedHmoOrProviderName: PropTypes.string,
     enrolleeNo: PropTypes.string,
+    organization: PropTypes.string,
   }),
   complaintInfo: PropTypes.shape({
     files: PropTypes.arrayOf(

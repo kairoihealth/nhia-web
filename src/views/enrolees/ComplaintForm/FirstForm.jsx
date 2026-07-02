@@ -20,6 +20,13 @@ const option = [
   { value: "NHIA", label: "NHIA" },
 ];
 
+const organizationOptions = [
+  { value: "Healthcare Facility", label: "Healthcare Facility" },
+  { value: "HMO", label: "HMO" },
+  { value: "Employer", label: "Employer" },
+  { value: "NGO", label: "NGO" },
+];
+
 const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
   const [errors, setErrors] = useState({});
   const [selectedHmo, setSelectedHmo] = useState(null);
@@ -39,7 +46,7 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
         value: hmo.id,
         label: hmo.name,
       })) || [],
-    [hmosData]
+    [hmosData],
   );
 
   const providersQueryKey = useMemo(() => ["providers"], []);
@@ -54,7 +61,7 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
         value: provider.id,
         label: provider.name,
       })) || [],
-    [providersData]
+    [providersData],
   );
 
   const handleInputChange = (e) => {
@@ -68,6 +75,10 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
 
   const handleAltPhoneChange = (value) => {
     setFirstInfo({ ...firstInfo, altPhone: value });
+  };
+
+  const handleOrganizationChange = (selectedOption) => {
+    setFirstInfo({ ...firstInfo, organization: selectedOption?.value || "" });
   };
 
   const handleComplaintChange = (selectedOption) => {
@@ -118,19 +129,20 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
       newErrors.altPhone = "Alternative phone number is invalid.";
     }
 
-    if (!firstInfo.nhiaNo?.trim()) newErrors.nhiaNo = "NHIA number is required";
-    else if (!/^KAI-\d{8}$/.test(firstInfo.nhiaNo)) {
-      newErrors.nhiaNo = "NHIA number must be in the format KAI-12345678";
-    }
+    // if (!firstInfo.nhiaNo?.trim()) newErrors.nhiaNo = "NHIA number is required";
+    // else if (!/^KAI-\d{8}$/.test(firstInfo.nhiaNo)) {
+    //   newErrors.nhiaNo = "NHIA number must be in the format KAI-12345678";
+    // }
     if (!firstInfo.complaint_against)
       newErrors.complaint_against = "Please select a complaint option.";
     if (firstInfo.complaint_against === "Enrollee") {
-      if (!firstInfo.enrolleeNo?.trim()) {
-        newErrors.enrolleeNo = "Enrollee NHIA number is required.";
-      } else if (!/^KAI-\d{8}$/.test(firstInfo.enrolleeNo)) {
-        newErrors.enrolleeNo =
-          "Enrollee NHIA number must be in the format KAI-12345678";
-      } else if (firstInfo.nhiaNo?.trim() === firstInfo.enrolleeNo?.trim()) {
+      // if (!firstInfo.enrolleeNo?.trim()) {
+      //   newErrors.enrolleeNo = "Enrollee NHIA number is required.";
+      // } else if (!/^KAI-\d{8}$/.test(firstInfo.enrolleeNo)) {
+      //   newErrors.enrolleeNo =
+      //     "Enrollee NHIA number must be in the format KAI-12345678";
+      // } else
+      if (firstInfo.nhiaNo?.trim() === firstInfo.enrolleeNo?.trim()) {
         newErrors.enrolleeNo = "You cannot file a complaint against yourself.";
       }
     }
@@ -273,6 +285,40 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                       helperText={errors.lastName}
                     />
                   </Box>
+                </Box>
+                <Box
+                  display="flex"
+                  flexDirection={{ xs: "column", md: "row" }}
+                  gap={2}
+                  mt={2}
+                >
+                  <Box
+                    flex={1}
+                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                  >
+                    <Typography
+                      sx={{
+                        color: "#595959",
+                        fontSize: "16px",
+                        fontWeight: 500,
+                        lineHeight: "24px",
+                      }}
+                    >
+                      Organization
+                    </Typography>
+                    <ReactSelect
+                      name="organization"
+                      styles={selectStyles}
+                      value={organizationOptions.find(
+                        (opt) => opt.value === firstInfo.organization,
+                      )}
+                      onChange={handleOrganizationChange}
+                      options={organizationOptions}
+                      placeholder="Select Organization"
+                      isClearable
+                    />
+                  </Box>
+                  {/* <Box flex={1}></Box> */}
                 </Box>
                 <Box
                   display="flex"
@@ -437,22 +483,19 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                         lineHeight: "24px",
                       }}
                     >
-                      NHIA Number
-                      <span style={{ color: "#099243", marginLeft: "6px" }}>
-                        *
-                      </span>
+                      NHIA Number / Code
                     </Typography>
                     <TextField
                       name="nhiaNo"
                       fullWidth
                       variant="outlined"
                       required
-                      placeholder="KAI-12345678"
+                      placeholder="NHIA Number / Code"
                       sx={textFieldStyles}
                       value={firstInfo.nhiaNo}
                       onChange={handleInputChange}
-                      error={!!errors.nhiaNo}
-                      helperText={errors.nhiaNo}
+                      // error={!!errors.nhiaNo}
+                      // helperText={errors.nhiaNo}
                     />
                   </Box>
                   <Box
@@ -519,7 +562,7 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                       name="complaint_against"
                       styles={selectStyles}
                       value={option.find(
-                        (opt) => opt.value === firstInfo.complaint_against
+                        (opt) => opt.value === firstInfo.complaint_against,
                       )}
                       onChange={handleComplaintChange}
                       options={option}
@@ -634,9 +677,6 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                       }}
                     >
                       Enrollee NHIA Number
-                      <span style={{ color: "#099243", marginLeft: "6px" }}>
-                        *
-                      </span>
                     </Typography>
                     <Box>
                       <TextField
@@ -644,7 +684,7 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
                         fullWidth
                         variant="outlined"
                         required
-                        placeholder="KAI-12345678"
+                        placeholder="Enrollee NHIA Number"
                         sx={textFieldStyles}
                         value={firstInfo.enrolleeNo}
                         onChange={handleInputChange}
@@ -736,4 +776,5 @@ FirstForm.propTypes = {
   onNext: PropTypes.func,
   onBack: PropTypes.func,
   btn: PropTypes.any,
+  organization: PropTypes.string,
 };

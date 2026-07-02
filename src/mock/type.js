@@ -187,8 +187,8 @@ export const nhiaProgram = [
   },
   {
     id: 4,
-    value: "Public Sector Scheme",
-    label: "Public Sector Scheme",
+    value: "Formal Sector Programme",
+    label: "Formal Sector Programme",
   },
   {
     id: 5,
@@ -765,19 +765,19 @@ export const hmoComplaints = [
     priority: "High",
   },
   {
-    description: "Delay in authorising referral",
+    description: "Delay in authorization of referral",
     complaint_type: "Service Delivery",
     complaint_category: "Referral",
     priority: "Top",
   },
   {
-    description: "Denial of code",
+    description: "Denial of authorization code",
     complaint_type: "Financial",
     complaint_category: "Billing",
     priority: "High",
   },
   {
-    description: "Refusal to authorise referral",
+    description: "Refusal to authorize referral",
     complaint_type: "Service Delivery",
     complaint_category: "Referral",
     priority: "Top",
@@ -904,6 +904,34 @@ export const enrolleeComplaints = [
     description: "Non-compliance with Claims Management portal",
     complaint_type: "Operational",
     complaint_category: "Administrative",
+    priority: "Medium",
+  },
+  {
+    description: "Others",
+    complaint_type: "Other",
+    complaint_category: "Other",
+    priority: "Medium",
+  },
+];
+
+export const nhiaComplaints = [
+  {
+    description: "Omission of names from NHIA Register OPS & Equity Programme",
+    complaint_type: "Operational",
+    complaint_category: "Administrative",
+    priority: "High",
+  },
+  {
+    description: "Fraudulent activity",
+    complaint_type: "Financial",
+    complaint_category: "Fraud",
+    priority: "High",
+  },
+  {
+    description:
+      "Inappropriate/Aggressive behaviour by personnel on any other stakeholder",
+    complaint_type: "Relationship",
+    complaint_category: "Abuse",
     priority: "Medium",
   },
   {
