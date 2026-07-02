@@ -344,7 +344,7 @@ const CentralDashboard = () => {
                 borderRadius: "12px",
                 backgroundColor: "#FFFFFF",
                 width: "100%",
-                height: "209px",
+                minHeight: "209px",
               }}
             >
               <Typography

@@ -1291,7 +1291,6 @@ const StateReportsPage = () => {
                   </Card>
                 ) : null}
               </Box>
-              can_export_complaint_data
               {hasPermission("can_export_complaint_data") && (
                 <Box
                   sx={{
