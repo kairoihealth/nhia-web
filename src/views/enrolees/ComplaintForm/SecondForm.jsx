@@ -11,6 +11,7 @@ import {
   complaintType,
   enrolleeComplaints,
   hmoComplaints,
+  nhiaComplaints,
   nhiaProgram,
   providerComplaints,
 } from "../../../mock/type";
@@ -36,8 +37,10 @@ const SecondForm = ({
     firstInfo.complaint_against === "Provider"
       ? providerComplaints
       : firstInfo.complaint_against === "HMO"
-      ? hmoComplaints
-      : enrolleeComplaints;
+        ? hmoComplaints
+        : firstInfo.complaint_against === "NHIA"
+          ? nhiaComplaints
+          : enrolleeComplaints;
 
   const mappedComplaintOptions = useMemo(
     () =>
@@ -45,7 +48,7 @@ const SecondForm = ({
         value: option.description,
         label: option.description,
       })) || [],
-    [complaintOptions]
+    [complaintOptions],
   );
 
   const onDrop = (acceptedFiles) => {
@@ -135,7 +138,7 @@ const SecondForm = ({
     if (selectedOption.value !== "Others") {
       complaintInfo["otherDescription"] = "";
       const complaint = complaintOptions.find(
-        (type) => type.description === selectedOption.value
+        (type) => type.description === selectedOption.value,
       );
       complaintInfo["complaint_type"] = complaint.complaint_type;
       complaintInfo["complaint_category"] = complaint.complaint_category;
@@ -329,7 +332,7 @@ const SecondForm = ({
                     <ReactSelect
                       styles={selectStyles}
                       value={nhiaProgram.find(
-                        (el) => el.id === complaintInfo.programme
+                        (el) => el.id === complaintInfo.programme,
                       )}
                       onChange={handleProgramChange}
                       options={nhiaProgram}
@@ -370,7 +373,7 @@ const SecondForm = ({
                     <ReactSelect
                       styles={selectStyles}
                       value={mappedComplaintOptions.find(
-                        (el) => el.value === complaintInfo.description
+                        (el) => el.value === complaintInfo.description,
                       )}
                       name="description"
                       onChange={handleComplaintDescriptionChange}
@@ -453,7 +456,8 @@ const SecondForm = ({
                           ? complaintOptions
                               .filter(
                                 (type) =>
-                                  type.description === complaintInfo.description
+                                  type.description ===
+                                  complaintInfo.description,
                               )
                               ?.map((option) => ({
                                 value: option.complaint_type,
@@ -461,7 +465,7 @@ const SecondForm = ({
                               }))
                           : complaintType.find(
                               (type) =>
-                                type.value === complaintInfo.complaint_type
+                                type.value === complaintInfo.complaint_type,
                             )
                       }
                       onChange={handleComplaintTypeChange}
@@ -501,7 +505,7 @@ const SecondForm = ({
                           ? complaintOptions
                               .filter(
                                 (cat) =>
-                                  cat.description === complaintInfo.description
+                                  cat.description === complaintInfo.description,
                               )
                               ?.map((option) => ({
                                 value: option.complaint_category,
@@ -509,7 +513,7 @@ const SecondForm = ({
                               }))
                           : complaintCategories.find(
                               (cat) =>
-                                cat.value === complaintInfo.complaint_category
+                                cat.value === complaintInfo.complaint_category,
                             )
                       }
                       onChange={handleComplaintCategoryChange}
@@ -576,7 +580,7 @@ const SecondForm = ({
                         <span>SVG, PNG, JPG, or GIF (max. 800x400px)</span>
                         <br />
                         <span style={{ fontWeight: 600 }}>
-                          File size shouldn't exceed 10MB.
+                          File size shouldn&apos;t exceed 10MB.
                         </span>
                         <br />
                         Upload max. 5 documents in total
@@ -746,7 +750,7 @@ SecondForm.propTypes = {
         name: PropTypes.string,
         type: PropTypes.string,
         preview: PropTypes.string,
-      })
+      }),
     ),
     // length: PropTypes.number,
     date: PropTypes.string,
