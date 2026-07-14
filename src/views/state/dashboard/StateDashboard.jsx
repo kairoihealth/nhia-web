@@ -565,7 +565,7 @@ const StateDashboard = () => {
                   fontSize: "16px",
                   fontWeight: 500,
                   lineHeight: "21.6px",
-                  color: "#038F3E",
+                  color: "#1B5E20",
                   mb: 2,
                 }}
               >
@@ -586,18 +586,27 @@ const StateDashboard = () => {
                 onClick={() => navigate("/stateadmin/complaints")}
               >
                 View Complaints{" "}
-                <ArrowRightAltTwoToneIcon sx={{ color: "#038F3E" }} />
+                <ArrowRightAltTwoToneIcon sx={{ color: "#1B5E20" }} />
               </Typography>
             </Box>
-            <Box sx={{ width: "100%", overflowX: "auto" }}>
-              <ReusableTable
-                columns={columns}
-                rows={transformedRows}
-                onViewClick={handleViewComplaint}
-                showActions={false}
-                showStatus={false}
-              />
-            </Box>
+            <Card
+              sx={{
+                p: { xs: 1, md: 2 },
+                borderRadius: "12px",
+                boxShadow:
+                  "0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04)",
+              }}
+            >
+              <Box sx={{ width: "100%", overflowX: "auto" }}>
+                <ReusableTable
+                  columns={columns}
+                  rows={transformedRows}
+                  onViewClick={handleViewComplaint}
+                  showActions={false}
+                  showStatus={false}
+                />
+              </Box>
+            </Card>
           </Box>
         </Box>
 
@@ -854,8 +863,8 @@ const StateDashboard = () => {
                           fontSize: "14px",
                           fontWeight: 500,
                           backgroundColor: "transparent",
-                          border: "1px solid #038F3E",
-                          color: "#038F3E",
+                          border: "1px solid #1B5E20",
+                          color: "#1B5E20",
                           textTransform: "none",
                           "&:hover": {
                             backgroundColor: "#027A3B",

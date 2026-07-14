@@ -87,7 +87,7 @@ const StateReplyComplaintPage = () => {
   // Function to remove an attachment
   const handleRemoveAttachment = (index) => {
     setAttachments((prevAttachments) =>
-      prevAttachments.filter((_, i) => i !== index)
+      prevAttachments.filter((_, i) => i !== index),
     );
   };
 
@@ -102,7 +102,7 @@ const StateReplyComplaintPage = () => {
         attachments?.map(async (attachment) => {
           const base64 = await convertToBase64(attachment.file);
           return { document: base64 };
-        })
+        }),
       );
 
       const data = {
@@ -465,7 +465,7 @@ const StateReplyComplaintPage = () => {
                     fontSize: "16px",
                     fontWeight: 500,
                     lineHeight: "24px",
-                    color: "#038F3E",
+                    color: "#1B5E20",
                     cursor: "pointer",
                   }}
                 >
@@ -499,7 +499,7 @@ const StateReplyComplaintPage = () => {
                 variant="contained"
                 sx={{
                   width: "261px",
-                  backgroundColor: "#038F3E",
+                  backgroundColor: "#1B5E20",
                   color: "#FFFFFF",
                   fontWeight: 500,
                   fontSize: "16px",

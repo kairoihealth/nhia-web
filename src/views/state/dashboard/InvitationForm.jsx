@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Button, Card, TextField, Typography } from "@mui/material";
 import SuccessModal from "../../../shared/SuccessModal";
 import { useMemo, useState } from "react";
 import ReactSelect from "react-select";
@@ -145,7 +145,14 @@ const InvitationForm = () => {
   console.log(topStatus, "activeStatuses");
 
   return (
-    <Box sx={{ p: 4 }}>
+    <Card
+      sx={{
+        m: 2,
+        p: { xs: 2, md: 4 },
+        borderRadius: "12px",
+        boxShadow: "0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04)",
+      }}
+    >
       <Typography
         sx={{
           fontSize: "18px",
@@ -307,7 +314,7 @@ const InvitationForm = () => {
               fontWeight: 500,
               lineHeight: "21.6px",
               borderRadius: "8px",
-              backgroundColor: "#038F3E",
+              backgroundColor: "#1B5E20",
               color: "#FFFFFF",
               width: { xs: "100%", sm: "347px" },
               py: "12px",
@@ -330,7 +337,7 @@ const InvitationForm = () => {
         message="You have successfully sent an invite to"
         recipient={`${email}`}
       />
-    </Box>
+    </Card>
   );
 };
 

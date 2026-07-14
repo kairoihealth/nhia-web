@@ -1,5 +1,11 @@
-import Logo from "../../../assets/nhia-logo.png";
-import { Box, TextField, Button, FormControl, Typography } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Button,
+  FormControl,
+  Typography,
+  Card,
+} from "@mui/material";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import PropTypes from "prop-types";
@@ -12,6 +18,9 @@ import {
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getAllHmo, getAllProviders } from "../../../services/settings";
+import TwoColumnLayout from "./TwoColumnLayout";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import FormCardHeader from "./FormCardHeader";
 
 const option = [
   { value: "HMO", label: "Hmo" },
@@ -20,14 +29,14 @@ const option = [
   { value: "NHIA", label: "NHIA" },
 ];
 
-const organizationOptions = [
-  { value: "Healthcare Facility", label: "Healthcare Facility" },
-  { value: "HMO", label: "HMO" },
-  { value: "Employer", label: "Employer" },
-  { value: "NGO", label: "NGO" },
-];
-
-const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
+const FirstForm = ({
+  firstInfo,
+  setFirstInfo,
+  onNext,
+  onBack,
+  btn,
+  selectedAccountType,
+}) => {
   const [errors, setErrors] = useState({});
   const [selectedHmo, setSelectedHmo] = useState(null);
   const [selectedProvider, setSelectedProvider] = useState(null);
@@ -77,10 +86,6 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
     setFirstInfo({ ...firstInfo, altPhone: value });
   };
 
-  const handleOrganizationChange = (selectedOption) => {
-    setFirstInfo({ ...firstInfo, organization: selectedOption?.value || "" });
-  };
-
   const handleComplaintChange = (selectedOption) => {
     const value = selectedOption?.value || "";
 
@@ -107,12 +112,15 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
   const validateFields = () => {
     const newErrors = {};
 
-    if (!firstInfo.firstName?.trim())
-      newErrors.firstName = "First name is required.";
-    if (!firstInfo.lastName?.trim())
-      newErrors.lastName = "Last name is required.";
-    // if (!firstInfo.middleName?.trim())
-    //   newErrors.middleName = "Middle name is required.";
+    // if (
+    //   selectedAccountType === "Enrollee" ||
+    //   selectedAccountType === "Employer"
+    // ) {
+      if (!firstInfo.firstName?.trim())
+        newErrors.firstName = "First name is required.";
+      if (!firstInfo.lastName?.trim())
+        newErrors.lastName = "Last name is required.";
+    // }
     if (!firstInfo.contactAddress?.trim())
       newErrors.contactAddress = "Contact address is required.";
     if (!firstInfo.email?.trim()) newErrors.email = "Email is required.";
@@ -167,604 +175,521 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack, btn }) => {
   };
 
   return (
-    <>
-      <Box
+    <TwoColumnLayout
+      title="Tell us about yourself"
+      subtitle="Your details help us verify enrollment and contact you with updates."
+      rightColumnSx={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Card
         sx={{
-          backgroundColor: { xs: "#FFFFFF", md: "#038F3E" },
+          width: { xs: "100%", sm: "70%", md: "85%", lg: "57%" },
+          p: { xs: 3, md: 5 },
+          borderRadius: "16px",
+          boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.05)",
+          backgroundColor: "#fff",
+          border: "1px solid #F0F0F0",
+          overflowY: "auto",
         }}
       >
-        <Box
-          sx={{
-            display: { xs: "grid", md: "flex" },
-            justifyContent: "center",
-            alignItems: { xs: "flex-start", md: "center" },
-            pt: { xs: 0, md: 4 },
-          }}
-        >
-          <Box>
+        <FormCardHeader
+          title="Complainant Details"
+          subtitle="Your personal and contact information"
+          titleSx={{ fontSize: "20px", color: "#1B1C1E" }}
+        />
+        <form>
+          {/* {(selectedAccountType === "Enrollee" ||
+            selectedAccountType === "Employer") && ( */}
+            <>
+              <Box
+                display="flex"
+                flexDirection={{ xs: "column", md: "row" }}
+                gap={2}
+              >
+                <Box
+                  flex={1}
+                  sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                >
+                  <Typography
+                    sx={{
+                      color: "#595959",
+                      fontSize: "16px",
+                      fontWeight: 500,
+                      lineHeight: "24px",
+                    }}
+                  >
+                    First Name
+                    <span style={{ color: "#099243", marginLeft: "6px" }}>
+                      *
+                    </span>
+                  </Typography>
+                  <TextField
+                    name="firstName"
+                    fullWidth
+                    variant="outlined"
+                    required
+                    placeholder="enter first name"
+                    sx={textFieldStyles}
+                    value={firstInfo.firstName}
+                    onChange={handleInputChange}
+                    error={!!errors.firstName}
+                    helperText={errors.firstName}
+                  />
+                </Box>
+                <Box
+                  flex={1}
+                  sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                >
+                  <Typography
+                    sx={{
+                      color: "#595959",
+                      fontSize: "16px",
+                      fontWeight: 500,
+                      lineHeight: "24px",
+                    }}
+                  >
+                    Last Name
+                    <span style={{ color: "#099243", marginLeft: "6px" }}>
+                      *
+                    </span>
+                  </Typography>
+                  <TextField
+                    name="lastName"
+                    fullWidth
+                    variant="outlined"
+                    required
+                    placeholder="enter last name"
+                    sx={textFieldStyles}
+                    value={firstInfo.lastName}
+                    onChange={handleInputChange}
+                    error={!!errors.lastName}
+                    helperText={errors.lastName}
+                  />
+                </Box>
+              </Box>
+              <Box
+                display="flex"
+                flexDirection={{ xs: "column", md: "row" }}
+                gap={2}
+                mt={2}
+              >
+                <Box
+                  flex={1}
+                  sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                >
+                  <Typography
+                    sx={{
+                      color: "#595959",
+                      fontSize: "16px",
+                      fontWeight: 500,
+                      lineHeight: "24px",
+                    }}
+                  >
+                    Middle Name
+                  </Typography>
+                  <TextField
+                    name="middleName"
+                    fullWidth
+                    variant="outlined"
+                    placeholder="enter middle name"
+                    sx={textFieldStyles}
+                    value={firstInfo.middleName}
+                    onChange={handleInputChange}
+                    error={!!errors.middleName}
+                    helperText={errors.middleName}
+                  />
+                </Box>
+              </Box>
+            </>
+          {/* )} */}
+          <Box mt={2}>
             <Box
-              sx={{
-                width: { xs: "400px", md: "1280px" },
-                backgroundColor: "#fff",
-                padding: "2rem",
-                margin: { xs: 0, md: "2rem" },
-                borderRadius: "8px",
-              }}
+              flex={1}
+              sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+              mb={2}
             >
-              <img
-                src={Logo}
-                alt="Logo"
-                style={{ display: "block", margin: "0 auto" }}
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                NHIA Number / Code
+              </Typography>
+              <TextField
+                name="nhiaNo"
+                fullWidth
+                variant="outlined"
+                required
+                placeholder="NHIA Number / Code"
+                sx={textFieldStyles}
+                value={firstInfo.nhiaNo}
+                onChange={handleInputChange}
+                // error={!!errors.nhiaNo}
+                // helperText={errors.nhiaNo}
               />
-              <Typography
-                align="center"
-                sx={{
-                  fontSize: "20px",
-                  fontWeight: 500,
-                  lineHeight: "27px",
-                  color: "#038F3E",
-                  margin: "1rem 0",
-                }}
-              >
-                Complaint Form
-              </Typography>
+            </Box>
+            <Box
+              flex={1}
+              sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+            >
               <Typography
                 sx={{
-                  fontSize: "20px",
+                  color: "#595959",
+                  fontSize: "16px",
                   fontWeight: 500,
-                  lineHeight: "27px",
-                  color: "#1B1C1E",
-                  my: 4,
+                  lineHeight: "24px",
                 }}
               >
-                Complainant Details
+                Contact Address
+                <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
               </Typography>
-              <form>
-                <Box
-                  display="flex"
-                  flexDirection={{ xs: "column", md: "row" }}
-                  gap={2}
-                >
-                  <Box
-                    flex={1}
-                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: "16px",
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                      }}
-                    >
-                      First Name
-                      <span style={{ color: "#099243", marginLeft: "6px" }}>
-                        *
-                      </span>
-                    </Typography>
-                    <TextField
-                      name="firstName"
-                      fullWidth
-                      variant="outlined"
-                      required
-                      placeholder="enter first name"
-                      sx={textFieldStyles}
-                      value={firstInfo.firstName}
-                      onChange={handleInputChange}
-                      error={!!errors.firstName}
-                      helperText={errors.firstName}
-                    />
-                  </Box>
-                  <Box
-                    flex={1}
-                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: "16px",
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                      }}
-                    >
-                      Last Name
-                      <span style={{ color: "#099243", marginLeft: "6px" }}>
-                        *
-                      </span>
-                    </Typography>
-                    <TextField
-                      name="lastName"
-                      fullWidth
-                      variant="outlined"
-                      required
-                      placeholder="enter last name"
-                      sx={textFieldStyles}
-                      value={firstInfo.lastName}
-                      onChange={handleInputChange}
-                      error={!!errors.lastName}
-                      helperText={errors.lastName}
-                    />
-                  </Box>
-                </Box>
-                <Box
-                  display="flex"
-                  flexDirection={{ xs: "column", md: "row" }}
-                  gap={2}
-                  mt={2}
-                >
-                  <Box
-                    flex={1}
-                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: "16px",
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                      }}
-                    >
-                      Organization
-                    </Typography>
-                    <ReactSelect
-                      name="organization"
-                      styles={selectStyles}
-                      value={organizationOptions.find(
-                        (opt) => opt.value === firstInfo.organization,
-                      )}
-                      onChange={handleOrganizationChange}
-                      options={organizationOptions}
-                      placeholder="Select Organization"
-                      isClearable
-                    />
-                  </Box>
-                  {/* <Box flex={1}></Box> */}
-                </Box>
-                <Box
-                  display="flex"
-                  flexDirection={{ xs: "column", md: "row" }}
-                  gap={2}
-                  mt={2}
-                >
-                  <Box
-                    flex={1}
-                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: "16px",
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                      }}
-                    >
-                      Middle Name
-                      <span style={{ color: "#099243", marginLeft: "6px" }}>
-                        *
-                      </span>
-                    </Typography>
-                    <TextField
-                      name="middleName"
-                      fullWidth
-                      variant="outlined"
-                      required
-                      placeholder="enter middle name"
-                      sx={textFieldStyles}
-                      value={firstInfo.middleName}
-                      onChange={handleInputChange}
-                      error={!!errors.middleName}
-                      helperText={errors.middleName}
-                    />
-                  </Box>
-                  <Box
-                    flex={1}
-                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: "16px",
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                      }}
-                    >
-                      Contact Address
-                      <span style={{ color: "#099243", marginLeft: "6px" }}>
-                        *
-                      </span>
-                    </Typography>
-                    <TextField
-                      name="contactAddress"
-                      fullWidth
-                      variant="outlined"
-                      required
-                      placeholder="e.g H23 dolphin estate"
-                      sx={textFieldStyles}
-                      value={firstInfo.contactAddress}
-                      onChange={handleInputChange}
-                      error={!!errors.contactAddress}
-                      helperText={errors.contactAddress}
-                    />
-                  </Box>
-                </Box>
-                <Box
-                  display="flex"
-                  flexDirection={{ xs: "column", md: "row" }}
-                  gap={2}
-                  mt={2}
-                >
-                  <Box
-                    flex={1}
-                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: "16px",
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                      }}
-                    >
-                      Email Address
-                      <span style={{ color: "#099243", marginLeft: "6px" }}>
-                        *
-                      </span>
-                    </Typography>
-                    <TextField
-                      name="email"
-                      fullWidth
-                      variant="outlined"
-                      required
-                      type="email"
-                      placeholder="example@example.com"
-                      sx={textFieldStyles}
-                      value={firstInfo.email}
-                      onChange={handleInputChange}
-                      error={!!errors.email}
-                      helperText={errors.email}
-                    />
-                  </Box>
-                  <Box
-                    flex={1}
-                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: "16px",
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                      }}
-                    >
-                      Phone Number
-                      <span style={{ color: "#099243", marginLeft: "6px" }}>
-                        *
-                      </span>
-                    </Typography>
-                    <FormControl fullWidth>
-                      <PhoneInput
-                        country={"ng"}
-                        inputStyle={formControlStyles}
-                        inputProps={{
-                          label: "Phone Number",
-                          variant: "outlined",
-                          margin: "normal",
-                          fullWidth: true,
-                        }}
-                        value={firstInfo.phone || ""}
-                        onChange={handlePhoneChange}
-                        error={!!errors.phone}
-                      />
-                      {errors.phone && (
-                        <Typography
-                          sx={{ color: "red", fontSize: "13px", mt: 0.5 }}
-                        >
-                          {errors.phone}
-                        </Typography>
-                      )}
-                    </FormControl>
-                  </Box>
-                </Box>
-                <Box
-                  display="flex"
-                  flexDirection={{ xs: "column", md: "row" }}
-                  gap={2}
-                  mt={2}
-                >
-                  <Box
-                    flex={1}
-                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: "16px",
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                      }}
-                    >
-                      NHIA Number / Code
-                    </Typography>
-                    <TextField
-                      name="nhiaNo"
-                      fullWidth
-                      variant="outlined"
-                      required
-                      placeholder="NHIA Number / Code"
-                      sx={textFieldStyles}
-                      value={firstInfo.nhiaNo}
-                      onChange={handleInputChange}
-                      // error={!!errors.nhiaNo}
-                      // helperText={errors.nhiaNo}
-                    />
-                  </Box>
-                  <Box
-                    flex={1}
-                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: "16px",
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                      }}
-                    >
-                      Alternative Phone Number
-                    </Typography>
-                    <FormControl fullWidth>
-                      <PhoneInput
-                        country={"ng"}
-                        inputStyle={formControlStyles}
-                        inputProps={{
-                          label: "Alternative Phone Number",
-                          variant: "outlined",
-                          margin: "normal",
-                          fullWidth: true,
-                        }}
-                        value={firstInfo.altPhone || ""}
-                        onChange={handleAltPhoneChange}
-                      />
-                      {errors.altPhone && (
-                        <Typography
-                          sx={{ color: "red", fontSize: "13px", mt: 0.5 }}
-                        >
-                          {errors.altPhone}
-                        </Typography>
-                      )}
-                    </FormControl>
-                  </Box>
-                </Box>
-                <Box
-                  display="flex"
-                  flexDirection={{ xs: "column", md: "row" }}
-                  gap={2}
-                  mt={2}
-                >
-                  <Box
-                    flex={1}
-                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: "16px",
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                      }}
-                    >
-                      Complaint against
-                      <span style={{ color: "#099243", marginLeft: "6px" }}>
-                        *
-                      </span>
-                    </Typography>
-                    <ReactSelect
-                      name="complaint_against"
-                      styles={selectStyles}
-                      value={option.find(
-                        (opt) => opt.value === firstInfo.complaint_against,
-                      )}
-                      onChange={handleComplaintChange}
-                      options={option}
-                      placeholder="Select Option"
-                    />
-                    {errors.complaint_against && (
-                      <Typography
-                        sx={{ color: "red", fontSize: "13px", mt: 0.5 }}
-                      >
-                        {errors.complaint_against}
-                      </Typography>
-                    )}
-                  </Box>
-                </Box>
-
-                {firstInfo.complaint_against === "HMO" ? (
-                  <Box
-                    flex={1}
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 1,
-                      my: 2,
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: "16px",
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                      }}
-                    >
-                      HMO Name
-                      <span style={{ color: "#099243", marginLeft: "6px" }}>
-                        *
-                      </span>
-                    </Typography>
-                    <Box>
-                      <ReactSelect
-                        styles={selectStyles}
-                        value={selectedHmo}
-                        onChange={handleHmoChange}
-                        options={hmos}
-                        placeholder="Select HMO"
-                      />
-                      {errors.hmo && (
-                        <Typography
-                          sx={{ color: "red", fontSize: "13px", mt: 0.5 }}
-                        >
-                          {errors.hmo}
-                        </Typography>
-                      )}
-                    </Box>
-                  </Box>
-                ) : firstInfo.complaint_against === "Provider" ? (
-                  <Box
-                    flex={1}
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 1,
-                      my: 2,
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: "16px",
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                      }}
-                    >
-                      Providers Name
-                      <span style={{ color: "#099243", marginLeft: "6px" }}>
-                        *
-                      </span>
-                    </Typography>
-                    <Box>
-                      <ReactSelect
-                        styles={selectStyles}
-                        value={selectedProvider}
-                        onChange={handleProviderChange}
-                        options={providers}
-                        placeholder="Select Provider"
-                      />
-                      {errors.provider && (
-                        <Typography
-                          sx={{ color: "red", fontSize: "13px", mt: 0.5 }}
-                        >
-                          {errors.provider}
-                        </Typography>
-                      )}
-                    </Box>
-                  </Box>
-                ) : firstInfo.complaint_against === "Enrollee" ? (
-                  <Box
-                    flex={1}
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 1,
-                      my: 2,
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: "16px",
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                      }}
-                    >
-                      Enrollee NHIA Number
-                    </Typography>
-                    <Box>
-                      <TextField
-                        name="enrolleeNo"
-                        fullWidth
-                        variant="outlined"
-                        required
-                        placeholder="Enrollee NHIA Number"
-                        sx={textFieldStyles}
-                        value={firstInfo.enrolleeNo}
-                        onChange={handleInputChange}
-                        error={!!errors.enrolleeNo}
-                        helperText={errors.enrolleeNo}
-                      />
-                      {errors.provider && (
-                        <Typography
-                          sx={{ color: "red", fontSize: "13px", mt: 0.5 }}
-                        >
-                          {errors.provider}
-                        </Typography>
-                      )}
-                    </Box>
-                  </Box>
-                ) : null}
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "flex-end",
-                    alignItems: "flex-end",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: { xs: "grid", md: "flex" },
-                      justifyContent: { xs: "center", md: "flex-end" },
-                      gap: 2,
-                      mt: 4,
-                    }}
-                  >
-                    <Button
-                      variant="outlined"
-                      sx={{
-                        width: "270px",
-                        height: "48px",
-                        borderRadius: "16px",
-                        py: 1.5,
-                        fontSize: { xs: "14px", md: "16px" },
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                        textTransform: "capitalize",
-                        borderColor: "#038F3E",
-                        color: "#038F3E",
-                        "&:hover": { borderColor: "#038F3E" },
-                      }}
-                      // href="/account-type"
-                      onClick={onBack}
-                    >
-                      Back
-                    </Button>
-                    <Button
-                      variant="contained"
-                      sx={{
-                        width: "270px",
-                        height: "48px",
-                        borderRadius: "16px",
-                        py: 1.5,
-                        fontSize: { xs: "14px", md: "16px" },
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                        textTransform: "capitalize",
-                        backgroundColor: "#038F3E",
-                        "&:hover": { backgroundColor: "#038F3E" },
-                      }}
-                      // href="/enrollee-complaint-second-form"
-                      onClick={handleNext}
-                    >
-                      Save & Continue
-                    </Button>
-                  </Box>
-                  <Box sx={{ width: "20%", my: 2 }}>{btn}</Box>
-                </Box>
-              </form>
+              <TextField
+                name="contactAddress"
+                fullWidth
+                variant="outlined"
+                required
+                placeholder="e.g H23 dolphin estate"
+                sx={textFieldStyles}
+                value={firstInfo.contactAddress}
+                onChange={handleInputChange}
+                error={!!errors.contactAddress}
+                helperText={errors.contactAddress}
+              />
             </Box>
           </Box>
-        </Box>
-      </Box>
-    </>
+          <Box
+            display="flex"
+            flexDirection={{ xs: "column", md: "row" }}
+            gap={2}
+            mt={2}
+          >
+            <Box
+              flex={1}
+              sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+            >
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                Email Address
+                <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
+              </Typography>
+              <TextField
+                name="email"
+                fullWidth
+                variant="outlined"
+                required
+                type="email"
+                placeholder="example@example.com"
+                sx={textFieldStyles}
+                value={firstInfo.email}
+                onChange={handleInputChange}
+                error={!!errors.email}
+                helperText={errors.email}
+              />
+            </Box>
+          </Box>
+          <Box
+            display="flex"
+            flexDirection={{ xs: "column", md: "row" }}
+            gap={2}
+            mt={2}
+          >
+            <Box
+              flex={1}
+              sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+            >
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                Phone Number
+                <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
+              </Typography>
+              <FormControl fullWidth>
+                <PhoneInput
+                  country={"ng"}
+                  inputStyle={formControlStyles}
+                  inputProps={{
+                    label: "Phone Number",
+                    variant: "outlined",
+                    margin: "normal",
+                    fullWidth: true,
+                  }}
+                  value={firstInfo.phone || ""}
+                  onChange={handlePhoneChange}
+                  error={!!errors.phone}
+                />
+                {errors.phone && (
+                  <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
+                    {errors.phone}
+                  </Typography>
+                )}
+              </FormControl>
+            </Box>
+
+            <Box
+              flex={1}
+              sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+            >
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                Alternative Phone Number
+              </Typography>
+              <FormControl fullWidth>
+                <PhoneInput
+                  country={"ng"}
+                  inputStyle={formControlStyles}
+                  inputProps={{
+                    label: "Alternative Phone Number",
+                    variant: "outlined",
+                    margin: "normal",
+                    fullWidth: true,
+                  }}
+                  value={firstInfo.altPhone || ""}
+                  onChange={handleAltPhoneChange}
+                />
+                {errors.altPhone && (
+                  <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
+                    {errors.altPhone}
+                  </Typography>
+                )}
+              </FormControl>
+            </Box>
+          </Box>
+          <Box
+            display="flex"
+            flexDirection={{ xs: "column", md: "row" }}
+            gap={2}
+            mt={2}
+          >
+            <Box
+              flex={1}
+              sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+            >
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                Complaint against
+                <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
+              </Typography>
+              <ReactSelect
+                name="complaint_against"
+                styles={selectStyles}
+                value={option.find(
+                  (opt) => opt.value === firstInfo.complaint_against,
+                )}
+                onChange={handleComplaintChange}
+                options={option}
+                placeholder="Select Option"
+              />
+              {errors.complaint_against && (
+                <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
+                  {errors.complaint_against}
+                </Typography>
+              )}
+            </Box>
+          </Box>
+
+          {firstInfo.complaint_against === "HMO" ? (
+            <Box
+              flex={1}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+                my: 2,
+              }}
+            >
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                HMO Name
+                <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
+              </Typography>
+              <Box>
+                <ReactSelect
+                  styles={selectStyles}
+                  value={selectedHmo}
+                  onChange={handleHmoChange}
+                  options={hmos}
+                  placeholder="Select HMO"
+                />
+                {errors.hmo && (
+                  <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
+                    {errors.hmo}
+                  </Typography>
+                )}
+              </Box>
+            </Box>
+          ) : firstInfo.complaint_against === "Provider" ? (
+            <Box
+              flex={1}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+                my: 2,
+              }}
+            >
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                Providers Name
+                <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
+              </Typography>
+              <Box>
+                <ReactSelect
+                  styles={selectStyles}
+                  value={selectedProvider}
+                  onChange={handleProviderChange}
+                  options={providers}
+                  placeholder="Select Provider"
+                />
+                {errors.provider && (
+                  <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
+                    {errors.provider}
+                  </Typography>
+                )}
+              </Box>
+            </Box>
+          ) : firstInfo.complaint_against === "Enrollee" ? (
+            <Box
+              flex={1}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+                my: 2,
+              }}
+            >
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                Enrollee NHIA Number
+              </Typography>
+              <Box>
+                <TextField
+                  name="enrolleeNo"
+                  fullWidth
+                  variant="outlined"
+                  required
+                  placeholder="Enrollee NHIA Number"
+                  sx={textFieldStyles}
+                  value={firstInfo.enrolleeNo}
+                  onChange={handleInputChange}
+                  error={!!errors.enrolleeNo}
+                  helperText={errors.enrolleeNo}
+                />
+                {errors.provider && (
+                  <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
+                    {errors.provider}
+                  </Typography>
+                )}
+              </Box>
+            </Box>
+          ) : null}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              // justifyContent: "flex-end",
+              // alignItems: "flex-end",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: 2,
+                mt: 4,
+              }}
+            >
+              <Button
+                variant="outlined"
+                startIcon={<ArrowBackIcon />}
+                sx={{
+                  width: "87px",
+                  height: "48px",
+                  borderRadius: "16px",
+                  py: 1.5,
+                  fontSize: { xs: "14px", md: "16px" },
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                  textTransform: "capitalize",
+                  borderColor: "#1B5E20",
+                  color: "#1B5E20",
+                  "&:hover": { borderColor: "#1B5E20" },
+                }}
+                onClick={onBack}
+              >
+                Back
+              </Button>
+              <Button
+                variant="contained"
+                sx={{
+                  width: "fit-content",
+                  height: "48px",
+                  borderRadius: "16px",
+                  py: 1.5,
+                  fontSize: { xs: "14px", md: "16px" },
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                  textTransform: "capitalize",
+                  backgroundColor: "#1B5E20",
+                  "&:hover": { backgroundColor: "#1B5E20" },
+                }}
+                // href="/enrollee-complaint-second-form"
+                onClick={handleNext}
+              >
+                Save & Continue
+              </Button>
+            </Box>
+          </Box>
+        </form>
+      </Card>
+    </TwoColumnLayout>
   );
 };
 
@@ -776,5 +701,5 @@ FirstForm.propTypes = {
   onNext: PropTypes.func,
   onBack: PropTypes.func,
   btn: PropTypes.any,
-  organization: PropTypes.string,
+  selectedAccountType: PropTypes.string,
 };

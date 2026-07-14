@@ -465,7 +465,7 @@ const CentralReplyComplaintPage = () => {
                     fontSize: "16px",
                     fontWeight: 500,
                     lineHeight: "24px",
-                    color: "#038F3E",
+                    color: "#1B5E20",
                     cursor: "pointer",
                   }}
                 >
@@ -499,7 +499,7 @@ const CentralReplyComplaintPage = () => {
                 variant="contained"
                 sx={{
                   width: { xs: "100%", sm: "261px" },
-                  backgroundColor: "#038F3E",
+                  backgroundColor: "#1B5E20",
                   color: "#FFFFFF",
                   fontWeight: 500,
                   fontSize: "16px",

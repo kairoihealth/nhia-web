@@ -180,7 +180,7 @@ const StateInvitationForm = () => {
               fontWeight: 500,
               lineHeight: "21.6px",
               borderRadius: "8px",
-              backgroundColor: "#038F3E",
+              backgroundColor: "#1B5E20",
               color: "#FFFFFF",
               width: { xs: "100%", sm: "347px" },
               py: "12px",

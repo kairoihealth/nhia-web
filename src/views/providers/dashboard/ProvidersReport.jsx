@@ -27,10 +27,10 @@ import { useAuth } from "../../../components/auth/AuthContext";
 //     borderColor: "#DADADA",
 //   },
 //   "&:hover .MuiOutlinedInput-notchedOutline": {
-//     borderColor: "#038F3E",
+//     borderColor: "#1B5E20",
 //   },
 //   "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-//     borderColor: "#038F3E",
+//     borderColor: "#1B5E20",
 //   },
 // };
 
@@ -39,10 +39,10 @@ const textStyles = {
     borderRadius: "8px",
     backgroundColor: "#F5F5F5",
     "&:hover": {
-      outline: "1px solid #038F3E",
+      outline: "1px solid #1B5E20",
     },
     "&.Mui-focused": {
-      outline: "1px solid #038F3E",
+      outline: "1px solid #1B5E20",
       boxShadow: "none",
     },
   },
@@ -256,7 +256,7 @@ const ProvidersReportPage = () => {
               >
                 <Typography
                   sx={{
-                    color: "#038F3E",
+                    color: "#1B5E20",
                     fontSize: "16px",
                     fontWeight: 600,
                     lineHeight: "19.36px",
@@ -313,7 +313,7 @@ const ProvidersReportPage = () => {
               >
                 <Typography
                   sx={{
-                    color: "#038F3E",
+                    color: "#1B5E20",
                     fontSize: "16px",
                     fontWeight: 600,
                     lineHeight: "19.36px",
@@ -375,7 +375,7 @@ const ProvidersReportPage = () => {
               >
                 <Typography
                   sx={{
-                    color: "#038F3E",
+                    color: "#1B5E20",
                     fontSize: "16px",
                     fontWeight: 600,
                     lineHeight: "19.36px",
@@ -423,7 +423,7 @@ const ProvidersReportPage = () => {
                 sx={{
                   width: { xs: "100%", sm: "135px" },
                   height: "51px",
-                  backgroundColor: "#038F3E",
+                  backgroundColor: "#1B5E20",
                   color: "#FFFFFF",
                   textTransform: "none",
                   fontSize: "16px",
@@ -643,7 +643,7 @@ const ProvidersReportPage = () => {
                       width: { xs: "100%", sm: "249px" },
                       height: "51px",
                       borderRadius: "8px",
-                      backgroundColor: "#038F3E",
+                      backgroundColor: "#1B5E20",
                       fontSize: "16px",
                       fontWeight: 500,
                       lineHeight: "19.36px",

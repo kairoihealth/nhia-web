@@ -10,7 +10,7 @@ import {
   IconButton,
   Link,
   OutlinedInput,
-  FormControl
+  FormControl,
 } from "@mui/material";
 import Logo from "../../../assets/nhia-logo.png";
 import PhoneInput from "react-phone-input-2";
@@ -27,9 +27,9 @@ const textFieldStyles = {
     border: "0.5px solid #DADADA",
     mb: 3,
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#038F3E"
-    }
-  }
+      borderColor: "#1B5E20",
+    },
+  },
 };
 
 const formControlStyles = {
@@ -41,7 +41,7 @@ const formControlStyles = {
   border: "0.5px solid #DADADA",
   paddingY: "34px",
   fontSize: "16px",
-  outline: "none"
+  outline: "none",
 };
 const HmoRegisterPage = () => {
   const navigate = useNavigate();
@@ -50,7 +50,7 @@ const HmoRegisterPage = () => {
     email: "",
     phone: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
@@ -87,12 +87,12 @@ const HmoRegisterPage = () => {
       </Helmet> */}
       <Box
         sx={{
-          backgroundColor: "#038F3E",
+          backgroundColor: "#1B5E20",
           height: "auto",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          py: { xs: 2, md: 6 }
+          py: { xs: 2, md: 6 },
         }}
       >
         <Container maxWidth="sm">
@@ -103,7 +103,7 @@ const HmoRegisterPage = () => {
               textAlign: "center",
               width: "100%",
               maxWidth: "720px",
-              borderRadius: "25px"
+              borderRadius: "25px",
             }}
           >
             <Box
@@ -117,8 +117,8 @@ const HmoRegisterPage = () => {
                 fontSize: "24px",
                 fontWeight: 500,
                 lineHeight: "32.4px",
-                color: "#038F3E",
-                mt: 2
+                color: "#1B5E20",
+                mt: 2,
               }}
               gutterBottom
             >
@@ -132,7 +132,7 @@ const HmoRegisterPage = () => {
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "flex-start",
-                  gap: 1
+                  gap: 1,
                 }}
               >
                 <Typography
@@ -140,7 +140,7 @@ const HmoRegisterPage = () => {
                     color: "#595959",
                     fontSize: "16px",
                     fontWeight: 500,
-                    lineHeight: "24px"
+                    lineHeight: "24px",
                   }}
                 >
                   HMO&apos;s Name
@@ -164,7 +164,7 @@ const HmoRegisterPage = () => {
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "flex-start",
-                  gap: 1
+                  gap: 1,
                 }}
               >
                 <Typography
@@ -172,7 +172,7 @@ const HmoRegisterPage = () => {
                     color: "#595959",
                     fontSize: "16px",
                     fontWeight: 500,
-                    lineHeight: "24px"
+                    lineHeight: "24px",
                   }}
                 >
                   Official Email Address
@@ -197,7 +197,7 @@ const HmoRegisterPage = () => {
                   flexDirection: "column",
                   alignItems: "flex-start",
                   gap: 1,
-                  mb: 3
+                  mb: 3,
                 }}
               >
                 <Typography
@@ -205,7 +205,7 @@ const HmoRegisterPage = () => {
                     color: "#595959",
                     fontSize: "16px",
                     fontWeight: 500,
-                    lineHeight: "24px"
+                    lineHeight: "24px",
                   }}
                 >
                   Official Phone Number
@@ -218,8 +218,8 @@ const HmoRegisterPage = () => {
                     inputStyle={{
                       ...formControlStyles,
                       "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "#038F3E"
-                      }
+                        borderColor: "#1B5E20",
+                      },
                     }}
                     onChange={handleChange}
                   />
@@ -233,7 +233,7 @@ const HmoRegisterPage = () => {
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "flex-start",
-                  gap: 1
+                  gap: 1,
                 }}
               >
                 <Typography
@@ -241,7 +241,7 @@ const HmoRegisterPage = () => {
                     color: "#595959",
                     fontSize: "16px",
                     fontWeight: 500,
-                    lineHeight: "24px"
+                    lineHeight: "24px",
                   }}
                 >
                   Password
@@ -275,8 +275,8 @@ const HmoRegisterPage = () => {
                   sx={{
                     ...textFieldStyles,
                     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#038F3E"
-                    }
+                      borderColor: "#1B5E20",
+                    },
                   }}
                   onChange={handleChange}
                 />
@@ -290,7 +290,7 @@ const HmoRegisterPage = () => {
                   flexDirection: "column",
                   alignItems: "flex-start",
                   gap: 1,
-                  my: 2
+                  my: 2,
                 }}
               >
                 <Typography
@@ -298,7 +298,7 @@ const HmoRegisterPage = () => {
                     color: "#595959",
                     fontSize: "16px",
                     fontWeight: 500,
-                    lineHeight: "24px"
+                    lineHeight: "24px",
                   }}
                 >
                   Confirm Password
@@ -332,8 +332,8 @@ const HmoRegisterPage = () => {
                   sx={{
                     ...textFieldStyles,
                     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#038F3E"
-                    }
+                      borderColor: "#1B5E20",
+                    },
                   }}
                   onChange={handleChange}
                 />
@@ -348,7 +348,7 @@ const HmoRegisterPage = () => {
                   width: "347px",
                   height: "45px",
                   borderRadius: "50px",
-                  backgroundColor: "#038F3E",
+                  backgroundColor: "#1B5E20",
                   color: "#FFFFFF",
                   fontSize: "16px",
                   fontWeight: 500,
@@ -356,7 +356,7 @@ const HmoRegisterPage = () => {
                   my: 3,
                   py: "12px",
                   px: "8px",
-                  textTransform: "capitalize"
+                  textTransform: "capitalize",
                 }}
                 type="submit"
                 onClick={handleSubmit}
@@ -379,7 +379,7 @@ const HmoRegisterPage = () => {
               {/* Login Link */}
               <Typography variant="body2" align="center">
                 I have an account?&nbsp;
-                <Link href="/login-page" underline="hover" color="#038F3E">
+                <Link href="/login-page" underline="hover" color="#1B5E20">
                   Log In
                 </Link>
               </Typography>

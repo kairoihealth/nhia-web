@@ -91,7 +91,7 @@ const ProvidersSingleComplaintPage = () => {
               fontSize: "24px",
               fontWeight: 500,
               lineHeight: "32.4px",
-              color: "#038F3E",
+              color: "#1B5E20",
             }}
           >
             Complainant&apos;s Details
@@ -213,7 +213,7 @@ const ProvidersSingleComplaintPage = () => {
               fontSize: "24px",
               fontWeight: 500,
               lineHeight: "32.4px",
-              color: "#038F3E",
+              color: "#1B5E20",
             }}
           >
             Complaints Details
@@ -359,7 +359,7 @@ const ProvidersSingleComplaintPage = () => {
             variant="contained"
             sx={{
               width: "50%",
-              backgroundColor: "#038F3E",
+              backgroundColor: "#1B5E20",
               color: "#FFFFFF",
               fontWeight: 500,
               fontSize: "16px",
@@ -380,9 +380,9 @@ const ProvidersSingleComplaintPage = () => {
   );
 };
 
-const ProvidersSingleComplaint = WithAuthorization(ProvidersSingleComplaintPage, [
-  "can_view_complaint_details",
-  "can_respond_to_complaints",
-]);
+const ProvidersSingleComplaint = WithAuthorization(
+  ProvidersSingleComplaintPage,
+  ["can_view_complaint_details", "can_respond_to_complaints"],
+);
 
 export default ProvidersSingleComplaint;

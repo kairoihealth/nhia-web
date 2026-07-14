@@ -4,7 +4,7 @@ import {
   Button,
   Typography,
   OutlinedInput,
-  IconButton
+  IconButton,
   // Link,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -17,7 +17,7 @@ const EmailReceivedSection = ({
   setShowVerification,
   handleVerifyEmail,
   fromRoute,
-  email
+  email,
 }) => {
   const [code, setCode] = useState(["", "", "", ""]);
   const inputRefs = useRef([]);
@@ -41,7 +41,7 @@ const EmailReceivedSection = ({
         }
       }
     },
-    [code]
+    [code],
   );
 
   // Handle backspace key
@@ -66,7 +66,7 @@ const EmailReceivedSection = ({
       {/* Header */}
       <Typography
         align="center"
-        color="#038F3E"
+        color="#1B5E20"
         sx={{ fontSize: "32px", fontWeight: 500, lineHeight: "43.2px" }}
         gutterBottom
       >
@@ -82,7 +82,7 @@ const EmailReceivedSection = ({
           fontWeight: 500,
           lineHeight: "21.6px",
           color: "#475467",
-          mb: 3
+          mb: 3,
         }}
       >
         {fromRoute === "forgot-password"
@@ -99,7 +99,7 @@ const EmailReceivedSection = ({
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              mb: 3
+              mb: 3,
             }}
           >
             {code.map((digit, index) => (
@@ -111,7 +111,7 @@ const EmailReceivedSection = ({
                 onKeyDown={(e) => handleKeyDown(index, e)}
                 inputProps={{
                   maxLength: 1,
-                  style: { textAlign: "center" }
+                  style: { textAlign: "center" },
                 }}
                 sx={{
                   width: "56px",
@@ -119,11 +119,11 @@ const EmailReceivedSection = ({
                   mx: 1,
                   "& .MuiOutlinedInput-input": {
                     fontSize: "24px",
-                    padding: "8px"
+                    padding: "8px",
                   },
                   "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#038F3E" // Green border color
-                  }
+                    borderColor: "#1B5E20", // Green border color
+                  },
                 }}
               />
             ))}
@@ -152,9 +152,9 @@ const EmailReceivedSection = ({
               py: "10px",
               px: "18px",
               borderRadius: "50px",
-              backgroundColor: "#038F3E",
+              backgroundColor: "#1B5E20",
               my: 3,
-              textTransform: "none"
+              textTransform: "none",
             }}
           >
             {fromRoute === "forgot-password"
@@ -169,12 +169,12 @@ const EmailReceivedSection = ({
               fontSize: "14px",
               fontWeight: 400,
               lineHeight: "20px",
-              color: "#475467"
+              color: "#475467",
             }}
           >
             Didn&apos;t receive the email?{" "}
             <span
-              style={{ fontWeight: 500, cursor: "pointer", color: "#038F3E" }}
+              style={{ fontWeight: 500, cursor: "pointer", color: "#1B5E20" }}
               onClick={handleResendEmail}
             >
               Click to resend.
@@ -189,7 +189,7 @@ const EmailReceivedSection = ({
               alignItems: "center",
               mt: 2,
               cursor: "pointer",
-              gap: 0.1
+              gap: 0.1,
             }}
             onClick={handleBackToLogin}
           >
@@ -202,7 +202,7 @@ const EmailReceivedSection = ({
                 fontSize: "14px",
                 fontWeight: 600,
                 lineHeight: "20px",
-                color: "#475467"
+                color: "#475467",
               }}
             >
               {fromRoute === "forgot-password" ? "Back" : "Back to login"}
@@ -223,9 +223,9 @@ const EmailReceivedSection = ({
               py: "10px",
               px: "18px",
               borderRadius: "50px",
-              backgroundColor: "#038F3E",
+              backgroundColor: "#1B5E20",
               my: 3,
-              textTransform: "none"
+              textTransform: "none",
             }}
           >
             {fromRoute === "forgot-password"
@@ -240,7 +240,7 @@ const EmailReceivedSection = ({
               justifyContent: "center",
               alignItems: "center",
               cursor: "pointer",
-              gap: 0.1
+              gap: 0.1,
             }}
             onClick={handleBackToLogin}
           >
@@ -254,7 +254,7 @@ const EmailReceivedSection = ({
                 fontWeight: 600,
                 lineHeight: "20px",
                 color: "#475467",
-                textTransform: "none"
+                textTransform: "none",
               }}
             >
               {fromRoute === "forgot-password"
@@ -275,7 +275,7 @@ EmailReceivedSection.propTypes = {
   setShowVerification: PropTypes.func.isRequired,
   handleVerifyEmail: PropTypes.func.isRequired,
   fromRoute: PropTypes.string.isRequired,
-  email: PropTypes.string.isRequired
+  email: PropTypes.string.isRequired,
 };
 
 export default EmailReceivedSection;

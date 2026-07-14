@@ -10,6 +10,7 @@ import {
   Box,
   Pagination,
   PaginationItem,
+  Chip,
 } from "@mui/material";
 import PropTypes from "prop-types";
 import { ArrowLeft, ArrowRight } from "@mui/icons-material";
@@ -21,7 +22,7 @@ const ReusableTable = ({
   showActions = false,
   showStatus = false,
   pagination = false,
-  headerBackgroundColor = "#038F3E",
+  headerBackgroundColor = "#1B5E20",
   actionButtonText = "View Complaint",
   statusLabel = "Complaint Status",
   totalPages = 1,
@@ -31,6 +32,29 @@ const ReusableTable = ({
   // setPageSize,
 }) => {
   // const [page, setPage] = useState(1);
+  const statusColors = {
+    closed: { backgroundColor: "#E8F5E9", color: "#1B5E20" },
+    active: { backgroundColor: "#E3F2FD", color: "#0D47A1" },
+    pending: { backgroundColor: "#FFF8E1", color: "#FF8F00" },
+    escalated: { backgroundColor: "#FFEBEE", color: "#C62828" },
+    default: { backgroundColor: "#F5F5F5", color: "#616161" },
+  };
+
+  const getStatusChip = (status) => {
+    const statusLower = status?.toLowerCase();
+    const colors = statusColors[statusLower] || statusColors.default;
+    return (
+      <Chip
+        label={status || "Unknown"}
+        size="small"
+        sx={{
+          backgroundColor: colors.backgroundColor,
+          color: colors.color,
+          textTransform: "capitalize",
+        }}
+      />
+    );
+  };
   const rowsPerPage = pageSize || 10;
 
   const handleChangePage = (event, newPage) => {
@@ -83,19 +107,6 @@ const ReusableTable = ({
                 </Typography>
               </TableCell>
             ))}
-            {showActions && (
-              <TableCell
-                align="center"
-                sx={{
-                  fontSize: "14px",
-                  fontWeight: 500,
-                  lineHeight: "19.12px",
-                  color: "#FFFFFF",
-                }}
-              >
-                Actions
-              </TableCell>
-            )}
             {showStatus && (
               <TableCell
                 align="center"
@@ -107,6 +118,19 @@ const ReusableTable = ({
                 }}
               >
                 {statusLabel}
+              </TableCell>
+            )}
+            {showActions && (
+              <TableCell
+                align="center"
+                sx={{
+                  fontSize: "14px",
+                  fontWeight: 500,
+                  lineHeight: "19.12px",
+                  color: "#FFFFFF",
+                }}
+              >
+                Actions
               </TableCell>
             )}
           </TableRow>
@@ -135,6 +159,13 @@ const ReusableTable = ({
                 </TableCell>
               ))}
 
+              {/* Status Pill Cell (if showStatus is true) */}
+              {showStatus && (
+                <TableCell align="center">
+                  {getStatusChip(row.status)}
+                </TableCell>
+              )}
+
               {/* View Button Cell (if showActions is true) */}
               {showActions && (
                 <TableCell align="center">
@@ -143,60 +174,20 @@ const ReusableTable = ({
                     size="medium"
                     onClick={() => onViewClick(row)}
                     sx={{
-                      fontSize: "16px",
+                      fontSize: "13px",
                       fontWeight: 500,
                       lineHeight: "21.6px",
-                      borderRadius: "8px",
-                      backgroundColor: "#038F3E",
+                      borderRadius: "60px",
+                      backgroundColor: "#1B5E20",
                       color: "#FFFFFF",
-                      py: { xs: "8px", md: "12px" },
-                      px: { xs: "16px", md: "23px" },
+                      // py: { xs: "8px", md: "12px" },
+                      // px: { xs: "16px", md: "23px" },
                       textTransform: "none",
                       "&:hover": { backgroundColor: "#027A3B" },
                     }}
                   >
                     {actionButtonText}
                   </Button>
-                </TableCell>
-              )}
-
-              {/* Status Pill Cell (if showStatus is true) */}
-              {showStatus && (
-                <TableCell align="center">
-                  <Box
-                    sx={{
-                      display: "inline-block",
-                      px: 2,
-                      py: 0.5,
-                      fontSize: "16px",
-                      fontWeight: 400,
-                      lineHeight: "21.6px",
-                      borderRadius: "8px",
-                      textTransform: "capitalize",
-                      backgroundColor:
-                        row.status === "pending"
-                          ? "#FFF3E7"
-                          : row.status === "closed" ||
-                              row.status === "request sent"
-                            ? "#D6EBFF"
-                            : row.status === "active" ||
-                                row.status === "accepted"
-                              ? "#E8F8EE"
-                              : "#FFF3E7",
-                      color:
-                        row.status === "pending"
-                          ? "#EDB378"
-                          : row.status === "closed" ||
-                              row.status === "request sent"
-                            ? "#4B95DD"
-                            : row.status === "active" ||
-                                row.status === "accepted"
-                              ? "#096F35"
-                              : "red",
-                    }}
-                  >
-                    &bull; {row.status || "N/A"}
-                  </Box>
                 </TableCell>
               )}
             </TableRow>
@@ -224,7 +215,7 @@ const ReusableTable = ({
                     sx={{
                       mx: 0.5, // Add some spacing between page numbers
                       "&.Mui-selected": {
-                        backgroundColor: "#038F3E",
+                        backgroundColor: "#1B5E20",
                         color: "#FFFFFF",
                         "&:hover": {
                           backgroundColor: "#027A3B",
@@ -296,7 +287,7 @@ ReusableTable.defaultProps = {
   showActions: false,
   showStatus: false,
   pagination: false,
-  headerBackgroundColor: "#038F3E",
+  headerBackgroundColor: "#1B5E20",
   actionButtonText: "View Complaint",
   statusLabel: "Complaint status",
   totalPages: 1,

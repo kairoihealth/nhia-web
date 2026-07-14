@@ -8,6 +8,7 @@ import {
   TextField,
   Button,
   IconButton,
+  Card,
 } from "@mui/material";
 import { TabButton, TabDropdown } from "../../../shared/TabPanel";
 import ReusableTable from "../../../shared/Table";
@@ -196,8 +197,17 @@ const CentralComplaintsPage = () => {
     return diffInHours > 360;
   };
 
-  const transformedRows =
-    complaints?.results?.map((complaint) => ({
+  const transformedRows = [...(complaints?.results || [])]
+    .sort((a, b) => {
+      if (a.status === "escalated" && b.status !== "escalated") {
+        return -1;
+      }
+      if (a.status !== "escalated" && b.status === "escalated") {
+        return 1;
+      }
+      return 0;
+    })
+    .map((complaint) => ({
       created_at: new Date(complaint.created_at).toLocaleDateString(),
       name: `${complaint.firstname || ""} ${complaint.lastname || ""}`.trim(),
       complaint_no: complaint.case_id,
@@ -206,7 +216,7 @@ const CentralComplaintsPage = () => {
       id: complaint.id,
       status: complaint.status,
       isOverdue: isOverdue(complaint.created_at, complaint.status),
-    })) || [];
+    }));
 
   // const filteredRows = transformedRows.filter((row) => {
   //   // Tab filter
@@ -279,15 +289,13 @@ const CentralComplaintsPage = () => {
   }
 
   return (
-    <Box aria-hidden={false}>
-      <Box
+    <Box>
+      <Card
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          p: 1,
-          backgroundColor: "#FAFAFA",
-          height: "100vh",
-          overflowY: "auto",
+          m: 2,
+          p: { xs: 1, md: 2 },
+          borderRadius: "12px",
+          boxShadow: "0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04)",
         }}
       >
         {/* Header */}
@@ -346,12 +354,13 @@ const CentralComplaintsPage = () => {
                 p: 1,
                 cursor: "pointer",
                 alignSelf: { xs: "flex-start", md: "center" },
+                alignItems: "center",
               }}
             >
-              <FiFilter size={20} style={{ color: "#64748B" }} />
+              <FiFilter size={14} style={{ color: "#64748B" }} />
               <Typography
                 sx={{
-                  fontSize: "16px",
+                  fontSize: "14px",
                   fontWeight: 500,
                   lineHeight: "21.6px",
                   color: "#64748B",
@@ -516,8 +525,8 @@ const CentralComplaintsPage = () => {
                       fontSize: "14px",
                       fontWeight: 500,
                       backgroundColor: "transparent",
-                      border: "1px solid #038F3E",
-                      color: "#038F3E",
+                      border: "1px solid #1B5E20",
+                      color: "#1B5E20",
                       textTransform: "none",
                       "&:hover": { backgroundColor: "#027A3B", color: "#fff" },
                     }}
@@ -531,7 +540,7 @@ const CentralComplaintsPage = () => {
         </Stack>
 
         {/* Table */}
-        <Box sx={{ width: "100%", overflowX: "auto" }}>
+        <Box sx={{ width: "100%", overflowX: "auto", mt: 2 }}>
           <ReusableTable
             columns={getColumns()}
             rows={transformedRows}
@@ -552,7 +561,7 @@ const CentralComplaintsPage = () => {
             }}
           />
         </Box>
-      </Box>
+      </Card>
     </Box>
   );
 };

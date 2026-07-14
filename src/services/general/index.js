@@ -165,6 +165,26 @@ export const rateComplaint = async ({ id, payload }) => {
   }
 };
 
+export const assignComplaint = async ({ id, payload }) => {
+  try {
+    const response = await Api.post(e.ASSIGN_COMPLAINT(id), payload);
+    return response;
+  } catch (error) {
+    console.error("Failed to assign complaint:", error);
+    throw error;
+  }
+};
+
+export const updateComplaintPriority = async ({ id, payload }) => {
+  try {
+    const response = await Api.post(e.UPDATE_COMPLAINT_PRIORITY(id), payload);
+    return response;
+  } catch (error) {
+    console.error("Failed to update complaint priority:", error);
+    throw error;
+  }
+};
+
 export const getComplaintSatisfactionScores = async ({
   start_date,
   end_date,

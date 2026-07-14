@@ -12,7 +12,7 @@ const SubmissionStatus = () => {
     <>
       <Box
         sx={{
-          backgroundColor: { xs: "#FFFFFF", md: "#038F3E" },
+          backgroundColor: { xs: "#FFFFFF", md: "#1B5E20" },
           minHeight: "100dvh",
         }}
       >
@@ -45,7 +45,7 @@ const SubmissionStatus = () => {
                   fontSize: "30px",
                   fontWeight: 500,
                   lineHeight: "27px",
-                  color: "#038F3E",
+                  color: "#1B5E20",
                   margin: "1rem 0 1.2rem",
                 }}
               >
@@ -89,7 +89,7 @@ const SubmissionStatus = () => {
                 </Typography>
                 <button
                   style={{
-                    color: "#038F3E",
+                    color: "#1B5E20",
                     border: "none",
                     backgroundColor: "transparent",
                     cursor: "pointer",
