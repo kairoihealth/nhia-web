@@ -8,14 +8,16 @@ export const TabButton = ({ tab, activeTab, label, onClick }) => (
   <Button
     variant="text"
     sx={{
-      borderBottom: activeTab === tab ? "2px solid #038F3E" : "none",
-      color: activeTab === tab ? "#038F3E" : "#000000",
+      borderBottom: activeTab === tab ? "2px solid #1B5E20" : "none",
+      borderRadius: 0,
+      color: activeTab === tab ? "#1B5E20" : "#000000",
+      fontSize: "14px",
       fontWeight: activeTab === tab ? "bold" : "normal",
       textTransform: "none",
       mr: 2,
       mb: 1,
       "&:hover": {
-        color: "#038F3E",
+        color: "#1B5E20",
       },
     }}
     onClick={() => onClick(tab)}
@@ -113,7 +115,7 @@ export const TabDropdown = ({ activeTab, options, onTabClick }) => {
                 sx={{
                   justifyContent: "flex-start",
                   textTransform: "none",
-                  color: activeTab === option.tab ? "#038F3E" : "inherit",
+                  color: activeTab === option.tab ? "#1B5E20" : "inherit",
                   backgroundColor:
                     activeTab === option.tab ? "#F0FDF4" : "transparent",
                   "&:hover": {

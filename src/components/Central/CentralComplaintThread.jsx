@@ -279,7 +279,7 @@ const CentralComplaintThreadPage = () => {
                 >
                   <Typography
                     sx={{
-                      fontSize: {xs: "14px", md: "16px"},
+                      fontSize: { xs: "14px", md: "16px" },
                       fontWeight: 400,
                       lineHeight: "24px",
                       color: "#292D32",
@@ -294,7 +294,7 @@ const CentralComplaintThreadPage = () => {
                   />
                   <Typography
                     sx={{
-                      fontSize: {xs: "14px", md: "16px"},
+                      fontSize: { xs: "14px", md: "16px" },
                       fontWeight: 400,
                       lineHeight: "24px",
                       color: "#000000",
@@ -450,7 +450,7 @@ const CentralComplaintThreadPage = () => {
                             }}
                           >
                             <FileDownloadOutlinedIcon
-                              sx={{ color: "#038F3E" }}
+                              sx={{ color: "#1B5E20" }}
                             />
                           </IconButton>
                         </Box>
@@ -847,7 +847,7 @@ const CentralComplaintThreadPage = () => {
                                       <CircularProgress size={18} />
                                     ) : (
                                       <FileDownloadOutlinedIcon
-                                        sx={{ color: "#038F3E" }}
+                                        sx={{ color: "#1B5E20" }}
                                       />
                                     )}
                                   </IconButton>
@@ -910,8 +910,8 @@ const CentralComplaintThreadPage = () => {
                 variant="outlined"
                 sx={{
                   width: { xs: "70%", md: "auto" },
-                  border: "1px solid #038F3E",
-                  color: "#038F3E",
+                  border: "1px solid #1B5E20",
+                  color: "#1B5E20",
                   fontWeight: 500,
                   fontSize: "16px",
                   lineHeight: "24px",
@@ -927,8 +927,8 @@ const CentralComplaintThreadPage = () => {
                 variant="outlined"
                 sx={{
                   width: { xs: "70%", md: "auto" },
-                  border: "1px solid #038F3E",
-                  color: "#038F3E",
+                  border: "1px solid #1B5E20",
+                  color: "#1B5E20",
                   fontWeight: 500,
                   fontSize: "16px",
                   lineHeight: "24px",
@@ -944,8 +944,8 @@ const CentralComplaintThreadPage = () => {
                 variant="outlined"
                 sx={{
                   width: { xs: "70%", md: "auto" },
-                  border: "1px solid #038F3E",
-                  color: "#038F3E",
+                  border: "1px solid #1B5E20",
+                  color: "#1B5E20",
                   fontWeight: 500,
                   fontSize: "16px",
                   lineHeight: "24px",

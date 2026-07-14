@@ -129,6 +129,32 @@ const menuData = {
       link: "/admin/settings",
     },
   ],
+  Enrollee: [
+    {
+      id: 1,
+      label: "Dashboard",
+      icon: <FiHome />,
+      link: "/enrollee/dashboard",
+    },
+    {
+      id: 2,
+      label: "Complaints",
+      icon: <FaRegComment />,
+      link: "/enrollee/complaints",
+    },
+    {
+      id: 3,
+      label: "File Complaint",
+      icon: <FaRegComment />,
+      link: "/enrollee/complaint/create",
+    },
+    {
+      id: 3,
+      label: "Profile",
+      icon: <FiUser />,
+      link: "/enrollee/profile",
+    },
+  ],
 };
 
 const DashboardSidebar = ({ showMobileMenu, onMobileClose }) => {
@@ -147,7 +173,8 @@ const DashboardSidebar = ({ showMobileMenu, onMobileClose }) => {
         flexDirection: "column",
         justifyContent: "space-between",
         height: "100%",
-        p: 2,
+        py: 2,
+        px: 0,
       }}
     >
       <IconButton
@@ -189,8 +216,8 @@ const DashboardSidebar = ({ showMobileMenu, onMobileClose }) => {
             flexDirection: "column",
             gap: 2,
             mt: 3,
-            cursor: "pointer",
             flexGrow: 1,
+            pl: 2,
           }}
         >
           {menuData[role]?.length > 0 ? (
@@ -200,11 +227,11 @@ const DashboardSidebar = ({ showMobileMenu, onMobileClose }) => {
                 to={item.link}
                 style={({ isActive }) => ({
                   textDecoration: "none",
-                  color: isActive ? "#038F3E" : "#FFFFFF",
+                  color: isActive ? "#1B5E20" : "rgba(255,255,255,.6)",
                   backgroundColor: isActive ? "#FFFFFF" : "transparent",
                   borderTopLeftRadius: "20px",
                   borderBottomLeftRadius: "20px",
-                  padding: "12px 20px",
+                  padding: "12px 14px",
                   display: "flex",
                   alignItems: "center",
                 })}
@@ -214,7 +241,7 @@ const DashboardSidebar = ({ showMobileMenu, onMobileClose }) => {
                     {item.icon}
                     <Typography
                       sx={{
-                        fontSize: "16px",
+                        fontSize: "15px",
                         fontWeight: isActive ? 600 : 500,
                         lineHeight: "21.6px",
                       }}
@@ -237,26 +264,28 @@ const DashboardSidebar = ({ showMobileMenu, onMobileClose }) => {
         sx={{
           borderTop: "1px solid #e0e0e0",
           cursor: "pointer",
-          mx: -2, // Counteract parent padding
-          background: "#038F3E",
+          background: "#1B5E20",
+          color: "rgba(255,255,255,.6)",
           border: "none",
-          padding: "12px 20px",
+          paddingLeft: "16px",
+          fontSize: "15px",
+          width: "100%",
         }}
       >
         <ListItem
           component="button"
           onClick={logout}
           sx={{
-            color: "#ffffff",
-            background: "#038F3E",
-            width: "100%",
+            color: "rgba(255,255,255,.6)",
+            background: "#1B5E20",
             textAlign: "left",
             border: "none",
+            padding: "12px 14px",
             gap: 2,
-            
+            cursor: "pointer",
           }}
         >
-          <ListItemIcon>
+          <ListItemIcon sx={{ minWidth: "unset" }}>
             <FiLogOut style={{ color: "#ffffff" }} />
           </ListItemIcon>
           <ListItemText primary="Logout" />
@@ -276,7 +305,7 @@ const DashboardSidebar = ({ showMobileMenu, onMobileClose }) => {
         PaperProps={{
           sx: {
             width: 269,
-            backgroundColor: "#038F3E",
+            backgroundColor: "#1B5E20",
             color: "#ffffff",
           },
         }}
@@ -288,12 +317,12 @@ const DashboardSidebar = ({ showMobileMenu, onMobileClose }) => {
       {/* Desktop Sidebar */}
       <Box
         sx={{
-          width: 269,
+          width: 230,
           flexShrink: 0,
           display: { xs: "none", md: "flex" },
           flexDirection: "column",
           height: "100vh",
-          backgroundColor: "#038F3E",
+          backgroundColor: "#1B5E20",
           color: "#ffffff",
         }}
       >

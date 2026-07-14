@@ -1,6 +1,4 @@
 import { useState } from "react";
-import Logo from "../../../assets/nhia-logo.png"; // eslint-disable-line
-import { Box, TextField, Button, FormControl, Typography } from "@mui/material";
 import { useDropzone } from "react-dropzone";
 import { BsCloudUpload } from "react-icons/bs";
 import { AiOutlineFile } from "react-icons/ai";
@@ -19,6 +17,17 @@ import { selectStyles, textFieldStyles } from "../../../utils/style";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { useMemo } from "react";
 import { useHandleError } from "../../../hooks/useToastHandler";
+import {
+  Box,
+  TextField,
+  Button,
+  FormControl,
+  Typography,
+  Card,
+} from "@mui/material";
+import TwoColumnLayout from "./TwoColumnLayout";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import FormCardHeader from "./FormCardHeader";
 
 const SecondForm = ({
   complaintInfo,
@@ -142,6 +151,7 @@ const SecondForm = ({
       );
       complaintInfo["complaint_type"] = complaint.complaint_type;
       complaintInfo["complaint_category"] = complaint.complaint_category;
+      complaintInfo["priority"] = complaint.priority;
     }
     setComplaintInfo({
       ...complaintInfo,
@@ -190,347 +200,169 @@ const SecondForm = ({
   };
 
   return (
-    <>
-      <Box
+    <TwoColumnLayout
+      title="Describe your complaint"
+      subtitle="The more detail you provide, the faster we can resolve your case."
+      rightColumnSx={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Card
         sx={{
-          backgroundColor: { xs: "#FFFFFF", md: "#038F3E" },
+          width: { xs: "100%", sm: "70%", md: "85%", lg: "57%" },
+          p: { xs: 3, md: 5 },
+          borderRadius: "16px",
+          boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.05)",
+          backgroundColor: "#fff",
+          border: "1px solid #F0F0F0",
+          overflowY: "auto",
         }}
       >
-        <Box
-          sx={{
-            display: { xs: "grid", md: "flex" },
-            justifyContent: "center",
-            alignItems: { xs: "flex-start", md: "center" },
-            pt: { xs: 0, md: 4 },
-          }}
-        >
-          <Box>
+        <FormCardHeader
+          title="Complaint Details"
+          subtitle="Tell us what happened"
+        />
+        <form>
+          <Box
+            display="flex"
+            flexDirection={{ xs: "column", md: "row" }}
+            gap={2}
+          >
             <Box
+              flex={1}
+              sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+            >
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                Date of Incident
+                <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
+              </Typography>
+              <TextField
+                name="date"
+                fullWidth
+                type="date"
+                variant="outlined"
+                required
+                sx={textFieldStyles}
+                InputLabelProps={{ shrink: true }}
+                inputProps={{
+                  max: new Date().toISOString().split("T")[0],
+                }}
+                value={complaintInfo.date}
+                onChange={handleInputChange}
+                error={!!errors.date}
+                helperText={errors.date}
+              />
+            </Box>
+            <Box
+              flex={1}
+              sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+            >
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                Time of Incident
+                <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
+              </Typography>
+              <TextField
+                name="time"
+                fullWidth
+                type="time"
+                variant="outlined"
+                required
+                sx={textFieldStyles}
+                InputLabelProps={{ shrink: true }}
+                value={complaintInfo.time}
+                onChange={handleInputChange}
+                error={!!errors.time}
+                helperText={errors.time}
+              />
+            </Box>
+          </Box>
+          <Box
+            flex={1}
+            sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+            mt={2}
+          >
+            <Typography
               sx={{
-                width: { xs: "400px", md: "1280px" },
-                backgroundColor: "#fff",
-                padding: "2rem",
-                margin: "2rem",
-                borderRadius: "8px",
+                color: "#595959",
+                fontSize: "16px",
+                fontWeight: 500,
+                lineHeight: "24px",
               }}
             >
-              <img
-                src={Logo}
-                alt="Logo"
-                style={{ display: "block", margin: "0 auto" }}
+              NHIA programme
+              <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
+            </Typography>
+            <ReactSelect
+              styles={selectStyles}
+              value={nhiaProgram.find(
+                (el) => el.id === complaintInfo.programme,
+              )}
+              onChange={handleProgramChange}
+              options={nhiaProgram}
+              placeholder="Select option"
+            />
+            {errors.programme && (
+              <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
+                {errors.programme}
+              </Typography>
+            )}
+          </Box>
+          <Box
+            display="flex"
+            flexDirection={{ xs: "column", md: "column" }}
+            // gap={2}
+            mt={2}
+          >
+            <Box
+              flex={1}
+              sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+            >
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                Description
+                <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
+              </Typography>
+              <ReactSelect
+                styles={selectStyles}
+                value={mappedComplaintOptions.find(
+                  (el) => el.value === complaintInfo.description,
+                )}
+                name="description"
+                onChange={handleComplaintDescriptionChange}
+                options={mappedComplaintOptions}
+                placeholder='Select the option that best describes your complaint. Select "Others" if your complaint is not there.'
               />
-              <Typography
-                align="center"
-                sx={{
-                  fontSize: "20px",
-                  fontWeight: 500,
-                  lineHeight: "27px",
-                  color: "#038F3E",
-                  margin: "1rem 0",
-                }}
-              >
-                Complaint Form
-              </Typography>
-              <Typography
-                sx={{
-                  fontSize: "20px",
-                  fontWeight: 500,
-                  lineHeight: "27px",
-                  my: 4,
-                }}
-              >
-                Complaint Details
-              </Typography>
-              <form>
-                <Box
-                  display="flex"
-                  flexDirection={{ xs: "column", md: "row" }}
-                  gap={2}
-                >
-                  <Box
-                    flex={1}
-                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: "16px",
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                      }}
-                    >
-                      Date of Incident
-                      <span style={{ color: "#099243", marginLeft: "6px" }}>
-                        *
-                      </span>
-                    </Typography>
-                    <TextField
-                      name="date"
-                      fullWidth
-                      type="date"
-                      variant="outlined"
-                      required
-                      sx={textFieldStyles}
-                      InputLabelProps={{ shrink: true }}
-                      inputProps={{
-                        max: new Date().toISOString().split("T")[0],
-                      }}
-                      value={complaintInfo.date}
-                      onChange={handleInputChange}
-                      error={!!errors.date}
-                      helperText={errors.date}
-                    />
-                  </Box>
-                  <Box
-                    flex={1}
-                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: "16px",
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                      }}
-                    >
-                      Time of Incident
-                      <span style={{ color: "#099243", marginLeft: "6px" }}>
-                        *
-                      </span>
-                    </Typography>
-                    <TextField
-                      name="time"
-                      fullWidth
-                      type="time"
-                      variant="outlined"
-                      required
-                      sx={textFieldStyles}
-                      InputLabelProps={{ shrink: true }}
-                      value={complaintInfo.time}
-                      onChange={handleInputChange}
-                      error={!!errors.time}
-                      helperText={errors.time}
-                    />
-                  </Box>
-                  <Box
-                    flex={1}
-                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: "16px",
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                      }}
-                    >
-                      NHIA programme
-                      <span style={{ color: "#099243", marginLeft: "6px" }}>
-                        *
-                      </span>
-                    </Typography>
-                    <ReactSelect
-                      styles={selectStyles}
-                      value={nhiaProgram.find(
-                        (el) => el.id === complaintInfo.programme,
-                      )}
-                      onChange={handleProgramChange}
-                      options={nhiaProgram}
-                      placeholder="Select option"
-                    />
-                    {errors.programme && (
-                      <Typography
-                        sx={{ color: "red", fontSize: "13px", mt: 0.5 }}
-                      >
-                        {errors.programme}
-                      </Typography>
-                    )}
-                  </Box>
-                </Box>
-                <Box
-                  display="flex"
-                  flexDirection={{ xs: "column", md: "column" }}
-                  // gap={2}
-                  mt={2}
-                >
-                  <Box
-                    flex={1}
-                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: "16px",
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                      }}
-                    >
-                      Description
-                      <span style={{ color: "#099243", marginLeft: "6px" }}>
-                        *
-                      </span>
-                    </Typography>
-                    <ReactSelect
-                      styles={selectStyles}
-                      value={mappedComplaintOptions.find(
-                        (el) => el.value === complaintInfo.description,
-                      )}
-                      name="description"
-                      onChange={handleComplaintDescriptionChange}
-                      options={mappedComplaintOptions}
-                      placeholder='Select the option that best describes your complaint. Select "Others" if your complaint is not there.'
-                    />
-                    {errors.description && (
-                      <Typography
-                        sx={{ color: "red", fontSize: "13px", mt: 0.5 }}
-                      >
-                        {errors.description}
-                      </Typography>
-                    )}
-                  </Box>
-                  {complaintInfo.description === "Others" && (
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: 1,
-                        mt: 2,
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                          color: "#595959",
-                          fontSize: "16px",
-                          fontWeight: 500,
-                          lineHeight: "24px",
-                        }}
-                      >
-                        Complaint Description
-                        <span style={{ color: "#099243", marginLeft: "6px" }}>
-                          *
-                        </span>
-                      </Typography>
-                      <TextField
-                        name="otherDescription"
-                        fullWidth
-                        variant="outlined"
-                        multiline
-                        rows={4}
-                        required
-                        placeholder="enter complaint description"
-                        value={complaintInfo.otherDescription}
-                        onChange={handleInputChange}
-                        error={!!errors.otherDescription}
-                        helperText={errors.otherDescription}
-                      />
-                    </Box>
-                  )}
-                </Box>
-                <Box
-                  display="flex"
-                  flexDirection={{ xs: "column", md: "row" }}
-                  gap={2}
-                  mt={2}
-                >
-                  <Box
-                    flex={1}
-                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: "16px",
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                      }}
-                    >
-                      Complaint Type
-                      <span style={{ color: "#099243", marginLeft: "6px" }}>
-                        *
-                      </span>
-                    </Typography>
-                    <ReactSelect
-                      styles={selectStyles}
-                      value={
-                        complaintInfo.description !== "Others"
-                          ? complaintOptions
-                              .filter(
-                                (type) =>
-                                  type.description ===
-                                  complaintInfo.description,
-                              )
-                              ?.map((option) => ({
-                                value: option.complaint_type,
-                                label: option.complaint_type,
-                              }))
-                          : complaintType.find(
-                              (type) =>
-                                type.value === complaintInfo.complaint_type,
-                            )
-                      }
-                      onChange={handleComplaintTypeChange}
-                      options={complaintType}
-                      placeholder="Select option"
-                      isDisabled={complaintInfo.description !== "Others"}
-                    />
-                    {errors.complaint_type && (
-                      <Typography
-                        sx={{ color: "red", fontSize: "13px", mt: 0.5 }}
-                      >
-                        {errors.complaint_type}
-                      </Typography>
-                    )}
-                  </Box>
-                  <Box
-                    flex={1}
-                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: "16px",
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                      }}
-                    >
-                      Complaint Category
-                      <span style={{ color: "#099243", marginLeft: "6px" }}>
-                        *
-                      </span>
-                    </Typography>
-                    <ReactSelect
-                      styles={selectStyles}
-                      value={
-                        complaintInfo.description !== "Others"
-                          ? complaintOptions
-                              .filter(
-                                (cat) =>
-                                  cat.description === complaintInfo.description,
-                              )
-                              ?.map((option) => ({
-                                value: option.complaint_category,
-                                label: option.complaint_category,
-                              }))
-                          : complaintCategories.find(
-                              (cat) =>
-                                cat.value === complaintInfo.complaint_category,
-                            )
-                      }
-                      onChange={handleComplaintCategoryChange}
-                      options={complaintCategories}
-                      placeholder="Select option"
-                      isDisabled={complaintInfo.description !== "Others"}
-                    />
-                    {errors.complaint_category && (
-                      <Typography
-                        sx={{ color: "red", fontSize: "13px", mt: 0.5 }}
-                      >
-                        {errors.complaint_category}
-                      </Typography>
-                    )}
-                  </Box>
-                </Box>
-
+              {errors.description && (
+                <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
+                  {errors.description}
+                </Typography>
+              )}
+            </Box>
+            {complaintInfo.description &&
+              complaintInfo.description !== "Others" && (
                 <Box
                   sx={{
                     display: "flex",
@@ -547,196 +379,342 @@ const SecondForm = ({
                       lineHeight: "24px",
                     }}
                   >
-                    Supporting Evidence
+                    Additional Information (Optional)
                   </Typography>
-                  <FormControl sx={{ width: { xs: "100%", md: "40%" } }}>
-                    <Box
-                      {...getRootProps()}
-                      sx={{
-                        border: "2px dashed #ccc",
-                        padding: "2rem",
-                        textAlign: "center",
-                        backgroundColor: "#f8f9fa",
-                        cursor: "pointer",
-                        marginTop: "1rem",
-                      }}
-                    >
-                      <input {...getInputProps()} />
-                      <BsCloudUpload size={48} style={{ color: "#6c757d" }} />
-                      <Typography
-                        sx={{
-                          fontSize: "12px",
-                          fontWeight: 400,
-                          lineHeight: "18px",
-                          color: "#475467",
-                          mt: 2,
-                        }}
-                      >
-                        <span style={{ fontWeight: 600, color: "#6941C6" }}>
-                          Click to upload
-                        </span>{" "}
-                        or drag and drop
-                        <br />
-                        <span>SVG, PNG, JPG, or GIF (max. 800x400px)</span>
-                        <br />
-                        <span style={{ fontWeight: 600 }}>
-                          File size shouldn&apos;t exceed 10MB.
-                        </span>
-                        <br />
-                        Upload max. 5 documents in total
-                      </Typography>
-                    </Box>
-                    {errors?.files && (
-                      <Typography
-                        sx={{ color: "red", fontSize: "13px", mt: 1 }}
-                      >
-                        {errors?.files}
-                      </Typography>
-                    )}
-                    {complaintInfo.files?.length > 0 && (
-                      <Box sx={{ mt: 2, width: "100%" }}>
-                        <Box display="flex" gap={2} mt={2}>
-                          {complaintInfo?.files?.map((file, index) => (
-                            <Box
-                              key={index}
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                px: "10px",
-                                py: "10px",
-                                backgroundColor: "#f1f3f4",
-                                borderRadius: "8px",
-                                marginBottom: "8px",
-                              }}
-                            >
-                              {file?.type?.startsWith("image/") &&
-                              file?.preview ? (
-                                <Box
-                                  sx={{
-                                    width: 60,
-                                    height: 60,
-                                    marginRight: "10px",
-                                    borderRadius: "4px",
-                                    overflow: "hidden",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                  }}
-                                >
-                                  <img
-                                    src={file?.preview}
-                                    alt={file?.name}
-                                    style={{
-                                      display: "block",
-                                      maxWidth: "100%",
-                                      maxHeight: "100%",
-                                      objectFit: "cover",
-                                    }}
-                                  />
-                                </Box>
-                              ) : (
-                                <AiOutlineFile
-                                  size={34}
-                                  style={{ marginRight: "10px" }}
-                                />
-                              )}
-                              <Box sx={{ width: "100%", height: "auto" }}>
-                                <Typography sx={{ fontSize: "12px" }}>
-                                  {file?.name}
-                                </Typography>
-                                <Typography sx={{ fontSize: "12px" }}>
-                                  {Math.round(file.size / 1024)} KB - uploaded
-                                </Typography>
-                                <Typography
-                                  sx={{ fontSize: "12px", color: "#038F3E" }}
-                                >
-                                  {file?.type}
-                                </Typography>
-                              </Box>
-                              <Box
-                                size="small"
-                                color="error"
-                                onClick={() => removeFile(file)}
-                                sx={{ marginLeft: "10px", cursor: "pointer" }}
-                              >
-                                <CancelOutlinedIcon />
-                              </Box>
-                            </Box>
-                          ))}
-                        </Box>
-                        {complaintInfo.files.length === 5 && (
-                          <Typography sx={{ color: "red" }}>
-                            {`You can only upload a maximum of ${maxFiles} files`}
-                          </Typography>
-                        )}
-                      </Box>
-                    )}
-                  </FormControl>
+                  <TextField
+                    name="additional_information"
+                    fullWidth
+                    variant="outlined"
+                    multiline
+                    rows={4}
+                    placeholder="Provide any other details here"
+                    value={complaintInfo.additional_information || ""}
+                    onChange={handleInputChange}
+                  />
                 </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "flex-end",
-                    alignItems: "flex-end",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: { xs: "grid", md: "flex" },
-                      justifyContent: { xs: "center", md: "flex-end" },
-                      gap: 2,
-                      mt: 4,
-                    }}
-                  >
-                    <Button
-                      variant="outlined"
-                      sx={{
-                        width: "270px",
-                        height: "48px",
-                        borderRadius: "16px",
-                        py: 1.5,
-                        fontSize: { xs: "14px", md: "16px" },
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                        textTransform: "capitalize",
-                        borderColor: "#038F3E",
-                        color: "#038F3E",
-                        "&:hover": { borderColor: "#038F3E" },
-                      }}
-                      // href="/"
-                      onClick={onBack}
-                    >
-                      Back
-                    </Button>
-                    <Button
-                      variant="contained"
-                      sx={{
-                        width: "270px",
-                        height: "48px",
-                        borderRadius: "16px",
-                        py: 1.5,
-                        fontSize: { xs: "14px", md: "16px" },
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                        textTransform: "capitalize",
-                        backgroundColor: "#038F3E",
-                        "&:hover": { backgroundColor: "#038F3E" },
-                      }}
-                      // href="/enrollee-form-preview"
-                      onClick={handleNext}
-                    >
-                      Save & Continue
-                    </Button>
-                  </Box>
-                  <Box sx={{ width: "20%", my: 2 }}>{btn}</Box>
-                </Box>
-              </form>
+              )}
+          </Box>
+          {complaintInfo.description === "Others" && (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+                mt: 2,
+              }}
+            >
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                Complaint Description
+                <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
+              </Typography>
+              <TextField
+                name="otherDescription"
+                fullWidth
+                variant="outlined"
+                multiline
+                rows={4}
+                required
+                placeholder="enter complaint description"
+                value={complaintInfo.otherDescription}
+                onChange={handleInputChange}
+                error={!!errors.otherDescription}
+                helperText={errors.otherDescription}
+              />
+            </Box>
+          )}
+          {/* </Box> */}
+          <Box
+            display="flex"
+            flexDirection={{ xs: "column", md: "row" }}
+            gap={2}
+            mt={2}
+          >
+            <Box
+              flex={1}
+              sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+            >
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                Complaint Type
+                <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
+              </Typography>
+              <ReactSelect
+                styles={selectStyles}
+                value={
+                  complaintInfo.description !== "Others"
+                    ? complaintOptions
+                        .filter(
+                          (type) =>
+                            type.description === complaintInfo.description,
+                        )
+                        ?.map((option) => ({
+                          value: option.complaint_type,
+                          label: option.complaint_type,
+                        }))
+                    : complaintType.find(
+                        (type) => type.value === complaintInfo.complaint_type,
+                      )
+                }
+                onChange={handleComplaintTypeChange}
+                options={complaintType}
+                placeholder="Select option"
+                isDisabled={complaintInfo.description !== "Others"}
+              />
+              {errors.complaint_type && (
+                <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
+                  {errors.complaint_type}
+                </Typography>
+              )}
+            </Box>
+            <Box
+              flex={1}
+              sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+            >
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                Complaint Category
+                <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
+              </Typography>
+              <ReactSelect
+                styles={selectStyles}
+                value={
+                  complaintInfo.description !== "Others"
+                    ? complaintOptions
+                        .filter(
+                          (cat) =>
+                            cat.description === complaintInfo.description,
+                        )
+                        ?.map((option) => ({
+                          value: option.complaint_category,
+                          label: option.complaint_category,
+                        }))
+                    : complaintCategories.find(
+                        (cat) => cat.value === complaintInfo.complaint_category,
+                      )
+                }
+                onChange={handleComplaintCategoryChange}
+                options={complaintCategories}
+                placeholder="Select option"
+                isDisabled={complaintInfo.description !== "Others"}
+              />
+              {errors.complaint_category && (
+                <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
+                  {errors.complaint_category}
+                </Typography>
+              )}
             </Box>
           </Box>
-        </Box>
-      </Box>
-    </>
+
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 1,
+              mt: 2,
+            }}
+          >
+            <Typography
+              sx={{
+                color: "#595959",
+                fontSize: "16px",
+                fontWeight: 500,
+                lineHeight: "20px",
+              }}
+            >
+              Supporting Evidence
+            </Typography>
+            <FormControl sx={{ width: "100%" }}>
+              <Box
+                {...getRootProps()}
+                sx={{
+                  border: "2px dashed #ccc",
+                  padding: "2rem",
+                  textAlign: "center",
+                  backgroundColor: "#f8f9fa",
+                  cursor: "pointer",
+                  mt: 1,
+                }}
+              >
+                <input {...getInputProps()} />
+                <BsCloudUpload size={48} style={{ color: "#6c757d" }} />
+                <Typography
+                  sx={{
+                    fontSize: "12px",
+                    fontWeight: 400,
+                    lineHeight: "18px",
+                    color: "#475467",
+                    mt: 2,
+                  }}
+                >
+                  <span style={{ fontWeight: 600, color: "#6941C6" }}>
+                    Click to upload
+                  </span>{" "}
+                  or drag and drop
+                  <br />
+                  <span>SVG, PNG, JPG, or GIF (max. 800x400px)</span>
+                  <br />
+                  <span style={{ fontWeight: 600 }}>
+                    File size shouldn&apos;t exceed 10MB.
+                  </span>
+                  <br />
+                  Upload max. 5 documents in total
+                </Typography>
+              </Box>
+              {errors?.files && (
+                <Typography sx={{ color: "red", fontSize: "13px", mt: 1 }}>
+                  {errors?.files}
+                </Typography>
+              )}
+              {complaintInfo.files?.length > 0 && (
+                <Box sx={{ mt: 2, width: "100%" }}>
+                  <Box display="flex" gap={2} mt={2}>
+                    {complaintInfo?.files?.map((file, index) => (
+                      <Box
+                        key={index}
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          px: "10px",
+                          py: "10px",
+                          backgroundColor: "#f1f3f4",
+                          borderRadius: "8px",
+                          marginBottom: "8px",
+                        }}
+                      >
+                        {file?.type?.startsWith("image/") && file?.preview ? (
+                          <Box
+                            sx={{
+                              width: 60,
+                              height: 60,
+                              marginRight: "10px",
+                              borderRadius: "4px",
+                              overflow: "hidden",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <img
+                              src={file?.preview}
+                              alt={file?.name}
+                              style={{
+                                display: "block",
+                                maxWidth: "100%",
+                                maxHeight: "100%",
+                                objectFit: "cover",
+                              }}
+                            />
+                          </Box>
+                        ) : (
+                          <AiOutlineFile
+                            size={34}
+                            style={{ marginRight: "10px" }}
+                          />
+                        )}
+                        <Box sx={{ width: "100%", height: "auto" }}>
+                          <Typography sx={{ fontSize: "12px" }}>
+                            {file?.name}
+                          </Typography>
+                          <Typography sx={{ fontSize: "12px" }}>
+                            {Math.round(file.size / 1024)} KB - uploaded
+                          </Typography>
+                          <Typography
+                            sx={{ fontSize: "12px", color: "#1B5E20" }}
+                          >
+                            {file?.type}
+                          </Typography>
+                        </Box>
+                        <Box
+                          size="small"
+                          color="error"
+                          onClick={() => removeFile(file)}
+                          sx={{ marginLeft: "10px", cursor: "pointer" }}
+                        >
+                          <CancelOutlinedIcon />
+                        </Box>
+                      </Box>
+                    ))}
+                  </Box>
+                  {complaintInfo.files.length === 5 && (
+                    <Typography sx={{ color: "red" }}>
+                      {`You can only upload a maximum of ${maxFiles} files`}
+                    </Typography>
+                  )}
+                </Box>
+              )}
+            </FormControl>
+          </Box>
+
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              gap: 2,
+              mt: 4,
+            }}
+          >
+            <Button
+              variant="outlined"
+              startIcon={<ArrowBackIcon />}
+              sx={{
+                width: "fit-content",
+                height: "48px",
+                borderRadius: "16px",
+                py: 1.5,
+                fontSize: { xs: "14px", md: "16px" },
+                fontWeight: 500,
+                lineHeight: "24px",
+                textTransform: "capitalize",
+                borderColor: "#1B5E20",
+                color: "#1B5E20",
+                "&:hover": { borderColor: "#1B5E20" },
+              }}
+              onClick={onBack}
+            >
+              Back
+            </Button>
+            <Button
+              variant="contained"
+              sx={{
+                width: "fit-content ",
+                height: "48px",
+                borderRadius: "16px",
+                py: 1.5,
+                fontSize: { xs: "14px", md: "16px" },
+                fontWeight: 500,
+                lineHeight: "24px",
+                textTransform: "capitalize",
+                backgroundColor: "#1B5E20",
+                "&:hover": { backgroundColor: "#1B5E20" },
+              }}
+              // href="/enrollee-form-preview"
+              onClick={handleNext}
+            >
+              Save & Continue
+            </Button>
+          </Box>
+        </form>
+      </Card>
+    </TwoColumnLayout>
   );
 };
 
@@ -761,6 +739,8 @@ SecondForm.propTypes = {
     complaint_category: PropTypes.string,
     description: PropTypes.string,
     otherDescription: PropTypes.string,
+    additional_information: PropTypes.string,
+    priority: PropTypes.string,
   }),
   setComplaintInfo: PropTypes.func.isRequired,
   firstInfo: PropTypes.object,

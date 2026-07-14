@@ -32,7 +32,7 @@ const textFieldStyles = {
     color: "#000000",
     border: "0.5px solid #DADADA",
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#038F3E",
+      borderColor: "#1B5E20",
     },
   },
 };
@@ -467,7 +467,7 @@ const ProvidersProfile = () => {
                       width: { xs: "100%", sm: "144px" },
                       height: "42px",
                       borderRadius: "12px",
-                      backgroundColor: "#038F3E",
+                      backgroundColor: "#1B5E20",
                       color: "#FFFFFF",
                       fontSize: "16px",
                       fontWeight: 500,
@@ -498,7 +498,7 @@ const ProvidersProfile = () => {
                   fontWeight: 500,
                   lineHeight: "32.4px",
                   textTransform: "none",
-                  color: "#038F3E",
+                  color: "#1B5E20",
                   mt: 5,
                 }}
               >
@@ -696,7 +696,7 @@ const ProvidersProfile = () => {
                         width: { xs: "100%", sm: "auto" },
                         height: "42px",
                         borderRadius: "12px",
-                        backgroundColor: "#038F3E",
+                        backgroundColor: "#1B5E20",
                         color: "#FFFFFF",
                         fontSize: "16px",
                         fontWeight: 500,
@@ -720,7 +720,7 @@ const ProvidersProfile = () => {
                       fontWeight: 500,
                       lineHeight: "32.4px",
                       textTransform: "none",
-                      color: "#038F3E",
+                      color: "#1B5E20",
                       mt: 5,
                     }}
                   >

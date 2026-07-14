@@ -53,7 +53,7 @@ const textFieldStyles = {
     color: "#000000",
     border: "0.5px solid #DADADA",
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#038F3E",
+      borderColor: "#1B5E20",
     },
   },
 };
@@ -67,7 +67,7 @@ const textFieldStyles = {
 //   fontSize: "16px",
 //   outline: "none",
 //   "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-//     borderColor: "#038F3E", // Green border color
+//     borderColor: "#1B5E20", // Green border color
 //   },
 // };
 
@@ -431,7 +431,7 @@ const AddAdminForm = () => {
             sx={{
               width: { xs: "100%", sm: "380px" },
               height: "48px",
-              backgroundColor: "#038F3E",
+              backgroundColor: "#1B5E20",
               color: "#FFFFFF",
               textTransform: "none",
               fontSize: "16px",
@@ -918,7 +918,7 @@ const EditAdminForm = () => {
                 sx={{
                   width: { xs: "100%", sm: "380px" },
                   height: "48px",
-                  backgroundColor: "#038F3E",
+                  backgroundColor: "#1B5E20",
                   color: "#FFFFFF",
                   textTransform: "none",
                   fontSize: "16px",
@@ -1301,7 +1301,7 @@ const ManageAdminRoles = () => {
                 sx={{
                   width: { xs: "100%", sm: "380px" },
                   height: "48px",
-                  backgroundColor: "#038F3E",
+                  backgroundColor: "#1B5E20",
                   color: "#FFFFFF",
                   textTransform: "none",
                   fontSize: "16px",

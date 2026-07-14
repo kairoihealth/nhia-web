@@ -169,46 +169,68 @@ export const complaintCategories = [
   },
 ];
 
+// update the nhiaProgram array with these:
+//  1.⁠ ⁠Public Sector Scheme
+//  2.⁠ ⁠Organised Private Sector
+//  3.⁠ ⁠GIFSHIP-g
+//  4.⁠ ⁠GIFSHIP-n
+//  5.⁠ ⁠GIFSHIP-c
+//  6.⁠ ⁠GIFSHIP-r
+//  7.⁠ ⁠TISHIP
+//  8.⁠ ⁠BHCPF
+//  9.⁠ ⁠HMO Private Plan
+// 10.⁠ ⁠Others - Equity Programs, etc.
+
 export const nhiaProgram = [
   {
     id: 1,
-    value: "Individual",
-    label: "Individual",
+    value: "Public Sector Scheme",
+    label: "Public Sector Scheme",
   },
   {
     id: 2,
-    value: "Family",
-    label: "Family",
-  },
-  {
-    id: 3,
-    value: "Group",
-    label: "Group",
-  },
-  {
-    id: 4,
-    value: "Formal Sector Programme",
-    label: "Formal Sector Programme",
-  },
-  {
-    id: 5,
     value: "Organised Private Sector",
     label: "Organised Private Sector",
   },
   {
+    id: 3,
+    value: "GIFSHIP-g",
+    label: "GIFSHIP-g",
+  },
+  {
+    id: 4,
+    value: "GIFSHIP-n",
+    label: "GIFSHIP-n",
+  },
+  {
+    id: 5,
+    value: "GIFSHIP-c",
+    label: "GIFSHIP-c",
+  },
+  {
     id: 6,
-    value: "GIFSHIP",
-    label: "GIFSHIP",
+    value: "GIFSHIP-r",
+    label: "GIFSHIP-r",
   },
   {
     id: 7,
+    value: "TISHIP",
+    label: "TISHIP",
+  },
+  {
+    id: 8,
     value: "BHCPF",
     label: "BHCPF",
   },
   {
-    id: 8,
-    value: "Others - Equity Programs, Private Health Plans",
-    label: "Others - Equity Programs, Private Health Plans",
+    id: 9,
+    value: "HMO Private Plan",
+    label: "HMO Private Plan",
+  },
+  {
+    id: 10,
+    value: "Others - Equity Programs, etc.",
+    label: "Others - Equity Programs, etc.",
   },
 ];
 
@@ -218,27 +240,27 @@ export const providerComplaints = [
       "Refusal to treat/manage any enrollees and their covered dependents after receiving payments from the relevant HMOs on behalf of such enrollees.",
     complaint_type: "Service Delivery",
     complaint_category: "Access",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description: "Discrimination against NHIA Patients.",
     complaint_type: "Relationship",
     complaint_category: "Abuse",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description:
       "Receipt and management of any enrollee as a fee-paying patient.",
     complaint_type: "Financial",
     complaint_category: "Billing",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description:
       "Solicitation, collection, or charging any fee from any enrollee in addition to the fees payable by NHIA, except for a 10% co-payment for prescribed drugs.",
     complaint_type: "Financial",
     complaint_category: "Billing",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description: "Not operating 24 hours a day, 7 days a week.",
@@ -250,14 +272,14 @@ export const providerComplaints = [
     description: "Refusal to refer.",
     complaint_type: "Service Delivery",
     complaint_category: "Referral",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description:
       "Referring an enrollee elsewhere for a service for which the Facility is accredited to render.",
     complaint_type: "Service Delivery",
     complaint_category: "Referral",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description:
@@ -299,7 +321,7 @@ export const providerComplaints = [
       "Deliberately and against medical ethics under-managing an enrollee.",
     complaint_type: "Service Delivery",
     complaint_category: "Quality of Care",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description: "Engaging in any fraudulent activity.",
@@ -319,7 +341,7 @@ export const providerComplaints = [
       "Specified NHIA technical/ personnel requirements are no longer being met.",
     complaint_type: "Operational",
     complaint_category: "Staffing & Resources",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description:
@@ -340,7 +362,7 @@ export const providerComplaints = [
       "Denial of emergency care to enrollees who are out-of-station or not primarily registered in the Facility.",
     complaint_type: "Service Delivery",
     complaint_category: "Access",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description: "Failure to submit claims within the stipulated period.",
@@ -353,13 +375,13 @@ export const providerComplaints = [
       "Failure to make adequate alternative arrangements for the provision of service/drugs during strike/industrial action or out-of-stock.",
     complaint_type: "Service Delivery",
     complaint_category: "Access",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description: "Refusal to dispense medications",
     complaint_type: "Service Delivery",
     complaint_category: "Access",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description:
@@ -386,7 +408,7 @@ export const providerComplaints = [
     description: "Non-adherence to the referral protocol/procedure.",
     complaint_type: "Service Delivery",
     complaint_category: "Referral",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description: "Refusal to procure professional indemnity insurance cover.",
@@ -437,21 +459,21 @@ export const providerComplaints = [
       "Delay in accessing care (waiting time, diagnoses, treatment, etc.) beyond the specified time in the Standard Treatment Protocol.",
     complaint_type: "Service Delivery",
     complaint_category: "Access",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description:
       "Problems with the coordination of treatment in different services by clinical staff",
     complaint_type: "Service Delivery",
     complaint_category: "Quality of Care",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description:
       "Refusal to adhere to patient safety measures as specified in the Standard Treatment Protocol.",
     complaint_type: "Service Delivery",
     complaint_category: "Quality of Care",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description:
@@ -477,7 +499,7 @@ export const providerComplaints = [
     description: "Delay in authorising referral",
     complaint_type: "Service Delivery",
     complaint_category: "Referral",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description: "Denial of code",
@@ -489,7 +511,7 @@ export const providerComplaints = [
     description: "Refusal to authorise referral",
     complaint_type: "Service Delivery",
     complaint_category: "Referral",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description: "Non-compliance with directive/agreement/sanction",
@@ -530,13 +552,13 @@ export const hmoComplaints = [
       "Refusal to remit appropriate payments (capitation, Fee-For-Service or other funds) due to Facilities within the specified period indicated in the Operational Guidelines or contracts.",
     complaint_type: "Financial",
     complaint_category: "Fraud",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description: "Deliberate issuance of Dud cheque(s).",
     complaint_type: "Financial",
     complaint_category: "Fraud",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description:
@@ -557,7 +579,7 @@ export const hmoComplaints = [
       "Willfully or negligently refuses to forward the prescribed remittances as required under NHIA Operational Guidelines and appropriate notices/reminders have been sent and ignored.",
     complaint_type: "Operational",
     complaint_category: "Administrative",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description:
@@ -604,14 +626,14 @@ export const hmoComplaints = [
     description: "False representation at time of application",
     complaint_type: "Financial",
     complaint_category: "Fraud",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description:
       "Specified NHIA technical/personnel requirements are no longer being met.",
     complaint_type: "Operational",
     complaint_category: "Staffing & Resources",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description: "The HMO is involved in direct healthcare service delivery.",
@@ -624,7 +646,7 @@ export const hmoComplaints = [
       "Refusal to approve a referral without any justification and/or is inaccessible to authorize referrals.",
     complaint_type: "Service Delivery",
     complaint_category: "Referrals",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description:
@@ -652,7 +674,7 @@ export const hmoComplaints = [
       "Failure to refund the part of the security deposit withdrawn within 90 days.",
     complaint_type: "Financial",
     complaint_category: "Fraud",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description: "Refusal to attend reconciliation exercise.",
@@ -664,7 +686,7 @@ export const hmoComplaints = [
     description: "Breach of contractual agreement.",
     complaint_type: "Operational",
     complaint_category: "Administrative",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description:
@@ -678,14 +700,14 @@ export const hmoComplaints = [
       "Operating health insurance schemes without prior registration and license by the Authority.",
     complaint_type: "Financial",
     complaint_category: "Fraud",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description:
       "Conducting business activity under any name which includes health scheme, medical insurance scheme etc. calculated to mislead the public.",
     complaint_type: "Financial",
     complaint_category: "Fraud",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description:
@@ -768,7 +790,7 @@ export const hmoComplaints = [
     description: "Delay in authorization of referral",
     complaint_type: "Service Delivery",
     complaint_category: "Referral",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description: "Denial of authorization code",
@@ -780,7 +802,7 @@ export const hmoComplaints = [
     description: "Refusal to authorize referral",
     complaint_type: "Service Delivery",
     complaint_category: "Referral",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description: "Non-compliance with directive/agreement/sanction",
@@ -820,27 +842,27 @@ export const enrolleeComplaints = [
     description: "Failure to obtain Health Insurance cover.",
     complaint_type: "Service Delivery",
     complaint_category: "Access",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description:
       "Willfully or intentionally engages in multiple enrolment/registration.",
     complaint_type: "Financial",
     complaint_category: "Fraud",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description: "Falsification of personal/medical records.",
     complaint_type: "Financial",
     complaint_category: "Fraud",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description:
       "Willfully abet impersonation by allowing unauthorized persons the usage of NHIA ID Card to access services.",
     complaint_type: "Financial",
     complaint_category: "Fraud",
-    priority: "Top",
+    priority: "Urgent",
   },
   {
     description:

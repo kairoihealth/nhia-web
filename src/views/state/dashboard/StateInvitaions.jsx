@@ -1,11 +1,11 @@
-import { Box, Typography, CircularProgress, Button } from "@mui/material";
+import { Box, Typography, CircularProgress, Button, Card } from "@mui/material";
 import ReusableTable from "../../../shared/Table";
 import SearchFilter from "../../../shared/SearchAndFilter";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { getInvitations } from "../../../services/general";
 import { getUsers } from "../../../services/central";
+import FormCardHeader from "../../enrolees/ComplaintForm/FormCardHeader";
 
 const InvitationsByState = () => {
   const navigate = useNavigate();
@@ -120,14 +120,12 @@ const InvitationsByState = () => {
 
   return (
     <Box>
-      <Box
+      <Card
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          py: 3,
-          backgroundColor: "#FAFAFA",
-          //   height: "100vh",
-          overflowY: "auto",
+          m: 2,
+          p: { xs: 1, md: 2 },
+          borderRadius: "12px",
+          boxShadow: "0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04)",
         }}
       >
         {/* Header */}
@@ -140,17 +138,7 @@ const InvitationsByState = () => {
             gap: 2,
           }}
         >
-          <Typography
-            sx={{
-              fontSize: "18px",
-              fontWeight: 500,
-              lineHeight: "28px",
-              color: "#101828",
-            }}
-            gutterBottom
-          >
-            Providers & HMO
-          </Typography>
+          <FormCardHeader title="Providers & HMO" />
           <Button
             variant="contained"
             size="medium"
@@ -160,7 +148,7 @@ const InvitationsByState = () => {
               fontWeight: 500,
               lineHeight: "21.6px",
               borderRadius: "8px",
-              backgroundColor: "#038F3E",
+              backgroundColor: "#1B5E20",
               color: "#FFFFFF",
               py: "12px",
               px: "23px",
@@ -225,7 +213,7 @@ const InvitationsByState = () => {
             }}
           />
         </Box>
-      </Box>
+      </Card>
     </Box>
   );
 };

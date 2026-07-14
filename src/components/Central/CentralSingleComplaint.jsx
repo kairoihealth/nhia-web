@@ -81,7 +81,7 @@ const CentralSingleComplaintPage = () => {
               fontSize: "24px",
               fontWeight: 500,
               lineHeight: "32.4px",
-              color: "#038F3E",
+              color: "#1B5E20",
             }}
           >
             Complainant&apos;s Details
@@ -203,7 +203,7 @@ const CentralSingleComplaintPage = () => {
               fontSize: "24px",
               fontWeight: 500,
               lineHeight: "32.4px",
-              color: "#038F3E",
+              color: "#1B5E20",
             }}
           >
             Complaints Details
@@ -397,7 +397,7 @@ const CentralSingleComplaintPage = () => {
             variant="contained"
             sx={{
               width: { xs: "100%", md: "50%" },
-              backgroundColor: "#038F3E",
+              backgroundColor: "#1B5E20",
               color: "#FFFFFF",
               fontWeight: 500,
               fontSize: "16px",

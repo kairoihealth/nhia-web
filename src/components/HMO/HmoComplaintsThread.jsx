@@ -440,7 +440,7 @@ const HmoComplaintsThreadPage = () => {
                             },
                           }}
                         >
-                          <FileDownloadOutlinedIcon sx={{ color: "#038F3E" }} />
+                          <FileDownloadOutlinedIcon sx={{ color: "#1B5E20" }} />
                         </IconButton>
                       </Box>
                     </Card>
@@ -772,7 +772,7 @@ const HmoComplaintsThreadPage = () => {
                                     <CircularProgress size={18} />
                                   ) : (
                                     <FileDownloadOutlinedIcon
-                                      sx={{ color: "#038F3E" }}
+                                      sx={{ color: "#1B5E20" }}
                                     />
                                   )}
                                 </IconButton>
@@ -911,7 +911,7 @@ const HmoComplaintsThreadPage = () => {
                                       fontSize: "14px",
                                       fontWeight: 500,
                                       lineHeight: "18.9px",
-                                      color: "#038F3E",
+                                      color: "#1B5E20",
                                     }}
                                   >
                                     {nhiaResponse?.response_by?.firstname +
@@ -949,8 +949,8 @@ const HmoComplaintsThreadPage = () => {
               variant="outlined"
               sx={{
                 width: "20%",
-                border: "1px solid #038F3E",
-                color: "#038F3E",
+                border: "1px solid #1B5E20",
+                color: "#1B5E20",
                 fontWeight: 500,
                 fontSize: "16px",
                 lineHeight: "24px",

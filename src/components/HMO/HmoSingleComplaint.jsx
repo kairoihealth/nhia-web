@@ -60,7 +60,7 @@ const HmoSingleComplaintPage = () => {
               fontSize: "24px",
               fontWeight: 500,
               lineHeight: "32.4px",
-              color: "#038F3E",
+              color: "#1B5E20",
             }}
           >
             Complainant&apos;s Details
@@ -182,7 +182,7 @@ const HmoSingleComplaintPage = () => {
               fontSize: "24px",
               fontWeight: 500,
               lineHeight: "32.4px",
-              color: "#038F3E",
+              color: "#1B5E20",
             }}
           >
             Complaints Details
@@ -328,7 +328,7 @@ const HmoSingleComplaintPage = () => {
             variant="contained"
             sx={{
               width: "50%",
-              backgroundColor: "#038F3E",
+              backgroundColor: "#1B5E20",
               color: "#FFFFFF",
               fontWeight: 500,
               fontSize: "16px",

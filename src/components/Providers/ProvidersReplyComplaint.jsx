@@ -27,7 +27,7 @@ const textFieldStyles = {
     color: "#000000",
     border: "0.5px solid #DADADA",
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#038F3E",
+      borderColor: "#1B5E20",
     },
   },
 };
@@ -44,7 +44,7 @@ const multiLineStyles = {
       alignSelf: "flex-start",
     },
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#038F3E",
+      borderColor: "#1B5E20",
     },
   },
 };
@@ -130,7 +130,7 @@ const ProvidersReplyComplaintPage = () => {
   // Function to remove an attachment
   const handleRemoveAttachment = (index) => {
     setAttachments((prevAttachments) =>
-      prevAttachments.filter((_, i) => i !== index)
+      prevAttachments.filter((_, i) => i !== index),
     );
   };
 
@@ -145,7 +145,7 @@ const ProvidersReplyComplaintPage = () => {
         attachments?.map(async (attachment) => {
           const base64 = await convertToBase64(attachment.file);
           return { document: base64 };
-        })
+        }),
       );
 
       const data = {
@@ -504,7 +504,7 @@ const ProvidersReplyComplaintPage = () => {
                     fontSize: "16px",
                     fontWeight: 500,
                     lineHeight: "24px",
-                    color: "#038F3E",
+                    color: "#1B5E20",
                     cursor: "pointer",
                   }}
                 >
@@ -568,7 +568,7 @@ const ProvidersReplyComplaintPage = () => {
               variant="contained"
               sx={{
                 width: "26%",
-                backgroundColor: "#038F3E",
+                backgroundColor: "#1B5E20",
                 color: "#FFFFFF",
                 fontWeight: 500,
                 fontSize: "16px",
