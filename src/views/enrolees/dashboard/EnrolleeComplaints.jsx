@@ -33,7 +33,7 @@ const tabOptions = [
   { tab: "", label: "All Complaints" },
   { tab: "pending", label: "New Complaints" },
   { tab: "active", label: "Active Complaints" },
-  { tab: "closed", label: "Completed Complaints" },
+  { tab: "resolved", label: "Resolved Complaints" },
   { tab: "escalated", label: "Escalated Complaints" },
 ];
 
@@ -163,7 +163,7 @@ const EnrolleeComplaints = () => {
           m: 2,
           p: { xs: 1, md: 2 },
           borderRadius: "12px",
-          boxShadow: "0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04)",
+          boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
         }}
       >
         {/* Header */}
@@ -293,7 +293,7 @@ const EnrolleeComplaints = () => {
                     <option value="">All Complaints</option>
                     <option value="pending">Pending</option>
                     <option value="active">Active</option>
-                    <option value="closed">Closed</option>
+                    <option value="resolved">Resolved</option>
                     <option value="escalated">Escalated</option>
                   </select>
 
@@ -397,7 +397,7 @@ const EnrolleeComplaints = () => {
             showActions={true}
             showStatus={true}
             pagination={true}
-            headerBackgroundColor="#20201E"
+            // headerBackgroundColor="#20201E"
             totalPages={complaints?.total_pages}
             page={page}
             setPage={(page) => {

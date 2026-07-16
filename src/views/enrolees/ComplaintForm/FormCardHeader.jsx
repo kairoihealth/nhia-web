@@ -6,7 +6,7 @@ const FormCardHeader = ({ title, subtitle, titleSx, subtitleSx }) => (
     <Typography
       sx={{
         fontSize: { xs: "17px", sm: "19px" },
-        fontWeight: 700,
+        fontWeight: 600,
         lineHeight: { xs: "1.3", md: "1.3" },
         color: "#1A1A1A",
         textAlign: "start",
@@ -19,7 +19,7 @@ const FormCardHeader = ({ title, subtitle, titleSx, subtitleSx }) => (
       <Typography
         sx={{
           fontSize: { xs: "14px", sm: "14px" },
-          fontWeight: 200,
+          fontWeight: 400,
           lineHeight: { xs: "1.3", md: "1.3" },
           color: "#6B6B6B",
           mb: 4,

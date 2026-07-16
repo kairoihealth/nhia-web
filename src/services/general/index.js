@@ -58,6 +58,16 @@ export const getComplaints = async ({
   }
 };
 
+export const getWorkloadSummary = async (params) => {
+  try {
+    const response = await Api.get(e.GET_WORKLOAD_SUMMARY, { params });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch workload summary:", error);
+    throw error;
+  }
+};
+
 export const getNewComplaints = async ({
   ordering,
   page,
@@ -181,6 +191,27 @@ export const updateComplaintPriority = async ({ id, payload }) => {
     return response;
   } catch (error) {
     console.error("Failed to update complaint priority:", error);
+    throw error;
+  }
+};
+
+export const getComplaintStatusHistory = async (id) => {
+  try {
+    const response = await Api.get(e.GET_COMPLAINT_STATUS_HISTORY(id));
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch complaint status history:", error);
+    throw error;
+  }
+};
+
+export const getComplaintAssignmentHistory = async (id) => {
+  try {
+    const response = await Api.get(e.GET_COMPLAINT_ASSIGNMENT_HISTORY(id));
+    console.log(response, "responseresponse");
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch complaint assignment history:", error);
     throw error;
   }
 };

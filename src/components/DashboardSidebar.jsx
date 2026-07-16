@@ -92,6 +92,12 @@ const menuData = {
       icon: <LuCross />,
       link: "/stateadmin/invitations",
     },
+    {
+      id: 7,
+      label: "Workload",
+      icon: <TbReportAnalytics />,
+      link: "/stateadmin/workload",
+    },
     { id: 5, label: "Profile", icon: <FiUser />, link: "/stateadmin/profile" },
     {
       id: 6,
@@ -120,6 +126,12 @@ const menuData = {
       label: "State Invites",
       icon: <LuCross />,
       link: "/admin/state/invite",
+    },
+    {
+      id: 7,
+      label: "Workload",
+      icon: <TbReportAnalytics />,
+      link: "/admin/workload",
     },
     { id: 5, label: "Profile", icon: <FiUser />, link: "/admin/profile" },
     {

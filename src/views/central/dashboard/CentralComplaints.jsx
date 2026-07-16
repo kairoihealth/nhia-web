@@ -21,6 +21,7 @@ import { useMemo } from "react";
 import { complaintCategories, complaintType } from "../../../mock/type";
 import InfoIcon from "@mui/icons-material/Info";
 import WithAuthorization from "../../../components/auth/withAuthorization";
+import FormCardHeader from "../../enrolees/ComplaintForm/FormCardHeader";
 
 const initialFilters = {
   type: "",
@@ -36,7 +37,7 @@ const tabOptions = [
   { tab: "", label: "All Complaints" },
   { tab: "pending", label: "New Complaints" },
   { tab: "active", label: "Active Complaints" },
-  { tab: "closed", label: "Completed Complaints" },
+  { tab: "resolved", label: "Resolved Complaints" },
   { tab: "escalated", label: "Escalated Complaints" },
 ];
 
@@ -133,7 +134,7 @@ const CentralComplaintsPage = () => {
     {
       label: "",
       field: "isOverdue",
-      align: "center",
+      align: "left",
       format: (isOverdue) => {
         if (isOverdue) {
           const tooltipStyle = {
@@ -181,10 +182,11 @@ const CentralComplaintsPage = () => {
         return null;
       },
     },
+    { label: "Case ID", field: "complaint_no", align: "center" },
     { label: "Date", field: "created_at", align: "center" },
     { label: "Complainant", field: "name", align: "center" },
-    { label: "Complaint no", field: "complaint_no", align: "center" },
-    { label: "Complaint type", field: "type", align: "center" },
+    { label: "Against", field: "complaint_against", align: "center" },
+    { label: "Category", field: "complaint_category", align: "center" },
     { label: "Location", field: "location", align: "center" },
   ];
 
@@ -210,8 +212,13 @@ const CentralComplaintsPage = () => {
     .map((complaint) => ({
       created_at: new Date(complaint.created_at).toLocaleDateString(),
       name: `${complaint.firstname || ""} ${complaint.lastname || ""}`.trim(),
+      complaint_against:
+        complaint.provider?.name ||
+        complaint.hmo?.name ||
+        complaint.state?.name ||
+        complaint.complaint_against,
       complaint_no: complaint.case_id,
-      type: complaint.complaint_type,
+      complaint_category: complaint.complaint_category,
       location: complaint?.state?.name,
       id: complaint.id,
       status: complaint.status,
@@ -292,16 +299,13 @@ const CentralComplaintsPage = () => {
     <Box>
       <Card
         sx={{
-          m: 2,
           p: { xs: 1, md: 2 },
           borderRadius: "12px",
-          boxShadow: "0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04)",
+          boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
         }}
       >
         {/* Header */}
-        <Typography variant="h5" gutterBottom>
-          Complaints Received
-        </Typography>
+        <FormCardHeader title="Complaints Received" />
 
         {/* Tabs and Filter Button */}
         <Stack
@@ -404,7 +408,7 @@ const CentralComplaintsPage = () => {
                     <option value="">All Complaints</option>
                     <option value="pending">Pending</option>
                     <option value="active">Active</option>
-                    <option value="closed">Closed</option>
+                    <option value="resolved">Resolved</option>
                     <option value="escalated">Escalated</option>
                   </select>
 
@@ -548,7 +552,7 @@ const CentralComplaintsPage = () => {
             showActions={true}
             showStatus={true}
             pagination={true}
-            headerBackgroundColor="#20201E"
+            // headerBackgroundColor="#20201E"
             actionButtonText={buttonTextMapping[filters.status]}
             totalPages={complaints?.total_pages}
             page={page}

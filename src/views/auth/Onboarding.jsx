@@ -10,8 +10,6 @@ import PropTypes from "prop-types";
 import TwoColumnLayout from "../enrolees/ComplaintForm/TwoColumnLayout";
 import TwoColumnLayout from "../../components/layout/TwoColumnLayout";
 
-
-
 const OnboardingView = ({ stateInfo, setStateInfo, onNext }) => {
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
@@ -162,7 +160,7 @@ const OnboardingView = ({ stateInfo, setStateInfo, onNext }) => {
               color: "#1B5E20",
               textDecoration: "none",
               my: 2,
-              fontFamily: "General Sans,Arial,sans-serif",
+              fontFamily: "Inter,Arial,sans-serif",
               // '&:hover': { textDecoration: 'underline' }
             }}
           >

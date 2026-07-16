@@ -14,6 +14,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   assignComplaint,
   getSingleComplaint,
+  getComplaintStatusHistory,
+  getComplaintAssignmentHistory,
   updateComplaintPriority,
 } from "../../services/general";
 import WithAuthorization from "../auth/withAuthorization";
@@ -22,8 +24,10 @@ import PropTypes from "prop-types";
 import { useState } from "react";
 import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
 import { getUsers } from "../../services/central";
+import { PriorityChip, StatusChip } from "../../shared/StatusChips";
+import ActivityTimeline from "../../shared/ActivityTimeline";
 
-const DetailItem = ({ label, value, direction = "column" }) => (
+export const DetailItem = ({ label, value, direction = "column" }) => (
   <Box
     sx={{
       mb: 2,
@@ -41,7 +45,10 @@ const DetailItem = ({ label, value, direction = "column" }) => (
     >
       {label}
     </Typography>
-    <Typography variant="body2" sx={{ color: "#1B1C1E", fontWeight: 500 }}>
+    <Typography
+      variant="body2"
+      sx={{ color: "#1B1C1E", fontWeight: 500, fontSize: "13px" }}
+    >
       {value || "N/A"}
     </Typography>
   </Box>
@@ -51,54 +58,6 @@ DetailItem.propTypes = {
   label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   direction: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
-};
-
-const statusColors = {
-  closed: { backgroundColor: "#E8F5E9", color: "#1B5E20" },
-  active: { backgroundColor: "#E3F2FD", color: "#0D47A1" },
-  pending: { backgroundColor: "#FFF8E1", color: "#FF8F00" },
-  escalated: { backgroundColor: "#FFEBEE", color: "#C62828" },
-  default: { backgroundColor: "#F5F5F5", color: "#616161" },
-};
-
-const priorityColors = {
-  low: { backgroundColor: "#E3F2FD", color: "#0D47A1" },
-  medium: { backgroundColor: "#FFF8E1", color: "#FF8F00" },
-  high: { backgroundColor: "#FFEBEE", color: "#C62828" },
-  urgent: { backgroundColor: "#FFEBEE", color: "#C62828" },
-  default: { backgroundColor: "#F5F5F5", color: "#616161" },
-};
-
-const getStatusChip = (status) => {
-  const statusLower = status?.toLowerCase();
-  const colors = statusColors[statusLower] || statusColors.default;
-  return (
-    <Chip
-      label={status || "Unknown"}
-      size="small"
-      sx={{
-        backgroundColor: colors.backgroundColor,
-        color: colors.color,
-        textTransform: "capitalize",
-      }}
-    />
-  );
-};
-
-const getPriorityChip = (priority) => {
-  const priorityLower = priority?.toLowerCase();
-  const colors = priorityColors[priorityLower] || priorityColors.default;
-  return (
-    <Chip
-      label={priority || "N/A"}
-      size="small"
-      sx={{
-        backgroundColor: colors.backgroundColor,
-        color: colors.color,
-        textTransform: "capitalize",
-      }}
-    />
-  );
 };
 
 export const StatusInfoCard = ({
@@ -115,7 +74,7 @@ export const StatusInfoCard = ({
     const diffTime = targetDate - today;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     if (diffDays < 0) return "Overdue";
-    return `${diffDays} days left`;
+    return `${diffDays} day${diffDays !== 1 ? "s" : ""} left`;
   };
 
   return (
@@ -123,7 +82,7 @@ export const StatusInfoCard = ({
       sx={{
         p: { xs: 2, lg: 2.5 },
         borderRadius: "12px",
-        boxShadow: "0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04)",
+        boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
       }}
     >
       <Typography
@@ -135,12 +94,12 @@ export const StatusInfoCard = ({
       <Divider sx={{ mb: 2 }} />
       <DetailItem
         label="Status"
-        value={getStatusChip(status)}
+        value={<StatusChip status={status} />}
         direction="row"
       />
       <DetailItem
         label="Priority"
-        value={getPriorityChip(priority)}
+        value={<PriorityChip priority={priority} />}
         direction="row"
       />
       {state && (
@@ -192,6 +151,18 @@ const StateSingleComplaintPage = () => {
     queryFn: () => getSingleComplaint(id),
   });
 
+  const { data: statusHistory } = useQuery({
+    queryKey: ["complaintStatusHistory", id],
+    queryFn: () => getComplaintStatusHistory(id),
+    enabled: !!id,
+  });
+
+  const { data: assignmentHistory } = useQuery({
+    queryKey: ["complaintAssignmentHistory", id],
+    queryFn: () => getComplaintAssignmentHistory(id),
+    enabled: !!id,
+  });
+
   const { data: officers } = useQuery({
     queryKey: ["stateOfficers", complaint?.state?.id],
     queryFn: () =>
@@ -201,6 +172,13 @@ const StateSingleComplaintPage = () => {
       }),
     enabled: !!complaint?.state?.id,
   });
+
+  const buttonText =
+    complaint?.status === "resolved"
+      ? "View Resolution"
+      : complaint?.status === "closed"
+        ? "View Thread"
+        : "Resolve Complaint";
 
   const handleCompliant = () => {
     navigate(`/stateadmin/complaint/${complaint?.id}/thread`, {
@@ -277,7 +255,7 @@ const StateSingleComplaintPage = () => {
   }
 
   return (
-    <Box sx={{ p: 1 }}>
+    <Box sx={{ p: { xs: 0, sm: 1 } }}>
       <Button
         startIcon={<ArrowBackIcon />}
         onClick={() => navigate(-1)}
@@ -299,7 +277,7 @@ const StateSingleComplaintPage = () => {
             sx={{
               p: { xs: 2, lg: 2.5 },
               borderRadius: "12px",
-              boxShadow: "0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04)",
+              boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
             }}
           >
             <Box
@@ -333,8 +311,8 @@ const StateSingleComplaintPage = () => {
                     fontSize: "13px",
                   }}
                 >
-                  {getStatusChip(complaint?.status)}
-                  {getPriorityChip(complaint?.priority)}
+                  <StatusChip status={complaint?.status} />
+                  <PriorityChip priority={complaint?.priority} />
                 </Box>
               </Box>
               <Typography variant="caption" color="text.secondary">
@@ -374,7 +352,7 @@ const StateSingleComplaintPage = () => {
                   "&:hover": { backgroundColor: "#1B5E20" },
                 }}
               >
-                Resolve Complaint
+                {buttonText}
               </Button>
             </Box>
 
@@ -480,6 +458,14 @@ const StateSingleComplaintPage = () => {
                 {complaint?.description}
               </Typography>
             </Box>
+
+            <Divider sx={{ my: 3 }} />
+
+            <ActivityTimeline
+              statusHistory={statusHistory}
+              assignmentHistory={assignmentHistory}
+              complaint={complaint}
+            />
           </Card>
         </Box>
 
@@ -490,7 +476,7 @@ const StateSingleComplaintPage = () => {
             priority={complaint?.priority}
             state={complaint?.state?.name}
             assignedTo={complaint?.assigned_officer_code}
-            resolutionDate={complaint?.resolution_date}
+            resolutionDate={complaint?.due_date}
           />
 
           <Card
@@ -498,7 +484,7 @@ const StateSingleComplaintPage = () => {
               p: { xs: 2, lg: 2.5 },
               mt: 3,
               borderRadius: "12px",
-              boxShadow: "0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04)",
+              boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
             }}
           >
             <Typography
@@ -553,7 +539,7 @@ const StateSingleComplaintPage = () => {
               p: { xs: 2, lg: 2.5 },
               mt: 3,
               borderRadius: "12px",
-              boxShadow: "0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04)",
+              boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
             }}
           >
             <Typography

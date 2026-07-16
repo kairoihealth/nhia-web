@@ -9,6 +9,9 @@ import {
   IconButton,
   Typography,
   Chip,
+  Modal,
+  TextField,
+  Fade,
 } from "@mui/material";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
@@ -25,30 +28,8 @@ import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
 import WithAuthorization from "../auth/withAuthorization";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PropTypes from "prop-types";
-
-const statusColors = {
-  closed: { backgroundColor: "#E8F5E9", color: "#1B5E20" },
-  active: { backgroundColor: "#E3F2FD", color: "#0D47A1" },
-  pending: { backgroundColor: "#FFF8E1", color: "#FF8F00" },
-  escalated: { backgroundColor: "#FFEBEE", color: "#C62828" },
-  default: { backgroundColor: "#F5F5F5", color: "#616161" },
-};
-
-const getStatusChip = (status) => {
-  const statusLower = status?.toLowerCase();
-  const colors = statusColors[statusLower] || statusColors.default;
-  return (
-    <Chip
-      label={status || "Unknown"}
-      size="small"
-      sx={{
-        backgroundColor: colors.backgroundColor,
-        color: colors.color,
-        textTransform: "capitalize",
-      }}
-    />
-  );
-};
+import FormCardHeader from "../../views/enrolees/ComplaintForm/FormCardHeader";
+import { StatusChip } from "../../shared/StatusChips";
 
 const roleColors = {
   hmo: { backgroundColor: "#E3F2FD", color: "#0D47A1" },
@@ -89,6 +70,9 @@ const StateComplaintThreadPage = () => {
   const { id } = useParams();
 
   const navigate = useNavigate();
+  const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState("");
+  const [feedback, setFeedback] = useState("");
 
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -119,13 +103,16 @@ const StateComplaintThreadPage = () => {
       ),
     [responses],
   );
-  const handleUpdateStatus = async (status) => {
+  const handleUpdateStatus = async (status, feedbackText) => {
     setIsUpdating(true);
     try {
-      let res = await updateComplaintStatus({
-        id: thread,
-        payload: { status, feedback: status },
-      });
+      const payload = { status };
+      if (status === "resolved") {
+        payload.resolution_notes = feedbackText || status;
+      } else {
+        payload.feedback = feedbackText || status;
+      }
+      let res = await updateComplaintStatus({ id, payload });
 
       refetch();
       handleSuccess(res.data?.message || "Complaint updated successfully");
@@ -133,6 +120,8 @@ const StateComplaintThreadPage = () => {
       handleError("Failed to send response:", error);
     } finally {
       setIsUpdating(false);
+      setFeedbackModalOpen(false);
+      setFeedback("");
     }
   };
 
@@ -178,7 +167,7 @@ const StateComplaintThreadPage = () => {
   }
 
   return (
-    <Box sx={{ p: 1 }}>
+    <Box sx={{ p: { xs: 0, sm: 1 } }}>
       <Button
         startIcon={<ArrowBackIcon />}
         onClick={() => navigate(-1)}
@@ -210,7 +199,7 @@ const StateComplaintThreadPage = () => {
                 p: { xs: 2, md: 4 },
                 borderRadius: "12px",
                 boxShadow:
-                  "0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04)",
+                  "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
               }}
             >
               <Box
@@ -223,7 +212,7 @@ const StateComplaintThreadPage = () => {
                 <Box>
                   <Typography
                     sx={{
-                      fontSize: "18px",
+                      fontSize: { xs: "15px", sm: "18px" },
                       fontWeight: 600,
                       lineHeight: "32.4px",
                       color: "#111827",
@@ -238,47 +227,65 @@ const StateComplaintThreadPage = () => {
                         state: { complaint: complaint?.id },
                       })
                     }
-                    sx={{ cursor: "pointer", color: "#071C42", mt: "4px" }}
+                    sx={{
+                      cursor: "pointer",
+                      color: "#071C42",
+                      fontSize: "13px",
+                      mt: "4px",
+                    }}
                   >
                     View Complain details
                   </Typography>
                 </Box>
                 <Box>
-                  {getStatusChip(complaint?.status)}
-                  <Box>
-                    {isUpdating || isLoading ? (
-                      <Typography
-                        sx={{
-                          fontSize: "14px",
-                          fontWeight: 300,
-                          color: "#111827",
-                          marginTop: "8px",
-                        }}
-                      >
-                        Please wait...
-                      </Typography>
-                    ) : (
-                      <select
-                        name="status"
-                        style={{
-                          border: "none",
-                          background: "transparent",
-                          marginTop: "10px",
-                          outline: "none",
-                          color: "#555555",
-                        }}
-                        onChange={(e) => {
-                          handleUpdateStatus(e.target.value);
-                        }}
-                      >
-                        <option value="">Change status</option>
-                        <option value="pending">Pending</option>
-                        <option value="active">Active</option>
-                        <option value="closed">Closed</option>
-                        <option value="escalated">Escalated</option>
-                      </select>
+                  <StatusChip status={complaint?.status} />
+                  {complaint?.status !== "closed" &&
+                    complaint?.status !== "resolved" && (
+                      <Box>
+                        {isUpdating || isLoading ? (
+                          <Typography
+                            sx={{
+                              fontSize: "14px",
+                              fontWeight: 300,
+                              color: "#111827",
+                              marginTop: "8px",
+                            }}
+                          >
+                            Please wait...
+                          </Typography>
+                        ) : (
+                          <select
+                            name="status"
+                            style={{
+                              border: "none",
+                              background: "transparent",
+                              marginTop: "10px",
+                              outline: "none",
+                              color: "#555555",
+                            }}
+                            value={complaint?.status || ""}
+                            onChange={(e) => {
+                              const newStatus = e.target.value;
+                              if (
+                                newStatus === "resolved" ||
+                                newStatus === "escalated"
+                              ) {
+                                setSelectedStatus(newStatus);
+                                setFeedbackModalOpen(true);
+                              } else {
+                                handleUpdateStatus(newStatus);
+                              }
+                            }}
+                          >
+                            <option value="">Change status</option>
+                            <option value="pending">Pending</option>
+                            <option value="active">Active</option>
+                            <option value="resolved">Resolved</option>
+                            <option value="escalated">Escalated</option>
+                          </select>
+                        )}
+                      </Box>
                     )}
-                  </Box>
                 </Box>
               </Box>
 
@@ -356,6 +363,8 @@ const StateComplaintThreadPage = () => {
                               width: "149px",
                               borderRadius: 2,
                               overflow: "hidden",
+                              boxShadow:
+                                "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
                             }}
                           >
                             {isImage(file.document) ? (
@@ -469,6 +478,43 @@ const StateComplaintThreadPage = () => {
                   </Box>
                 </Box>
               </Box>
+
+              {(complaint?.status === "resolved" ||
+                complaint?.status === "closed" ||
+                complaint?.status === "escalated") &&
+                (complaint.resolution_notes || complaint.feedback) && (
+                  <Box sx={{ width: "100%", mt: 3 }}>
+                    <Typography
+                      sx={{
+                        fontSize: "16px",
+                        fontWeight: 500,
+                        lineHeight: "21.6px",
+                        color: "#000000",
+                        mb: "10px",
+                      }}
+                    >
+                      {complaint?.status === "resolved"
+                        ? "Resolution Note"
+                        : "Feedback"}
+                    </Typography>
+                    <Box
+                      sx={{
+                        fontSize: "14px",
+                        color: "#1B1C1E",
+                        p: 2,
+                        backgroundColor: "#E8F5E9",
+                        borderRadius: "8px",
+                        whiteSpace: "pre-wrap",
+                        lineHeight: 1.6,
+                        borderLeft: "4px solid #1B5E20",
+                      }}
+                    >
+                      <Typography variant="body2">
+                        {complaint.resolution_notes || complaint.feedback}
+                      </Typography>
+                    </Box>
+                  </Box>
+                )}
             </Card>
 
             {/*Complaint responses*/}
@@ -478,7 +524,7 @@ const StateComplaintThreadPage = () => {
                 p: { xs: 2, md: 4 },
                 borderRadius: "12px",
                 boxShadow:
-                  "0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04)",
+                  "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
               }}
             >
               <Typography
@@ -625,6 +671,8 @@ const StateComplaintThreadPage = () => {
                                         width: "149px",
                                         borderRadius: 2,
                                         overflow: "hidden",
+                                        boxShadow:
+                                          "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
                                       }}
                                     >
                                       {isImage(file.document) ? (
@@ -719,68 +767,71 @@ const StateComplaintThreadPage = () => {
 
             {/*Button*/}
             {/*Button*/}
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: { xs: "column", md: "row" },
-                justifyContent: "center",
-                alignItems: "center",
-                gap: 3,
-                my: 6,
-              }}
-            >
-              <Button
-                variant="outlined"
-                sx={{
-                  width: { xs: "70%", md: "auto" },
-                  border: "1px solid #1B5E20",
-                  color: "#1B5E20",
-                  fontWeight: 500,
-                  fontSize: "16px",
-                  lineHeight: "24px",
-                  textTransform: "capitalize",
-                  padding: "10px 22px",
-                  borderRadius: "50px",
-                }}
-                onClick={() => handleReply("Complainant")}
-              >
-                Reply complainant
-              </Button>
-              <Button
-                variant="outlined"
-                sx={{
-                  width: { xs: "70%", md: "auto" },
-                  border: "1px solid #1B5E20",
-                  color: "#1B5E20",
-                  fontWeight: 500,
-                  fontSize: "16px",
-                  lineHeight: "24px",
-                  textTransform: "capitalize",
-                  padding: "10px 22px",
-                  borderRadius: "50px",
-                }}
-                onClick={() => handleReply("Respondent")}
-              >
-                Reply respondent
-              </Button>
-              <Button
-                variant="outlined"
-                sx={{
-                  width: { xs: "70%", md: "auto" },
-                  border: "1px solid #1B5E20",
-                  color: "#1B5E20",
-                  fontWeight: 500,
-                  fontSize: "16px",
-                  lineHeight: "24px",
-                  textTransform: "capitalize",
-                  padding: "10px 22px",
-                  borderRadius: "50px",
-                }}
-                onClick={() => handleReply("All")}
-              >
-                Reply all
-              </Button>
-            </Box>
+            {complaint?.status !== "closed" &&
+              complaint?.status !== "resolved" && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: { xs: "column", md: "row" },
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: 3,
+                    my: 6,
+                  }}
+                >
+                  <Button
+                    variant="outlined"
+                    sx={{
+                      width: { xs: "70%", md: "auto" },
+                      border: "1px solid #1B5E20",
+                      color: "#1B5E20",
+                      fontWeight: 500,
+                      fontSize: "16px",
+                      lineHeight: "24px",
+                      textTransform: "capitalize",
+                      padding: "10px 22px",
+                      borderRadius: "50px",
+                    }}
+                    onClick={() => handleReply("Complainant")}
+                  >
+                    Reply complainant
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    sx={{
+                      width: { xs: "70%", md: "auto" },
+                      border: "1px solid #1B5E20",
+                      color: "#1B5E20",
+                      fontWeight: 500,
+                      fontSize: "16px",
+                      lineHeight: "24px",
+                      textTransform: "capitalize",
+                      padding: "10px 22px",
+                      borderRadius: "50px",
+                    }}
+                    onClick={() => handleReply("Respondent")}
+                  >
+                    Reply respondent
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    sx={{
+                      width: { xs: "70%", md: "auto" },
+                      border: "1px solid #1B5E20",
+                      color: "#1B5E20",
+                      fontWeight: 500,
+                      fontSize: "16px",
+                      lineHeight: "24px",
+                      textTransform: "capitalize",
+                      padding: "10px 22px",
+                      borderRadius: "50px",
+                    }}
+                    onClick={() => handleReply("All")}
+                  >
+                    Reply all
+                  </Button>
+                </Box>
+              )}
           </>
         ) : (
           <Box
@@ -804,6 +855,64 @@ const StateComplaintThreadPage = () => {
           </Box>
         )}
       </Box>
+      <Modal
+        open={feedbackModalOpen}
+        onClose={() => setFeedbackModalOpen(false)}
+        aria-labelledby="feedback-modal-title"
+        aria-describedby="feedback-modal-description"
+        closeAfterTransition
+      >
+        <Fade in={feedbackModalOpen}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: 400,
+              bgcolor: "background.paper",
+              boxShadow: 24,
+              p: 4,
+              borderRadius: "12px",
+            }}
+          >
+            <FormCardHeader
+              title="Provide Feedback for Status Change"
+              subtitle={`Please provide a reason for changing the status to "${selectedStatus}".`}
+            />
+            <TextField
+              fullWidth
+              multiline
+              rows={4}
+              variant="outlined"
+              label="Feedback"
+              value={feedback}
+              onChange={(e) => setFeedback(e.target.value)}
+            />
+            <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end" }}>
+              <Button onClick={() => setFeedbackModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                variant="contained"
+                onClick={() => handleUpdateStatus(selectedStatus, feedback)}
+                disabled={isUpdating || !feedback}
+                sx={{
+                  ml: 2,
+                  backgroundColor: "#1B5E20",
+                  "&:hover": { backgroundColor: "#1B5E20" },
+                }}
+              >
+                {isUpdating ? (
+                  <CircularProgress size={24} color="inherit" />
+                ) : (
+                  "Submit"
+                )}
+              </Button>
+            </Box>
+          </Box>
+        </Fade>
+      </Modal>
     </Box>
   );
 };
