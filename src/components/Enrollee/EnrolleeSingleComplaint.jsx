@@ -9,10 +9,19 @@ import {
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import { getSingleComplaint } from "../../services/general";
+import {
+  getSingleComplaint,
+  getComplaintStatusHistory,
+  getComplaintAssignmentHistory,
+  updateComplaintStatus,
+} from "../../services/general";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PropTypes from "prop-types";
 import { StatusInfoCard } from "../State/StateSingleComplaint";
+import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
+import { useState } from "react";
+import { PriorityChip, StatusChip } from "../../shared/StatusChips";
+import ActivityTimeline from "../../shared/ActivityTimeline";
 
 const DetailItem = ({ label, value }) => (
   <Box sx={{ mb: 2 }}>
@@ -36,58 +45,34 @@ DetailItem.propTypes = {
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
 };
 
-const statusColors = {
-  closed: { backgroundColor: "#E8F5E9", color: "#1B5E20" },
-  active: { backgroundColor: "#E3F2FD", color: "#0D47A1" },
-  pending: { backgroundColor: "#FFF8E1", color: "#FF8F00" },
-  escalated: { backgroundColor: "#FFEBEE", color: "#C62828" },
-  default: { backgroundColor: "#F5F5F5", color: "#616161" },
-};
-
-const priorityColors = {
-  low: { backgroundColor: "#E3F2FD", color: "#0D47A1" },
-  medium: { backgroundColor: "#FFF8E1", color: "#FF8F00" },
-  high: { backgroundColor: "#FFEBEE", color: "#C62828" },
-  urgent: { backgroundColor: "#FFEBEE", color: "#C62828" },
-  default: { backgroundColor: "#F5F5F5", color: "#616161" },
-};
-
-const getStatusChip = (status) => {
-  const statusLower = status?.toLowerCase();
-  const colors = statusColors[statusLower] || statusColors.default;
-  return (
-    <Chip
-      label={status || "Unknown"}
-      size="small"
-      sx={{ backgroundColor: colors.backgroundColor, color: colors.color }}
-    />
-  );
-};
-
-const getPriorityChip = (priority) => {
-  const priorityLower = priority?.toLowerCase();
-  const colors = priorityColors[priorityLower] || priorityColors.default;
-  return (
-    <Chip
-      label={priority || "N/A"}
-      size="small"
-      sx={{ backgroundColor: colors.backgroundColor, color: colors.color }}
-    />
-  );
-};
-
 const EnrolleeSingleComplaint = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const handleError = useHandleError();
+  const handleSuccess = useHandleSuccess();
+  const [isClosing, setIsClosing] = useState(false);
 
   const {
     data: complaint,
     isLoading,
     isError,
     error,
+    refetch,
   } = useQuery({
     queryKey: ["singleComplaint", id],
     queryFn: () => getSingleComplaint(id),
+  });
+
+  const { data: statusHistory } = useQuery({
+    queryKey: ["complaintStatusHistory", id],
+    queryFn: () => getComplaintStatusHistory(id),
+    enabled: !!id,
+  });
+
+  const { data: assignmentHistory } = useQuery({
+    queryKey: ["complaintAssignmentHistory", id],
+    queryFn: () => getComplaintAssignmentHistory(id),
+    enabled: !!id,
   });
 
   const [description, additionalInfo] = (complaint?.description || "").split(
@@ -97,7 +82,33 @@ const EnrolleeSingleComplaint = () => {
   const assignedOfficerName =
     complaint?.assigned_to && complaint?.assigned_officer_code;
 
-  const resolutionDate = complaint?.resolution_date;
+  const resolutionDate = complaint?.due_date;
+
+  const threadButtonText =
+    complaint?.status === "resolved"
+      ? "View Resolution"
+      : complaint?.status === "closed"
+        ? "View Thread"
+        : "View Thread";
+
+  const handleCloseComplaint = async () => {
+    setIsClosing(true);
+    try {
+      await updateComplaintStatus({
+        id,
+        payload: {
+          status: "closed",
+          feedback: "Complaint withdrawn by enrollee.",
+        },
+      });
+      handleSuccess("Complaint has been successfully withdrawn.");
+      refetch();
+    } catch (error) {
+      handleError(error, "Failed to withdraw complaint.");
+    } finally {
+      setIsClosing(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -131,7 +142,7 @@ const EnrolleeSingleComplaint = () => {
   }
 
   return (
-    <Box sx={{ p: 1 }}>
+    <Box sx={{ p: { xs: 0, md: 1 } }}>
       <Button
         startIcon={<ArrowBackIcon />}
         onClick={() => navigate(-1)}
@@ -153,7 +164,7 @@ const EnrolleeSingleComplaint = () => {
             sx={{
               p: { xs: 2, md: 2.5 },
               borderRadius: "12px",
-              boxShadow: "0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04)",
+              boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
             }}
           >
             <Box
@@ -188,8 +199,8 @@ const EnrolleeSingleComplaint = () => {
                     fontSize: "13px",
                   }}
                 >
-                  {getStatusChip(complaint?.status)}
-                  {getPriorityChip(complaint?.priority)}
+                  <StatusChip status={complaint?.status} />
+                  <PriorityChip priority={complaint?.priority} />
                 </Box>
               </Box>
               <Typography variant="caption" color="text.secondary">
@@ -231,7 +242,7 @@ const EnrolleeSingleComplaint = () => {
                     "&:hover": { borderColor: "#1B5E20" },
                   }}
                 >
-                  View Thread
+                  {threadButtonText}
                 </Button>
                 <Button
                   variant="contained"
@@ -245,6 +256,25 @@ const EnrolleeSingleComplaint = () => {
                 >
                   Respond
                 </Button>
+                {complaint?.status !== "closed" &&
+                  complaint?.status !== "resolved" && (
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      onClick={handleCloseComplaint}
+                      disabled={isClosing}
+                      sx={{
+                        fontSize: "14px",
+                        textTransform: "none",
+                      }}
+                    >
+                      {isClosing ? (
+                        <CircularProgress size={24} color="inherit" />
+                      ) : (
+                        "Withdraw Complaint"
+                      )}
+                    </Button>
+                  )}
               </Box>
             </Box>
 
@@ -326,6 +356,14 @@ const EnrolleeSingleComplaint = () => {
                 </Typography>
               </Box>
             )}
+
+            <Divider sx={{ my: 3 }} />
+
+            <ActivityTimeline
+              statusHistory={statusHistory}
+              assignmentHistory={assignmentHistory}
+              complaint={complaint}
+            />
           </Card>
         </Box>
 

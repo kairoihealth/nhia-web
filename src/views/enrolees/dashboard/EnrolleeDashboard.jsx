@@ -31,6 +31,7 @@ import { useState } from "react";
 import { useRef } from "react";
 import { useEffect } from "react";
 import { FiChevronDown } from "react-icons/fi";
+import FormCardHeader from "../ComplaintForm/FormCardHeader";
 
 const initialFilters = {
   status: "",
@@ -282,21 +283,16 @@ const EnrolleeDashboard = () => {
                 alignItems: "flex-start",
                 borderRadius: "12px",
                 backgroundColor: "#FFFFFF",
+                boxShadow:
+                  "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
                 width: "100%",
                 minHeight: "209px",
               }}
             >
-              <Typography
-                sx={{
-                  fontSize: "18px",
-                  fontWeight: 500,
-                  lineHeight: "28px",
-                  color: "#475467",
-                }}
-                gutterBottom
-              >
-                Total Complaints Filed
-              </Typography>
+              <FormCardHeader
+                title="Total Complaints Filed"
+                titleSx={{ fontSize: "18px", color: "#475467" }}
+              />
               <Typography
                 sx={{
                   fontSize: "48px",
@@ -317,6 +313,7 @@ const EnrolleeDashboard = () => {
                 alignItems: "flex-start",
                 borderRadius: "12px",
                 backgroundColor: "#FFFFFF",
+                boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
                 width: "100%",
                 minHeight: "209px",
               }}
@@ -356,17 +353,10 @@ const EnrolleeDashboard = () => {
                 minHeight: "209px",
               }}
             >
-              <Typography
-                sx={{
-                  fontSize: "18px",
-                  fontWeight: 500,
-                  lineHeight: "28px",
-                  color: "#475467",
-                }}
-                gutterBottom
-              >
-                Complaints Status
-              </Typography>
+              <FormCardHeader
+                title="Complaints Status"
+                titleSx={{ fontSize: "18px", color: "#475467" }}
+              />
               <Box
                 sx={{
                   display: "flex",
@@ -500,17 +490,10 @@ const EnrolleeDashboard = () => {
             <Box
               sx={{ display: "flex", justifyContent: "space-between", px: 2 }}
             >
-              <Typography
-                sx={{
-                  fontSize: "20px",
-                  fontWeight: 500,
-                  lineHeight: "27px",
-                  color: "#1B1C1E",
-                  mb: 2,
-                }}
-              >
-                Recent Complaints
-              </Typography>
+              <FormCardHeader
+                title="Recent Complaints"
+                titleSx={{ fontSize: "20px", color: "#1B1C1E" }}
+              />
               <Typography
                 sx={{
                   display: "flex",
@@ -533,7 +516,7 @@ const EnrolleeDashboard = () => {
                 p: { xs: 1, md: 2 },
                 borderRadius: "12px",
                 boxShadow:
-                  "0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04)",
+                  "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
               }}
             >
               <Box sx={{ width: "100%", overflowX: "auto" }}>

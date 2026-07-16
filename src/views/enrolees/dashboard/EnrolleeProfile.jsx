@@ -6,6 +6,7 @@ import {
   FormControl,
   // Checkbox,
   Button,
+  Card,
   // Link,
 } from "@mui/material";
 import PhoneInput from "react-phone-input-2";
@@ -170,13 +171,11 @@ const EnrolleeProfile = () => {
       {/* Main Layout */}
       <Box
         sx={{
-          display: "flex",
-          backgroundColor: "#FAFAFA",
-          height: "100vh",
+          p: 2,
         }}
       >
         {/* Main Content Area */}
-        <Box sx={{ flexGrow: 1, p: 3 }}>
+        <Card sx={{ flexGrow: 1, p: 3, borderRadius: "12px", boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A" }}>
           {/* Sub Content */}
           <Box sx={{ mt: 2 }}>
             {/* Title */}
@@ -780,7 +779,7 @@ const EnrolleeProfile = () => {
                 </Box> */}
             </Box>
           </Box>
-        </Box>
+        </Card>
       </Box>
     </Box>
   );

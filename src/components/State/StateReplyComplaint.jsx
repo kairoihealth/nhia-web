@@ -169,7 +169,7 @@ const StateReplyComplaintPage = () => {
   }
 
   return (
-    <Box sx={{ display: "flex", p: 4, background: "#ffffff" }}>
+    <Box sx={{ display: "flex", p: { xs: 0, sm: 1 }, background: "#ffffff" }}>
       <Box
         sx={{
           display: "flex",
@@ -361,6 +361,8 @@ const StateReplyComplaintPage = () => {
                           borderRadius: "8px",
                           position: "relative",
                           overflow: "hidden",
+                          boxShadow:
+                            "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
                         }}
                       >
                         {file?.type?.startsWith("image") ? (

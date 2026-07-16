@@ -140,7 +140,7 @@ const EnrolleeReplyComplaint = () => {
   };
 
   return (
-    <Box sx={{ p: { xs: 1, md: 1 } }}>
+    <Box sx={{ p: { xs: 0, md: 1 } }}>
       <Button
         startIcon={<ArrowBackIcon />}
         onClick={() => navigate(-1)}
@@ -153,7 +153,7 @@ const EnrolleeReplyComplaint = () => {
         sx={{
           p: { xs: 2, md: 4 },
           borderRadius: "12px",
-          boxShadow: "0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04)",
+          boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
         }}
       >
         <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
@@ -221,6 +221,8 @@ const EnrolleeReplyComplaint = () => {
                           borderRadius: "8px",
                           position: "relative",
                           overflow: "hidden",
+                          boxShadow:
+                            "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
                         }}
                       >
                         {/* Image Preview */}

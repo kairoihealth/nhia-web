@@ -4,6 +4,7 @@ import {
   CircularProgress,
   TextField,
   Typography,
+  Card,
 } from "@mui/material";
 import SuccessModal from "../../../shared/SuccessModal";
 import { useMemo, useState } from "react";
@@ -12,9 +13,11 @@ import ReactSelect from "react-select";
 import { selectStyles, textFieldStyles } from "../../../utils/style";
 import { useHandleError } from "../../../hooks/useToastHandler";
 // import useAuth from "../../../hooks/useAuth";
-import { inviteStateUser, inviteUser } from "../../../services/central";
+import { inviteStateUser } from "../../../services/central";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import FormCardHeader from "../../enrolees/ComplaintForm/FormCardHeader";
+import { getAdminStatuses } from "../../../services/adminSettings";
 
 const StateInvitationForm = () => {
   const navigate = useNavigate();
@@ -25,6 +28,20 @@ const StateInvitationForm = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
+
+  const {
+    data: statuses,
+    // isLoading,
+    // isError,
+    // error,
+  } = useQuery({
+    queryKey: ["statuses"],
+    queryFn: () => getAdminStatuses({ page: 1, pageSize: 100 }),
+  });
+
+  const activeStatus = statuses?.results?.filter(
+    (status) => status?.is_active && status?.permissions?.length >= 5,
+  )[0];
 
   const { data: statesData, isLoading: statesLoading } = useQuery({
     queryKey: ["statesQueryKey"],
@@ -73,6 +90,7 @@ const StateInvitationForm = () => {
         email: email,
         role: "StateAdmin",
         state: selectedState.value,
+        admin_status: activeStatus.id,
       };
 
       await inviteStateUser(payload);
@@ -90,17 +108,15 @@ const StateInvitationForm = () => {
   };
 
   return (
-    <Box sx={{ p: 4 }}>
-      <Typography
-        sx={{
-          fontSize: "18px",
-          fontWeight: 500,
-          lineHeight: "28px",
-          color: "#101828",
-        }}
-      >
-        Send Invite
-      </Typography>
+    <Card
+      sx={{
+        m: 2,
+        p: { xs: 2, md: 4 },
+        borderRadius: "12px",
+        boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
+      }}
+    >
+      <FormCardHeader title="Send Invite" />
 
       {/* Form */}
       <Box
@@ -203,7 +219,7 @@ const StateInvitationForm = () => {
         message={"You have successfully sent an invite to"}
         recipient={`${email}`}
       />
-    </Box>
+    </Card>
   );
 };
 

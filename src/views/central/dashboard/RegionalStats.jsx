@@ -92,6 +92,7 @@ const RegionalStats = () => {
               p: 2,
               borderRadius: "12px",
               backgroundColor: "#FFFFFF",
+              boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
               width: "313px",
               height: "209px",
             }}

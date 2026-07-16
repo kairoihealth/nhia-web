@@ -1247,6 +1247,8 @@ const CentralReportsPage = () => {
                       alignItems: "center",
                       borderRadius: "12px",
                       backgroundColor: "#FFFFFF",
+                      boxShadow:
+                        "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
                       width: { xs: "100%", md: "500px" },
                       // height: "350px",
                     }}

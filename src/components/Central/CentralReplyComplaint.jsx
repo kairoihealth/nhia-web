@@ -6,6 +6,7 @@ import {
   CardMedia,
   CircularProgress,
   IconButton,
+  Divider,
   TextField,
   Typography,
 } from "@mui/material";
@@ -27,6 +28,7 @@ import {
 import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
 import { convertToBase64 } from "../../utils/convertTobase64";
 import WithAuthorization from "../auth/withAuthorization";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 // import { convertFileToBase64 } from "../../utils/convertTobase64";
 // import { getAllHmo } from "../../services/settings";
 
@@ -168,93 +170,33 @@ const CentralReplyComplaintPage = () => {
   }
 
   return (
-    <Box sx={{ p: { xs: 1, md: 4 }, background: "#ffffff" }}>
-      <Box
+    <Box sx={{ p: { xs: 0, sm: 1 } }}>
+      <Button
+        startIcon={<ArrowBackIcon />}
+        onClick={() => navigate(-1)}
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          width: "100%",
-          height: "auto",
+          mb: 2,
+          color: "#1B5E20",
+          textTransform: "none",
+          p: 0,
         }}
       >
-        {/*Header*/}
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            height: "59px",
-            backgroundColor: "#20201E",
-            borderTopLeftRadius: "10px",
-            borderTopRightRadius: "10px",
-            p: { xs: 2, md: 4 },
-          }}
-        >
-          <Typography
-            sx={{
-              fontSize: { xs: "15px", md: "24px" },
-              fontWeight: 500,
-              lineHeight: "24px",
-              color: "#FFFFFF",
-            }}
-          >
-            {complaint?.case_id} - {complaint?.complaint_type || ""}
-          </Typography>
-        </Box>
-
-        {/*Messages*/}
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 2,
-            width: "100%",
-            mt: 2,
-            p: { xs: 2, md: 4 },
-          }}
-        >
-          <Box sx={{ width: "100%" }}>
-            <Typography
-              sx={{
-                fontSize: "20px",
-                fontWeight: 600,
-                lineHeight: "24px",
-                color: "#111827",
-              }}
-            >
-              Message From Complainant
-            </Typography>
-            <Box
-              sx={{
-                fontSize: "16px",
-                fontWeight: 400,
-                lineHeight: "24px",
-                color: "#1B1C1E",
-                mt: 2,
-              }}
-            >
-              {complaint?.description}
-            </Box>
-          </Box>
-        </Box>
-
-        {/*Reply*/}
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 3,
-            p: { xs: 2, md: 4 },
-            mt: 5,
-            background: "#FAFAFA",
-          }}
-        >
+        Back to Complaint Thread
+      </Button>
+      <Card
+        sx={{
+          p: { xs: 2, md: 4 },
+          borderRadius: "12px",
+          boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
+        }}
+      >
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
           {responseTo === "Complainant" && (
             <Typography
               variant="subtitle1"
               sx={{
-                fontSize: "20px",
+                fontSize: "18px",
                 fontWeight: 600,
-                lineHeight: "24px",
                 color: "#111827",
                 mb: 2,
               }}
@@ -264,14 +206,16 @@ const CentralReplyComplaintPage = () => {
           )}
           <Typography
             sx={{
-              fontSize: "16px",
-              fontWeight: 400,
-              lineHeight: "21.6px",
-              color: "#000000",
+              fontSize: "18px",
+              fontWeight: 500,
+              lineHeight: "16px",
+              color: "#111827",
             }}
           >
             Message {responseTo}
           </Typography>
+
+          <Divider />
 
           {/* <Autocomplete
             freeSolo
@@ -329,17 +273,17 @@ const CentralReplyComplaintPage = () => {
             sx={{
               display: "flex",
               flexDirection: { xs: "column-reverse", md: "row" },
-              justifyContent: { xs: "center", md: "space-between" },
-              alignItems: { xs: "center", md: "flex-start" },
+              justifyContent: "space-between",
+              alignItems: "flex-start",
               gap: 4,
-              mt: { xs: 5, md: 3 },
+              mt: 3,
             }}
           >
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                width: { xs: "100%", md: "60%" },
+                width: "100%",
                 gap: 1,
               }}
               onClick={handleAddAttachmentClick}
@@ -361,6 +305,8 @@ const CentralReplyComplaintPage = () => {
                           borderRadius: "8px",
                           position: "relative",
                           overflow: "hidden",
+                          boxShadow:
+                            "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
                         }}
                       >
                         {file?.type?.startsWith("image") ? (
@@ -492,31 +438,33 @@ const CentralReplyComplaintPage = () => {
                 Upload max. 5 documents
               </Typography>
             </Box>
-
-            {/*Button */}
-            <Box sx={{ display: "flex", justifyContent: "center" }}>
-              <Button
-                variant="contained"
-                sx={{
-                  width: { xs: "100%", sm: "261px" },
-                  backgroundColor: "#1B5E20",
-                  color: "#FFFFFF",
-                  fontWeight: 500,
-                  fontSize: "16px",
-                  lineHeight: "24px",
-                  textTransform: "capitalize",
-                  p: "12px 24px",
-                  borderRadius: "50px",
-                }}
-                onClick={handleSubmit}
-                loading={isSubmitting}
-              >
-                Send Response
-              </Button>
-            </Box>
+          </Box>
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Button
+              variant="contained"
+              disabled={isSubmitting}
+              sx={{
+                width: { xs: "80%", md: "26%" },
+                backgroundColor: "#1B5E20",
+                color: "#FFFFFF",
+                fontWeight: 500,
+                fontSize: "16px",
+                lineHeight: "24px",
+                textTransform: "capitalize",
+                padding: "10px 22px",
+                borderRadius: "50px",
+              }}
+              onClick={handleSubmit}
+            >
+              {isSubmitting ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                "Send Response"
+              )}
+            </Button>
           </Box>
         </Box>
-      </Box>
+      </Card>
     </Box>
   );
 };

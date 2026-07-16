@@ -7,7 +7,7 @@ export const selectStyles = {
     backgroundColor: "#F5F5F5",
     border: state.isFocused ? "1px solid #1B5E20" : "1px solid #DADADA",
     fontSize: "16px",
-    fontFamily: "General Sans !important",
+    fontFamily: "Inter !important",
     boxShadow: state.isFocused ? null : null, // Remove default focus shadow
     "&:hover": {
       borderColor: state.isFocused ? "#1B5E20" : "#DADADA",
@@ -15,7 +15,7 @@ export const selectStyles = {
   }),
   menu: (base) => ({
     ...base,
-    fontFamily: "General Sans !important",
+    fontFamily: "Inter !important",
     zIndex: 10000, // Ensure it's above other elements
   }),
   option: (base, state) => ({
@@ -33,13 +33,13 @@ export const selectStyles = {
     ...base,
     fontSize: "16px", // Match the font size of the options
     color: "#000000",
-    fontFamily: "General Sans !important",
+    fontFamily: "Inter !important",
   }),
   placeholder: (base) => ({
     ...base,
     fontSize: "16px", // Match the font size of the options
     color: "#000000",
-    fontFamily: "General Sans !important",
+    fontFamily: "Inter !important",
   }),
 };
 

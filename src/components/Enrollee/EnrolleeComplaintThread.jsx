@@ -21,30 +21,7 @@ import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import { isImage } from "../../utils/general";
 import { RoleBadge } from "../State/StateComplaintThread";
-
-const statusColors = {
-  closed: { backgroundColor: "#E8F5E9", color: "#1B5E20" },
-  active: { backgroundColor: "#E3F2FD", color: "#0D47A1" },
-  pending: { backgroundColor: "#FFF8E1", color: "#FF8F00" },
-  escalated: { backgroundColor: "#FFEBEE", color: "#C62828" },
-  default: { backgroundColor: "#F5F5F5", color: "#616161" },
-};
-
-const getStatusChip = (status) => {
-  const statusLower = status?.toLowerCase();
-  const colors = statusColors[statusLower] || statusColors.default;
-  return (
-    <Chip
-      label={status || "Unknown"}
-      size="small"
-      sx={{
-        backgroundColor: colors.backgroundColor,
-        color: colors.color,
-        textTransform: "capitalize",
-      }}
-    />
-  );
-};
+import { StatusChip } from "../../shared/StatusChips";
 
 const EnrolleeComplaintThread = () => {
   const { id } = useParams();
@@ -132,7 +109,7 @@ const EnrolleeComplaintThread = () => {
   }
 
   return (
-    <Box sx={{ p: { xs: 1, md: 1 } }}>
+    <Box sx={{ p: { xs: 0, md: 1 } }}>
       <Button
         startIcon={<ArrowBackIcon />}
         onClick={() => navigate(`/enrollee/complaint/${id}`)}
@@ -164,7 +141,7 @@ const EnrolleeComplaintThread = () => {
               mt: 2,
               p: { xs: 2, md: 2.5 },
               borderRadius: "12px",
-              boxShadow: "0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04)",
+              boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
             }}
           >
             <Box
@@ -177,7 +154,7 @@ const EnrolleeComplaintThread = () => {
               <Box>
                 <Typography
                   sx={{
-                    fontSize: "18px",
+                    fontSize: { xs: "15px", sm: "18px" },
                     fontWeight: 600,
                     lineHeight: "32.4px",
                     color: "#111827",
@@ -195,14 +172,14 @@ const EnrolleeComplaintThread = () => {
                   sx={{
                     cursor: "pointer",
                     color: "#1B5E20",
-                    fontSize: "14px",
+                    fontSize: "13px",
                     mt: "4px",
                   }}
                 >
                   View Complain details
                 </Typography>
               </Box>
-              <Box>{getStatusChip(complaint?.status)}</Box>
+              <Box>{<StatusChip status={complaint?.status} />}</Box>
             </Box>
 
             <Divider sx={{ my: 1 }} />
@@ -266,6 +243,8 @@ const EnrolleeComplaintThread = () => {
                             width: "149px",
                             borderRadius: 2,
                             overflow: "hidden",
+                            boxShadow:
+                              "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
                           }}
                         >
                           {isImage(file.document) ? (
@@ -344,6 +323,43 @@ const EnrolleeComplaintThread = () => {
                 </Box>
               </Box>
             </Box>
+
+            {(complaint?.status === "resolved" ||
+              complaint?.status === "closed" ||
+              complaint?.status === "escalated") &&
+              (complaint.resolution_notes || complaint.feedback) && (
+                <Box sx={{ width: "100%", mt: 3 }}>
+                  <Typography
+                    sx={{
+                      fontSize: "15px",
+                      fontWeight: 500,
+                      lineHeight: "18px",
+                      color: "#000000",
+                      mb: "10px",
+                    }}
+                  >
+                    {complaint?.status === "resolved"
+                      ? "Resolution Note"
+                      : "Feedback"}
+                  </Typography>
+                  <Box
+                    sx={{
+                      fontSize: "14px",
+                      color: "#1B1C1E",
+                      p: 2,
+                      backgroundColor: "#E8F5E9",
+                      // borderRadius: "8px",
+                      whiteSpace: "pre-wrap",
+                      lineHeight: 1.6,
+                      borderLeft: "4px solid #1B5E20",
+                    }}
+                  >
+                    <Typography variant="body2">
+                      {complaint.resolution_notes || complaint.feedback}
+                    </Typography>
+                  </Box>
+                </Box>
+              )}
           </Card>
 
           {/*Complaint responses*/}
@@ -352,7 +368,7 @@ const EnrolleeComplaintThread = () => {
               mt: 3,
               p: { xs: 2, md: 2.5 },
               borderRadius: "12px",
-              boxShadow: "0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04)",
+              boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
             }}
           >
             <Typography
@@ -540,6 +556,8 @@ const EnrolleeComplaintThread = () => {
                                       width: "149px",
                                       borderRadius: 2,
                                       overflow: "hidden",
+                                      boxShadow:
+                                        "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
                                     }}
                                   >
                                     {isImage(file.document) ? (
@@ -629,70 +647,73 @@ const EnrolleeComplaintThread = () => {
           </Card>
 
           {/*Button*/}
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: { xs: "column", md: "row" },
-              justifyContent: "center",
-              alignItems: "center",
-              gap: 3,
-              my: 6,
-            }}
-          >
-            <Button
-              variant="outlined"
-              sx={{
-                width: { xs: "70%", md: "auto" },
-                border: "1px solid #1B5E20",
-                color: "#1B5E20",
-                fontWeight: 500,
-                fontSize: "16px",
-                lineHeight: "24px",
-                textTransform: "capitalize",
-                padding: "10px 22px",
-                borderRadius: "50px",
-              }}
-              onClick={() => handleReply("NHIA")}
-            >
-              Reply NHIA
-            </Button>
-            {complaint?.complaint_against === "NHIA" ? null : (
-              <Button
-                variant="outlined"
+          {complaint?.status !== "closed" &&
+            complaint?.status !== "resolved" && (
+              <Box
                 sx={{
-                  width: { xs: "70%", md: "auto" },
-                  border: "1px solid #1B5E20",
-                  color: "#1B5E20",
-                  fontWeight: 500,
-                  fontSize: "16px",
-                  lineHeight: "24px",
-                  textTransform: "capitalize",
-                  padding: "10px 22px",
-                  borderRadius: "50px",
+                  display: "flex",
+                  flexDirection: { xs: "column", md: "row" },
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: 3,
+                  my: 6,
                 }}
-                onClick={() => handleReply("Respondent")}
               >
-                Reply Respondent
-              </Button>
+                <Button
+                  variant="outlined"
+                  sx={{
+                    width: { xs: "70%", md: "auto" },
+                    border: "1px solid #1B5E20",
+                    color: "#1B5E20",
+                    fontWeight: 500,
+                    fontSize: "16px",
+                    lineHeight: "24px",
+                    textTransform: "capitalize",
+                    padding: "10px 22px",
+                    borderRadius: "50px",
+                  }}
+                  onClick={() => handleReply("NHIA")}
+                >
+                  Reply NHIA
+                </Button>
+                {complaint?.complaint_against === "NHIA" ? null : (
+                  <Button
+                    variant="outlined"
+                    sx={{
+                      width: { xs: "70%", md: "auto" },
+                      border: "1px solid #1B5E20",
+                      color: "#1B5E20",
+                      fontWeight: 500,
+                      fontSize: "16px",
+                      lineHeight: "24px",
+                      textTransform: "capitalize",
+                      padding: "10px 22px",
+                      borderRadius: "50px",
+                    }}
+                    onClick={() => handleReply("Respondent")}
+                  >
+                    Reply Respondent
+                  </Button>
+                )}
+                <Button
+                  variant="outlined"
+                  sx={{
+                    width: { xs: "70%", md: "auto" },
+                    border: "1px solid #1B5E20",
+                    color: "#1B5E20",
+                    fontWeight: 500,
+                    fontSize: "16px",
+                    lineHeight: "24px",
+                    textTransform: "capitalize",
+                    padding: "10px 22px",
+                    borderRadius: "50px",
+                  }}
+                  onClick={() => handleReply("All")}
+                >
+                  Reply All
+                </Button>
+              </Box>
             )}
-            <Button
-              variant="outlined"
-              sx={{
-                width: { xs: "70%", md: "auto" },
-                border: "1px solid #1B5E20",
-                color: "#1B5E20",
-                fontWeight: 500,
-                fontSize: "16px",
-                lineHeight: "24px",
-                textTransform: "capitalize",
-                padding: "10px 22px",
-                borderRadius: "50px",
-              }}
-              onClick={() => handleReply("All")}
-            >
-              Reply All
-            </Button>
-          </Box>
         </>
       ) : (
         <Box
