@@ -9,6 +9,7 @@ import CreateComplaint from "../dashboard/CreateComplaint";
 import EnrolleeSingleComplaint from "../../../components/Enrollee/EnrolleeSingleComplaint";
 import EnrolleeComplaintThread from "../../../components/Enrollee/EnrolleeComplaintThread";
 import EnrolleeReplyComplaint from "../../../components/Enrollee/EnrolleeReplyComplaint";
+import EnrolleeNotifications from "../dashboard/EnrolleeNotifications";
 
 const EnrolleeRoutes = () => {
   return (
@@ -26,6 +27,7 @@ const EnrolleeRoutes = () => {
         element={<EnrolleeComplaintThread />}
       />
       <Route path="complaint/:id/reply" element={<EnrolleeReplyComplaint />} />
+      <Route path="notifications" element={<EnrolleeNotifications />} />
     </Routes>
   );
 };

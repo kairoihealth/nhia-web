@@ -6,6 +6,7 @@ import {
   ListItemIcon,
   ListItemText,
   IconButton,
+  Badge,
   Typography,
 } from "@mui/material";
 import {
@@ -15,12 +16,15 @@ import {
   FiHome,
   FiSettings,
   FiX,
+  FiBell,
 } from "react-icons/fi";
 import Logo from "../assets/nhia-logo.png";
 import { TbReportAnalytics } from "react-icons/tb";
 import { LuCross } from "react-icons/lu";
 import { FaRegComment } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { getUnreadNotificationCount } from "../services/general";
 
 const menuData = {
   HMO: [
@@ -36,6 +40,12 @@ const menuData = {
       label: "Reports",
       icon: <TbReportAnalytics />,
       link: "/hmo/reports",
+    },
+    {
+      id: 6,
+      label: "Notifications",
+      icon: <FiBell />,
+      link: "/hmo/notifications",
     },
     { id: 4, label: "Profile", icon: <FiUser />, link: "/hmo/profile" },
     { id: 5, label: "Settings", icon: <FiSettings />, link: "/hmo/settings" },
@@ -58,6 +68,12 @@ const menuData = {
       label: "Reports",
       icon: <TbReportAnalytics />,
       link: "/provider/reports",
+    },
+    {
+      id: 6,
+      label: "Notifications",
+      icon: <FiBell />,
+      link: "/provider/notifications",
     },
     { id: 4, label: "Profile", icon: <FiUser />, link: "/provider/profile" },
     {
@@ -85,6 +101,12 @@ const menuData = {
       label: "Reports",
       icon: <TbReportAnalytics />,
       link: "/stateadmin/reports",
+    },
+    {
+      id: 8,
+      label: "Notifications",
+      icon: <FiBell />,
+      link: "/stateadmin/notifications",
     },
     {
       id: 4,
@@ -122,6 +144,12 @@ const menuData = {
       link: "/admin/reports",
     },
     {
+      id: 8,
+      label: "Notifications",
+      icon: <FiBell />,
+      link: "/admin/notifications",
+    },
+    {
       id: 4,
       label: "State Invites",
       icon: <LuCross />,
@@ -156,9 +184,15 @@ const menuData = {
     },
     {
       id: 3,
-      label: "File Complaint",
+      label: "File New Complaint",
       icon: <FaRegComment />,
       link: "/enrollee/complaint/create",
+    },
+    {
+      id: 4,
+      label: "Notifications",
+      icon: <FiBell />,
+      link: "/enrollee/notifications",
     },
     {
       id: 3,
@@ -171,7 +205,13 @@ const menuData = {
 
 const DashboardSidebar = ({ showMobileMenu, onMobileClose }) => {
   const role = localStorage.getItem("userRole");
-  // const menuItems = menuData[role] || [];
+
+  const { data: notificationsCount } = useQuery({
+    queryKey: ["notifications"],
+    queryFn: () => getUnreadNotificationCount(),
+  });
+
+  const unreadCount = notificationsCount?.unread_count || 0;
 
   const logout = () => {
     localStorage.clear();
@@ -226,7 +266,7 @@ const DashboardSidebar = ({ showMobileMenu, onMobileClose }) => {
           sx={{
             display: "flex",
             flexDirection: "column",
-            gap: 2,
+            gap: 1.5,
             mt: 3,
             flexGrow: 1,
             pl: 2,
@@ -237,6 +277,7 @@ const DashboardSidebar = ({ showMobileMenu, onMobileClose }) => {
               <NavLink
                 key={index}
                 to={item.link}
+                onClick={onMobileClose}
                 style={({ isActive }) => ({
                   textDecoration: "none",
                   color: isActive ? "#1B5E20" : "rgba(255,255,255,.6)",
@@ -248,20 +289,33 @@ const DashboardSidebar = ({ showMobileMenu, onMobileClose }) => {
                   alignItems: "center",
                 })}
               >
-                {({ isActive }) => (
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    {item.icon}
-                    <Typography
-                      sx={{
-                        fontSize: "15px",
-                        fontWeight: isActive ? 600 : 500,
-                        lineHeight: "21.6px",
-                      }}
-                    >
-                      {item.label}
-                    </Typography>
-                  </Box>
-                )}
+                {({ isActive }) => {
+                  const isNotifications = item.label === "Notifications";
+                  return (
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      {item.icon}
+                      <Typography
+                        sx={{
+                          fontSize: "15px",
+                          fontWeight: isActive ? 600 : 500,
+                          lineHeight: "21.6px",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 2,
+                          color: isActive ? "#1B5E20" : "rgba(255,255,255,.6)",
+                        }}
+                      >
+                        {item.label}{" "}
+                        {isNotifications && (
+                          <Badge
+                            badgeContent={unreadCount}
+                            color="error"
+                          ></Badge>
+                        )}
+                      </Typography>
+                    </Box>
+                  );
+                }}
               </NavLink>
             ))
           ) : (

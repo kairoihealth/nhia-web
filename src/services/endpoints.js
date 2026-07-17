@@ -72,4 +72,12 @@ export const ENDPOINTS = {
   RESEND_INVITATION: (id) => `/invitations/${id}/resend/`,
   CANCEL_INVITATION: (id) => `/invitations/${id}/cancel/`,
   VERIFY_INVITATION: `/invitations/verify/`,
+
+  //NOTIFICATIONS
+  GET_NOTIFICATIONS: "/notifications/",
+  GET_UNREAD_NOTIFICATIONS: "/notifications/unread/",
+  GET_UNREAD_NOTIFICATIONS_COUNT: "/notifications/unread-count/",
+  GET_SINGLE_NOTIFICATION: (id) => `/notifications/${id}/`,
+  MARK_NOTIFICATION_AS_READ: (id) => `/notifications/${id}/mark-as-read/`,
+  MARK_ALL_NOTIFICATIONS_AS_READ: "/notifications/mark-all-as-read/",
 };

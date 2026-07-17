@@ -14,6 +14,7 @@ import CentralSingleComplaint from "../../../components/Central/CentralSingleCom
 import CentralComplaintThread from "../../../components/Central/CentralComplaintThread";
 import CentralReplyComplaint from "../../../components/Central/CentralReplyComplaint";
 import CentralWorkloadSummary from "../dashboard/CentralWorkloadSummary";
+import CentralNotifications from "../dashboard/CentralNotifications";
 
 const CentralRoutes = () => {
   return (
@@ -42,6 +43,7 @@ const CentralRoutes = () => {
         />
         <Route path="complaint/:id/reply" element={<CentralReplyComplaint />} />
         <Route path="workload" element={<CentralWorkloadSummary />} />
+        <Route path="notifications" element={<CentralNotifications />} />
       </Route>
     </Routes>
   );

@@ -8,6 +8,7 @@ import ProvidersSingleComplaint from "../../../components/Providers/ProvidersSin
 import ProvidersComplaintThread from "../../../components/Providers/ProvidersComplaintThread";
 import ProvidersReplyComplaint from "../../../components/Providers/ProvidersReplyComplaint";
 import ProvidersSettings from "../dashboard/ProvidersSettings";
+import ProviderNotifications from "../dashboard/ProviderNotifications";
 const ProviderRoutes = () => {
   return (
     <Routes>
@@ -22,6 +23,7 @@ const ProviderRoutes = () => {
         element={<ProvidersComplaintThread />}
       />
       <Route path="complaint/:id/reply" element={<ProvidersReplyComplaint />} />
+      <Route path="notifications" element={<ProviderNotifications />} />
     </Routes>
   );
 };
