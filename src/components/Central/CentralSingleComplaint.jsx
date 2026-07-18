@@ -4,7 +4,6 @@ import {
   CircularProgress,
   Typography,
   Card,
-  Chip,
   MenuItem,
   Divider,
   TextField,
@@ -12,7 +11,6 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import {
-  assignComplaint,
   getSingleComplaint,
   getComplaintStatusHistory,
   getComplaintAssignmentHistory,
@@ -23,7 +21,6 @@ import { DetailItem, StatusInfoCard } from "../State/StateSingleComplaint";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useState } from "react";
 import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
-import { getUsers } from "../../services/central";
 import { PriorityChip, StatusChip } from "../../shared/StatusChips";
 import ActivityTimeline from "../../shared/ActivityTimeline";
 
@@ -32,8 +29,6 @@ const CentralSingleComplaintPage = () => {
   const { id } = useParams();
   const handleError = useHandleError();
   const handleSuccess = useHandleSuccess();
-  const [assignedTo, setAssignedTo] = useState("");
-  const [isAssigning, setIsAssigning] = useState(false);
   const [priority, setPriority] = useState("");
   const [isUpdatingPriority, setIsUpdatingPriority] = useState(false);
 
@@ -62,15 +57,6 @@ const CentralSingleComplaintPage = () => {
 
   console.log(statusHistory, assignmentHistory, "assignmentHistory");
 
-  const { data: officers } = useQuery({
-    queryKey: ["centralOfficers"],
-    queryFn: () =>
-      getUsers({
-        role: "Admin",
-      }),
-    enabled: true,
-  });
-
   const buttonText =
     complaint?.status === "resolved"
       ? "View Resolution"
@@ -82,23 +68,6 @@ const CentralSingleComplaintPage = () => {
     navigate(`/admin/complaint/${complaint?.id}/thread`, {
       state: { thread: complaint?.id },
     });
-  };
-
-  const handleAssignComplaint = async () => {
-    if (!assignedTo) {
-      handleError("Please select an officer to assign.");
-      return;
-    }
-    setIsAssigning(true);
-    try {
-      await assignComplaint({ id, payload: { assigned_to: assignedTo } });
-      handleSuccess("Complaint assigned successfully!");
-      refetch();
-    } catch (error) {
-      handleError(error, "Failed to assign complaint.");
-    } finally {
-      setIsAssigning(false);
-    }
   };
 
   const handleUpdatePriority = async () => {

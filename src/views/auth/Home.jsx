@@ -54,21 +54,21 @@ const Home = () => {
     {
       id: 1,
       title: "Submit a new complaint",
-      subtitle: "File a new complaint as an enrollee.",
+      subtitle: "File as an enrollee, HMO, or provider",
       icon: <NoteAddOutlinedIcon sx={{ fontSize: 28 }} />, // This icon is fine
       onClick: () => navigate("/create-complaint"), // This route is handled by Enrollee.jsx
     },
     {
       id: 2,
       title: "Enrollee Login",
-      subtitle: "Access your enrollee portal.",
+      subtitle: "Track your complaints and coverage",
       icon: <PersonOutlineIcon sx={{ fontSize: 28 }} />,
       onClick: () => navigate("/login", { state: { from: "enrollee" } }),
     },
     {
       id: 3,
       title: "Staff / HMO / Provider Login",
-      subtitle: "Access for authorized personnel.",
+      subtitle: "NHIA officers, HMOs, and healthcare providers",
       icon: <GroupsOutlinedIcon sx={{ fontSize: 28 }} />,
       onClick: () => navigate("/login", { state: { from: "staff" } }),
     },

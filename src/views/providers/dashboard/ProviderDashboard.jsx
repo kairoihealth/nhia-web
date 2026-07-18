@@ -113,9 +113,10 @@ const ProviderDashboard = () => {
 
   const pieStatusColors = [
     { status: "pending", color: "#FFCC99" },
-    { status: "active", color: "#72F172" },
-    { status: "closed", color: "#4B95DD" },
+    { status: "active", color: "#4B95DD" },
+    { status: "closed", color: "#72F172" },
     { status: "escalated", color: "#E75C5C" },
+    { status: "resolved", color: "#72F172" },
   ];
   const filteredPieStatus = useMemo(
     () =>

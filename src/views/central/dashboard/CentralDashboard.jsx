@@ -134,9 +134,10 @@ const CentralDashboard = () => {
 
   const pieStatusColors = [
     { status: "pending", color: "#FFCC99" },
-    { status: "active", color: "#72F172" },
-    { status: "closed", color: "#4B95DD" },
+    { status: "active", color: "#4B95DD" },
+    { status: "closed", color: "#72F172" },
     { status: "escalated", color: "#E75C5C" },
+    { status: "resolved", color: "#72F172" },
   ];
   const filteredPieStatus = useMemo(
     () =>
@@ -313,7 +314,8 @@ const CentralDashboard = () => {
                 alignItems: "flex-start",
                 borderRadius: "12px",
                 backgroundColor: "#FFFFFF",
-                boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
+                boxShadow:
+                  "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
                 width: "100%",
                 height: "209px",
               }}
@@ -342,7 +344,8 @@ const CentralDashboard = () => {
                 alignItems: "flex-start",
                 borderRadius: "12px",
                 backgroundColor: "#FFFFFF",
-                boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
+                boxShadow:
+                  "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
                 width: "100%",
                 minHeight: "209px",
               }}
@@ -412,7 +415,8 @@ const CentralDashboard = () => {
                 alignItems: "flex-start",
                 borderRadius: "12px",
                 backgroundColor: "#FFFFFF",
-                boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
+                boxShadow:
+                  "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
                 width: "100%",
                 height: "209px",
               }}
@@ -438,7 +442,8 @@ const CentralDashboard = () => {
                 alignItems: "flex-start",
                 borderRadius: "12px",
                 backgroundColor: "#FFFFFF",
-                boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
+                boxShadow:
+                  "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
                 width: "100%",
                 height: "209px",
               }}
@@ -483,7 +488,8 @@ const CentralDashboard = () => {
               sx={{
                 p: { xs: 1, md: 2 },
                 borderRadius: "12px",
-                boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
+                boxShadow:
+                  "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
               }}
             >
               <Box

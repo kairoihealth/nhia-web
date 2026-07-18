@@ -35,13 +35,11 @@ const SecondForm = ({
   firstInfo,
   onNext,
   onBack,
-  btn,
 }) => {
   const handleError = useHandleError();
   const maxFiles = 5;
   const [errors, setErrors] = useState({});
 
-  // eslint-disable-next-line
   const complaintOptions =
     firstInfo.complaint_against === "Provider"
       ? providerComplaints
@@ -218,7 +216,7 @@ const SecondForm = ({
           boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.05)",
           backgroundColor: "#fff",
           border: "1px solid #F0F0F0",
-          overflowY: "auto",
+          overflow: "unset",
         }}
       >
         <FormCardHeader

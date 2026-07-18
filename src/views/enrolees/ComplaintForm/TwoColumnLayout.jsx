@@ -14,10 +14,10 @@ const TwoColumnLayout = ({
       {/* Left Column */}
       <Box
         sx={{
-          width: { xs: "100%", md: "32%", lg: "27%" },
+          width: { xs: "100%", md: "280px", lg: "380px" },
           backgroundColor: "#1B5E20",
           color: "#fff",
-          px: { xs: 5, sm: 16, md: 4, lg: 6 },
+          px: { xs: 5, sm: 16, md: 3, lg: 6 },
           py: { xs: 5, sm: 6, md: 4, lg: 6 },
           display: "flex",
           flexDirection: "column",

@@ -7,7 +7,6 @@ import {
   Typography,
   Card,
   CardMedia,
-  Chip,
   IconButton,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";

@@ -34,7 +34,7 @@ const textStyles = {
   },
 };
 
-const HmoReportsPage = () => {
+const ProviderReportsPage = () => {
   const { hasPermission } = useAuth();
   const handleError = useHandleError();
   const [pieData, setPieData] = useState(null);
@@ -43,7 +43,6 @@ const HmoReportsPage = () => {
     reportType: "status",
     startDate: "",
     endDate: "",
-    name: "",
   });
 
   const handleFilterChange = (event) => {
@@ -63,7 +62,6 @@ const HmoReportsPage = () => {
         reportType,
         start_date: startDate,
         end_date: endDate,
-        // [respondent]: name || "",
       });
 
       const aggregatedData = [
@@ -500,7 +498,6 @@ const HmoReportsPage = () => {
         }),
     [pieData],
   );
-  console.log(pieData, "pieData");
 
   const pieStatusData = {
     labels: filteredPieStatus?.map((s) => s.status) || [],
@@ -866,9 +863,9 @@ const HmoReportsPage = () => {
   );
 };
 
-const HmoReports = WithAuthorization(
-  HmoReportsPage,
+const ProviderReports = WithAuthorization(
+  ProviderReportsPage,
   "can_access_advanced_reporting",
 );
 
-export default HmoReports;
+export default ProviderReports;

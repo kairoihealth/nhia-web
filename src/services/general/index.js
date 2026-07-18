@@ -370,3 +370,68 @@ export const getInvitations = async ({
     throw error;
   }
 };
+
+export const getNotifications = async ({ page, page_size }) => {
+  const params = new URLSearchParams();
+
+  if (page) params.append("page", page);
+  if (page_size) params.append("page_size", page_size);
+  try {
+    const response = await Api.get(e.GET_NOTIFICATIONS, { params });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch notifications:", error);
+    throw error;
+  }
+};
+
+export const getUnreadNotifications = async () => {
+  try {
+    const response = await Api.get(e.GET_UNREAD_NOTIFICATIONS);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch unread notifications:", error);
+    throw error;
+  }
+};
+
+export const getUnreadNotificationCount = async () => {
+  try {
+    const response = await Api.get(e.GET_UNREAD_NOTIFICATIONS_COUNT);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch unread notification count:", error);
+    throw error;
+  }
+};
+
+
+export const getSingleNotification = async (id) => {
+  try {
+    const response = await Api.get(e.GET_SINGLE_NOTIFICATION(id));
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch notification:", error);
+    throw error;
+  }
+};
+
+export const markNotificationAsRead = async (id) => {
+  try {
+    const response = await Api.post(e.MARK_NOTIFICATION_AS_READ(id));
+    return response.data;
+  } catch (error) {
+    console.error("Failed to mark notification as read:", error);
+    throw error;
+  }
+};
+
+export const markAllNotificationsAsRead = async () => {
+  try {
+    const response = await Api.post(e.MARK_ALL_NOTIFICATIONS_AS_READ);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to mark all notifications as read:", error);
+    throw error;
+  }
+};
