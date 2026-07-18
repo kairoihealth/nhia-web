@@ -8,7 +8,6 @@ import {
   Stack,
   IconButton,
   Typography,
-  Chip,
   Modal,
   TextField,
   Fade,
@@ -40,7 +39,6 @@ const CentralComplaintThreadPage = () => {
 
   const navigate = useNavigate();
 
-  const [isDownloading, setIsDownloading] = useState("");
   const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState("");
   const [feedback, setFeedback] = useState("");

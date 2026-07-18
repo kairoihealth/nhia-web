@@ -32,7 +32,7 @@ const Notifications = () => {
   const handleError = useHandleError();
   const handleSuccess = useHandleSuccess();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMobile = useMediaQuery(theme.breakpoints.down("lg"));
   const [page, setPage] = useState(1);
   const pageSize = 15;
   const userRole = localStorage.getItem("userRole");
@@ -178,6 +178,8 @@ const Notifications = () => {
                   borderRadius: "8px",
                   flexDirection: isMobile ? "column" : "row",
                   alignItems: isMobile ? "flex-start" : "center",
+                  flexWrap: "wrap",
+                  gap: 2,
                   py: 1.5,
                 }}
                 secondaryAction={
@@ -194,7 +196,10 @@ const Notifications = () => {
                               textTransform: "none",
                             }}
                           >
-                            View Details
+                            View{" "}
+                            {notification.target_type === "complaint"
+                              ? "Complaint"
+                              : "Details"}
                           </Button>
                         )}
                       {!notification.is_read && (
@@ -242,9 +247,11 @@ const Notifications = () => {
                         color="text.secondary"
                       >
                         {[
-                          notification.actor_details?.name &&
-                            `By: ${notification.actor_details.name}`,
-                          notification.verb,
+                          (notification.actor_details?.role === "Admin" ||
+                            notification.actor_details?.role ===
+                              "StateAdmin") &&
+                            `By: ${notification.actor_details?.officer_code || "Officer"} `,
+                        //   notification.verb,
                           notification.created_at &&
                             new Date(notification.created_at).toLocaleString(),
                         ]
@@ -253,8 +260,12 @@ const Notifications = () => {
                       </Typography>
                     </>
                   }
-                  primaryTypographyProps={{
-                    fontWeight: notification.is_read ? 400 : 600,
+                  slotProps={{
+                    primary: {
+                      sx: {
+                        fontWeight: notification.is_read ? 400 : 600,
+                      },
+                    },
                   }}
                 />
                 {isMobile && (
@@ -278,7 +289,10 @@ const Notifications = () => {
                             textTransform: "none",
                           }}
                         >
-                          View Complaint
+                          View{" "}
+                          {notification.target_type === "complaint"
+                            ? "Complaint"
+                            : "Details"}
                         </Button>
                       )}
                     {!notification.is_read && (
@@ -287,7 +301,12 @@ const Notifications = () => {
                         onClick={() => handleMarkAsRead(notification.id)}
                         disabled={markAsReadMutation.isLoading}
                         variant="outlined"
-                        sx={{ color: "#1B5E20", borderColor: "#1B5E20" }}
+                        sx={{
+                          color: "#1B5E20",
+                          borderColor: "#1B5E20",
+                          fontSize: "12px",
+                          textTransform: "none",
+                        }}
                       >
                         Mark as read
                       </Button>

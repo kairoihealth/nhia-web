@@ -1,17 +1,12 @@
 import { Box, Button, Card, TextField, Typography } from "@mui/material";
 import SuccessModal from "../../../shared/SuccessModal";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import ReactSelect from "react-select";
 import { selectStyles, textFieldStyles } from "../../../utils/style";
 import { useQuery } from "@tanstack/react-query";
-import {
-  addHmo,
-  addProvider,
-  getAllHmo,
-  getAllProviders,
-} from "../../../services/settings";
+import { addHmo, addProvider } from "../../../services/settings";
 import { useHandleError } from "../../../hooks/useToastHandler";
-import { inviteStateUser, inviteUser } from "../../../services/central";
+import { inviteStateUser } from "../../../services/central";
 import { useNavigate } from "react-router-dom";
 import { getAdminStatuses } from "../../../services/adminSettings";
 import FormCardHeader from "../../enrolees/ComplaintForm/FormCardHeader";
@@ -32,37 +27,7 @@ const InvitationForm = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const hmosQueryKey = useMemo(() => ["hmos"], []);
-  const { data: hmosData } = useQuery({
-    queryKey: hmosQueryKey,
-    queryFn: () => getAllHmo({ page: 1, pageSize: 100 }),
-  });
-
-  const hmos = useMemo(
-    () =>
-      hmosData?.results?.map((hmo) => ({
-        value: hmo.id,
-        label: hmo.name,
-      })) || [],
-    [hmosData],
-  );
-
-  const providersQueryKey = useMemo(() => ["providers"], []);
-  const { data: providersData } = useQuery({
-    queryKey: providersQueryKey,
-    queryFn: () => getAllProviders({ page: 1, pageSize: 100 }),
-  });
-
-  const providers = useMemo(
-    () =>
-      providersData?.results?.map((provider) => ({
-        value: provider.id,
-        label: provider.name,
-      })) || [],
-    [providersData],
-  );
-
-  const { data: statuses, isLoading } = useQuery({
+  const { data: statuses } = useQuery({
     queryKey: ["statuses"],
     queryFn: () => getAdminStatuses({ page: 1, pageSize: 10 }),
   });
@@ -71,8 +36,8 @@ const InvitationForm = () => {
     (status) => status?.is_active,
   );
 
-  const topStatus = activeStatuses?.find(
-    (status) => status?.permissions?.length === 6,
+  const activeStatus = activeStatuses?.find(
+    (status) => status?.is_active && status?.permissions?.length >= 5,
   );
 
   const handleInputChange = (event) => {
@@ -122,7 +87,7 @@ const InvitationForm = () => {
         ...(selectedType.value === "Provider" && {
           provider: res.id,
         }),
-        admin_status: topStatus?.id,
+        admin_status: activeStatus?.id,
       };
 
       await inviteStateUser(payload);
@@ -143,8 +108,6 @@ const InvitationForm = () => {
     }
   };
 
-  console.log(topStatus, "activeStatuses");
-
   return (
     <Card
       sx={{
@@ -152,6 +115,9 @@ const InvitationForm = () => {
         p: { xs: 2, md: 4 },
         borderRadius: "12px",
         boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
+        maxWidth: "550px",
+        width: "100%",
+        overflow: "visible",
       }}
     >
       <FormCardHeader title="Send Invite" />
@@ -162,7 +128,7 @@ const InvitationForm = () => {
           display: "flex",
           flexDirection: "column",
           gap: 2,
-          width: { xs: "100%", md: "40%" },
+          width: "100%",
           py: 4,
         }}
       >

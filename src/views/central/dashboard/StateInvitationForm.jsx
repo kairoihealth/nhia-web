@@ -114,6 +114,9 @@ const StateInvitationForm = () => {
         p: { xs: 2, md: 4 },
         borderRadius: "12px",
         boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
+        maxWidth: "550px",
+        width: "100%",
+        overflow: "visible",
       }}
     >
       <FormCardHeader title="Send Invite" />
@@ -124,7 +127,7 @@ const StateInvitationForm = () => {
           display: "flex",
           flexDirection: "column",
           gap: 2,
-          width: { xs: "100%", md: "40%" },
+          width: "100%",
           py: 4,
         }}
       >
@@ -186,7 +189,7 @@ const StateInvitationForm = () => {
         </Box>
 
         {/* Button */}
-        <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
           <Button
             variant="contained"
             size="medium"

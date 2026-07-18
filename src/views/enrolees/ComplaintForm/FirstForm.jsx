@@ -29,14 +29,7 @@ const option = [
   { value: "NHIA", label: "NHIA" },
 ];
 
-const FirstForm = ({
-  firstInfo,
-  setFirstInfo,
-  onNext,
-  onBack,
-  btn,
-  selectedAccountType,
-}) => {
+const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack }) => {
   const [errors, setErrors] = useState({});
   const [selectedHmo, setSelectedHmo] = useState(null);
   const [selectedProvider, setSelectedProvider] = useState(null);
@@ -116,10 +109,10 @@ const FirstForm = ({
     //   selectedAccountType === "Enrollee" ||
     //   selectedAccountType === "Employer"
     // ) {
-      if (!firstInfo.firstName?.trim())
-        newErrors.firstName = "First name is required.";
-      if (!firstInfo.lastName?.trim())
-        newErrors.lastName = "Last name is required.";
+    if (!firstInfo.firstName?.trim())
+      newErrors.firstName = "First name is required.";
+    if (!firstInfo.lastName?.trim())
+      newErrors.lastName = "Last name is required.";
     // }
     if (!firstInfo.contactAddress?.trim())
       newErrors.contactAddress = "Contact address is required.";
@@ -193,7 +186,7 @@ const FirstForm = ({
           boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.05)",
           backgroundColor: "#fff",
           border: "1px solid #F0F0F0",
-          overflowY: "auto",
+          overflow: "unset",
         }}
       >
         <FormCardHeader
@@ -204,107 +197,103 @@ const FirstForm = ({
         <form>
           {/* {(selectedAccountType === "Enrollee" ||
             selectedAccountType === "Employer") && ( */}
-            <>
+          <>
+            <Box
+              display="flex"
+              flexDirection={{ xs: "column", md: "row" }}
+              gap={2}
+            >
               <Box
-                display="flex"
-                flexDirection={{ xs: "column", md: "row" }}
-                gap={2}
+                flex={1}
+                sx={{ display: "flex", flexDirection: "column", gap: 1 }}
               >
-                <Box
-                  flex={1}
-                  sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                <Typography
+                  sx={{
+                    color: "#595959",
+                    fontSize: "16px",
+                    fontWeight: 500,
+                    lineHeight: "24px",
+                  }}
                 >
-                  <Typography
-                    sx={{
-                      color: "#595959",
-                      fontSize: "16px",
-                      fontWeight: 500,
-                      lineHeight: "24px",
-                    }}
-                  >
-                    First Name
-                    <span style={{ color: "#099243", marginLeft: "6px" }}>
-                      *
-                    </span>
-                  </Typography>
-                  <TextField
-                    name="firstName"
-                    fullWidth
-                    variant="outlined"
-                    required
-                    placeholder="enter first name"
-                    sx={textFieldStyles}
-                    value={firstInfo.firstName}
-                    onChange={handleInputChange}
-                    error={!!errors.firstName}
-                    helperText={errors.firstName}
-                  />
-                </Box>
-                <Box
-                  flex={1}
-                  sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-                >
-                  <Typography
-                    sx={{
-                      color: "#595959",
-                      fontSize: "16px",
-                      fontWeight: 500,
-                      lineHeight: "24px",
-                    }}
-                  >
-                    Last Name
-                    <span style={{ color: "#099243", marginLeft: "6px" }}>
-                      *
-                    </span>
-                  </Typography>
-                  <TextField
-                    name="lastName"
-                    fullWidth
-                    variant="outlined"
-                    required
-                    placeholder="enter last name"
-                    sx={textFieldStyles}
-                    value={firstInfo.lastName}
-                    onChange={handleInputChange}
-                    error={!!errors.lastName}
-                    helperText={errors.lastName}
-                  />
-                </Box>
+                  First Name
+                  <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
+                </Typography>
+                <TextField
+                  name="firstName"
+                  fullWidth
+                  variant="outlined"
+                  required
+                  placeholder="enter first name"
+                  sx={textFieldStyles}
+                  value={firstInfo.firstName}
+                  onChange={handleInputChange}
+                  error={!!errors.firstName}
+                  helperText={errors.firstName}
+                />
               </Box>
               <Box
-                display="flex"
-                flexDirection={{ xs: "column", md: "row" }}
-                gap={2}
-                mt={2}
+                flex={1}
+                sx={{ display: "flex", flexDirection: "column", gap: 1 }}
               >
-                <Box
-                  flex={1}
-                  sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                <Typography
+                  sx={{
+                    color: "#595959",
+                    fontSize: "16px",
+                    fontWeight: 500,
+                    lineHeight: "24px",
+                  }}
                 >
-                  <Typography
-                    sx={{
-                      color: "#595959",
-                      fontSize: "16px",
-                      fontWeight: 500,
-                      lineHeight: "24px",
-                    }}
-                  >
-                    Middle Name
-                  </Typography>
-                  <TextField
-                    name="middleName"
-                    fullWidth
-                    variant="outlined"
-                    placeholder="enter middle name"
-                    sx={textFieldStyles}
-                    value={firstInfo.middleName}
-                    onChange={handleInputChange}
-                    error={!!errors.middleName}
-                    helperText={errors.middleName}
-                  />
-                </Box>
+                  Last Name
+                  <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
+                </Typography>
+                <TextField
+                  name="lastName"
+                  fullWidth
+                  variant="outlined"
+                  required
+                  placeholder="enter last name"
+                  sx={textFieldStyles}
+                  value={firstInfo.lastName}
+                  onChange={handleInputChange}
+                  error={!!errors.lastName}
+                  helperText={errors.lastName}
+                />
               </Box>
-            </>
+            </Box>
+            <Box
+              display="flex"
+              flexDirection={{ xs: "column", md: "row" }}
+              gap={2}
+              mt={2}
+            >
+              <Box
+                flex={1}
+                sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+              >
+                <Typography
+                  sx={{
+                    color: "#595959",
+                    fontSize: "16px",
+                    fontWeight: 500,
+                    lineHeight: "24px",
+                  }}
+                >
+                  Middle Name
+                </Typography>
+                <TextField
+                  name="middleName"
+                  fullWidth
+                  variant="outlined"
+                  placeholder="enter middle name"
+                  sx={textFieldStyles}
+                  value={firstInfo.middleName}
+                  onChange={handleInputChange}
+                  error={!!errors.middleName}
+                  helperText={errors.middleName}
+                />
+              </Box>
+            </Box>
+          </>
           {/* )} */}
           <Box mt={2}>
             <Box

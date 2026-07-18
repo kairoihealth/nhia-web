@@ -10,10 +10,12 @@ import {
 import { useMemo, useState } from "react";
 import PieChart from "../../../shared/PieChart";
 import { options } from "../../../utils/config";
+import { useQuery } from "@tanstack/react-query";
 import { getComplaintStats } from "../../../services/general";
 import { useHandleError } from "../../../hooks/useToastHandler";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { getAllHmo, getAllProviders } from "../../../services/settings";
 import Logo from "../../../assets/nhia-logo.png";
 import { useAuth } from "../../../components/auth/AuthContext";
 import WithAuthorization from "../../../components/auth/withAuthorization";
@@ -34,15 +36,23 @@ const textStyles = {
   },
 };
 
-const HmoReportsPage = () => {
+const campaignAgainstOptions = [
+  { value: "HMO", label: "Hmo" },
+  { value: "Provider", label: "Provider" },
+  { value: "Enrollee", label: "Enrollee" },
+];
+
+const StateReportsPage = () => {
   const { hasPermission } = useAuth();
   const handleError = useHandleError();
   const [pieData, setPieData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const stateId = localStorage.getItem("stateId");
   const [filters, setFilters] = useState({
     reportType: "status",
     startDate: "",
     endDate: "",
+    complaint_against: "",
     name: "",
   });
 
@@ -54,22 +64,62 @@ const HmoReportsPage = () => {
     }));
   };
 
+  const hmosQueryKey = useMemo(() => ["hmos"], []);
+  const { data: hmosData } = useQuery({
+    queryKey: hmosQueryKey,
+    queryFn: () => getAllHmo({ page: 1, pageSize: 100 }),
+  });
+
+  const hmos = useMemo(
+    () =>
+      hmosData?.results?.map((hmo) => ({
+        value: hmo.id,
+        label: hmo.name,
+      })) || [],
+    [hmosData],
+  );
+
+  const providersQueryKey = useMemo(() => ["providers"], []);
+  const { data: providersData } = useQuery({
+    queryKey: providersQueryKey,
+    queryFn: () => getAllProviders({ page: 1, pageSize: 100 }),
+  });
+
+  const providers = useMemo(
+    () =>
+      providersData?.results?.map((provider) => ({
+        value: provider.id,
+        label: provider.name,
+      })) || [],
+    [providersData],
+  );
+
   const handleGenerateReport = async () => {
-    const { reportType, startDate, endDate } = filters;
+    const { reportType, startDate, endDate, complaint_against, name } = filters;
+    const respondent =
+      complaint_against === "HMO"
+        ? "hmo_id"
+        : complaint_against === "Provider"
+          ? "provider_id"
+          : complaint_against === "Enrollee"
+            ? "enrollee"
+            : null;
 
     try {
       setIsLoading(true);
       const reportData = await getComplaintStats({
         reportType,
+        state_id: stateId,
         start_date: startDate,
         end_date: endDate,
-        // [respondent]: name || "",
+        [respondent]: name || "",
       });
 
       const aggregatedData = [
         { status: "All", total: reportData?.total },
         ...(reportData[filters.reportType]?.map((item) => {
-          const key = item.status || item.complaint_type;
+          const key =
+            item.status || item.complaint_type || item.complaint_against;
           return { status: key || "Unknown", total: item.total };
         }) || []),
       ];
@@ -201,7 +251,19 @@ const HmoReportsPage = () => {
     yPosition += 10;
 
     const activeFilters = [];
-
+    if (filters.complaint_against && filters.name) {
+      if (filters.complaint_against === "HMO") {
+        const hmoName = hmos.find((h) => h.value === filters.name)?.label;
+        if (hmoName) activeFilters.push(`HMO: ${hmoName}`);
+      } else if (filters.complaint_against === "Provider") {
+        const providerName = providers.find(
+          (p) => p.value === filters.name,
+        )?.label;
+        if (providerName) activeFilters.push(`Provider: ${providerName}`);
+      } else if (filters.complaint_against === "Enrollee") {
+        activeFilters.push(`Enrollee: ${filters.name}`);
+      }
+    }
     if (filters.startDate)
       activeFilters.push(
         `From: ${new Date(filters.startDate).toLocaleDateString()}`,
@@ -500,7 +562,6 @@ const HmoReportsPage = () => {
         }),
     [pieData],
   );
-  console.log(pieData, "pieData");
 
   const pieStatusData = {
     labels: filteredPieStatus?.map((s) => s.status) || [],
@@ -578,9 +639,148 @@ const HmoReportsPage = () => {
                 >
                   <option value="status">Complaints</option>
                   <option value="complaint_type">Complaint Type</option>
+                  <option value="complaint_against">Complaint Against</option>
                 </select>
               </FormControl>
             </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                width: { xs: "100%", sm: "200px" },
+                gap: 1,
+              }}
+            >
+              <Typography
+                sx={{
+                  color: "#1B5E20",
+                  fontSize: "16px",
+                  fontWeight: 600,
+                  lineHeight: "19.36px",
+                }}
+              >
+                Complaint against
+                <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
+              </Typography>
+              <select
+                id="complaint_against"
+                value={filters.complaint_against}
+                name="complaint_against"
+                onChange={handleFilterChange}
+                style={{
+                  width: "100%",
+                  height: "51px",
+                  borderRadius: "8px",
+                  backgroundColor: "#F5F5F5",
+                  padding: "0 16px",
+                  border: "1px solid #DADADA",
+                  color: "#475467",
+                  fontSize: "16px",
+                }}
+              >
+                <option value="status">All</option>
+                {campaignAgainstOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </Box>
+
+            {filters.complaint_against === "HMO" ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  width: { xs: "100%", sm: "200px" },
+                  gap: 1,
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: "#1B5E20",
+                    fontSize: "16px",
+                    fontWeight: 600,
+                    lineHeight: "19.36px",
+                  }}
+                >
+                  HMO Name
+                  <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
+                </Typography>
+                <Box>
+                  <select
+                    id="name"
+                    value={filters.name}
+                    name="name"
+                    onChange={handleFilterChange}
+                    style={{
+                      width: "100%",
+                      height: "51px",
+                      borderRadius: "8px",
+                      backgroundColor: "#F5F5F5",
+                      padding: "0 16px",
+                      border: "1px solid #DADADA",
+                      color: "#475467",
+                      fontSize: "16px",
+                    }}
+                  >
+                    <option value="status">All</option>
+                    {hmos.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </Box>
+              </Box>
+            ) : filters.complaint_against === "Provider" ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  width: { xs: "100%", sm: "200px" },
+                  gap: 1,
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: "#1B5E20",
+                    fontSize: "16px",
+                    fontWeight: 600,
+                    lineHeight: "19.36px",
+                  }}
+                >
+                  Providers Name
+                  <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
+                </Typography>
+                <Box>
+                  <select
+                    id="name"
+                    value={filters.name}
+                    name="name"
+                    onChange={handleFilterChange}
+                    style={{
+                      width: "100%",
+                      height: "51px",
+                      borderRadius: "8px",
+                      backgroundColor: "#F5F5F5",
+                      padding: "0 16px",
+                      border: "1px solid #DADADA",
+                      color: "#475467",
+                      fontSize: "16px",
+                    }}
+                  >
+                    <option value="status">All</option>
+                    {providers.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </Box>
+              </Box>
+            ) : null}
 
             <Box
               sx={{
@@ -866,9 +1066,9 @@ const HmoReportsPage = () => {
   );
 };
 
-const HmoReports = WithAuthorization(
-  HmoReportsPage,
+const StateReports = WithAuthorization(
+  StateReportsPage,
   "can_access_advanced_reporting",
 );
 
-export default HmoReports;
+export default StateReports;

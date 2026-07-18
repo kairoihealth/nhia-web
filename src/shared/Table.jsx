@@ -31,7 +31,7 @@ const ReusableTable = ({
   totalPages = 1,
   page = 1,
   setPage,
-  pageSize = 10,
+  // pageSize = 10,
   // setPageSize,
 }) => {
   const theme = useTheme();

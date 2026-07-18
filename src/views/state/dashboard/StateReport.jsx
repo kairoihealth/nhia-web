@@ -936,40 +936,6 @@ const StateReportsPage = () => {
                     </select>
                   </Box>
                 </Box>
-              ) : filters.complaint_against === "Enrollee" ? (
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: { xs: "100%", sm: "200px" },
-                    gap: 1,
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      color: "#1B5E20",
-                      fontSize: "16px",
-                      fontWeight: 600,
-                      lineHeight: "19.36px",
-                    }}
-                  >
-                    Enrollee Name or NHIA Number
-                    <span style={{ color: "#099243", marginLeft: "6px" }}>
-                      *
-                    </span>
-                  </Typography>
-                  <Box>
-                    <TextField
-                      name="name"
-                      fullWidth
-                      variant="outlined"
-                      required
-                      placeholder="enter Enrollee name or NHIA number"
-                      value={filters.name}
-                      onChange={handleFilterChange}
-                    />
-                  </Box>
-                </Box>
               ) : null}
 
               {/* Location */}

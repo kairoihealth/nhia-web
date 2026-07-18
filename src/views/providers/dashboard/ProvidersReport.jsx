@@ -12,12 +12,10 @@ import { useMemo } from "react";
 import { useState } from "react";
 import PieChart from "../../../shared/PieChart";
 import { options } from "../../../utils/config";
-import { useQuery } from "@tanstack/react-query";
 import { getComplaintStats } from "../../../services/general";
 import { useHandleError } from "../../../hooks/useToastHandler";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { getStates } from "../../../services/settings";
 import WithAuthorization from "../../../components/auth/withAuthorization";
 import { useAuth } from "../../../components/auth/AuthContext";
 
@@ -55,7 +53,6 @@ const ProvidersReportPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [filters, setFilters] = useState({
     reportType: "complaints",
-    location: "",
     startDate: "",
     endDate: "",
   });
@@ -68,24 +65,13 @@ const ProvidersReportPage = () => {
     }));
   };
 
-  const {
-    data: states,
-    isLoading: isLoadingStates,
-    // isError,
-    // error,
-  } = useQuery({
-    queryKey: ["states"],
-    queryFn: () => getStates(),
-  });
-
   const handleGenerateReport = async () => {
-    const { reportType, location, startDate, endDate } = filters;
+    const { reportType, startDate, endDate } = filters;
 
     try {
       setIsLoading(true);
       const reportData = await getComplaintStats({
         reportType,
-        state_id: location,
         start_date: startDate,
         end_date: endDate,
       });
@@ -189,21 +175,6 @@ const ProvidersReportPage = () => {
     ],
   };
 
-  if (isLoadingStates) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
-
   return (
     <Box>
       {/* <Helmet>
@@ -286,6 +257,8 @@ const ProvidersReportPage = () => {
                   >
                     {/* <option value="">Select Report Type</option> */}
                     <option value="complaints">Complaints</option>
+                    {/* <option value="complaint_type">Complaint Type</option>
+                    <option value="complaint_against">Complaint Against</option> */}
                   </select>
                   {/* <Select
                     labelId="report-type-label"
@@ -298,68 +271,6 @@ const ProvidersReportPage = () => {
                   >
                     <MenuItem value="">Comparison Value</MenuItem>
                     <MenuItem value="complaints">Complaints</MenuItem>
-                  </Select> */}
-                </FormControl>
-              </Box>
-
-              {/* Location */}
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  width: { xs: "100%", sm: "243px" },
-                  gap: 1,
-                }}
-              >
-                <Typography
-                  sx={{
-                    color: "#1B5E20",
-                    fontSize: "16px",
-                    fontWeight: 600,
-                    lineHeight: "19.36px",
-                  }}
-                >
-                  Location
-                </Typography>
-                <FormControl
-                  fullWidth
-                  sx={{ maxWidth: { xs: "100%", sm: "243px" } }}
-                >
-                  <select
-                    id="location"
-                    value={filters.location}
-                    name="location"
-                    onChange={handleFilterChange}
-                    style={{
-                      width: "100%",
-                      height: "51px",
-                      borderRadius: "8px",
-                      backgroundColor: "#F5F5F5",
-                      padding: "0 16px",
-                      border: "1px solid #DADADA",
-                      color: "#475467",
-                      fontSize: "16px",
-                    }}
-                  >
-                    <option value="">Select Location</option>
-                    {states?.results?.map((state) => (
-                      <option key={state.id} value={state.id}>
-                        {state.name}
-                      </option>
-                    ))}
-                  </select>
-                  {/* <Select
-                    labelId="location-label"
-                    id="location"
-                    value={filters.location}
-                    name="location"
-                    onChange={handleFilterChange}
-                    // label="Location"
-                    sx={styles}
-                  >
-                    <MenuItem value="">Select Region</MenuItem>
-                    <MenuItem value="Lagos">Lagos</MenuItem>
-                    <MenuItem value="Kaduna">Kaduna</MenuItem>
                   </Select> */}
                 </FormControl>
               </Box>

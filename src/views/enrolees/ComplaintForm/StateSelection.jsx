@@ -1,5 +1,4 @@
 import { Box, Typography, Button, Card } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getStates } from "../../../services/settings";
 import ReactSelect from "react-select";
@@ -10,8 +9,7 @@ import TwoColumnLayout from "./TwoColumnLayout";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import FormCardHeader from "./FormCardHeader";
 
-const StateSelection = ({ stateInfo, setStateInfo, onNext, onBack, btn }) => {
-  const navigate = useNavigate();
+const StateSelection = ({ stateInfo, setStateInfo, onNext, onBack }) => {
   const [errors, setErrors] = useState({});
 
   const { data, isLoading } = useQuery({

@@ -1,7 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import ProviderDashboard from "../dashboard/ProviderDashboard";
 import ProviderComplaints from "../dashboard/ProvidersComplaints";
-import ProvidersReport from "../dashboard/ProvidersReport";
 import ProvidersProfile from "../dashboard/ProvidersProfile";
 // import ProvidersSettings from "../dashboard/ProvidersSettings";
 import ProvidersSingleComplaint from "../../../components/Providers/ProvidersSingleComplaint";
@@ -9,12 +8,13 @@ import ProvidersComplaintThread from "../../../components/Providers/ProvidersCom
 import ProvidersReplyComplaint from "../../../components/Providers/ProvidersReplyComplaint";
 import ProvidersSettings from "../dashboard/ProvidersSettings";
 import ProviderNotifications from "../dashboard/ProviderNotifications";
+import ProviderReports from "../dashboard/ProviderReports";
 const ProviderRoutes = () => {
   return (
     <Routes>
       <Route path="dashboard" element={<ProviderDashboard />} />
       <Route path="complaints" element={<ProviderComplaints />} />
-      <Route path="reports" element={<ProvidersReport />} />
+      <Route path="reports" element={<ProviderReports />} />
       <Route path="profile" element={<ProvidersProfile />} />
       <Route path="settings" element={<ProvidersSettings />} />
       <Route path="complaint/:id" element={<ProvidersSingleComplaint />} />
