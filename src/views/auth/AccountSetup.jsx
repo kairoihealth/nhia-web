@@ -127,7 +127,7 @@ const AccountSetup = () => {
     <>
       <Box
         sx={{
-          backgroundColor: "#038F3E",
+          backgroundColor: "#1B5E20",
           height: "auto",
           display: "flex",
           justifyContent: "center",
@@ -157,7 +157,7 @@ const AccountSetup = () => {
                 fontSize: "24px",
                 fontWeight: 500,
                 lineHeight: "32.4px",
-                color: "#038F3E",
+                color: "#1B5E20",
                 mt: 2,
               }}
               gutterBottom
@@ -302,7 +302,7 @@ const AccountSetup = () => {
                     inputStyle={{
                       ...formControlStyles,
                       "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "#038F3E",
+                        borderColor: "#1B5E20",
                       },
                     }}
                     // onChange={handleChange}
@@ -365,7 +365,7 @@ const AccountSetup = () => {
                   sx={{
                     ...textFieldStyles,
                     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#038F3E",
+                      borderColor: "#1B5E20",
                     },
                   }}
                   onChange={handleChange}
@@ -429,7 +429,7 @@ const AccountSetup = () => {
                   sx={{
                     ...textFieldStyles,
                     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#038F3E",
+                      borderColor: "#1B5E20",
                     },
                   }}
                   onChange={handleChange}
@@ -451,7 +451,7 @@ const AccountSetup = () => {
                   width: "347px",
                   height: "45px",
                   borderRadius: "50px",
-                  backgroundColor: "#038F3E",
+                  backgroundColor: "#1B5E20",
                   color: "#FFFFFF",
                   fontSize: "16px",
                   fontWeight: 500,
@@ -483,7 +483,7 @@ const AccountSetup = () => {
               {/* Login Link */}
               <Typography variant="body2" align="center">
                 I have an account?&nbsp;
-                <Link href="/login" underline="hover" color="#038F3E">
+                <Link href="/login" underline="hover" color="#1B5E20">
                   Log In
                 </Link>
               </Typography>

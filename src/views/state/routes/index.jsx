@@ -10,6 +10,8 @@ import StateSingleComplaint from "../../../components/State/StateSingleComplaint
 import StateComplaintThread from "../../../components/State/StateComplaintThread";
 import StateReplyComplaint from "../../../components/State/StateReplyComplaint";
 import StateSettings from "../dashboard/StateSettings";
+import StateWorkloadSummary from "../dashboard/StateWorkloadSummary";
+import StateNotifications from "../dashboard/StateNotifications";
 
 const StateRoutes = () => {
   return (
@@ -30,6 +32,8 @@ const StateRoutes = () => {
         <Route path="complaint/:id" element={<StateSingleComplaint />} />
         <Route path="complaint/:id/thread" element={<StateComplaintThread />} />
         <Route path="complaint/:id/reply" element={<StateReplyComplaint />} />
+        <Route path="workload" element={<StateWorkloadSummary />} />
+        <Route path="notifications" element={<StateNotifications />} />
       </Route>
     </Routes>
   );

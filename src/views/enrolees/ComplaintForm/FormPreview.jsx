@@ -1,4 +1,3 @@
-import Logo from "../../../assets/nhia-logo.png";
 import {
   Box,
   Button,
@@ -11,6 +10,9 @@ import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useState } from "react";
 import PropTypes from "prop-types";
+import TwoColumnLayout from "./TwoColumnLayout";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import FormCardHeader from "./FormCardHeader";
 
 const FormPreview = ({
   firstInfo,
@@ -18,7 +20,6 @@ const FormPreview = ({
   onSubmit,
   isSubmitting,
   onBack,
-  btn,
 }) => {
   const [, setFiles] = useState(complaintInfo?.files || []);
   const handleDeleteFile = (fileId) => {
@@ -31,609 +32,611 @@ const FormPreview = ({
   console.log(firstInfo, complaintInfo, "firstInfo");
 
   return (
-    <>
-      <Box
+    <TwoColumnLayout
+      title="Review before submitting"
+      subtitle="Check all details carefully. Once submitted, your complaint is assigned a unique Case ID."
+      rightColumnSx={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Card
         sx={{
-          backgroundColor: { xs: "#FFFFFF", md: "#038F3E" },
+          width: { xs: "100%", sm: "70%", md: "85%", lg: "65%" },
+          p: { xs: 3, md: 5 },
+          borderRadius: "16px",
+          boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.05)",
+          backgroundColor: "#fff",
+          border: "1px solid #F0F0F0",
+          overflow: "unset",
         }}
       >
+        <FormCardHeader
+          title="Complaint Preview"
+          subtitle="Review your complaint before submitting"
+        />
+        <FormCardHeader
+          title="Complainant Details"
+          titleSx={{ fontSize: "16px", mb: 0.5 }}
+        />
         <Box
-          sx={{
-            display: { xs: "grid", md: "flex" },
-            justifyContent: "center",
-            alignItems: { xs: "flex-start", md: "center" },
-            py: { xs: 0, md: 4 },
-          }}
+          sx={(theme) => ({
+            border: `1px solid ${theme.palette.divider}`,
+            borderRadius: "12px",
+            p: 2.5,
+            backgroundColor: "#F9F9F9",
+            width: "100%",
+            mb: 4,
+          })}
         >
-          <Box>
-            <Box
-              sx={{
-                width: { xs: "400px", md: "100%" },
-                backgroundColor: "#fff",
-                padding: "2rem",
-                // margin: { xs: 0, md: "2rem" },
-                borderRadius: "8px",
-                px: { xs: 2, md: 16 },
-              }}
-            >
-              <img
-                src={Logo}
-                alt="Logo"
-                style={{ display: "block", margin: "0 auto" }}
-              />
+          <Box display="flex" flexDirection="column" gap={2}>
+            <Box flex={1} sx={{ display: "flex", gap: 2 }}>
               <Typography
-                align="center"
                 sx={{
-                  fontSize: "20px",
+                  color: "#595959",
+                  fontSize: { xs: "14px", md: "16px" },
                   fontWeight: 500,
-                  lineHeight: "27px",
-                  color: "#038F3E",
-                  margin: "1rem 0",
+                  lineHeight: "24px",
+                  width: "40%",
                 }}
               >
-                Complaint Preview
+                Name:
               </Typography>
+              <Typography
+                sx={{
+                  color: "#1B1C1E",
+                  fontSize: { xs: "14px", md: "16px" },
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                  width: "60%",
+                }}
+              >
+                {firstInfo.firstName} {firstInfo.middleName}{" "}
+                {firstInfo.lastName}
+              </Typography>
+            </Box>
+            <Box flex={1} sx={{ display: "flex", gap: 2 }}>
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: { xs: "14px", md: "16px" },
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                  width: "40%",
+                }}
+              >
+                Contact Address:
+              </Typography>
+              <Typography
+                sx={{
+                  color: "#1B1C1E",
+                  fontSize: { xs: "14px", md: "16px" },
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                  width: "60%",
+                }}
+              >
+                {firstInfo?.contactAddress}
+              </Typography>
+            </Box>
+            <Box flex={1} sx={{ display: "flex", gap: 2 }}>
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: { xs: "14px", md: "16px" },
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                  width: "40%",
+                }}
+              >
+                Email Address:
+              </Typography>
+              <Typography
+                sx={{
+                  color: "#1B1C1E",
+                  fontSize: { xs: "14px", md: "16px" },
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                  width: "60%",
+                }}
+              >
+                {firstInfo.email}
+              </Typography>
+            </Box>
+            <Box flex={1} sx={{ display: "flex", gap: 2 }}>
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: { xs: "14px", md: "16px" },
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                  width: "40%",
+                }}
+              >
+                Phone Number:
+              </Typography>
+              <Typography
+                sx={{
+                  color: "#1B1C1E",
+                  fontSize: { xs: "14px", md: "16px" },
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                  width: "60%",
+                }}
+              >
+                {firstInfo?.phone}
+              </Typography>
+            </Box>
+            <Box flex={1} sx={{ display: "flex", gap: 2 }}>
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: { xs: "14px", md: "16px" },
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                  width: "40%",
+                }}
+              >
+                NHIA Number:
+              </Typography>
+              <Typography
+                sx={{
+                  color: "#1B1C1E",
+                  fontSize: { xs: "14px", md: "16px" },
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                  width: "60%",
+                }}
+              >
+                {firstInfo?.nhiaNo}
+              </Typography>
+            </Box>
+            {firstInfo.organization && (
+              <Box flex={1} sx={{ display: "flex", gap: 2 }}>
+                <Typography
+                  sx={{
+                    color: "#595959",
+                    fontSize: { xs: "14px", md: "16px" },
+                    fontWeight: 500,
+                    lineHeight: "24px",
+                    width: "40%",
+                  }}
+                >
+                  Organization:
+                </Typography>
+                <Typography
+                  sx={{
+                    color: "#1B1C1E",
+                    fontSize: { xs: "14px", md: "16px" },
+                    fontWeight: 500,
+                    lineHeight: "24px",
+                    width: "60%",
+                  }}
+                >
+                  {firstInfo?.organization}
+                </Typography>
+              </Box>
+            )}
+          </Box>
+        </Box>
+
+        <Box>
+          <FormCardHeader
+            title="Complaint Details"
+            titleSx={{ fontSize: "16px" }}
+          />
+          <Box
+            sx={(theme) => ({
+              border: `1px solid ${theme.palette.divider}`,
+              borderRadius: "12px",
+              p: 2.5,
+              backgroundColor: "#F9F9F9",
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+            })}
+          >
+            <Box
+              flex={1}
+              sx={{ display: "flex", alignItems: "center", gap: 2 }}
+            >
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "14px",
+                  fontWeight: 500,
+                  lineHeight: "18.9px",
+                }}
+              >
+                Complaint Type:
+              </Typography>
+              <Typography
+                sx={{
+                  color: "#1B1C1E",
+                  fontSize: { xs: "14px", md: "16px" },
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                {complaintInfo?.complaint_type}
+              </Typography>
+            </Box>
+            <Box
+              flex={1}
+              sx={{ display: "flex", alignItems: "center", gap: 2 }}
+            >
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "14px",
+                  fontWeight: 500,
+                  lineHeight: "18.9px",
+                }}
+              >
+                Complaint Category:
+              </Typography>
+              <Typography
+                sx={{
+                  color: "#1B1C1E",
+                  fontSize: { xs: "14px", md: "16px" },
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                {complaintInfo?.complaint_category}
+              </Typography>
+            </Box>
+            <Box
+              flex={1}
+              sx={{ display: "flex", alignItems: "center", gap: 2 }}
+            >
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "14px",
+                  fontWeight: 500,
+                  lineHeight: "18.9px",
+                }}
+              >
+                Complaint Against:
+              </Typography>
+              <Typography
+                sx={{
+                  color: "#1B1C1E",
+                  fontSize: { xs: "14px", md: "16px" },
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                {firstInfo?.complaint_against}
+              </Typography>
+            </Box>
+            <Box
+              flex={1}
+              sx={{ display: "flex", alignItems: "center", gap: 2 }}
+            >
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "14px",
+                  fontWeight: 500,
+                  lineHeight: "18.9px",
+                }}
+              >
+                {firstInfo?.complaint_against}:
+              </Typography>
+              <Typography
+                sx={{
+                  color: "#1B1C1E",
+                  fontSize: { xs: "14px", md: "16px" },
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                {firstInfo?.selectedHmoOrProviderName || firstInfo?.enrolleeNo}
+              </Typography>
+            </Box>
+            <Box
+              flex={1}
+              sx={{ display: "flex", alignItems: "center", gap: 2 }}
+            >
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "14px",
+                  fontWeight: 500,
+                  lineHeight: "18.9px",
+                }}
+              >
+                Date of Incident:
+              </Typography>
+              <Typography
+                sx={{
+                  color: "#1B1C1E",
+                  fontSize: { xs: "14px", md: "16px" },
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                {complaintInfo?.date}
+              </Typography>
+            </Box>
+            <Box
+              flex={1}
+              sx={{ display: "flex", alignItems: "center", gap: 2 }}
+            >
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "14px",
+                  fontWeight: 500,
+                  lineHeight: "18.9px",
+                }}
+              >
+                Time of Incident:
+              </Typography>
+              <Typography
+                sx={{
+                  color: "#1B1C1E",
+                  fontSize: { xs: "14px", md: "16px" },
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                {complaintInfo?.time}
+              </Typography>
+            </Box>
+          </Box>
+
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "flex-start",
+              width: "100%",
+              border: (theme) => `1px solid ${theme.palette.divider}`,
+              borderRadius: "12px",
+              p: 2.5,
+              my: 4,
+              gap: 3,
+            }}
+          >
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
               <Typography
                 sx={{
                   fontSize: "16px",
                   fontWeight: 500,
                   lineHeight: "21.6px",
-                  color: "#038F3E",
-                  my: 4,
+                  color: "#000000",
                 }}
               >
-                Complainant Details
+                Complaint Description
               </Typography>
               <Box
                 sx={{
-                  width: { xs: "100%", md: "50%" },
-                  height: "232px",
-                  border: "0.5px solid #DADADA",
+                  width: "100%",
+                  minHeight: "100px",
+                  p: 1.5,
+                  backgroundColor: "#FDFDFD",
+                  border: (theme) => `1px solid ${theme.palette.divider}`,
                   borderRadius: "8px",
-                  backgroundColor: "#F5F5F5",
-                  p: 2,
                 }}
               >
-                <Box display="flex" flexDirection="column" gap={2}>
-                  <Box flex={1} sx={{ display: "flex", gap: 2 }}>
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: { xs: "14px", md: "16px" },
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                        width: "40%",
-                      }}
-                    >
-                      Name:
-                    </Typography>
-                    <Typography
-                      sx={{
-                        color: "#1B1C1E",
-                        fontSize: { xs: "14px", md: "16px" },
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                        width: "60%",
-                      }}
-                    >
-                      {firstInfo.firstName} {firstInfo.middleName}{" "}
-                      {firstInfo.lastName}
-                    </Typography>
-                  </Box>
-                  <Box flex={1} sx={{ display: "flex", gap: 2 }}>
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: { xs: "14px", md: "16px" },
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                        width: "40%",
-                      }}
-                    >
-                      Contact Address:
-                    </Typography>
-                    <Typography
-                      sx={{
-                        color: "#1B1C1E",
-                        fontSize: { xs: "14px", md: "16px" },
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                        width: "60%",
-                      }}
-                    >
-                      {firstInfo?.contactAddress}
-                    </Typography>
-                  </Box>
-                  <Box flex={1} sx={{ display: "flex", gap: 2 }}>
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: { xs: "14px", md: "16px" },
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                        width: "40%",
-                      }}
-                    >
-                      Email Address:
-                    </Typography>
-                    <Typography
-                      sx={{
-                        color: "#1B1C1E",
-                        fontSize: { xs: "14px", md: "16px" },
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                        width: "60%",
-                      }}
-                    >
-                      {firstInfo.email}
-                    </Typography>
-                  </Box>
-                  <Box flex={1} sx={{ display: "flex", gap: 2 }}>
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: { xs: "14px", md: "16px" },
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                        width: "40%",
-                      }}
-                    >
-                      Phone Number:
-                    </Typography>
-                    <Typography
-                      sx={{
-                        color: "#1B1C1E",
-                        fontSize: { xs: "14px", md: "16px" },
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                        width: "60%",
-                      }}
-                    >
-                      {firstInfo?.phone}
-                    </Typography>
-                  </Box>
-                  <Box flex={1} sx={{ display: "flex", gap: 2 }}>
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: { xs: "14px", md: "16px" },
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                        width: "40%",
-                      }}
-                    >
-                      NHIA Number:
-                    </Typography>
-                    <Typography
-                      sx={{
-                        color: "#1B1C1E",
-                        fontSize: { xs: "14px", md: "16px" },
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                        width: "60%",
-                      }}
-                    >
-                      {firstInfo?.nhiaNo}
-                    </Typography>
-                  </Box>
-                  {firstInfo.organization && (
-                    <Box flex={1} sx={{ display: "flex", gap: 2 }}>
-                      <Typography
-                        sx={{
-                          color: "#595959",
-                          fontSize: { xs: "14px", md: "16px" },
-                          fontWeight: 500,
-                          lineHeight: "24px",
-                          width: "40%",
-                        }}
-                      >
-                        Organization:
-                      </Typography>
-                      <Typography
-                        sx={{
-                          color: "#1B1C1E",
-                          fontSize: { xs: "14px", md: "16px" },
-                          fontWeight: 500,
-                          lineHeight: "24px",
-                          width: "60%",
-                        }}
-                      >
-                        {firstInfo?.organization}
-                      </Typography>
-                    </Box>
-                  )}
-                </Box>
-              </Box>
-
-              <Box>
                 <Typography
                   sx={{
                     fontSize: { xs: "14px", md: "16px" },
                     fontWeight: 500,
-                    lineHeight: "21.6px",
-                    color: "#038F3E",
-                    my: 4,
+                    lineHeight: "24px",
+                    color: "#1B1C1E",
                   }}
                 >
-                  Complaint Details
+                  {complaintInfo?.otherDescription ||
+                    complaintInfo?.description}
                 </Typography>
+              </Box>
+              {complaintInfo.additional_information && (
                 <Box
                   sx={{
                     display: "flex",
                     flexDirection: "column",
-                    width: "60%",
                     gap: 1,
+                    mt: 2,
                   }}
                 >
+                  <Typography
+                    sx={{
+                      fontSize: "16px",
+                      fontWeight: 500,
+                      lineHeight: "21.6px",
+                      color: "#000000",
+                    }}
+                  >
+                    Additional Information
+                  </Typography>
                   <Box
-                    flex={1}
-                    sx={{ display: "flex", alignItems: "center", gap: 2 }}
+                    sx={{
+                      width: "100%",
+                      minHeight: "100px",
+                      p: 1.5,
+                      backgroundColor: "#FDFDFD",
+                      border: (theme) => `1px solid ${theme.palette.divider}`,
+                      borderRadius: "8px",
+                    }}
                   >
                     <Typography
                       sx={{
-                        color: "#595959",
-                        fontSize: "14px",
-                        fontWeight: 500,
-                        lineHeight: "18.9px",
-                      }}
-                    >
-                      Complaint Type:
-                    </Typography>
-                    <Typography
-                      sx={{
-                        color: "#1B1C1E",
                         fontSize: { xs: "14px", md: "16px" },
                         fontWeight: 500,
                         lineHeight: "24px",
-                      }}
-                    >
-                      {complaintInfo?.complaint_type}
-                    </Typography>
-                  </Box>
-                  <Box
-                    flex={1}
-                    sx={{ display: "flex", alignItems: "center", gap: 2 }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: "14px",
-                        fontWeight: 500,
-                        lineHeight: "18.9px",
-                      }}
-                    >
-                      Complaint Category:
-                    </Typography>
-                    <Typography
-                      sx={{
                         color: "#1B1C1E",
-                        fontSize: { xs: "14px", md: "16px" },
-                        fontWeight: 500,
-                        lineHeight: "24px",
                       }}
                     >
-                      {complaintInfo?.complaint_category}
-                    </Typography>
-                  </Box>
-                  <Box
-                    flex={1}
-                    sx={{ display: "flex", alignItems: "center", gap: 2 }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: "14px",
-                        fontWeight: 500,
-                        lineHeight: "18.9px",
-                      }}
-                    >
-                      Complaint Against:
-                    </Typography>
-                    <Typography
-                      sx={{
-                        color: "#1B1C1E",
-                        fontSize: { xs: "14px", md: "16px" },
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                      }}
-                    >
-                      {firstInfo?.complaint_against}
-                    </Typography>
-                  </Box>
-                  <Box
-                    flex={1}
-                    sx={{ display: "flex", alignItems: "center", gap: 2 }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: "14px",
-                        fontWeight: 500,
-                        lineHeight: "18.9px",
-                      }}
-                    >
-                      {firstInfo?.complaint_against}:
-                    </Typography>
-                    <Typography
-                      sx={{
-                        color: "#1B1C1E",
-                        fontSize: { xs: "14px", md: "16px" },
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                      }}
-                    >
-                      {firstInfo?.selectedHmoOrProviderName ||
-                        firstInfo?.enrolleeNo}
-                    </Typography>
-                  </Box>
-                  <Box
-                    flex={1}
-                    sx={{ display: "flex", alignItems: "center", gap: 2 }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: "14px",
-                        fontWeight: 500,
-                        lineHeight: "18.9px",
-                      }}
-                    >
-                      Date of Incident:
-                    </Typography>
-                    <Typography
-                      sx={{
-                        color: "#1B1C1E",
-                        fontSize: { xs: "14px", md: "16px" },
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                      }}
-                    >
-                      {complaintInfo?.date}
-                    </Typography>
-                  </Box>
-                  <Box
-                    flex={1}
-                    sx={{ display: "flex", alignItems: "center", gap: 2 }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#595959",
-                        fontSize: "14px",
-                        fontWeight: 500,
-                        lineHeight: "18.9px",
-                      }}
-                    >
-                      Time of Incident:
-                    </Typography>
-                    <Typography
-                      sx={{
-                        color: "#1B1C1E",
-                        fontSize: { xs: "14px", md: "16px" },
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                      }}
-                    >
-                      {complaintInfo?.time}
+                      {complaintInfo.additional_information}
                     </Typography>
                   </Box>
                 </Box>
+              )}
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+                pb: 2,
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "21.6px",
+                  color: "#000000",
+                }}
+              >
+                Attachments
+              </Typography>
+              {Array.isArray(complaintInfo?.files) &&
+              complaintInfo.files.length > 0 ? (
+                <Box sx={{ display: "flex", gap: 2 }}>
+                  {complaintInfo?.files?.map((file) => (
+                    <Card
+                      key={file.id}
+                      sx={{
+                        position: "relative",
+                        width: "100%",
+                        borderRadius: 2,
+                        overflow: "hidden",
+                      }}
+                    >
+                      {file.type?.startsWith("image/") ? (
+                        <CardMedia
+                          component="img"
+                          sx={{ width: "100%", height: "101px", p: 1 }}
+                          image={file.preview || file.icon}
+                          alt={file.name}
+                        />
+                      ) : (
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            height: 140,
+                            backgroundColor: "#f5f5f5",
+                            p: 1,
+                          }}
+                        >
+                          <InsertDriveFileIcon
+                            sx={{ fontSize: 48, color: "#d32f2f" }}
+                          />
+                          <Typography variant="caption">{file.name}</Typography>
+                        </Box>
+                      )}
 
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "flex-start",
-                    width: { xs: "100%", md: "1010px" },
-                    height: { xs: "auto", md: "auto" },
-                    border: "1px solid #D4D4D4B2",
-                    borderRadius: "8px",
-                    p: 2,
-                    my: 6,
-                    gap: 6,
-                  }}
-                >
-                  <Box
-                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-                  >
-                    <Typography
-                      sx={{
-                        fontSize: "16px",
-                        fontWeight: 500,
-                        lineHeight: "21.6px",
-                        color: "#000000",
-                      }}
-                    >
-                      Complaint Description
-                    </Typography>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "flex-start",
-                        alignItems: "flex-start",
-                        width: { xs: "100%", md: "972px" },
-                        height: { xs: "auto", md: "149px" },
-                        border: "1px solid #E4E4E7",
-                        borderRadius: "8px",
-                        backgroundColor: "#F8F8F8",
-                        p: 2,
-                      }}
-                    >
-                      <Typography
+                      {/* Overlay Download Button */}
+                      <Box
                         sx={{
-                          fontSize: { xs: "14px", md: "16px" },
-                          fontWeight: 500,
-                          lineHeight: "24px",
-                          color: "#1B1C1E",
+                          position: "absolute",
+                          bottom: 8,
+                          right: 12,
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          width: "24px",
+                          height: "24px",
+                          borderRadius: "3px",
+                          backgroundColor: "#F2E2DD",
                         }}
                       >
-                        {complaintInfo?.otherDescription ||
-                          complaintInfo?.description}
-                      </Typography>
-                    </Box>
-                  </Box>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 1,
-                      pb: 2,
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        fontSize: "16px",
-                        fontWeight: 500,
-                        lineHeight: "21.6px",
-                        color: "#000000",
-                      }}
-                    >
-                      Attachments
-                    </Typography>
-                    {Array.isArray(complaintInfo?.files) &&
-                    complaintInfo.files.length > 0 ? (
-                      <Box sx={{ display: "flex", gap: 2 }}>
-                        {complaintInfo?.files?.map((file) => (
-                          <Card
-                            key={file.id}
-                            sx={{
-                              position: "relative",
-                              width: "100%",
-                              borderRadius: 2,
-                              overflow: "hidden",
-                            }}
-                          >
-                            {file.type?.startsWith("image/") ? (
-                              <CardMedia
-                                component="img"
-                                sx={{ width: "100%", height: "101px", p: 1 }}
-                                image={file.preview || file.icon}
-                                alt={file.name}
-                              />
-                            ) : (
-                              <Box
-                                sx={{
-                                  display: "flex",
-                                  flexDirection: "column",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  height: 140,
-                                  backgroundColor: "#f5f5f5",
-                                  p: 1,
-                                }}
-                              >
-                                <InsertDriveFileIcon
-                                  sx={{ fontSize: 48, color: "#d32f2f" }}
-                                />
-                                <Typography variant="caption">
-                                  {file.name}
-                                </Typography>
-                              </Box>
-                            )}
-
-                            {/* Overlay Download Button */}
-                            <Box
-                              sx={{
-                                position: "absolute",
-                                bottom: 8,
-                                right: 12,
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                width: "24px",
-                                height: "24px",
-                                borderRadius: "3px",
-                                backgroundColor: "#F2E2DD",
-                              }}
-                            >
-                              <IconButton
-                                onClick={() => handleDeleteFile(file.id)}
-                                sx={{
-                                  // backgroundColor: "rgba(0,0,0,0.5)",
-                                  color: "#EB001B",
-                                  "&:hover": {
-                                    backgroundColor: "rgba(0,0,0,0.7)",
-                                  },
-                                }}
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </Box>
-                          </Card>
-                        ))}
+                        <IconButton
+                          onClick={() => handleDeleteFile(file.id)}
+                          sx={{
+                            // backgroundColor: "rgba(0,0,0,0.5)",
+                            color: "#EB001B",
+                            "&:hover": {
+                              backgroundColor: "rgba(0,0,0,0.7)",
+                            },
+                          }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
                       </Box>
-                    ) : (
-                      <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-                        No attachments available.
-                      </Typography>
-                    )}
-                  </Box>
+                    </Card>
+                  ))}
                 </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "flex-end",
-                    alignItems: "flex-end",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: { xs: "grid", md: "flex" },
-                      justifyContent: { xs: "center", md: "flex-end" },
-                      gap: 2,
-                      my: 4,
-                    }}
-                  >
-                    <Button
-                      variant="outlined"
-                      sx={{
-                        width: "270px",
-                        height: "48px",
-                        borderRadius: "16px",
-                        py: 1.5,
-                        fontSize: { xs: "14px", md: "16px" },
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                        textTransform: "capitalize",
-                        borderColor: "#038F3E",
-                        color: "#038F3E",
-                        "&:hover": { borderColor: "#038F3E" },
-                      }}
-                      // href="/"
-                      onClick={onBack}
-                    >
-                      Back
-                    </Button>
-                    <Button
-                      variant="contained"
-                      sx={{
-                        width: "270px",
-                        height: "48px",
-                        borderRadius: "16px",
-                        py: 1.5,
-                        fontSize: { xs: "14px", md: "16px" },
-                        fontWeight: 500,
-                        lineHeight: "24px",
-                        textTransform: "capitalize",
-                        backgroundColor: "#038F3E",
-                        "&:hover": { backgroundColor: "#038F3E" },
-                      }}
-                      // href="/"
-                      onClick={onSubmit}
-                      loading={isSubmitting}
-                    >
-                      Submit
-                    </Button>
-                  </Box>
-                  <Box sx={{ width: "20%" }}>{btn}</Box>
-                </Box>
-              </Box>
+              ) : (
+                <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+                  No attachments available.
+                </Typography>
+              )}
+            </Box>
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              // justifyContent: "flex-end",
+              // alignItems: "flex-end",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: 2,
+                my: 1,
+              }}
+            >
+              <Button
+                variant="outlined"
+                startIcon={<ArrowBackIcon />}
+                sx={{
+                  width: "fit-content",
+                  height: "48px",
+                  borderRadius: "16px",
+                  py: 1.5,
+                  fontSize: { xs: "14px", md: "16px" },
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                  textTransform: "capitalize",
+                  borderColor: "#1B5E20",
+                  color: "#1B5E20",
+                  "&:hover": { borderColor: "#1B5E20" },
+                }}
+                onClick={onBack}
+              >
+                Back
+              </Button>
+              <Button
+                variant="contained"
+                sx={{
+                  width: "fit-content",
+                  height: "48px",
+                  borderRadius: "16px",
+                  py: 1.5,
+                  fontSize: { xs: "14px", md: "16px" },
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                  textTransform: "capitalize",
+                  backgroundColor: "#1B5E20",
+                  "&:hover": { backgroundColor: "#1B5E20" },
+                }}
+                // href="/"
+                onClick={onSubmit}
+                loading={isSubmitting}
+              >
+                Submit Complaint
+              </Button>
             </Box>
           </Box>
         </Box>
-      </Box>
-    </>
+      </Card>
+    </TwoColumnLayout>
   );
 };
 
@@ -660,7 +663,7 @@ FormPreview.propTypes = {
         name: PropTypes.string,
         type: PropTypes.string,
         preview: PropTypes.string,
-      })
+      }),
     ),
     date: PropTypes.string,
     time: PropTypes.string,
@@ -669,6 +672,7 @@ FormPreview.propTypes = {
     complaint_category: PropTypes.string,
     description: PropTypes.string,
     otherDescription: PropTypes.string,
+    additional_information: PropTypes.string,
   }),
   isSubmitting: PropTypes.bool,
   onSubmit: PropTypes.func,

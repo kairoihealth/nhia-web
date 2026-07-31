@@ -18,10 +18,10 @@ const SuccessModal = ({ open, onClose, recipient, message, title }) => {
           py: "80px",
           px: "60px",
           borderRadius: "10px",
-          textAlign: "center"
+          textAlign: "center",
         }}
       >
-        {/* <CheckCircleIcon sx={{ fontSize: 50, color: "#038F3E" }} /> */}
+        {/* <CheckCircleIcon sx={{ fontSize: 50, color: "#1B5E20" }} /> */}
         <img
           src={success}
           alt="Success"
@@ -32,7 +32,7 @@ const SuccessModal = ({ open, onClose, recipient, message, title }) => {
             fontSize: "32px",
             fontWeight: 500,
             color: "#111827",
-            mt: 2
+            mt: 2,
           }}
         >
           {title || "Success"}
@@ -54,5 +54,5 @@ SuccessModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   recipient: PropTypes.string,
   message: PropTypes.string,
-  title: PropTypes.string
+  title: PropTypes.string,
 };

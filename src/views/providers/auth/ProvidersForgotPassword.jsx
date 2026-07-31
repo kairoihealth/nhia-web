@@ -4,7 +4,7 @@ import {
   Container,
   Typography,
   TextField,
-  Button
+  Button,
   // Link
 } from "@mui/material";
 import Logo from "../../../assets/nhia-logo.png";
@@ -17,8 +17,8 @@ const textFieldStyles = {
     backgroundColor: "#F5F5F5",
     color: "#000000",
     border: "0.5px solid #DADADA",
-    mb: 3
-  }
+    mb: 3,
+  },
 };
 const ProvidersForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -31,8 +31,8 @@ const ProvidersForgotPassword = () => {
     }
     navigate(
       `/email-verification?from=forgot-password&email=${encodeURIComponent(
-        email
-      )}`
+        email,
+      )}`,
     );
   };
 
@@ -43,8 +43,8 @@ const ProvidersForgotPassword = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: "#038F3E",
-          height: "100vh"
+          backgroundColor: "#1B5E20",
+          height: "100vh",
         }}
       >
         <Container maxWidth="sm">
@@ -55,7 +55,7 @@ const ProvidersForgotPassword = () => {
               textAlign: "center",
               width: "100%",
               maxWidth: 500,
-              borderRadius: "25px"
+              borderRadius: "25px",
             }}
           >
             <Box
@@ -64,7 +64,7 @@ const ProvidersForgotPassword = () => {
               alt="Logo"
               sx={{ width: { xs: "70px", md: "74.64px" } }}
             />
-            <Typography variant="h5" color="#038F3E" gutterBottom>
+            <Typography variant="h5" color="#1B5E20" gutterBottom>
               Forgot Password
             </Typography>
             {/* <Typography variant="body1" align="center" sx={{ mb: 3 }}>
@@ -78,7 +78,7 @@ const ProvidersForgotPassword = () => {
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "flex-start",
-                  gap: 1
+                  gap: 1,
                 }}
               >
                 <Typography
@@ -86,7 +86,7 @@ const ProvidersForgotPassword = () => {
                     color: "#595959",
                     fontSize: "16px",
                     fontWeight: 500,
-                    lineHeight: "24px"
+                    lineHeight: "24px",
                   }}
                 >
                   Email Address
@@ -112,7 +112,7 @@ const ProvidersForgotPassword = () => {
                   width: "394px",
                   height: "45px",
                   borderRadius: "50px",
-                  backgroundColor: "#038F3E",
+                  backgroundColor: "#1B5E20",
                   color: "#FFFFFF",
                   fontSize: "16px",
                   fontWeight: 500,
@@ -120,7 +120,7 @@ const ProvidersForgotPassword = () => {
                   mb: 3,
                   py: "12px",
                   px: "8px",
-                  textTransform: "capitalize"
+                  textTransform: "capitalize",
                 }}
                 onClick={handleSubmit}
               >
@@ -133,7 +133,7 @@ const ProvidersForgotPassword = () => {
                 <Link
                   href="/providers-register-page"
                   underline="hover"
-                  color="#038F3E"
+                  color="#1B5E20"
                 >
                   Register Here
                 </Link>

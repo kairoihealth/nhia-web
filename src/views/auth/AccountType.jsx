@@ -7,7 +7,7 @@ import {
   FormControlLabel,
   Button,
   Typography,
-  Box
+  Box,
 } from "@mui/material";
 import Logo from "../../assets/nhia-logo.png";
 import KairoiLogo from "../../assets/kairoi-logo.png";
@@ -20,7 +20,7 @@ const AccountTypeCard = ({
   label,
   image,
   selectedAccountType,
-  onChange
+  onChange,
 }) => (
   <Box
     sx={{
@@ -31,9 +31,9 @@ const AccountTypeCard = ({
       cursor: "pointer",
       border:
         selectedAccountType === value
-          ? "2px solid #038F3E"
+          ? "2px solid #1B5E20"
           : "1px solid #3333331F",
-      borderRadius: "12px"
+      borderRadius: "12px",
       // m: 1,
       // flexBasis: '45%'
     }}
@@ -47,10 +47,10 @@ const AccountTypeCard = ({
         display: "block",
         textAlign: "left",
         cursor: "pointer",
-        "& .MuiRadio-root": { color: "#038F3E" },
+        "& .MuiRadio-root": { color: "#1B5E20" },
         "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-          borderColor: "#038F3E" // Green border color
-        }
+          borderColor: "#1B5E20", // Green border color
+        },
       }}
     />
     <Box
@@ -62,7 +62,7 @@ const AccountTypeCard = ({
         height: "101px",
         objectFit: "contain",
         mx: "auto",
-        display: "block"
+        display: "block",
       }}
     />
     <Typography
@@ -71,7 +71,7 @@ const AccountTypeCard = ({
         fontWeight: 500,
         lineHeight: "32.4px",
         mt: 2,
-        color: "#1B1C1E"
+        color: "#1B1C1E",
       }}
     >
       {label}
@@ -91,7 +91,7 @@ const AccountType = () => {
     const routes = {
       enrollee: "/enrollees-welcome-page",
       hmo: "/hmo-welcome-page",
-      provider: "/providers-welcome-page"
+      provider: "/providers-welcome-page",
     };
 
     if (selectedAccountType && routes[selectedAccountType]) {
@@ -107,7 +107,7 @@ const AccountType = () => {
   const accountTypes = [
     { id: 1, value: "enrollee", label: "I am an Enrollee", image: Enrolee },
     { id: 2, value: "hmo", label: "I am an HMO", image: HMO },
-    { id: 3, value: "provider", label: "I am a Provider", image: Provider }
+    { id: 3, value: "provider", label: "I am a Provider", image: Provider },
   ];
 
   return (
@@ -122,7 +122,7 @@ const AccountType = () => {
         <Box
           sx={{
             width: { xs: "100%", md: "50%" },
-            backgroundColor: "#038F3E",
+            backgroundColor: "#1B5E20",
             color: "#fff",
             p: 5,
             display: "flex",
@@ -130,7 +130,7 @@ const AccountType = () => {
             justifyContent: { xs: "center", md: "space-between" },
             alignItems: { xs: "center", md: "flex-start" },
             position: "relative",
-            height: { xs: "auto", md: "100vh" }
+            height: { xs: "auto", md: "100vh" },
           }}
         >
           <Box>
@@ -146,7 +146,7 @@ const AccountType = () => {
               width: { xs: "100%", md: "80%" },
               display: "flex",
               flexDirection: "column",
-              alignItems: "center"
+              alignItems: "center",
             }}
           >
             <Typography
@@ -156,7 +156,7 @@ const AccountType = () => {
                 lineHeight: { xs: "43.2px", md: "68.3px" },
                 mt: { xs: 2, md: 5 },
                 textAlign: { xs: "center", md: "left" },
-                width: { xs: "90%", md: "90%" }
+                width: { xs: "90%", md: "90%" },
               }}
             >
               Welcome to NHIA Complaint Management System
@@ -168,7 +168,7 @@ const AccountType = () => {
                 lineHeight: { xs: "27px", md: "32.4px" },
                 mt: 3,
                 textAlign: { xs: "center", md: "left" },
-                width: { xs: "70%", md: "90%" }
+                width: { xs: "70%", md: "90%" },
               }}
             >
               Welcome aboard! Your complaints fuel our quest for service
@@ -180,7 +180,7 @@ const AccountType = () => {
               display: { xs: "none", md: "flex" },
               justifyContent: "flex-end",
               alignItems: "flex-end",
-              mt: 5
+              mt: 5,
             }}
           >
             <Box
@@ -190,7 +190,7 @@ const AccountType = () => {
                 right: "20px",
                 display: "flex",
                 justifyContent: "flex-end",
-                alignItems: "center"
+                alignItems: "center",
               }}
             >
               <Typography
@@ -215,7 +215,7 @@ const AccountType = () => {
             p: { xs: 4, md: 4 },
             display: "flex",
             flexDirection: "column",
-            justifyContent: "space-between"
+            justifyContent: "space-between",
           }}
         >
           <Box>
@@ -224,8 +224,8 @@ const AccountType = () => {
                 fontSize: "24px",
                 fontWeight: 500,
                 lineHeight: "43.2px",
-                color: "#038F3E",
-                textAlign: { xs: "center", md: "left" }
+                color: "#1B5E20",
+                textAlign: { xs: "center", md: "left" },
               }}
             >
               Choose a complaint type
@@ -240,7 +240,7 @@ const AccountType = () => {
                   width: { xs: "100%", md: "99%" },
                   color: "#595959",
                   mt: 1,
-                  textAlign: { xs: "center", md: "left" }
+                  textAlign: { xs: "center", md: "left" },
                 }}
               >
                 Choose a complaint category to help us direct your complaint to
@@ -255,7 +255,7 @@ const AccountType = () => {
                 flexWrap: "wrap",
                 justifyContent: "space-around",
                 mt: 2,
-                gap: 4
+                gap: 4,
               }}
             >
               {accountTypes.slice(0, 2).map((account) => (
@@ -275,7 +275,7 @@ const AccountType = () => {
                   width: "100%",
                   display: "flex",
                   justifyContent: "flex-start",
-                  mx: 10
+                  mx: 10,
                 }}
               >
                 <AccountTypeCard
@@ -292,7 +292,7 @@ const AccountType = () => {
           <Box
             sx={{
               display: "flex",
-              justifyContent: { xs: "center", md: "flex-end" }
+              justifyContent: { xs: "center", md: "flex-end" },
             }}
           >
             <Button
@@ -301,12 +301,12 @@ const AccountType = () => {
                 width: "270px",
                 height: "48px",
                 mt: { xs: 6, md: 3 },
-                backgroundColor: "#038F3E",
+                backgroundColor: "#1B5E20",
                 borderRadius: "16px",
                 fontSize: { xs: "14px", md: "16px" },
                 fontWeight: 500,
                 textTransform: "capitalize",
-                "&:hover": { backgroundColor: "#027833" }
+                "&:hover": { backgroundColor: "#027833" },
               }}
               onClick={handleSubmit}
               disabled={!selectedAccountType}
@@ -329,5 +329,5 @@ AccountTypeCard.propTypes = {
   label: PropTypes.string.isRequired,
   image: PropTypes.string.isRequired,
   selectedAccountType: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired
+  onChange: PropTypes.func.isRequired,
 };

@@ -61,7 +61,7 @@ const ForgotPassword = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: "#038F3E",
+          backgroundColor: "#1B5E20",
           height: "100vh",
         }}
       >
@@ -82,7 +82,7 @@ const ForgotPassword = () => {
               alt="Logo"
               sx={{ width: { xs: "70px", md: "74.64px" } }}
             />
-            <Typography variant="h5" color="#038F3E" gutterBottom>
+            <Typography variant="h5" color="#1B5E20" gutterBottom>
               Forgot Password
             </Typography>
             {/* <Typography variant="body1" align="center" sx={{ mb: 3 }}>
@@ -130,7 +130,7 @@ const ForgotPassword = () => {
                   width: "394px",
                   height: "45px",
                   borderRadius: "50px",
-                  backgroundColor: "#038F3E",
+                  backgroundColor: "#1B5E20",
                   color: "#FFFFFF",
                   fontSize: "16px",
                   fontWeight: 500,
@@ -153,7 +153,7 @@ const ForgotPassword = () => {
                 <Link
                   href="/hmo-register-page"
                   underline="hover"
-                  color="#038F3E"
+                  color="#1B5E20"
                 >
                   Register Here
                 </Link>

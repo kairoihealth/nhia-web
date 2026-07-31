@@ -9,7 +9,7 @@ import {
   InputAdornment,
   IconButton,
   Link,
-  OutlinedInput
+  OutlinedInput,
 } from "@mui/material";
 import Logo from "../../../assets/nhia-logo.png";
 // import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -23,9 +23,9 @@ const textFieldStyles = {
     border: "0.5px solid #DADADA",
     mb: 3,
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#038F3E"
-    }
-  }
+      borderColor: "#1B5E20",
+    },
+  },
 };
 const ProvidersLoginPage = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -46,8 +46,8 @@ const ProvidersLoginPage = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: "#038F3E",
-          height: "100vh"
+          backgroundColor: "#1B5E20",
+          height: "100vh",
         }}
       >
         <Container maxWidth="sm">
@@ -59,7 +59,7 @@ const ProvidersLoginPage = () => {
               textAlign: "center",
               width: "100%",
               maxWidth: 500,
-              borderRadius: "25px"
+              borderRadius: "25px",
             }}
           >
             <Box
@@ -73,8 +73,8 @@ const ProvidersLoginPage = () => {
                 fontSize: "24px",
                 fontWeight: 500,
                 lineHeight: "32.4px",
-                color: "#038F3E",
-                mt: 2
+                color: "#1B5E20",
+                mt: 2,
               }}
               gutterBottom
             >
@@ -88,7 +88,7 @@ const ProvidersLoginPage = () => {
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "flex-start",
-                  gap: 1
+                  gap: 1,
                 }}
               >
                 <Typography
@@ -96,7 +96,7 @@ const ProvidersLoginPage = () => {
                     color: "#595959",
                     fontSize: "16px",
                     fontWeight: 500,
-                    lineHeight: "24px"
+                    lineHeight: "24px",
                   }}
                 >
                   Official Phone Number or Email Address
@@ -119,7 +119,7 @@ const ProvidersLoginPage = () => {
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "flex-start",
-                  gap: 1
+                  gap: 1,
                 }}
               >
                 <Typography
@@ -127,7 +127,7 @@ const ProvidersLoginPage = () => {
                     color: "#595959",
                     fontSize: "16px",
                     fontWeight: 500,
-                    lineHeight: "24px"
+                    lineHeight: "24px",
                   }}
                 >
                   Password
@@ -161,8 +161,8 @@ const ProvidersLoginPage = () => {
                   sx={{
                     ...textFieldStyles,
                     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#038F3E"
-                    }
+                      borderColor: "#1B5E20",
+                    },
                   }}
                 />
               </Box>
@@ -187,7 +187,7 @@ const ProvidersLoginPage = () => {
                   width: "394px",
                   height: "45px",
                   borderRadius: "50px",
-                  backgroundColor: "#038F3E",
+                  backgroundColor: "#1B5E20",
                   color: "#FFFFFF",
                   fontSize: "16px",
                   fontWeight: 500,
@@ -195,7 +195,7 @@ const ProvidersLoginPage = () => {
                   mb: 3,
                   py: "12px",
                   px: "8px",
-                  textTransform: "capitalize"
+                  textTransform: "capitalize",
                 }}
                 href="/providers-dashboard"
               >
@@ -208,7 +208,7 @@ const ProvidersLoginPage = () => {
                   fontSize: "16px",
                   fontWeight: 500,
                   lineHeight: "21.6px",
-                  color: "#595959"
+                  color: "#595959",
                 }}
                 align="center"
               >
@@ -216,11 +216,11 @@ const ProvidersLoginPage = () => {
                 <Link
                   href="/providers-register-page"
                   underline="hover"
-                  color="#038F3E"
+                  color="#1B5E20"
                   sx={{
                     fontSize: "16px",
                     fontWeight: 500,
-                    lineHeight: "21.6px"
+                    lineHeight: "21.6px",
                   }}
                 >
                   Register Here

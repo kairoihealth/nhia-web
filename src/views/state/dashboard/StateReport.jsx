@@ -32,10 +32,10 @@ import { useAuth } from "../../../components/auth/AuthContext";
 //     borderColor: "#DADADA",
 //   },
 //   "&:hover .MuiOutlinedInput-notchedOutline": {
-//     borderColor: "#038F3E",
+//     borderColor: "#1B5E20",
 //   },
 //   "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-//     borderColor: "#038F3E",
+//     borderColor: "#1B5E20",
 //   },
 // };
 
@@ -46,10 +46,10 @@ const textStyles = {
     height: "100%",
     borderColor: "#DADADA",
     "&:hover": {
-      outline: "1px solid #038F3E",
+      outline: "1px solid #1B5E20",
     },
     "&.Mui-focused": {
-      outline: "1px solid #038F3E",
+      outline: "1px solid #1B5E20",
       boxShadow: "none",
     },
   },
@@ -758,7 +758,7 @@ const StateReportsPage = () => {
               >
                 <Typography
                   sx={{
-                    color: "#038F3E",
+                    color: "#1B5E20",
                     fontSize: "16px",
                     fontWeight: 600,
                     lineHeight: "19.36px",
@@ -802,7 +802,7 @@ const StateReportsPage = () => {
               >
                 <Typography
                   sx={{
-                    color: "#038F3E",
+                    color: "#1B5E20",
                     fontSize: "16px",
                     fontWeight: 600,
                     lineHeight: "19.36px",
@@ -849,7 +849,7 @@ const StateReportsPage = () => {
                 >
                   <Typography
                     sx={{
-                      color: "#038F3E",
+                      color: "#1B5E20",
                       fontSize: "16px",
                       fontWeight: 600,
                       lineHeight: "19.36px",
@@ -898,7 +898,7 @@ const StateReportsPage = () => {
                 >
                   <Typography
                     sx={{
-                      color: "#038F3E",
+                      color: "#1B5E20",
                       fontSize: "16px",
                       fontWeight: 600,
                       lineHeight: "19.36px",
@@ -936,40 +936,6 @@ const StateReportsPage = () => {
                     </select>
                   </Box>
                 </Box>
-              ) : filters.complaint_against === "Enrollee" ? (
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: { xs: "100%", sm: "200px" },
-                    gap: 1,
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      color: "#038F3E",
-                      fontSize: "16px",
-                      fontWeight: 600,
-                      lineHeight: "19.36px",
-                    }}
-                  >
-                    Enrollee Name or NHIA Number
-                    <span style={{ color: "#099243", marginLeft: "6px" }}>
-                      *
-                    </span>
-                  </Typography>
-                  <Box>
-                    <TextField
-                      name="name"
-                      fullWidth
-                      variant="outlined"
-                      required
-                      placeholder="enter Enrollee name or NHIA number"
-                      value={filters.name}
-                      onChange={handleFilterChange}
-                    />
-                  </Box>
-                </Box>
               ) : null}
 
               {/* Location */}
@@ -983,7 +949,7 @@ const StateReportsPage = () => {
               >
                 <Typography
                   sx={{
-                    color: "#038F3E",
+                    color: "#1B5E20",
                     fontSize: "16px",
                     fontWeight: 600,
                     lineHeight: "19.36px",
@@ -1033,7 +999,7 @@ const StateReportsPage = () => {
               >
                 <Typography
                   sx={{
-                    color: "#038F3E",
+                    color: "#1B5E20",
                     fontSize: "16px",
                     fontWeight: 600,
                     lineHeight: "19.36px",
@@ -1084,7 +1050,7 @@ const StateReportsPage = () => {
                 sx={{
                   width: { xs: "100%", sm: "135px" },
                   height: "51px",
-                  backgroundColor: "#038F3E",
+                  backgroundColor: "#1B5E20",
                   color: "#FFFFFF",
                   textTransform: "none",
                   fontSize: "16px",
@@ -1232,6 +1198,8 @@ const StateReportsPage = () => {
                       alignItems: "center",
                       borderRadius: "12px",
                       backgroundColor: "#FFFFFF",
+                      boxShadow:
+                        "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
                       width: { xs: "100%", md: "500px" },
                       // height: "350px",
                     }}
@@ -1291,7 +1259,6 @@ const StateReportsPage = () => {
                   </Card>
                 ) : null}
               </Box>
-              can_export_complaint_data
               {hasPermission("can_export_complaint_data") && (
                 <Box
                   sx={{
@@ -1304,7 +1271,7 @@ const StateReportsPage = () => {
                       width: { xs: "100%", sm: "249px" },
                       height: "51px",
                       borderRadius: "8px",
-                      backgroundColor: "#038F3E",
+                      backgroundColor: "#1B5E20",
                       fontSize: "16px",
                       fontWeight: 500,
                       lineHeight: "19.36px",

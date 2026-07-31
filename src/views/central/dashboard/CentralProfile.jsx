@@ -5,6 +5,7 @@ import {
   TextField,
   FormControl,
   Button,
+  Card,
   // Link,
 } from "@mui/material";
 import PhoneInput from "react-phone-input-2";
@@ -29,7 +30,7 @@ const textFieldStyles = {
     border: "0.5px solid #DADADA",
     width: "100%",
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#038F3E",
+      borderColor: "#1B5E20",
     },
   },
 };
@@ -149,13 +150,11 @@ const CentralProfile = () => {
       {/* Main Layout */}
       <Box
         sx={{
-          display: "flex",
-          backgroundColor: "#FAFAFA",
-          height: "100vh",
+          p: 2,
         }}
       >
         {/* Main Content Area */}
-        <Box sx={{ flexGrow: 1, p: 3 }}>
+        <Card sx={{ flexGrow: 1, p: 3, borderRadius: "12px", boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A" }}>
           {/* Sub Content */}
           <Box sx={{ mt: 2 }}>
             {/* Title */}
@@ -445,7 +444,7 @@ const CentralProfile = () => {
                       width: "144px",
                       height: "42px",
                       borderRadius: "12px",
-                      backgroundColor: "#038F3E",
+                      backgroundColor: "#1B5E20",
                       color: "#FFFFFF",
                       fontSize: "16px",
                       fontWeight: 500,
@@ -476,7 +475,7 @@ const CentralProfile = () => {
                   fontWeight: 500,
                   lineHeight: "32.4px",
                   textTransform: "none",
-                  color: "#038F3E",
+                  color: "#1B5E20",
                   mt: 5,
                 }}
               >
@@ -504,7 +503,7 @@ const CentralProfile = () => {
                       display: "flex",
                       flexDirection: "column",
                       gap: 1,
-                      width: {xs: "100%", md: "49%"},
+                      width: { xs: "100%", md: "49%" },
                     }}
                   >
                     <Typography
@@ -557,7 +556,13 @@ const CentralProfile = () => {
 
                   {/* New Password and Confirm Password */}
                   <Box
-                    sx={{ display: "flex", gap: 2, mt: 2, flexWrap: "wrap", flexDirection: { xs: "column", md: "row" } }}
+                    sx={{
+                      display: "flex",
+                      gap: 2,
+                      mt: 2,
+                      flexWrap: "wrap",
+                      flexDirection: { xs: "column", md: "row" },
+                    }}
                   >
                     <Box
                       flex={1}
@@ -676,7 +681,7 @@ const CentralProfile = () => {
                         // width: "144px",
                         height: "42px",
                         borderRadius: "12px",
-                        backgroundColor: "#038F3E",
+                        backgroundColor: "#1B5E20",
                         color: "#FFFFFF",
                         fontSize: "16px",
                         fontWeight: 500,
@@ -700,7 +705,7 @@ const CentralProfile = () => {
                      fontWeight: 500,
                      lineHeight: "32.4px",
                      textTransform: "none",
-                     color: "#038F3E",
+                     color: "#1B5E20",
                      mt: 5,
                    }}
                  >
@@ -761,7 +766,7 @@ const CentralProfile = () => {
                </Box> */}
             </Box>
           </Box>
-        </Box>
+        </Card>
       </Box>
     </Box>
   );

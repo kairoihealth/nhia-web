@@ -6,6 +6,7 @@ import {
   ListItemIcon,
   ListItemText,
   IconButton,
+  Badge,
   Typography,
 } from "@mui/material";
 import {
@@ -15,12 +16,15 @@ import {
   FiHome,
   FiSettings,
   FiX,
+  FiBell,
 } from "react-icons/fi";
 import Logo from "../assets/nhia-logo.png";
 import { TbReportAnalytics } from "react-icons/tb";
 import { LuCross } from "react-icons/lu";
 import { FaRegComment } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { getUnreadNotificationCount } from "../services/general";
 
 const menuData = {
   HMO: [
@@ -36,6 +40,12 @@ const menuData = {
       label: "Reports",
       icon: <TbReportAnalytics />,
       link: "/hmo/reports",
+    },
+    {
+      id: 6,
+      label: "Notifications",
+      icon: <FiBell />,
+      link: "/hmo/notifications",
     },
     { id: 4, label: "Profile", icon: <FiUser />, link: "/hmo/profile" },
     { id: 5, label: "Settings", icon: <FiSettings />, link: "/hmo/settings" },
@@ -58,6 +68,12 @@ const menuData = {
       label: "Reports",
       icon: <TbReportAnalytics />,
       link: "/provider/reports",
+    },
+    {
+      id: 6,
+      label: "Notifications",
+      icon: <FiBell />,
+      link: "/provider/notifications",
     },
     { id: 4, label: "Profile", icon: <FiUser />, link: "/provider/profile" },
     {
@@ -87,10 +103,22 @@ const menuData = {
       link: "/stateadmin/reports",
     },
     {
+      id: 8,
+      label: "Notifications",
+      icon: <FiBell />,
+      link: "/stateadmin/notifications",
+    },
+    {
       id: 4,
       label: "Providers & HMO",
       icon: <LuCross />,
       link: "/stateadmin/invitations",
+    },
+    {
+      id: 7,
+      label: "Workload",
+      icon: <TbReportAnalytics />,
+      link: "/stateadmin/workload",
     },
     { id: 5, label: "Profile", icon: <FiUser />, link: "/stateadmin/profile" },
     {
@@ -116,10 +144,22 @@ const menuData = {
       link: "/admin/reports",
     },
     {
+      id: 8,
+      label: "Notifications",
+      icon: <FiBell />,
+      link: "/admin/notifications",
+    },
+    {
       id: 4,
       label: "State Invites",
       icon: <LuCross />,
       link: "/admin/state/invite",
+    },
+    {
+      id: 7,
+      label: "Workload",
+      icon: <TbReportAnalytics />,
+      link: "/admin/workload",
     },
     { id: 5, label: "Profile", icon: <FiUser />, link: "/admin/profile" },
     {
@@ -129,11 +169,49 @@ const menuData = {
       link: "/admin/settings",
     },
   ],
+  Enrollee: [
+    {
+      id: 1,
+      label: "Dashboard",
+      icon: <FiHome />,
+      link: "/enrollee/dashboard",
+    },
+    {
+      id: 2,
+      label: "Complaints",
+      icon: <FaRegComment />,
+      link: "/enrollee/complaints",
+    },
+    {
+      id: 3,
+      label: "File New Complaint",
+      icon: <FaRegComment />,
+      link: "/enrollee/complaint/create",
+    },
+    {
+      id: 4,
+      label: "Notifications",
+      icon: <FiBell />,
+      link: "/enrollee/notifications",
+    },
+    {
+      id: 3,
+      label: "Profile",
+      icon: <FiUser />,
+      link: "/enrollee/profile",
+    },
+  ],
 };
 
 const DashboardSidebar = ({ showMobileMenu, onMobileClose }) => {
   const role = localStorage.getItem("userRole");
-  // const menuItems = menuData[role] || [];
+
+  const { data: notificationsCount } = useQuery({
+    queryKey: ["notifications"],
+    queryFn: () => getUnreadNotificationCount(),
+  });
+
+  const unreadCount = notificationsCount?.unread_count || 0;
 
   const logout = () => {
     localStorage.clear();
@@ -147,7 +225,8 @@ const DashboardSidebar = ({ showMobileMenu, onMobileClose }) => {
         flexDirection: "column",
         justifyContent: "space-between",
         height: "100%",
-        p: 2,
+        py: 2,
+        px: 0,
       }}
     >
       <IconButton
@@ -187,10 +266,10 @@ const DashboardSidebar = ({ showMobileMenu, onMobileClose }) => {
           sx={{
             display: "flex",
             flexDirection: "column",
-            gap: 2,
+            gap: 1.5,
             mt: 3,
-            cursor: "pointer",
             flexGrow: 1,
+            pl: 2,
           }}
         >
           {menuData[role]?.length > 0 ? (
@@ -198,31 +277,45 @@ const DashboardSidebar = ({ showMobileMenu, onMobileClose }) => {
               <NavLink
                 key={index}
                 to={item.link}
+                onClick={onMobileClose}
                 style={({ isActive }) => ({
                   textDecoration: "none",
-                  color: isActive ? "#038F3E" : "#FFFFFF",
+                  color: isActive ? "#1B5E20" : "rgba(255,255,255,.6)",
                   backgroundColor: isActive ? "#FFFFFF" : "transparent",
                   borderTopLeftRadius: "20px",
                   borderBottomLeftRadius: "20px",
-                  padding: "12px 20px",
+                  padding: "12px 14px",
                   display: "flex",
                   alignItems: "center",
                 })}
               >
-                {({ isActive }) => (
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    {item.icon}
-                    <Typography
-                      sx={{
-                        fontSize: "16px",
-                        fontWeight: isActive ? 600 : 500,
-                        lineHeight: "21.6px",
-                      }}
-                    >
-                      {item.label}
-                    </Typography>
-                  </Box>
-                )}
+                {({ isActive }) => {
+                  const isNotifications = item.label === "Notifications";
+                  return (
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      {item.icon}
+                      <Typography
+                        sx={{
+                          fontSize: "15px",
+                          fontWeight: isActive ? 600 : 500,
+                          lineHeight: "21.6px",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 2,
+                          color: isActive ? "#1B5E20" : "rgba(255,255,255,.6)",
+                        }}
+                      >
+                        {item.label}{" "}
+                        {isNotifications && (
+                          <Badge
+                            badgeContent={unreadCount}
+                            color="error"
+                          ></Badge>
+                        )}
+                      </Typography>
+                    </Box>
+                  );
+                }}
               </NavLink>
             ))
           ) : (
@@ -237,26 +330,28 @@ const DashboardSidebar = ({ showMobileMenu, onMobileClose }) => {
         sx={{
           borderTop: "1px solid #e0e0e0",
           cursor: "pointer",
-          mx: -2, // Counteract parent padding
-          background: "#038F3E",
+          background: "#1B5E20",
+          color: "rgba(255,255,255,.6)",
           border: "none",
-          padding: "12px 20px",
+          paddingLeft: "16px",
+          fontSize: "15px",
+          width: "100%",
         }}
       >
         <ListItem
           component="button"
           onClick={logout}
           sx={{
-            color: "#ffffff",
-            background: "#038F3E",
-            width: "100%",
+            color: "rgba(255,255,255,.6)",
+            background: "#1B5E20",
             textAlign: "left",
             border: "none",
+            padding: "12px 14px",
             gap: 2,
-            
+            cursor: "pointer",
           }}
         >
-          <ListItemIcon>
+          <ListItemIcon sx={{ minWidth: "unset" }}>
             <FiLogOut style={{ color: "#ffffff" }} />
           </ListItemIcon>
           <ListItemText primary="Logout" />
@@ -276,7 +371,7 @@ const DashboardSidebar = ({ showMobileMenu, onMobileClose }) => {
         PaperProps={{
           sx: {
             width: 269,
-            backgroundColor: "#038F3E",
+            backgroundColor: "#1B5E20",
             color: "#ffffff",
           },
         }}
@@ -288,12 +383,12 @@ const DashboardSidebar = ({ showMobileMenu, onMobileClose }) => {
       {/* Desktop Sidebar */}
       <Box
         sx={{
-          width: 269,
+          width: 230,
           flexShrink: 0,
           display: { xs: "none", md: "flex" },
           flexDirection: "column",
           height: "100vh",
-          backgroundColor: "#038F3E",
+          backgroundColor: "#1B5E20",
           color: "#ffffff",
         }}
       >

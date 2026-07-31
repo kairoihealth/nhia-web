@@ -15,7 +15,7 @@ const DashboardLayout = ({ username }) => {
     <Box
       sx={{
         display: "flex",
-        backgroundColor: "#FAFAFA",
+        backgroundColor: "#EFF4EF",
         height: "100vh",
         width: "100%",
         overflow: "hidden",
@@ -52,7 +52,7 @@ const DashboardLayout = ({ username }) => {
             p: 2.5,
             overflowY: "auto",
             height: "calc(100vh - 88px)", // Adjust based on Topbar height
-            backgroundColor: "#ffffff",
+            backgroundColor: "#EFF4EF",
           }}
         >
           <Outlet />

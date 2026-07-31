@@ -28,7 +28,8 @@ const SearchFilter = ({
         gap: 2,
         justifyContent: "space-between",
         width: "100%",
-        p: { xs: 0, md: 2 },
+        flexWrap: "wrap",
+        // p: { xs: 0, md: 2 },
         py: { xs: 2, md: 2 },
       }}
     >
@@ -53,7 +54,7 @@ const SearchFilter = ({
               color: "#000000",
               border: "0.5px solid #DADADA",
               "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#038F3E",
+                borderColor: "#1B5E20",
               },
             },
           }}
@@ -61,9 +62,9 @@ const SearchFilter = ({
         <Button
           variant="contained"
           sx={{
-            width: { xs: "100%", sm: "118px" },
+            width: { xs: "118px", sm: "118px" },
             borderRadius: "8px",
-            backgroundColor: "#038F3E",
+            backgroundColor: "#1B5E20",
             color: "#fff",
             fontSize: "16px",
             fontWeight: 500,

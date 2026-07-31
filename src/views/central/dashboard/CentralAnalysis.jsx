@@ -268,6 +268,8 @@ const CentralAnalysis = () => {
             alignItems: "flex-start",
             borderRadius: "12px",
             backgroundColor: "#FFFFFF",
+            boxShadow:
+              "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
             minHeight: "209px",
           }}
         >
@@ -325,6 +327,8 @@ const CentralAnalysis = () => {
             alignItems: "flex-start",
             borderRadius: "12px",
             backgroundColor: "#FFFFFF",
+            boxShadow:
+              "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
             minHeight: "209px",
           }}
         >
@@ -382,6 +386,8 @@ const CentralAnalysis = () => {
             alignItems: "flex-start",
             borderRadius: "12px",
             backgroundColor: "#FFFFFF",
+            boxShadow:
+              "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
             minHeight: "209px",
           }}
         >
@@ -464,6 +470,8 @@ const CentralAnalysis = () => {
             alignItems: "flex-start",
             borderRadius: "12px",
             backgroundColor: "#FFFFFF",
+            boxShadow:
+              "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
             minHeight: "401px",
           }}
         >
@@ -538,6 +546,8 @@ const CentralAnalysis = () => {
             alignItems: "flex-start",
             borderRadius: "12px",
             backgroundColor: "#FFFFFF",
+            boxShadow:
+              "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
             minHeight: "401px",
           }}
         >
@@ -582,6 +592,8 @@ const CentralAnalysis = () => {
             alignItems: "flex-start",
             borderRadius: "12px",
             backgroundColor: "#FFFFFF",
+            boxShadow:
+              "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
             minHeight: "401px",
           }}
         >

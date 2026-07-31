@@ -23,10 +23,10 @@
 //         <meta name="Password Reset" content=" " />
 //         <link rel="canonical" href="/providers-reset-password" />
 //       </Helmet> */}
-//       <div className="d-flex" style={{ backgroundColor: "#038F3E" }}>
+//       <div className="d-flex" style={{ backgroundColor: "#1B5E20" }}>
 //         <Container className="d-flex justify-content-center align-items-center">
 //           <Row className="w-100 justify-content-center">
-//             <Col lg={6} md={8}> 
+//             <Col lg={6} md={8}>
 //             <div className="card w-lg-50 w-md-75 p-4 my-5" style={{ backgroundColor: "#ffffff" }}>
 //             <img
 //                   src={Logo}

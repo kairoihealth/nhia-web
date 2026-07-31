@@ -1,14 +1,10 @@
 import PropTypes from "prop-types";
-import {
-  Box,
-  Typography,
-  IconButton,
-  TextField,
-  InputAdornment,
-} from "@mui/material";
+import { Box, Typography, IconButton, Badge } from "@mui/material";
 import { FiBell, FiMenu } from "react-icons/fi";
-import SearchIcon from "@mui/icons-material/Search";
 import Logo from "../assets/nhia-logo.png";
+import { useQuery } from "@tanstack/react-query";
+import { getUnreadNotificationCount } from "../services/general";
+import { useNavigate } from "react-router-dom";
 
 const DashboardTopbar = ({
   username,
@@ -16,6 +12,16 @@ const DashboardTopbar = ({
   onMobileMenuClick,
 }) => {
   const userRole = localStorage.getItem("userRole");
+  const navigate = useNavigate();
+
+  const { data: notificationsCount } = useQuery({
+    queryKey: ["notifications"],
+    queryFn: () => getUnreadNotificationCount(),
+  });
+
+  const unreadCount = notificationsCount?.unread_count || 0;
+  // const rolePath = userRole?.toLowerCase().replace("admin", "");
+
   const fullname = username || localStorage.getItem("fullname");
   return (
     <Box
@@ -98,11 +104,19 @@ const DashboardTopbar = ({
         {/* <IconButton>
           <FiSearch size={20} color="#000000" />
         </IconButton> */}
-        <IconButton
-          sx={{ backgroundColor: "#F8F8F8", border: "0.64px solid #DADADA" }}
+        <Badge
+          badgeContent={unreadCount}
+          color="error"
+          sx={{ mr: 1, fontSize: "10px" }}
+          overlap="circular"
         >
-          <FiBell size={20} color="#000000" />
-        </IconButton>
+          <IconButton
+            sx={{ backgroundColor: "#F8F8F8", border: "0.64px solid #DADADA" }}
+            onClick={() => navigate(`${userRole.toLowerCase()}/notifications`)}
+          >
+            <FiBell size={20} color="#000000" />
+          </IconButton>
+        </Badge>
 
         {/* Mobile Menu Toggle */}
         <IconButton

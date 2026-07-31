@@ -16,8 +16,8 @@ const ProvidersWelcomePage = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: "#038F3E",
-          height: "100vh"
+          backgroundColor: "#1B5E20",
+          height: "100vh",
         }}
       >
         <Container maxWidth="md">
@@ -27,7 +27,7 @@ const ProvidersWelcomePage = () => {
               flexDirection: "column",
               justifyContent: "center",
               alignItems: "center",
-              width: "100%"
+              width: "100%",
             }}
           >
             <Card
@@ -38,7 +38,7 @@ const ProvidersWelcomePage = () => {
                 textAlign: "center",
                 width: "100%",
                 maxWidth: 500,
-                borderRadius: "25px"
+                borderRadius: "25px",
               }}
             >
               <Box
@@ -47,7 +47,7 @@ const ProvidersWelcomePage = () => {
                 alt="Logo"
                 sx={{
                   width: { xs: "70px", md: "126px" },
-                  my: { xs: 2, md: 4 }
+                  my: { xs: 2, md: 4 },
                 }}
               />
               <Typography
@@ -55,7 +55,7 @@ const ProvidersWelcomePage = () => {
                   fontSize: "32px",
                   fontWeight: 500,
                   lineHeight: "43.2px",
-                  color: "#038F3E"
+                  color: "#1B5E20",
                 }}
                 gutterBottom
               >
@@ -66,7 +66,7 @@ const ProvidersWelcomePage = () => {
                   fontSize: "20px",
                   fontWeight: 500,
                   lineHeight: "27px",
-                  color: "#595959"
+                  color: "#595959",
                 }}
                 gutterBottom
               >
@@ -80,7 +80,7 @@ const ProvidersWelcomePage = () => {
                   width: "394px",
                   height: "45px",
                   borderRadius: "50px",
-                  backgroundColor: "#038F3E",
+                  backgroundColor: "#1B5E20",
                   color: "#FFFFFF",
                   fontSize: "16px",
                   fontWeight: 500,
@@ -88,7 +88,7 @@ const ProvidersWelcomePage = () => {
                   mt: { xs: 3, md: 6 },
                   py: "12px",
                   px: "8px",
-                  textTransform: "capitalize"
+                  textTransform: "capitalize",
                 }}
               >
                 Login
@@ -100,7 +100,7 @@ const ProvidersWelcomePage = () => {
                   width: "394px",
                   height: "45px",
                   borderRadius: "50px",
-                  border: "1px solid #038F3E",
+                  border: "1px solid #1B5E20",
                   color: "#1B1C1E",
                   fontSize: "16px",
                   fontWeight: 500,
@@ -108,7 +108,7 @@ const ProvidersWelcomePage = () => {
                   mt: 2,
                   py: "12px",
                   px: "8px",
-                  textTransform: "none"
+                  textTransform: "none",
                 }}
               >
                 Create an Account

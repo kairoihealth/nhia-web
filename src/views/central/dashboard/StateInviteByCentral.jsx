@@ -1,10 +1,11 @@
-import { Box, Typography, CircularProgress, Button } from "@mui/material";
+import { Box, Typography, CircularProgress, Button, Card } from "@mui/material";
 import ReusableTable from "../../../shared/Table";
 import { useNavigate } from "react-router-dom";
 import SearchFilter from "../../../shared/SearchAndFilter";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getUsers } from "../../../services/central";
+import FormCardHeader from "../../enrolees/ComplaintForm/FormCardHeader";
 
 const StateInviteByCentral = () => {
   const navigate = useNavigate();
@@ -121,14 +122,12 @@ const StateInviteByCentral = () => {
 
   return (
     <Box>
-      <Box
+      <Card
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          py: 3,
-          backgroundColor: "#FAFAFA",
-          //   height: "100vh",
-          overflowY: "auto",
+          m: 2,
+          p: { xs: 1, md: 2 },
+          borderRadius: "12px",
+          boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
         }}
       >
         {/* Header */}
@@ -141,17 +140,7 @@ const StateInviteByCentral = () => {
             gap: 2,
           }}
         >
-          <Typography
-            sx={{
-              fontSize: "18px",
-              fontWeight: 500,
-              lineHeight: "28px",
-              color: "#101828",
-            }}
-            gutterBottom
-          >
-            State Invites
-          </Typography>
+          <FormCardHeader title="State Invites" />
           <Button
             variant="contained"
             size="medium"
@@ -161,7 +150,7 @@ const StateInviteByCentral = () => {
               fontWeight: 500,
               lineHeight: "21.6px",
               borderRadius: "8px",
-              backgroundColor: "#038F3E",
+              backgroundColor: "#1B5E20",
               color: "#FFFFFF",
               py: "12px",
               px: "23px",
@@ -208,7 +197,7 @@ const StateInviteByCentral = () => {
             showStatus={true}
             statusLabel={"Status"}
             pagination={true}
-            headerBackgroundColor="#20201E"
+            // headerBackgroundColor="#20201E"
             totalPages={users?.total_pages}
             page={page}
             setPage={(page) => {
@@ -220,7 +209,7 @@ const StateInviteByCentral = () => {
             }}
           />
         </Box>
-      </Box>
+      </Card>
     </Box>
   );
 };

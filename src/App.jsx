@@ -22,6 +22,9 @@ import ReviewForm from "./views/enrolees/ComplaintReview/ReviewForm";
 import SubmissionStatus from "./views/enrolees/ComplaintSubmission/SubmissionStatus";
 import { AuthProvider } from "./components/auth/AuthContext";
 import ResetPassword from "./components/ResetPassword";
+import Home from "./views/auth/Home";
+import EnrolleeRegisterPage from "./views/auth/EnrolleeRegisterPage";
+import EnrolleeRoutes from "./views/enrolees/routes";
 // import NotFound from "./components/NotFound";
 
 const getUserRole = () => localStorage.getItem("userRole");
@@ -34,7 +37,9 @@ function App() {
   return (
     <AuthProvider>
       <Routes>
-        <Route path="/" element={<Enrollee />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/create-complaint" element={<Enrollee />} />
+        <Route path="/register" element={<EnrolleeRegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
         {/* <Route path="/accept-invitation" element={<AccountSetup />} /> */}
         <Route path="/account-setup" element={<AccountSetup />} />
@@ -47,6 +52,7 @@ function App() {
       <Route path="/enrollee-complaint-second-form" element={<SecondForm />} />
       <Route path="/enrollee-form-preview" element={<FormPreview />} />*/}
         <Route path="/verify-user" element={<AccountSetup />} />
+        <Route path="/complaint-review" element={<ReviewForm />} />
         <Route path="/enrollee-complaint-review" element={<ReviewForm />} />
         <Route
           path="/enrollee-submission-status"
@@ -59,6 +65,7 @@ function App() {
             path="/"
             element={<DashboardLayout username={fullname} role={userRole} />}
           >
+            <Route path="enrollee/*" element={<EnrolleeRoutes />} />
             <Route path="hmo/*" element={<HMORoutes />} />
             <Route path="stateadmin/*" element={<StateRoutes />} />
             <Route path="provider/*" element={<ProviderRoutes />} />

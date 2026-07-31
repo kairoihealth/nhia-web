@@ -8,6 +8,7 @@ import {
   TextField,
   Button,
   IconButton,
+  Card,
 } from "@mui/material";
 import { FiFilter } from "react-icons/fi";
 import { TabButton, TabDropdown } from "../../../shared/TabPanel";
@@ -20,6 +21,7 @@ import { useEffect } from "react";
 import { complaintCategories, complaintType } from "../../../mock/type";
 import InfoIcon from "@mui/icons-material/Info";
 import WithAuthorization from "../../../components/auth/withAuthorization";
+import FormCardHeader from "../../enrolees/ComplaintForm/FormCardHeader";
 
 const initialFilters = {
   type: "",
@@ -33,7 +35,7 @@ const tabOptions = [
   { tab: "", label: "All Complaints" },
   { tab: "pending", label: "New Complaints" },
   { tab: "active", label: "Active Complaints" },
-  { tab: "closed", label: "Completed Complaints" },
+  { tab: "resolved", label: "Resolved Complaints" },
   { tab: "escalated", label: "Escalated Complaints" },
 ];
 
@@ -171,8 +173,17 @@ const StateComplaintsPage = () => {
     return diffInHours > 360;
   };
 
-  const transformedRows =
-    complaints?.results?.map((complaint) => ({
+  const transformedRows = [...(complaints?.results || [])]
+    .sort((a, b) => {
+      if (a.status === "escalated" && b.status !== "escalated") {
+        return -1;
+      }
+      if (a.status !== "escalated" && b.status === "escalated") {
+        return 1;
+      }
+      return 0;
+    })
+    .map((complaint) => ({
       created_at: new Date(complaint.created_at).toLocaleDateString(),
       name: `${complaint.firstname || ""} ${complaint.lastname || ""}`.trim(),
       complaint_no: complaint.case_id,
@@ -180,7 +191,7 @@ const StateComplaintsPage = () => {
       id: complaint.id,
       status: complaint.status,
       isOverdue: isOverdue(complaint.created_at, complaint.status),
-    })) || [];
+    }));
 
   const handleViewComplaint = (row) => {
     navigate(`/stateadmin/complaint/${row.id}`, {
@@ -221,20 +232,20 @@ const StateComplaintsPage = () => {
 
   return (
     <Box>
-      <Box
+      <Card
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          p: 1,
-          backgroundColor: "#FAFAFA",
-          height: "100vh",
-          overflowY: "auto",
+          m: 2,
+          p: { xs: 1, md: 2 },
+          borderRadius: "12px",
+          boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
         }}
       >
         {/* Header */}
-        <Typography variant="h5" gutterBottom>
-          Complaints Received
-        </Typography>
+        <FormCardHeader
+          title="Complaints Received"
+          subtitle="All complaints filed within your state"
+          subtitleSx={{ mb: 2 }}
+        />
 
         {/* Tabs and Filter Button */}
         <Stack
@@ -282,12 +293,13 @@ const StateComplaintsPage = () => {
                 p: 1,
                 cursor: "pointer",
                 alignSelf: { xs: "flex-start", md: "center" },
+                alignItems: "center",
               }}
             >
-              <FiFilter size={20} style={{ color: "#64748B" }} />
+              <FiFilter size={14} style={{ color: "#64748B" }} />
               <Typography
                 sx={{
-                  fontSize: "16px",
+                  fontSize: "14px",
                   fontWeight: 500,
                   lineHeight: "21.6px",
                   color: "#64748B",
@@ -331,7 +343,7 @@ const StateComplaintsPage = () => {
                     <option value="">All Complaints</option>
                     <option value="pending">Pending</option>
                     <option value="active">Active</option>
-                    <option value="closed">Closed</option>
+                    <option value="resolved">Resolved</option>
                     <option value="escalated">Escalated</option>
                   </select>
 
@@ -412,8 +424,8 @@ const StateComplaintsPage = () => {
                       fontSize: "14px",
                       fontWeight: 500,
                       backgroundColor: "transparent",
-                      border: "1px solid #038F3E",
-                      color: "#038F3E",
+                      border: "1px solid #1B5E20",
+                      color: "#1B5E20",
                       textTransform: "none",
                       "&:hover": { backgroundColor: "#027A3B", color: "#fff" },
                     }}
@@ -427,7 +439,7 @@ const StateComplaintsPage = () => {
         </Stack>
 
         {/* Table */}
-        <Box sx={{ width: "100%", overflowX: "auto" }}>
+        <Box sx={{ width: "100%", overflowX: "auto", mt: 2 }}>
           <ReusableTable
             columns={getColumns()}
             rows={transformedRows}
@@ -435,7 +447,7 @@ const StateComplaintsPage = () => {
             showActions={true}
             showStatus={true}
             pagination={true}
-            headerBackgroundColor="#20201E"
+            // headerBackgroundColor="#20201E"
             totalPages={complaints?.total_pages}
             page={page}
             setPage={(page) => {
@@ -447,7 +459,7 @@ const StateComplaintsPage = () => {
             }}
           />
         </Box>
-      </Box>
+      </Card>
     </Box>
   );
 };

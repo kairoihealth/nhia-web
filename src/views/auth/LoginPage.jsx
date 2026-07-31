@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Box,
-  Container,
   Typography,
   TextField,
   Button,
@@ -10,9 +9,13 @@ import {
   IconButton,
   Link,
   OutlinedInput,
+  Card,
 } from "@mui/material";
-import Logo from "../../assets/nhia-logo.png";
-import { VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
+import {
+  ArrowBack as ArrowBackIcon,
+  VisibilityOffOutlined,
+  VisibilityOutlined,
+} from "@mui/icons-material";
 import { userLogin } from "../../services/auth/auth";
 import { jwtDecode } from "jwt-decode";
 import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
@@ -20,9 +23,12 @@ import { textFieldStyles } from "../../utils/style";
 import Auth from "../../utils/Auth";
 import { getSingleUserWithToken } from "../../services/central";
 import { useAuth } from "../../components/auth/AuthContext";
+import TwoColumnLayout from "../enrolees/ComplaintForm/TwoColumnLayout";
+import FormCardHeader from "../enrolees/ComplaintForm/FormCardHeader";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const handleSuccess = useHandleSuccess();
   const handleError = useHandleError();
   const [email, setEmail] = useState("");
@@ -31,6 +37,25 @@ const LoginPage = () => {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { setAuthPermissions } = useAuth();
+
+  const from = location.state?.from;
+
+  const title =
+    from === "enrollee"
+      ? "Track and manage your complaints"
+      : "NHIA Staff Portal";
+
+  const subtitle =
+    from === "enrollee"
+      ? "Log in to view your coverage, submit complaints, and track resolutions."
+      : "For NHIA officers, HMO representatives, and healthcare providers managing complaints.";
+
+  const cardTitle =
+    from === "enrollee" ? "Enrollee Login" : "Staff & Partner Login";
+  const cardSubtitle =
+    from === "enrollee"
+      ? "Enter your credentials to access your portal."
+      : "For authorized personnel only.";
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -116,188 +141,210 @@ const LoginPage = () => {
   };
 
   return (
-    <>
-      <Box
+    <TwoColumnLayout
+      title={title}
+      subtitle={subtitle}
+      rightColumnSx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Card
         sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "#038F3E",
-          height: "100vh",
+          width: { xs: "90%", md: "85%", lg: "57%" },
+          p: { xs: 3, md: 5 },
+          borderRadius: "16px",
+          boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.05)",
+          backgroundColor: "#fff",
+          border: "1px solid #F0F0F0",
         }}
       >
-        <Container maxWidth="sm">
-          <Box
-            sx={{
-              px: 4,
-              py: { xs: 4, md: 12 },
-              backgroundColor: "#ffffff",
-              textAlign: "center",
-              width: "100%",
-              maxWidth: 500,
-              borderRadius: "25px",
-            }}
-          >
+        <FormCardHeader title={cardTitle} subtitle={cardSubtitle} />
+        <Box sx={{ textAlign: "center" }}>
+          <Box component="form" sx={{ mt: 3 }}>
+            {/* Email Field */}
             <Box
-              component="img"
-              src={Logo}
-              alt="Logo"
-              sx={{ width: { xs: "70px", md: "74.64px" } }}
-            />
-            <Typography
+              flex={1}
               sx={{
-                fontSize: "24px",
-                fontWeight: 500,
-                lineHeight: "32.4px",
-                color: "#038F3E",
-                mt: 2,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                gap: 1,
               }}
-              gutterBottom
             >
-              Welcome Back
-            </Typography>
-            <Box component="form" sx={{ mt: 3 }}>
-              {/* Email Field */}
-              <Box
-                flex={1}
+              <Typography
                 sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                  gap: 1,
-                }}
-              >
-                <Typography
-                  sx={{
-                    color: "#595959",
-                    fontSize: "16px",
-                    fontWeight: 500,
-                    lineHeight: "24px",
-                  }}
-                >
-                  {/* Official Phone Number or Email Address */}
-                  Email Address
-                  <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
-                </Typography>
-                <TextField
-                  fullWidth
-                  type="email"
-                  name="email"
-                  placeholder="example@example.com"
-                  required
-                  sx={textFieldStyles}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  error={!!errors.email}
-                  helperText={errors.email}
-                />
-              </Box>
-
-              {/* Password Field */}
-              <Box
-                flex={1}
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                  gap: 1,
-                  my: 2,
-                }}
-              >
-                <Typography
-                  sx={{
-                    color: "#595959",
-                    fontSize: "16px",
-                    fontWeight: 500,
-                    lineHeight: "24px",
-                  }}
-                >
-                  Password
-                  <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
-                </Typography>
-                <OutlinedInput
-                  id="outlined-adornment-password"
-                  name="password"
-                  type={passwordVisible ? "text" : "password"}
-                  placeholder="Password"
-                  fullWidth
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label={
-                          passwordVisible
-                            ? "hide the password"
-                            : "display the password"
-                        }
-                        onClick={togglePasswordVisibility}
-                        edge="end"
-                      >
-                        {passwordVisible ? (
-                          <VisibilityOutlined />
-                        ) : (
-                          <VisibilityOffOutlined />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                  // label="Password"
-                  sx={{
-                    ...textFieldStyles,
-                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#038F3E",
-                    },
-                  }}
-                />
-                {errors.password && (
-                  <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
-                    {errors.password}
-                  </Typography>
-                )}
-              </Box>
-
-              {/* Forgot Password Link */}
-              <Box sx={{ display: "flex", justifyContent: "flex-end", my: 3 }}>
-                <Link
-                  href="/forgot-password"
-                  underline="hover"
-                  color="error.main"
-                >
-                  Forgot Password?
-                </Link>
-              </Box>
-
-              {/* Login Button */}
-              <Button
-                variant="contained"
-                fullWidth
-                sx={{
-                  maxWidth: "394px",
-                  width: "100%",
-                  height: "45px",
-                  borderRadius: "50px",
-                  backgroundColor: email && password ? "#038F3E" : "grey",
-                  color: "#FFFFFF",
+                  color: "#595959",
                   fontSize: "16px",
                   fontWeight: 500,
                   lineHeight: "24px",
-                  mb: 3,
-                  py: "12px",
-                  px: "8px",
-                  textTransform: "capitalize",
                 }}
-                disabled={!email || !password}
-                loading={isSubmitting}
-                onClick={handleLogin}
               >
-                Login
-              </Button>
+                {/* Official Phone Number or Email Address */}
+                Email Address
+                <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
+              </Typography>
+              <TextField
+                fullWidth
+                type="email"
+                name="email"
+                placeholder="example@example.com"
+                required
+                sx={textFieldStyles}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                error={!!errors.email}
+                helperText={errors.email}
+              />
             </Box>
+
+            {/* Password Field */}
+            <Box
+              flex={1}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                gap: 1,
+                my: 2,
+              }}
+            >
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                Password
+                <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
+              </Typography>
+              <OutlinedInput
+                id="outlined-adornment-password"
+                name="password"
+                type={passwordVisible ? "text" : "password"}
+                placeholder="Password"
+                fullWidth
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label={
+                        passwordVisible
+                          ? "hide the password"
+                          : "display the password"
+                      }
+                      onClick={togglePasswordVisibility}
+                      edge="end"
+                    >
+                      {passwordVisible ? (
+                        <VisibilityOutlined />
+                      ) : (
+                        <VisibilityOffOutlined />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                // label="Password"
+                sx={{
+                  ...textFieldStyles,
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#1B5E20",
+                  },
+                }}
+              />
+              {errors.password && (
+                <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
+                  {errors.password}
+                </Typography>
+              )}
+            </Box>
+
+            {/* Forgot Password Link */}
+            <Box
+              sx={{ display: "flex", justifyContent: "flex-end", mb: 3, mt: 1 }}
+            >
+              <Link
+                href="/forgot-password"
+                underline="hover"
+                color="#388E3C"
+                fontFamily="Inter"
+              >
+                Forgot Password?
+              </Link>
+            </Box>
+
+            {/* Login Button */}
+            <Button
+              variant="contained"
+              fullWidth
+              sx={{
+                // maxWidth: "394px",
+                width: "100%",
+                height: "45px",
+                borderRadius: "50px",
+                backgroundColor: email && password ? "#1B5E20" : "grey",
+                color: "#FFFFFF",
+                fontSize: "16px",
+                fontWeight: 500,
+                lineHeight: "24px",
+                py: "12px",
+                px: "8px",
+                textTransform: "capitalize",
+              }}
+              disabled={!email || !password}
+              loading={isSubmitting}
+              onClick={handleLogin}
+            >
+              Login
+            </Button>
           </Box>
-        </Container>
-      </Box>
-    </>
+        </Box>
+        <Box
+          sx={{
+            mt: 3,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 1,
+          }}
+        >
+          {from === "enrollee" && (
+            <Typography
+              sx={{ textAlign: "center", fontSize: "13px", color: "#6B6B6B" }}
+            >
+              Don&apos;t have an account?{" "}
+              <Link
+                href="/register"
+                underline="hover"
+                sx={{ color: "#388E3C", fontWeight: 600, cursor: "pointer" }}
+              >
+                Register Here
+              </Link>
+            </Typography>
+          )}
+          <Button
+            variant="text"
+            startIcon={<ArrowBackIcon />}
+            onClick={() => navigate("/")}
+            sx={{
+              color: "#388E3C",
+              textTransform: "none",
+              fontSize: "13px",
+              fontWeight: 600,
+              "&:hover": {
+                backgroundColor: "rgba(27, 94, 32, 0.04)",
+              },
+            }}
+          >
+            Back to home
+          </Button>
+        </Box>
+      </Card>
+    </TwoColumnLayout>
   );
 };
 

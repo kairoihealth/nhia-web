@@ -8,6 +8,7 @@ import HmoSingleComplaint from "../../../components/HMO/HmoSingleComplaint";
 import HmoComplaintsThread from "../../../components/HMO/HmoComplaintsThread";
 import HmoReplyComplaints from "../../../components/HMO/HmoReplyComplaints";
 import HmoSettings from "../dashboard/HmoSettings";
+import HmoNotifications from "../dashboard/HmoNotifications";
 
 const HMORoutes = () => {
   return (
@@ -20,6 +21,7 @@ const HMORoutes = () => {
       <Route path="complaint/:id" element={<HmoSingleComplaint />} />
       <Route path="complaint/:id/thread" element={<HmoComplaintsThread />} />
       <Route path="complaint/:id/reply" element={<HmoReplyComplaints />} />
+      <Route path="notifications" element={<HmoNotifications />} />
     </Routes>
   );
 };

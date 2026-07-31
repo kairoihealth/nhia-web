@@ -8,6 +8,7 @@ import {
   TextField,
   Button,
   IconButton,
+  Card,
 } from "@mui/material";
 import { TabButton, TabDropdown } from "../../../shared/TabPanel";
 import ReusableTable from "../../../shared/Table";
@@ -20,6 +21,7 @@ import { useMemo } from "react";
 import { complaintCategories, complaintType } from "../../../mock/type";
 import InfoIcon from "@mui/icons-material/Info";
 import WithAuthorization from "../../../components/auth/withAuthorization";
+import FormCardHeader from "../../enrolees/ComplaintForm/FormCardHeader";
 
 const initialFilters = {
   type: "",
@@ -35,7 +37,7 @@ const tabOptions = [
   { tab: "", label: "All Complaints" },
   { tab: "pending", label: "New Complaints" },
   { tab: "active", label: "Active Complaints" },
-  { tab: "closed", label: "Completed Complaints" },
+  { tab: "resolved", label: "Resolved Complaints" },
   { tab: "escalated", label: "Escalated Complaints" },
 ];
 
@@ -132,7 +134,7 @@ const CentralComplaintsPage = () => {
     {
       label: "",
       field: "isOverdue",
-      align: "center",
+      align: "left",
       format: (isOverdue) => {
         if (isOverdue) {
           const tooltipStyle = {
@@ -180,10 +182,11 @@ const CentralComplaintsPage = () => {
         return null;
       },
     },
+    { label: "Case ID", field: "complaint_no", align: "center" },
     { label: "Date", field: "created_at", align: "center" },
     { label: "Complainant", field: "name", align: "center" },
-    { label: "Complaint no", field: "complaint_no", align: "center" },
-    { label: "Complaint type", field: "type", align: "center" },
+    { label: "Against", field: "complaint_against", align: "center" },
+    { label: "Category", field: "complaint_category", align: "center" },
     { label: "Location", field: "location", align: "center" },
   ];
 
@@ -196,17 +199,31 @@ const CentralComplaintsPage = () => {
     return diffInHours > 360;
   };
 
-  const transformedRows =
-    complaints?.results?.map((complaint) => ({
+  const transformedRows = [...(complaints?.results || [])]
+    .sort((a, b) => {
+      if (a.status === "escalated" && b.status !== "escalated") {
+        return -1;
+      }
+      if (a.status !== "escalated" && b.status === "escalated") {
+        return 1;
+      }
+      return 0;
+    })
+    .map((complaint) => ({
       created_at: new Date(complaint.created_at).toLocaleDateString(),
       name: `${complaint.firstname || ""} ${complaint.lastname || ""}`.trim(),
+      complaint_against:
+        complaint.provider?.name ||
+        complaint.hmo?.name ||
+        complaint.state?.name ||
+        complaint.complaint_against,
       complaint_no: complaint.case_id,
-      type: complaint.complaint_type,
+      complaint_category: complaint.complaint_category,
       location: complaint?.state?.name,
       id: complaint.id,
       status: complaint.status,
       isOverdue: isOverdue(complaint.created_at, complaint.status),
-    })) || [];
+    }));
 
   // const filteredRows = transformedRows.filter((row) => {
   //   // Tab filter
@@ -279,21 +296,16 @@ const CentralComplaintsPage = () => {
   }
 
   return (
-    <Box aria-hidden={false}>
-      <Box
+    <Box>
+      <Card
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          p: 1,
-          backgroundColor: "#FAFAFA",
-          height: "100vh",
-          overflowY: "auto",
+          p: { xs: 1, md: 2 },
+          borderRadius: "12px",
+          boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
         }}
       >
         {/* Header */}
-        <Typography variant="h5" gutterBottom>
-          Complaints Received
-        </Typography>
+        <FormCardHeader title="Complaints Received" />
 
         {/* Tabs and Filter Button */}
         <Stack
@@ -346,12 +358,13 @@ const CentralComplaintsPage = () => {
                 p: 1,
                 cursor: "pointer",
                 alignSelf: { xs: "flex-start", md: "center" },
+                alignItems: "center",
               }}
             >
-              <FiFilter size={20} style={{ color: "#64748B" }} />
+              <FiFilter size={14} style={{ color: "#64748B" }} />
               <Typography
                 sx={{
-                  fontSize: "16px",
+                  fontSize: "14px",
                   fontWeight: 500,
                   lineHeight: "21.6px",
                   color: "#64748B",
@@ -395,7 +408,7 @@ const CentralComplaintsPage = () => {
                     <option value="">All Complaints</option>
                     <option value="pending">Pending</option>
                     <option value="active">Active</option>
-                    <option value="closed">Closed</option>
+                    <option value="resolved">Resolved</option>
                     <option value="escalated">Escalated</option>
                   </select>
 
@@ -516,8 +529,8 @@ const CentralComplaintsPage = () => {
                       fontSize: "14px",
                       fontWeight: 500,
                       backgroundColor: "transparent",
-                      border: "1px solid #038F3E",
-                      color: "#038F3E",
+                      border: "1px solid #1B5E20",
+                      color: "#1B5E20",
                       textTransform: "none",
                       "&:hover": { backgroundColor: "#027A3B", color: "#fff" },
                     }}
@@ -531,7 +544,7 @@ const CentralComplaintsPage = () => {
         </Stack>
 
         {/* Table */}
-        <Box sx={{ width: "100%", overflowX: "auto" }}>
+        <Box sx={{ width: "100%", overflowX: "auto", mt: 2 }}>
           <ReusableTable
             columns={getColumns()}
             rows={transformedRows}
@@ -539,7 +552,7 @@ const CentralComplaintsPage = () => {
             showActions={true}
             showStatus={true}
             pagination={true}
-            headerBackgroundColor="#20201E"
+            // headerBackgroundColor="#20201E"
             actionButtonText={buttonTextMapping[filters.status]}
             totalPages={complaints?.total_pages}
             page={page}
@@ -552,7 +565,7 @@ const CentralComplaintsPage = () => {
             }}
           />
         </Box>
-      </Box>
+      </Card>
     </Box>
   );
 };
