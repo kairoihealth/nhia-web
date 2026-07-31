@@ -21,6 +21,19 @@ export const userLogin = async (email, password) => {
     throw error;
   }
 };
+export const userSignup = async (payload) => {
+  try {
+    const response = await Api.post(e.ENROLLEE_SIGNUP, payload, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error("Signup failed:", error);
+    throw error;
+  }
+};
 
 export const setUpAccount = async (payload) => {
   try {

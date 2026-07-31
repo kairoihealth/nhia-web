@@ -62,10 +62,10 @@ const getFeedbackMessage = (complaint) => {
         complaint?.complaint_against === "HMO"
           ? complaint?.hmo?.name
           : complaint?.complaint_against === "Provider"
-          ? complaint?.provider?.name
-          : complaint?.complaint_against === "Enrollee"
-          ? complaint?.enrollee || ""
-          : "the NHIA"
+            ? complaint?.provider?.name
+            : complaint?.complaint_against === "Enrollee"
+              ? complaint?.enrollee || ""
+              : "the NHIA"
       } has been closed. We hope the resolution was satisfactory. Best Regards.`;
     case "escalated":
       return "This complaint has been escalated for further review. The headquarters will handle it from here.";
@@ -177,8 +177,8 @@ const ComplaintStatusModal = ({ open, onClose, complaint }) => {
                   fontWeight: 500,
                   lineHeight: "24px",
                   textTransform: "capitalize",
-                  backgroundColor: "#038F3E",
-                  "&:hover": { backgroundColor: "#038F3E" },
+                  backgroundColor: "#1B5E20",
+                  "&:hover": { backgroundColor: "#1B5E20" },
                 }}
                 onClick={handleRate}
                 disabled={rating === 0}
@@ -254,8 +254,8 @@ const ComplaintStatusModal = ({ open, onClose, complaint }) => {
                   fontWeight: 500,
                   lineHeight: "24px",
                   textTransform: "capitalize",
-                  borderColor: "#038F3E",
-                  color: "#038F3E",
+                  borderColor: "#1B5E20",
+                  color: "#1B5E20",
                 }}
                 onClick={() => setView("details")}
                 variant="outlined"
@@ -271,9 +271,9 @@ const ComplaintStatusModal = ({ open, onClose, complaint }) => {
                   fontWeight: 500,
                   lineHeight: "24px",
                   textTransform: "capitalize",
-                  backgroundColor: "#038F3E",
+                  backgroundColor: "#1B5E20",
                   marginLeft: "14px",
-                  "&:hover": { backgroundColor: "#038F3E" },
+                  "&:hover": { backgroundColor: "#1B5E20" },
                 }}
                 onClick={handleEscalate}
                 loading={isUpdating}
@@ -356,7 +356,7 @@ const ComplaintStatusModal = ({ open, onClose, complaint }) => {
                   <Button
                     onClick={() => setView("rating")}
                     size="small"
-                    sx={{ color: "#038F3E", fontWeight: "500" }}
+                    sx={{ color: "#1B5E20", fontWeight: "500" }}
                   >
                     Rate Response
                   </Button>
@@ -379,7 +379,7 @@ const ComplaintStatusModal = ({ open, onClose, complaint }) => {
                   <Button
                     onClick={() => setView("escalate")}
                     size="small"
-                    sx={{ color: "#038F3E", fontWeight: "500" }}
+                    sx={{ color: "#1B5E20", fontWeight: "500" }}
                   >
                     Escalate
                   </Button>

@@ -111,7 +111,7 @@ const ResetPassword = () => {
     <>
       <Box
         sx={{
-          backgroundColor: "#038F3E",
+          backgroundColor: "#1B5E20",
           height: "auto",
           display: "flex",
           justifyContent: "center",
@@ -141,7 +141,7 @@ const ResetPassword = () => {
                 fontSize: "24px",
                 fontWeight: 500,
                 lineHeight: "32.4px",
-                color: "#038F3E",
+                color: "#1B5E20",
                 mt: 2,
               }}
               gutterBottom
@@ -199,7 +199,7 @@ const ResetPassword = () => {
                   sx={{
                     ...textFieldStyles,
                     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#038F3E",
+                      borderColor: "#1B5E20",
                     },
                   }}
                   onChange={handleChange}
@@ -263,7 +263,7 @@ const ResetPassword = () => {
                   sx={{
                     ...textFieldStyles,
                     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#038F3E",
+                      borderColor: "#1B5E20",
                     },
                   }}
                   onChange={handleChange}
@@ -285,7 +285,7 @@ const ResetPassword = () => {
                   width: "347px",
                   height: "45px",
                   borderRadius: "50px",
-                  backgroundColor: "#038F3E",
+                  backgroundColor: "#1B5E20",
                   color: "#FFFFFF",
                   fontSize: "16px",
                   fontWeight: 500,

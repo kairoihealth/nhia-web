@@ -58,6 +58,16 @@ export const getComplaints = async ({
   }
 };
 
+export const getWorkloadSummary = async (params) => {
+  try {
+    const response = await Api.get(e.GET_WORKLOAD_SUMMARY, { params });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch workload summary:", error);
+    throw error;
+  }
+};
+
 export const getNewComplaints = async ({
   ordering,
   page,
@@ -161,6 +171,47 @@ export const rateComplaint = async ({ id, payload }) => {
     return response;
   } catch (error) {
     console.error("Failed to rate complaint:", error);
+    throw error;
+  }
+};
+
+export const assignComplaint = async ({ id, payload }) => {
+  try {
+    const response = await Api.post(e.ASSIGN_COMPLAINT(id), payload);
+    return response;
+  } catch (error) {
+    console.error("Failed to assign complaint:", error);
+    throw error;
+  }
+};
+
+export const updateComplaintPriority = async ({ id, payload }) => {
+  try {
+    const response = await Api.post(e.UPDATE_COMPLAINT_PRIORITY(id), payload);
+    return response;
+  } catch (error) {
+    console.error("Failed to update complaint priority:", error);
+    throw error;
+  }
+};
+
+export const getComplaintStatusHistory = async (id) => {
+  try {
+    const response = await Api.get(e.GET_COMPLAINT_STATUS_HISTORY(id));
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch complaint status history:", error);
+    throw error;
+  }
+};
+
+export const getComplaintAssignmentHistory = async (id) => {
+  try {
+    const response = await Api.get(e.GET_COMPLAINT_ASSIGNMENT_HISTORY(id));
+    console.log(response, "responseresponse");
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch complaint assignment history:", error);
     throw error;
   }
 };
@@ -316,6 +367,71 @@ export const getInvitations = async ({
     return response.data;
   } catch (error) {
     console.error("Failed to fetch invitations:", error);
+    throw error;
+  }
+};
+
+export const getNotifications = async ({ page, page_size }) => {
+  const params = new URLSearchParams();
+
+  if (page) params.append("page", page);
+  if (page_size) params.append("page_size", page_size);
+  try {
+    const response = await Api.get(e.GET_NOTIFICATIONS, { params });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch notifications:", error);
+    throw error;
+  }
+};
+
+export const getUnreadNotifications = async () => {
+  try {
+    const response = await Api.get(e.GET_UNREAD_NOTIFICATIONS);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch unread notifications:", error);
+    throw error;
+  }
+};
+
+export const getUnreadNotificationCount = async () => {
+  try {
+    const response = await Api.get(e.GET_UNREAD_NOTIFICATIONS_COUNT);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch unread notification count:", error);
+    throw error;
+  }
+};
+
+
+export const getSingleNotification = async (id) => {
+  try {
+    const response = await Api.get(e.GET_SINGLE_NOTIFICATION(id));
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch notification:", error);
+    throw error;
+  }
+};
+
+export const markNotificationAsRead = async (id) => {
+  try {
+    const response = await Api.post(e.MARK_NOTIFICATION_AS_READ(id));
+    return response.data;
+  } catch (error) {
+    console.error("Failed to mark notification as read:", error);
+    throw error;
+  }
+};
+
+export const markAllNotificationsAsRead = async () => {
+  try {
+    const response = await Api.post(e.MARK_ALL_NOTIFICATIONS_AS_READ);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to mark all notifications as read:", error);
     throw error;
   }
 };

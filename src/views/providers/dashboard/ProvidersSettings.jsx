@@ -52,7 +52,7 @@ const textFieldStyles = {
     color: "#000000",
     border: "0.5px solid #DADADA",
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#038F3E",
+      borderColor: "#1B5E20",
     },
   },
 };
@@ -66,7 +66,7 @@ const textFieldStyles = {
 //   fontSize: "16px",
 //   outline: "none",
 //   "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-//     borderColor: "#038F3E", // Green border color
+//     borderColor: "#1B5E20", // Green border color
 //   },
 // };
 
@@ -122,6 +122,7 @@ const ProvidersSettings = () => {
               padding: "20px",
               gap: 2,
               mb: 4,
+              boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
               background: "#FAFAFA",
             }}
           >
@@ -240,7 +241,6 @@ const ProvidersSettings = () => {
 
 // Add Admin Form Component
 const AddAdminForm = () => {
-  const providerId = localStorage.getItem("providerId");
   const userRole = getUserRole();
   const handleError = useHandleError();
   const handleSuccess = useHandleSuccess();
@@ -280,7 +280,6 @@ const AddAdminForm = () => {
         designation: formData.designation,
         admin_status: formData.admin_status.value,
         role: userRole,
-        provider: providerId,
       };
 
       await addNewAdmin(payload);
@@ -431,7 +430,7 @@ const AddAdminForm = () => {
             sx={{
               width: { xs: "100%", sm: "380px" },
               height: "48px",
-              backgroundColor: "#038F3E",
+              backgroundColor: "#1B5E20",
               color: "#FFFFFF",
               textTransform: "none",
               fontSize: "16px",
@@ -459,10 +458,8 @@ const AddAdminForm = () => {
 
 // Edit Admin Form Component
 const EditAdminForm = () => {
-  const providerId = localStorage.getItem("providerId");
   const userId = localStorage.getItem("userId");
   const [selectedAdmin, setSelectedAdmin] = useState(null);
-  const userRole = getUserRole();
   const handleError = useHandleError();
   const handleSuccess = useHandleSuccess();
   const [formData, setFormData] = useState({
@@ -499,7 +496,6 @@ const EditAdminForm = () => {
         page: 1,
         pageSize: 100,
         role: "Provider",
-        provider: providerId,
       }),
   });
 
@@ -559,7 +555,6 @@ const EditAdminForm = () => {
         email: formData.email,
         designation: formData.designation,
         admin_status: formData.admin_status.value,
-        role: userRole,
         // password: formData.password,
       };
       console.log(payload, "submitted");
@@ -584,7 +579,14 @@ const EditAdminForm = () => {
 
   return (
     <Box>
-      <Box sx={{ background: "#FAFAFA", padding: "20px", mb: 4 }}>
+      <Box
+        sx={{
+          background: "#FAFAFA",
+          padding: "20px",
+          mb: 4,
+          boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
+        }}
+      >
         <Typography
           sx={{
             fontSize: "16px",
@@ -694,6 +696,7 @@ const EditAdminForm = () => {
           sx={{
             background: "#FAFAFA",
             padding: "20px",
+            boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
           }}
         >
           <Box
@@ -927,7 +930,7 @@ const EditAdminForm = () => {
                 sx={{
                   width: { xs: "100%", sm: "380px" },
                   height: "48px",
-                  backgroundColor: "#038F3E",
+                  backgroundColor: "#1B5E20",
                   color: "#FFFFFF",
                   textTransform: "none",
                   fontSize: "16px",
@@ -1058,7 +1061,13 @@ const ManageAdminRoles = () => {
   };
 
   return (
-    <Box sx={{ background: "#FAFAFA", padding: "20px" }}>
+    <Box
+      sx={{
+        background: "#FAFAFA",
+        padding: "20px",
+        boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
+      }}
+    >
       {!newLevel && !selectedLevel ? (
         <Box>
           <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
@@ -1321,7 +1330,7 @@ const ManageAdminRoles = () => {
                 sx={{
                   width: { xs: "100%", sm: "380px" },
                   height: "48px",
-                  backgroundColor: "#038F3E",
+                  backgroundColor: "#1B5E20",
                   color: "#FFFFFF",
                   textTransform: "none",
                   fontSize: "16px",

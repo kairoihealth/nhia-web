@@ -10,6 +10,8 @@ export const ENDPOINTS = {
   FORGOT_PASSWORD: "/users/reset-password/",
   RESET_PASSWORD: "/users/reset-password-confirm/",
   GET_USERS: "/users/",
+  CREATE_USER: "/users/",
+  ENROLLEE_SIGNUP: "/users/register-enrollee/",
   GET_SINGLE_USER: (id) => `/users/${id}/`,
   ADD_USER: "/users/register-user/",
   UPDATE_USER: (id) => `/users/${id}/`,
@@ -52,9 +54,15 @@ export const ENDPOINTS = {
   GET_COMPLAINT_RESPONSES_BY_CASE_ID: (case_id) =>
     `/complaints/case/${case_id}/responses/`,
   ADD_COMPLAINTS: "/complaints/",
-  UPDATE_COMPLAINT_STATUS: (id) => `/complaints/${id}/status/`,
+  UPDATE_COMPLAINT_STATUS: (id) => `/complaints/${id}/status-with-history/`,
   RATE_COMPLAINT: (id) => `/complaints/${id}/rate/`,
+  ASSIGN_COMPLAINT: (id) => `/complaints/${id}/assign/`,
+  UPDATE_COMPLAINT_PRIORITY: (id) => `/complaints/${id}/update-priority/`,
   RESPOND_TO_COMPLAINTS: "/complaints/respond/",
+  GET_WORKLOAD_SUMMARY: "/complaints/workload-summary/",
+  GET_COMPLAINT_STATUS_HISTORY: (id) => `/complaints/${id}/status-history/`,
+  GET_COMPLAINT_ASSIGNMENT_HISTORY: (id) =>
+    `/complaints/${id}/assignment-history/`,
 
   //INVITATIONS
   SEND_INVITATION: "/invitations/",
@@ -64,4 +72,12 @@ export const ENDPOINTS = {
   RESEND_INVITATION: (id) => `/invitations/${id}/resend/`,
   CANCEL_INVITATION: (id) => `/invitations/${id}/cancel/`,
   VERIFY_INVITATION: `/invitations/verify/`,
+
+  //NOTIFICATIONS
+  GET_NOTIFICATIONS: "/notifications/",
+  GET_UNREAD_NOTIFICATIONS: "/notifications/unread/",
+  GET_UNREAD_NOTIFICATIONS_COUNT: "/notifications/unread-count/",
+  GET_SINGLE_NOTIFICATION: (id) => `/notifications/${id}/`,
+  MARK_NOTIFICATION_AS_READ: (id) => `/notifications/${id}/mark-as-read/`,
+  MARK_ALL_NOTIFICATIONS_AS_READ: "/notifications/mark-all-as-read/",
 };

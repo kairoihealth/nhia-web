@@ -31,6 +31,7 @@ import { useState } from "react";
 import { useRef } from "react";
 import { useEffect } from "react";
 import { FiChevronDown } from "react-icons/fi";
+import FormCardHeader from "../../enrolees/ComplaintForm/FormCardHeader";
 
 const initialFilters = {
   status: "",
@@ -116,9 +117,10 @@ const Dashboard = () => {
 
   const pieStatusColors = [
     { status: "pending", color: "#FFCC99" },
-    { status: "active", color: "#72F172" },
-    { status: "closed", color: "#4B95DD" },
+    { status: "active", color: "#4B95DD" },
+    { status: "closed", color: "#72F172" },
     { status: "escalated", color: "#E75C5C" },
+    { status: "resolved", color: "#72F172" },
   ];
   const filteredPieStatus = useMemo(
     () =>
@@ -281,21 +283,16 @@ const Dashboard = () => {
                 alignItems: "flex-start",
                 borderRadius: "12px",
                 backgroundColor: "#FFFFFF",
+                boxShadow:
+                  "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
                 width: "100%",
                 minHeight: "209px",
               }}
             >
-              <Typography
-                sx={{
-                  fontSize: "18px",
-                  fontWeight: 500,
-                  lineHeight: "28px",
-                  color: "#475467",
-                }}
-                gutterBottom
-              >
-                Total Complaints Received
-              </Typography>
+              <FormCardHeader
+                title="Total Complaints Received"
+                titleSx={{ fontSize: "18px", color: "#475467" }}
+              />
               <Typography
                 sx={{
                   fontSize: "48px",
@@ -316,21 +313,16 @@ const Dashboard = () => {
                 alignItems: "flex-start",
                 borderRadius: "12px",
                 backgroundColor: "#FFFFFF",
+                boxShadow:
+                  "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
                 width: "100%",
                 minHeight: "209px",
               }}
             >
-              <Typography
-                sx={{
-                  fontSize: "18px",
-                  fontWeight: 500,
-                  lineHeight: "28px",
-                  color: "#475467",
-                }}
-                gutterBottom
-              >
-                Complaints Status
-              </Typography>
+              <FormCardHeader
+                title="Complaints Status"
+                titleSx={{ fontSize: "18px", color: "#475467" }}
+              />
               <Box
                 sx={{
                   display: "flex",
@@ -390,22 +382,16 @@ const Dashboard = () => {
                 alignItems: "flex-start",
                 borderRadius: "12px",
                 backgroundColor: "#FFFFFF",
+                boxShadow:
+                  "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
                 width: "100%",
                 minHeight: "209px",
               }}
             >
-              <Typography
-                sx={{
-                  fontSize: "18px",
-                  fontWeight: 500,
-                  lineHeight: "28px",
-                  color: "#475467",
-                  p: 1,
-                }}
-                gutterBottom
-              >
-                Complaint Volume
-              </Typography>
+              <FormCardHeader
+                title="Complaint Volume"
+                titleSx={{ fontSize: "18px", color: "#475467", p: 1 }}
+              />
               <Box
                 sx={{
                   display: "flex",
@@ -429,21 +415,16 @@ const Dashboard = () => {
                 alignItems: "flex-start",
                 borderRadius: "12px",
                 backgroundColor: "#FFFFFF",
+                boxShadow:
+                  "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
                 width: "100%",
                 minHeight: "209px",
               }}
             >
-              <Typography
-                sx={{
-                  fontSize: "18px",
-                  fontWeight: 500,
-                  lineHeight: "28px",
-                  color: "#475467",
-                }}
-                gutterBottom
-              >
-                Compliance with Regulations
-              </Typography>
+              <FormCardHeader
+                title="Compliance with Regulations"
+                titleSx={{ fontSize: "18px", color: "#475467" }}
+              />
               <Box
                 sx={{
                   display: "flex",
@@ -464,17 +445,10 @@ const Dashboard = () => {
             <Box
               sx={{ display: "flex", justifyContent: "space-between", px: 2 }}
             >
-              <Typography
-                sx={{
-                  fontSize: "20px",
-                  fontWeight: 500,
-                  lineHeight: "27px",
-                  color: "#1B1C1E",
-                  mb: 2,
-                }}
-              >
-                Escalated Complaints
-              </Typography>
+              <FormCardHeader
+                title="Escalated Complaints"
+                titleSx={{ fontSize: "20px", color: "#1B1C1E" }}
+              />
               <Typography
                 sx={{
                   display: "flex",
@@ -482,25 +456,34 @@ const Dashboard = () => {
                   fontSize: "14px",
                   fontWeight: 500,
                   lineHeight: "18.9px",
-                  color: "#038F3E",
+                  color: "#1B5E20",
                   textDecoration: "underline",
                   cursor: "pointer",
                 }}
                 onClick={() => navigate("/hmo/complaints")}
               >
                 View Complaints{" "}
-                <ArrowRightAltTwoToneIcon sx={{ color: "#038F3E" }} />
+                <ArrowRightAltTwoToneIcon sx={{ color: "#1B5E20" }} />
               </Typography>
             </Box>
-            <Box sx={{ width: "100%", overflowX: "auto" }}>
-              <ReusableTable
-                columns={getColumns()}
-                rows={transformedRows}
-                onViewClick={handleViewClick}
-                showActions={false}
-                showStatus={false}
-              />
-            </Box>
+            <Card
+              sx={{
+                p: { xs: 1, md: 2 },
+                borderRadius: "12px",
+                boxShadow:
+                  "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
+              }}
+            >
+              <Box sx={{ width: "100%", overflowX: "auto" }}>
+                <ReusableTable
+                  columns={getColumns()}
+                  rows={transformedRows}
+                  onViewClick={handleViewClick}
+                  showActions={false}
+                  showStatus={false}
+                />
+              </Box>
+            </Card>
           </Box>
         </Box>
 
@@ -522,20 +505,15 @@ const Dashboard = () => {
               alignItems: "flex-start",
               borderRadius: "12px",
               backgroundColor: "#FFFFFF",
+              boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
               width: "100%",
               minHeight: "451px",
             }}
           >
-            <Typography
-              sx={{
-                fontSize: "18px",
-                fontWeight: 500,
-                lineHeight: "28px",
-                color: "#101828",
-              }}
-            >
-              Frequency of Complaints
-            </Typography>
+            <FormCardHeader
+              title="Frequency of Complaints"
+              titleSx={{ fontSize: "18px", color: "#101828" }}
+            />
             {complaintStats?.complaint_type?.map((t) => (
               <Box
                 key={t.id}
@@ -585,6 +563,7 @@ const Dashboard = () => {
               alignItems: "flex-start",
               borderRadius: "12px",
               backgroundColor: "#FFFFFF",
+              boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
               width: "100%",
             }}
           >
@@ -597,16 +576,10 @@ const Dashboard = () => {
                 mb: 2,
               }}
             >
-              <Typography
-                sx={{
-                  fontSize: "18px",
-                  fontWeight: 500,
-                  lineHeight: "28px",
-                  color: "#101828",
-                }}
-              >
-                Complaint Trends
-              </Typography>
+              <FormCardHeader
+                title="Complaint Trends"
+                titleSx={{ fontSize: "18px", color: "#101828" }}
+              />
 
               <Box sx={{ position: "relative" }}>
                 <Box
@@ -702,8 +675,8 @@ const Dashboard = () => {
                           fontSize: "14px",
                           fontWeight: 500,
                           backgroundColor: "transparent",
-                          border: "1px solid #038F3E",
-                          color: "#038F3E",
+                          border: "1px solid #1B5E20",
+                          color: "#1B5E20",
                           textTransform: "none",
                           "&:hover": {
                             backgroundColor: "#027A3B",

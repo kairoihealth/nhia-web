@@ -36,7 +36,7 @@ const EmailVerifiedSection = () => {
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
-          alignItems: "center"
+          alignItems: "center",
         }}
       >
         <Typography
@@ -44,7 +44,7 @@ const EmailVerifiedSection = () => {
             fontSize: "32px",
             fontWeight: 500,
             lineHeight: "43.2px",
-            color: "#038F3E"
+            color: "#1B5E20",
           }}
         >
           Email Verified
@@ -55,7 +55,7 @@ const EmailVerifiedSection = () => {
             fontWeight: 400,
             lineHeight: "21.6px",
             color: "#475467",
-            width: "360px"
+            width: "360px",
           }}
         >
           Your email ({email}) has been successfully verified. Click below to
@@ -78,9 +78,9 @@ const EmailVerifiedSection = () => {
           py: "10px",
           px: "18px",
           borderRadius: "50px",
-          backgroundColor: "#038F3E",
+          backgroundColor: "#1B5E20",
           my: 3,
-          textTransform: "none"
+          textTransform: "none",
         }}
       >
         Continue to Login
@@ -90,7 +90,7 @@ const EmailVerifiedSection = () => {
         variant="text"
         onClick={onBackToLogin}
         sx={{
-          color: "#038F3E",
+          color: "#1B5E20",
           mt: 2,
           textDecoration: "none"
         }}

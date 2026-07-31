@@ -5,6 +5,7 @@ import {
   TextField,
   FormControl,
   Button,
+  Card,
   // Link,
 } from "@mui/material";
 import PhoneInput from "react-phone-input-2";
@@ -30,7 +31,7 @@ const textFieldStyles = {
     border: "0.5px solid #DADADA",
     width: "100%",
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#038F3E",
+      borderColor: "#1B5E20",
     },
   },
 };
@@ -150,13 +151,11 @@ const StateProfile = () => {
       {/* Main Layout */}
       <Box
         sx={{
-          display: "flex",
-          backgroundColor: "#FAFAFA",
-          height: "100vh",
+          p: 2,
         }}
       >
         {/* Main Content Area */}
-        <Box sx={{ flexGrow: 1, p: 3 }}>
+        <Card sx={{ flexGrow: 1, p: 3, borderRadius: "12px", boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A" }}>
           {/* Sub Content */}
           <Box sx={{ mt: 2 }}>
             {/* Title */}
@@ -446,7 +445,7 @@ const StateProfile = () => {
                       width: { xs: "100%", sm: "144px" },
                       height: "42px",
                       borderRadius: "12px",
-                      backgroundColor: "#038F3E",
+                      backgroundColor: "#1B5E20",
                       color: "#FFFFFF",
                       fontSize: "16px",
                       fontWeight: 500,
@@ -477,7 +476,7 @@ const StateProfile = () => {
                   fontWeight: 500,
                   lineHeight: "32.4px",
                   textTransform: "none",
-                  color: "#038F3E",
+                  color: "#1B5E20",
                   mt: 5,
                 }}
               >
@@ -675,7 +674,7 @@ const StateProfile = () => {
                         width: { xs: "100%", sm: "auto" },
                         height: "42px",
                         borderRadius: "12px",
-                        backgroundColor: "#038F3E",
+                        backgroundColor: "#1B5E20",
                         color: "#FFFFFF",
                         fontSize: "16px",
                         fontWeight: 500,
@@ -699,7 +698,7 @@ const StateProfile = () => {
                      fontWeight: 500,
                      lineHeight: "32.4px",
                      textTransform: "none",
-                     color: "#038F3E",
+                     color: "#1B5E20",
                      mt: 5,
                    }}
                  >
@@ -760,7 +759,7 @@ const StateProfile = () => {
                </Box> */}
             </Box>
           </Box>
-        </Box>
+        </Card>
       </Box>
     </Box>
   );

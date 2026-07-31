@@ -1,13 +1,27 @@
-import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Typography,
+  Card,
+  Divider,
+} from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { useLocation, useNavigate } from "react-router-dom";
-import { getSingleComplaint } from "../../services/general";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  getSingleComplaint,
+  getComplaintStatusHistory,
+  getComplaintAssignmentHistory,
+} from "../../services/general";
 import WithAuthorization from "../auth/withAuthorization";
+import { DetailItem, StatusInfoCard } from "../State/StateSingleComplaint";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { PriorityChip, StatusChip } from "../../shared/StatusChips";
+import ActivityTimeline from "../../shared/ActivityTimeline";
 
 const ProvidersSingleComplaintPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const slug = location?.state.complaint;
+  const { id } = useParams();
 
   const {
     data: complaint,
@@ -15,9 +29,28 @@ const ProvidersSingleComplaintPage = () => {
     isError,
     error,
   } = useQuery({
-    queryKey: ["complaints", slug],
-    queryFn: () => getSingleComplaint(slug),
+    queryKey: ["complaints", id],
+    queryFn: () => getSingleComplaint(id),
   });
+
+  const { data: statusHistory } = useQuery({
+    queryKey: ["complaintStatusHistory", id],
+    queryFn: () => getComplaintStatusHistory(id),
+    enabled: !!id,
+  });
+
+  const { data: assignmentHistory } = useQuery({
+    queryKey: ["complaintAssignmentHistory", id],
+    queryFn: () => getComplaintAssignmentHistory(id),
+    enabled: !!id,
+  });
+
+  const buttonText =
+    complaint?.status === "resolved"
+      ? "View Resolution"
+      : complaint?.status === "closed"
+      ? "View Thread"
+      : "Resolve Complaint";
 
   const handleCompliant = () => {
     navigate(`/provider/complaint/${complaint?.id}/thread`, {
@@ -57,332 +90,238 @@ const ProvidersSingleComplaintPage = () => {
   }
 
   return (
-    <Box>
-      <Box sx={{ px: 2 }}>
-        <Box sx={{ mt: 2 }}>
-          <Typography
-            sx={{
-              fontSize: "24px",
-              fontWeight: 500,
-              lineHeight: "32.4px",
-              color: "#1B1C1E",
-            }}
-          >
-            Complaints
-          </Typography>
-        </Box>
-        <Box sx={{ mt: 3 }}>
-          <Typography
-            sx={{
-              fontSize: "24px",
-              fontWeight: 500,
-              lineHeight: "32.4px",
-              color: "#111827",
-            }}
-          >
-            {complaint?.case_id || ""} - {complaint?.complaint_type || ""}
-          </Typography>
-        </Box>
+    <Box sx={{ p: { xs: 0, sm: 1 } }}>
+      <Button
+        startIcon={<ArrowBackIcon />}
+        onClick={() => navigate(-1)}
+        sx={{ mb: 2, color: "#1B5E20", textTransform: "none", p: 0 }}
+      >
+        Back to Complaints
+      </Button>
 
-        {/*Complainants Details*/}
-        <Box sx={{ mt: 6 }}>
-          <Typography
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", md: "row" },
+          gap: 3,
+        }}
+      >
+        {/* Left Column */}
+        <Box sx={{ width: { xs: "100%", md: "calc(74% - 12px)" } }}>
+          <Card
             sx={{
-              fontSize: "24px",
-              fontWeight: 500,
-              lineHeight: "32.4px",
-              color: "#038F3E",
+              p: { xs: 2, lg: 2.5 },
+              borderRadius: "12px",
+              boxShadow: "0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A",
             }}
           >
-            Complainant&apos;s Details
-          </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                flexWrap: "wrap",
+                gap: 1,
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  width: "100%",
+                  flexWrap: "wrap",
+                  gap: 1,
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  sx={{ fontWeight: 600, fontSize: "16px" }}
+                >
+                  {complaint?.case_id}
+                </Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: 1,
+                    textTransform: "capitalize",
+                    fontSize: "13px",
+                  }}
+                >
+                  <StatusChip status={complaint?.status} />
+                  <PriorityChip priority={complaint?.priority} />
+                </Box>
+              </Box>
+              <Typography variant="caption" color="text.secondary">
+                {`Filed ${new Date(complaint?.created_at).toLocaleDateString(
+                  "en-GB",
+                  {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  },
+                )} · Against ${complaint?.complaint_against} · ${complaint?.state?.name} State`}
+              </Typography>
+            </Box>
 
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              width: "40%",
-              gap: 2,
-              mt: 4,
-              px: 2,
-            }}
-          >
-            <Box flex={1} sx={{ display: "flex", gap: 2 }}>
-              <Typography
-                sx={{
-                  color: "#595959",
-                  fontSize: { xs: "14px", md: "16px" },
-                  fontWeight: 500,
-                  lineHeight: "24px",
-                  width: "60%",
-                }}
-              >
-                Complainant&apos;s Name
-              </Typography>
-              <Typography
-                sx={{
-                  color: "#1B1C1E",
-                  fontSize: { xs: "14px", md: "16px" },
-                  fontWeight: 500,
-                  lineHeight: "24px",
-                  width: "60%",
-                }}
-              >
-                {complaint?.firstname || "-"} {complaint?.lastname || "-"}
-              </Typography>
-            </Box>
-            <Box flex={1} sx={{ display: "flex", gap: 2 }}>
-              <Typography
-                sx={{
-                  color: "#595959",
-                  fontSize: { xs: "14px", md: "16px" },
-                  fontWeight: 500,
-                  lineHeight: "24px",
-                  width: "60%",
-                }}
-              >
-                Complainant&apos;s Address
-              </Typography>
-              <Typography
-                sx={{
-                  color: "#1B1C1E",
-                  fontSize: { xs: "14px", md: "16px" },
-                  fontWeight: 500,
-                  lineHeight: "24px",
-                  width: "60%",
-                }}
-              >
-                {complaint?.contact_address || "--"}
-              </Typography>
-            </Box>
-            <Box flex={1} sx={{ display: "flex", gap: 2 }}>
-              <Typography
-                sx={{
-                  color: "#595959",
-                  fontSize: { xs: "14px", md: "16px" },
-                  fontWeight: 500,
-                  lineHeight: "24px",
-                  width: "60%",
-                }}
-              >
-                Complainant&apos;s Email Address
-              </Typography>
-              <Typography
-                sx={{
-                  color: "#1B1C1E",
-                  fontSize: { xs: "14px", md: "16px" },
-                  fontWeight: 500,
-                  lineHeight: "24px",
-                  width: "60%",
-                }}
-              >
-                {complaint?.email || "--"}
-              </Typography>
-            </Box>
-            <Box flex={1} sx={{ display: "flex", gap: 2 }}>
-              <Typography
-                sx={{
-                  color: "#595959",
-                  fontSize: { xs: "14px", md: "16px" },
-                  fontWeight: 500,
-                  lineHeight: "24px",
-                  width: "60%",
-                }}
-              >
-                Complainant&apos;s Phone Number
-              </Typography>
-              <Typography
-                sx={{
-                  color: "#1B1C1E",
-                  fontSize: { xs: "14px", md: "16px" },
-                  fontWeight: 500,
-                  lineHeight: "24px",
-                  width: "60%",
-                }}
-              >
-                {complaint?.phone || "--"}
-              </Typography>
-            </Box>
-          </Box>
-        </Box>
+            <Divider sx={{ my: 2 }} />
 
-        {/*Complaint Details*/}
-        <Box sx={{ mt: 6 }}>
-          <Typography
-            sx={{
-              fontSize: "24px",
-              fontWeight: 500,
-              lineHeight: "32.4px",
-              color: "#038F3E",
-            }}
-          >
-            Complaints Details
-          </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 3,
+                flexWrap: "wrap",
+                gap: 1,
+              }}
+            >
+              <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                Complaint Details
+              </Typography>
+              <Button
+                variant="contained"
+                onClick={handleCompliant}
+                sx={{
+                  fontSize: "14px",
+                  textTransform: "none",
+                  backgroundColor: "#1B5E20",
+                  "&:hover": { backgroundColor: "#1B5E20" },
+                }}
+              >
+                {buttonText}
+              </Button>
+            </Box>
 
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              width: "40%",
-              gap: 2,
-              mt: 4,
-              px: 2,
-            }}
-          >
-            <Box flex={1} sx={{ display: "flex", gap: 2 }}>
+            <Typography
+              variant="subtitle2"
+              sx={{ fontWeight: 600, color: "#1B5E20", mb: 2 }}
+            >
+              Complainant&apos;s Details
+            </Typography>
+            <Box sx={{ display: { sm: "flex" }, gap: { sm: 3 } }}>
+              <Box sx={{ flex: 1 }}>
+                <DetailItem
+                  label="Complainant's Name"
+                  value={`${complaint?.firstname || "-"} ${complaint?.lastname || "-"}`}
+                />
+                <DetailItem
+                  label="Complainant's Email"
+                  value={complaint?.email}
+                />
+              </Box>
+              <Box sx={{ flex: 1 }}>
+                <DetailItem
+                  label="Complainant's Address"
+                  value={complaint?.contact_address}
+                />
+                <DetailItem
+                  label="Complainant's Phone"
+                  value={complaint?.phone}
+                />
+              </Box>
+            </Box>
+
+            <Divider sx={{ my: 2 }} />
+
+            <Typography
+              variant="subtitle2"
+              sx={{ fontWeight: 600, color: "#1B5E20", mb: 2 }}
+            >
+              Incident Details
+            </Typography>
+            <Box sx={{ display: { sm: "flex" }, gap: { sm: 3 } }}>
+              <Box sx={{ flex: 1 }}>
+                <DetailItem
+                  label="Date of Incident"
+                  value={new Date(complaint?.incident_date).toLocaleDateString(
+                    "en-GB",
+                    { day: "2-digit", month: "short", year: "numeric" },
+                  )}
+                />
+                <DetailItem
+                  label="Complaint Type"
+                  value={complaint?.complaint_type}
+                />
+                <DetailItem
+                  label="Complaint Against"
+                  value={complaint?.complaint_against}
+                />
+                <DetailItem
+                  label="Name of Respondent"
+                  value={
+                    complaint?.respondent ||
+                    complaint?.provider?.name ||
+                    complaint?.hmo?.name
+                  }
+                />
+              </Box>
+              <Box sx={{ flex: 1 }}>
+                <DetailItem
+                  label="Time of Incident"
+                  value={complaint?.incident_time}
+                />
+                <DetailItem
+                  label="Complaint Category"
+                  value={complaint?.complaint_category}
+                />
+                <DetailItem
+                  label="Programme"
+                  value={complaint?.nhia_programme}
+                />
+                <DetailItem label="State" value={complaint?.state?.name} />
+              </Box>
+            </Box>
+
+            <Divider sx={{ my: 2 }} />
+
+            <Box>
               <Typography
-                sx={{
-                  color: "#595959",
-                  fontSize: { xs: "14px", md: "16px" },
-                  fontWeight: 500,
-                  lineHeight: "24px",
-                  width: "60%",
-                }}
+                variant="subtitle1"
+                sx={{ fontWeight: 600, color: "#1B1C1E", mb: 1 }}
               >
-                Date of Incident
+                Description
               </Typography>
               <Typography
+                variant="body2"
                 sx={{
-                  color: "#1B1C1E",
-                  fontSize: { xs: "14px", md: "16px" },
-                  fontWeight: 500,
-                  lineHeight: "24px",
-                  width: "60%",
+                  p: 1.5,
+                  backgroundColor: "#F5F5F5",
+                  borderRadius: "8px",
+                  whiteSpace: "pre-wrap",
+                  lineHeight: 1.6,
                 }}
               >
-                {new Date(complaint?.incident_date).toLocaleDateString() ||
-                  "--"}
+                {complaint?.description}
               </Typography>
             </Box>
-            <Box flex={1} sx={{ display: "flex", gap: 2 }}>
-              <Typography
-                sx={{
-                  color: "#595959",
-                  fontSize: { xs: "14px", md: "16px" },
-                  fontWeight: 500,
-                  lineHeight: "24px",
-                  width: "60%",
-                }}
-              >
-                Time of Incident
-              </Typography>
-              <Typography
-                sx={{
-                  color: "#1B1C1E",
-                  fontSize: { xs: "14px", md: "16px" },
-                  fontWeight: 500,
-                  lineHeight: "24px",
-                  width: "60%",
-                }}
-              >
-                {complaint?.incident_time || "--"}
-              </Typography>
-            </Box>
-            <Box flex={1} sx={{ display: "flex", gap: 2 }}>
-              <Typography
-                sx={{
-                  color: "#595959",
-                  fontSize: { xs: "14px", md: "16px" },
-                  fontWeight: 500,
-                  lineHeight: "24px",
-                  width: "60%",
-                }}
-              >
-                Date Reported
-              </Typography>
-              <Typography
-                sx={{
-                  color: "#1B1C1E",
-                  fontSize: { xs: "14px", md: "16px" },
-                  fontWeight: 500,
-                  lineHeight: "24px",
-                  width: "60%",
-                }}
-              >
-                {new Date(complaint?.created_at).toLocaleDateString() || "--"}
-              </Typography>
-            </Box>
-            <Box flex={1} sx={{ display: "flex", gap: 2 }}>
-              <Typography
-                sx={{
-                  color: "#595959",
-                  fontSize: { xs: "14px", md: "16px" },
-                  fontWeight: 500,
-                  lineHeight: "24px",
-                  width: "60%",
-                }}
-              >
-                NHIA Programme
-              </Typography>
-              <Typography
-                sx={{
-                  color: "#1B1C1E",
-                  fontSize: { xs: "14px", md: "16px" },
-                  fontWeight: 500,
-                  lineHeight: "24px",
-                  width: "60%",
-                }}
-              >
-                {complaint?.nhia_programme || "--"}
-              </Typography>
-            </Box>
-            <Box flex={1} sx={{ display: "flex", gap: 2 }}>
-              <Typography
-                sx={{
-                  color: "#595959",
-                  fontSize: { xs: "14px", md: "16px" },
-                  fontWeight: 500,
-                  lineHeight: "24px",
-                  width: "60%",
-                }}
-              >
-                Type of Complaint
-              </Typography>
-              <Typography
-                sx={{
-                  color: "#1B1C1E",
-                  fontSize: { xs: "14px", md: "16px" },
-                  fontWeight: 500,
-                  lineHeight: "24px",
-                  width: "60%",
-                }}
-              >
-                {complaint?.complaint_type || "--"}
-              </Typography>
-            </Box>
-          </Box>
+
+            <Divider sx={{ my: 3 }} />
+
+            <ActivityTimeline
+              statusHistory={statusHistory}
+              assignmentHistory={assignmentHistory}
+              complaint={complaint}
+            />
+          </Card>
         </Box>
 
-        {/*Button*/}
-        <Box sx={{ display: "flex", justifyContent: "center" }}>
-          <Button
-            variant="contained"
-            sx={{
-              width: "50%",
-              backgroundColor: "#038F3E",
-              color: "#FFFFFF",
-              fontWeight: 500,
-              fontSize: "16px",
-              lineHeight: "24px",
-              textTransform: "capitalize",
-              padding: "12px 24px",
-              borderRadius: "8px",
-              mt: 8,
-              mb: 6,
-            }}
-            onClick={handleCompliant}
-          >
-            Resolve Complaints
-          </Button>
+        {/* Right Column */}
+        <Box sx={{ width: { xs: "100%", md: "calc(26% - 12px)" } }}>
+          <StatusInfoCard
+            status={complaint?.status}
+            priority={complaint?.priority}
+            state={complaint?.state?.name}
+            assignedTo={complaint?.assigned_officer_code}
+            resolutionDate={complaint?.due_date}
+          />
         </Box>
       </Box>
     </Box>
   );
 };
 
-const ProvidersSingleComplaint = WithAuthorization(ProvidersSingleComplaintPage, [
-  "can_view_complaint_details",
-  "can_respond_to_complaints",
-]);
+const ProvidersSingleComplaint = WithAuthorization(
+  ProvidersSingleComplaintPage,
+  ["can_view_complaint_details", "can_respond_to_complaints"],
+);
 
 export default ProvidersSingleComplaint;
