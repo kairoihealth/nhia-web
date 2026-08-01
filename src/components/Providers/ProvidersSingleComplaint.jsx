@@ -49,14 +49,21 @@ const ProvidersSingleComplaintPage = () => {
     complaint?.status === "resolved"
       ? "View Resolution"
       : complaint?.status === "closed"
-      ? "View Thread"
-      : "Resolve Complaint";
+        ? "View Thread"
+        : "Resolve Complaint";
 
   const handleCompliant = () => {
     navigate(`/provider/complaint/${complaint?.id}/thread`, {
       state: { thread: complaint?.id },
     });
   };
+
+  const complainantName =
+    [complaint?.firstname, complaint?.middlename, complaint?.lastname]
+      .filter(Boolean)
+      .join(" ") ||
+    complaint?.organization ||
+    "-";
 
   if (isLoading) {
     return (
@@ -201,7 +208,7 @@ const ProvidersSingleComplaintPage = () => {
               <Box sx={{ flex: 1 }}>
                 <DetailItem
                   label="Complainant's Name"
-                  value={`${complaint?.firstname || "-"} ${complaint?.lastname || "-"}`}
+                  value={complainantName}
                 />
                 <DetailItem
                   label="Complainant's Email"
