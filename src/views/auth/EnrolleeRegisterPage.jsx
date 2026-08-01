@@ -90,6 +90,7 @@ const EnrolleeRegisterPage = () => {
         ...formData,
         role: "Enrollee",
         is_staff: false,
+        // provider: "sg5f8rr4v5k8nsvys46v5k6j",
       };
       console.log(payload, "formData");
       await userSignup(payload);
@@ -104,7 +105,7 @@ const EnrolleeRegisterPage = () => {
 
   return (
     <TwoColumnLayout
-      title="Create Your Enrollee Account"
+      title="Create Your Account"
       subtitle="Join the NHIA platform to manage your health insurance, submit complaints, and track their resolution."
       rightColumnSx={{
         display: "flex",
@@ -125,7 +126,7 @@ const EnrolleeRegisterPage = () => {
         }}
       >
         <FormCardHeader
-          title="Enrollee Registration"
+          title="Registration"
           subtitle="Create an account to get started."
         />
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 3 }}>
