@@ -23,18 +23,25 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import FormCardHeader from "./FormCardHeader";
 
 const option = [
-  { value: "HMO", label: "Hmo" },
+  { value: "HMO", label: "HMO" },
   { value: "Provider", label: "Provider" },
   { value: "Enrollee", label: "Enrollee" },
   { value: "NHIA", label: "NHIA" },
 ];
 
-const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack }) => {
+const FirstForm = ({
+  firstInfo,
+  setFirstInfo,
+  onNext,
+  onBack,
+  selectedAccountType,
+}) => {
   const [errors, setErrors] = useState({});
   const [selectedHmo, setSelectedHmo] = useState(null);
   const [selectedProvider, setSelectedProvider] = useState(null);
   const [selectedHmoOrProviderName, setSelectedHmoOrProviderName] =
     useState(null);
+  const [selectedOrganization, setSelectedOrganization] = useState(null);
 
   const hmosQueryKey = useMemo(() => ["hmos"], []);
   const { data: hmosData } = useQuery({
@@ -102,18 +109,32 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack }) => {
     setSelectedHmoOrProviderName(selectedOption.label);
   };
 
+  const handleOrganizationChange = (selectedOption) => {
+    setSelectedOrganization(selectedOption);
+    setFirstInfo((prev) => ({
+      ...prev,
+      organization: selectedOption.label,
+    }));
+  };
+
   const validateFields = () => {
     const newErrors = {};
 
-    // if (
-    //   selectedAccountType === "Enrollee" ||
-    //   selectedAccountType === "Employer"
-    // ) {
-    if (!firstInfo.firstName?.trim())
-      newErrors.firstName = "First name is required.";
-    if (!firstInfo.lastName?.trim())
-      newErrors.lastName = "Last name is required.";
-    // }
+    if (selectedAccountType === "Enrollee") {
+      if (!firstInfo.firstName?.trim())
+        newErrors.firstName = "First name is required.";
+      if (!firstInfo.lastName?.trim())
+        newErrors.lastName = "Last name is required.";
+    }
+    if (
+      selectedAccountType === "HMO" ||
+      selectedAccountType === "Provider" ||
+      selectedAccountType === "Employer"
+    ) {
+      if (!firstInfo.organization?.trim()) {
+        newErrors.organization = "This field is required";
+      }
+    }
     if (!firstInfo.contactAddress?.trim())
       newErrors.contactAddress = "Contact address is required.";
     if (!firstInfo.email?.trim()) newErrors.email = "Email is required.";
@@ -150,6 +171,8 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack }) => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
+  console.log(errors, firstInfo, "errors");
 
   const handleNext = () => {
     if (validateFields()) {
@@ -195,106 +218,221 @@ const FirstForm = ({ firstInfo, setFirstInfo, onNext, onBack }) => {
           titleSx={{ fontSize: "20px", color: "#1B1C1E" }}
         />
         <form>
-          {/* {(selectedAccountType === "Enrollee" ||
-            selectedAccountType === "Employer") && ( */}
-          <>
-            <Box
-              display="flex"
-              flexDirection={{ xs: "column", md: "row" }}
-              gap={2}
-            >
+          {selectedAccountType === "Enrollee" ? (
+            <>
               <Box
-                flex={1}
-                sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                display="flex"
+                flexDirection={{ xs: "column", md: "row" }}
+                gap={2}
               >
-                <Typography
-                  sx={{
-                    color: "#595959",
-                    fontSize: "16px",
-                    fontWeight: 500,
-                    lineHeight: "24px",
-                  }}
+                <Box
+                  flex={1}
+                  sx={{ display: "flex", flexDirection: "column", gap: 1 }}
                 >
-                  First Name
-                  <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
-                </Typography>
+                  <Typography
+                    sx={{
+                      color: "#595959",
+                      fontSize: "16px",
+                      fontWeight: 500,
+                      lineHeight: "24px",
+                    }}
+                  >
+                    First Name
+                    <span style={{ color: "#099243", marginLeft: "6px" }}>
+                      *
+                    </span>
+                  </Typography>
+                  <TextField
+                    name="firstName"
+                    fullWidth
+                    variant="outlined"
+                    required
+                    placeholder="enter first name"
+                    sx={textFieldStyles}
+                    value={firstInfo.firstName}
+                    onChange={handleInputChange}
+                    error={!!errors.firstName}
+                    helperText={errors.firstName}
+                  />
+                </Box>
+                <Box
+                  flex={1}
+                  sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                >
+                  <Typography
+                    sx={{
+                      color: "#595959",
+                      fontSize: "16px",
+                      fontWeight: 500,
+                      lineHeight: "24px",
+                    }}
+                  >
+                    Last Name
+                    <span style={{ color: "#099243", marginLeft: "6px" }}>
+                      *
+                    </span>
+                  </Typography>
+                  <TextField
+                    name="lastName"
+                    fullWidth
+                    variant="outlined"
+                    required
+                    placeholder="enter last name"
+                    sx={textFieldStyles}
+                    value={firstInfo.lastName}
+                    onChange={handleInputChange}
+                    error={!!errors.lastName}
+                    helperText={errors.lastName}
+                  />
+                </Box>
+              </Box>
+              <Box
+                display="flex"
+                flexDirection={{ xs: "column", md: "row" }}
+                gap={2}
+                mt={2}
+              >
+                <Box
+                  flex={1}
+                  sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                >
+                  <Typography
+                    sx={{
+                      color: "#595959",
+                      fontSize: "16px",
+                      fontWeight: 500,
+                      lineHeight: "24px",
+                    }}
+                  >
+                    Middle Name
+                  </Typography>
+                  <TextField
+                    name="middleName"
+                    fullWidth
+                    variant="outlined"
+                    placeholder="enter middle name"
+                    sx={textFieldStyles}
+                    value={firstInfo.middleName}
+                    onChange={handleInputChange}
+                    error={!!errors.middleName}
+                    helperText={errors.middleName}
+                  />
+                </Box>
+              </Box>
+            </>
+          ) : selectedAccountType === "HMO" ? (
+            <Box
+              flex={1}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+                my: 2,
+              }}
+            >
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                HMO Name
+                <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
+              </Typography>
+              <Box>
+                <ReactSelect
+                  styles={selectStyles}
+                  value={selectedOrganization}
+                  onChange={handleOrganizationChange}
+                  options={hmos}
+                  placeholder="Select HMO"
+                />
+                {errors.organization && (
+                  <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
+                    {errors.organization}
+                  </Typography>
+                )}
+              </Box>
+            </Box>
+          ) : selectedAccountType === "Provider" ? (
+            <Box
+              flex={1}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+                my: 2,
+              }}
+            >
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                Providers Name
+                <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
+              </Typography>
+              <Box>
+                <ReactSelect
+                  styles={selectStyles}
+                  value={selectedOrganization}
+                  onChange={handleOrganizationChange}
+                  options={providers}
+                  placeholder="Select Provider"
+                />
+                {errors.organization && (
+                  <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
+                    {errors.organization}
+                  </Typography>
+                )}
+              </Box>
+            </Box>
+          ) : selectedAccountType === "Employer" ? (
+            <Box
+              flex={1}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+                my: 2,
+              }}
+            >
+              <Typography
+                sx={{
+                  color: "#595959",
+                  fontSize: "16px",
+                  fontWeight: 500,
+                  lineHeight: "24px",
+                }}
+              >
+                Organization Name
+              </Typography>
+              <Box>
                 <TextField
-                  name="firstName"
+                  name="organization"
                   fullWidth
                   variant="outlined"
                   required
-                  placeholder="enter first name"
+                  placeholder="Organization Name"
                   sx={textFieldStyles}
-                  value={firstInfo.firstName}
+                  value={firstInfo.organization}
                   onChange={handleInputChange}
-                  error={!!errors.firstName}
-                  helperText={errors.firstName}
+                  error={!!errors.organization}
+                  helperText={errors.organization}
                 />
-              </Box>
-              <Box
-                flex={1}
-                sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-              >
-                <Typography
-                  sx={{
-                    color: "#595959",
-                    fontSize: "16px",
-                    fontWeight: 500,
-                    lineHeight: "24px",
-                  }}
-                >
-                  Last Name
-                  <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
-                </Typography>
-                <TextField
-                  name="lastName"
-                  fullWidth
-                  variant="outlined"
-                  required
-                  placeholder="enter last name"
-                  sx={textFieldStyles}
-                  value={firstInfo.lastName}
-                  onChange={handleInputChange}
-                  error={!!errors.lastName}
-                  helperText={errors.lastName}
-                />
+                {errors.organization && (
+                  <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
+                    {errors.organization}
+                  </Typography>
+                )}
               </Box>
             </Box>
-            <Box
-              display="flex"
-              flexDirection={{ xs: "column", md: "row" }}
-              gap={2}
-              mt={2}
-            >
-              <Box
-                flex={1}
-                sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-              >
-                <Typography
-                  sx={{
-                    color: "#595959",
-                    fontSize: "16px",
-                    fontWeight: 500,
-                    lineHeight: "24px",
-                  }}
-                >
-                  Middle Name
-                </Typography>
-                <TextField
-                  name="middleName"
-                  fullWidth
-                  variant="outlined"
-                  placeholder="enter middle name"
-                  sx={textFieldStyles}
-                  value={firstInfo.middleName}
-                  onChange={handleInputChange}
-                  error={!!errors.middleName}
-                  helperText={errors.middleName}
-                />
-              </Box>
-            </Box>
-          </>
-          {/* )} */}
+          ) : null}
           <Box mt={2}>
             <Box
               flex={1}

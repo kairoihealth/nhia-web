@@ -90,6 +90,13 @@ const CentralSingleComplaintPage = () => {
     }
   };
 
+  const complainantName =
+    [complaint?.firstname, complaint?.middlename, complaint?.lastname]
+      .filter(Boolean)
+      .join(" ") ||
+    complaint?.organization ||
+    "-";
+
   if (isLoading) {
     return (
       <Box
@@ -233,7 +240,7 @@ const CentralSingleComplaintPage = () => {
               <Box sx={{ flex: 1 }}>
                 <DetailItem
                   label="Complainant's Name"
-                  value={`${complaint?.firstname || "-"} ${complaint?.lastname || "-"}`}
+                  value={complainantName}
                 />
                 <DetailItem
                   label="Complainant's Email"
@@ -427,7 +434,7 @@ const CentralSingleComplaintPage = () => {
               <MenuItem value="low">Low</MenuItem>
               <MenuItem value="medium">Medium</MenuItem>
               <MenuItem value="high">High</MenuItem>
-              <MenuItem value="urgent">Urgent</MenuItem>
+              <MenuItem value="top">Top</MenuItem>
             </TextField>
             <Button
               fullWidth

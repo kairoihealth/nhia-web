@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import NoteAddOutlinedIcon from "@mui/icons-material/NoteAddOutlined";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import PersonAddOutlinedIcon from "@mui/icons-material/PersonAddOutlined";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import TwoColumnLayout from "../enrolees/ComplaintForm/TwoColumnLayout";
 import FormCardHeader from "../enrolees/ComplaintForm/FormCardHeader";
@@ -53,20 +54,27 @@ const Home = () => {
   const options = [
     {
       id: 1,
+      title: "Create an Account",
+      subtitle: "For enrollees, HMOs, and providers",
+      icon: <PersonAddOutlinedIcon sx={{ fontSize: 28 }} />,
+      onClick: () => navigate("/register"),
+    },
+    {
+      id: 2,
       title: "Submit a new complaint",
       subtitle: "File as an enrollee, HMO, or provider",
       icon: <NoteAddOutlinedIcon sx={{ fontSize: 28 }} />, // This icon is fine
       onClick: () => navigate("/create-complaint"), // This route is handled by Enrollee.jsx
     },
     {
-      id: 2,
+      id: 3,
       title: "Enrollee Login",
-      subtitle: "Track your complaints and coverage",
+      subtitle: "Track your complaints",
       icon: <PersonOutlineIcon sx={{ fontSize: 28 }} />,
       onClick: () => navigate("/login", { state: { from: "enrollee" } }),
     },
     {
-      id: 3,
+      id: 4,
       title: "Staff / HMO / Provider Login",
       subtitle: "NHIA officers, HMOs, and healthcare providers",
       icon: <GroupsOutlinedIcon sx={{ fontSize: 28 }} />,
@@ -101,15 +109,17 @@ const Home = () => {
           subtitle=" How would you like to proceed?"
         />
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          {options.map((option) => (
-            <OptionCard
-              key={option.id}
-              icon={option.icon}
-              title={option.title}
-              subtitle={option.subtitle}
-              onClick={option.onClick}
-            />
-          ))}
+          {options
+            .sort((a, b) => a.id - b.id)
+            .map((option) => (
+              <OptionCard
+                key={option.id}
+                icon={option.icon}
+                title={option.title}
+                subtitle={option.subtitle}
+                onClick={option.onClick}
+              />
+            ))}
         </Box>
 
         <Typography

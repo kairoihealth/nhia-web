@@ -225,7 +225,7 @@ const FormPreview = ({
         <Box>
           <FormCardHeader
             title="Complaint Details"
-            titleSx={{ fontSize: "16px" }}
+            titleSx={{ fontSize: "16px", mb: 0.5 }}
           />
           <Box
             sx={(theme) => ({

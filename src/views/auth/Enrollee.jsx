@@ -83,6 +83,7 @@ const Enrollee = () => {
         priority: complaintInfo.priority?.toLowerCase() || "medium",
         hmo: firstInfo.hmoId || "",
         provider: firstInfo.providerId || "",
+        organization: firstInfo.organization || "",
         evidences,
       };
 

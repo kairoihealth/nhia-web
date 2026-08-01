@@ -169,18 +169,6 @@ export const complaintCategories = [
   },
 ];
 
-// update the nhiaProgram array with these:
-//  1.⁠ ⁠Public Sector Scheme
-//  2.⁠ ⁠Organised Private Sector
-//  3.⁠ ⁠GIFSHIP-g
-//  4.⁠ ⁠GIFSHIP-n
-//  5.⁠ ⁠GIFSHIP-c
-//  6.⁠ ⁠GIFSHIP-r
-//  7.⁠ ⁠TISHIP
-//  8.⁠ ⁠BHCPF
-//  9.⁠ ⁠HMO Private Plan
-// 10.⁠ ⁠Others - Equity Programs, etc.
-
 export const nhiaProgram = [
   {
     id: 1,
