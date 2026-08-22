@@ -550,26 +550,15 @@ const EditAdminForm = () => {
 
       // const token = new URLSearchParams(location.search).get("token") || "";
 
+      // Role and designation are the only editable fields; name and email
+      // belong to the account holder and are changed by them, not here.
       const payload = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
         designation: formData.designation,
-        admin_status: formData.admin_status.value,
-        // role: userRole,
-        // password: formData.password,
+        admin_status: formData.admin_status?.value || null,
       };
-      console.log(payload, "submitted");
       await updateAdmin(selectedAdmin?.id, payload);
       handleSuccess("Admin updated successfully!");
-      setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        designation: "",
-        admin_status: "",
-        // password: "",
-      });
+      setFormData({ designation: "", admin_status: "" });
       setSelectedAdmin(null);
       // navigate("/login");
     } catch (error) {
@@ -738,114 +727,33 @@ const EditAdminForm = () => {
             }}
             onSubmit={handleSubmit}
           >
-            {/* First Name */}
+            {/* Account details are shown for confirmation only. Name and email
+                are the account holder's own to change, from their profile. */}
             <Box
-              flex={1}
-              sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+              sx={{
+                backgroundColor: "#FFFFFF",
+                border: "1px solid #E0E0E0",
+                borderRadius: "8px",
+                p: 2,
+              }}
             >
-              <Typography
-                sx={{
-                  color: "#595959",
-                  fontSize: "16px",
-                  fontWeight: 500,
-                  lineHeight: "24px",
-                }}
-              >
-                First Name
+              <Typography sx={{ fontSize: "13px", color: "#6B6B6B" }}>
+                Account
               </Typography>
-              <TextField
-                fullWidth
-                variant="outlined"
-                required
-                placeholder="enter first name"
-                focused={true}
-                sx={textFieldStyles}
-                name="firstName"
-                onChange={handleChange}
-                value={formData.firstName}
-                error={!!errors.firstName}
-                helperText={errors.firstName}
-              />
-            </Box>
-
-            {/* Middle Name */}
-            {/* <Box flex={1} sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-          <Typography
-            sx={{
-              color: "#595959",
-              fontSize: "16px",
-              fontWeight: 500,
-              lineHeight: "24px",
-            }}
-          >
-            Middle Name
-          </Typography>
-          <TextField
-            fullWidth
-            variant="outlined"
-            required
-            placeholder="enter first name"
-            sx={textFieldStyles}
-          />
-        </Box> */}
-
-            {/* Last Name */}
-            <Box
-              flex={1}
-              sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-            >
               <Typography
-                sx={{
-                  color: "#595959",
-                  fontSize: "16px",
-                  fontWeight: 500,
-                  lineHeight: "24px",
-                }}
+                sx={{ fontSize: "16px", fontWeight: 600, color: "#1B1C1E" }}
               >
-                Last Name
+                {[selectedAdmin.firstname, selectedAdmin.lastname]
+                  .filter(Boolean)
+                  .join(" ") || "Name not set"}
               </Typography>
-              <TextField
-                fullWidth
-                variant="outlined"
-                required
-                placeholder="enter last name"
-                sx={textFieldStyles}
-                name="lastName"
-                onChange={handleChange}
-                value={formData.lastName}
-                error={!!errors.lastName}
-                helperText={errors.lastName}
-              />
-            </Box>
-
-            {/* Email Address */}
-            <Box
-              flex={1}
-              sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-            >
-              <Typography
-                sx={{
-                  color: "#595959",
-                  fontSize: "16px",
-                  fontWeight: 500,
-                  lineHeight: "24px",
-                }}
-              >
-                Email Address
+              <Typography sx={{ fontSize: "14px", color: "#595959" }}>
+                {selectedAdmin.email}
               </Typography>
-              <TextField
-                fullWidth
-                type="email"
-                variant="outlined"
-                required
-                placeholder="enter email address"
-                sx={textFieldStyles}
-                name="email"
-                onChange={handleChange}
-                value={formData.email}
-                error={!!errors.email}
-                helperText={errors.email}
-              />
+              <Typography sx={{ fontSize: "12px", color: "#6B6B6B", mt: 1 }}>
+                Name and email are managed by the account holder in their own
+                profile.
+              </Typography>
             </Box>
 
             {/* Designation */}
@@ -877,7 +785,7 @@ const EditAdminForm = () => {
               />
             </Box>
 
-            {/* Admin Status */}
+            {/* Role */}
             <Box
               flex={1}
               sx={{ display: "flex", flexDirection: "column", gap: 1 }}
@@ -890,7 +798,7 @@ const EditAdminForm = () => {
                   lineHeight: "24px",
                 }}
               >
-                Admin status
+                Select Role
               </Typography>
               <FormControl fullWidth variant="outlined">
                 <ReactSelect
@@ -904,8 +812,9 @@ const EditAdminForm = () => {
                     value: status.id,
                     label: status.name,
                   }))}
-                  placeholder="Select Admin Status"
-                  loading={isLoading}
+                  placeholder="Select Role"
+                  isSearchable
+                  isLoading={isLoading}
                 />
               </FormControl>
             </Box>

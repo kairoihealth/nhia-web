@@ -82,7 +82,7 @@ const FormPreview = ({
                   width: "40%",
                 }}
               >
-                Name:
+                {firstInfo.loggedBy ? "Logged by:" : "Name:"}
               </Typography>
               <Typography
                 sx={{
@@ -93,8 +93,10 @@ const FormPreview = ({
                   width: "60%",
                 }}
               >
-                {firstInfo.firstName} {firstInfo.middleName}{" "}
-                {firstInfo.lastName}
+                {firstInfo.loggedBy ||
+                  `${firstInfo.firstName || ""} ${firstInfo.middleName || ""} ${
+                    firstInfo.lastName || ""
+                  }`.replace(/\s+/g, " ").trim()}
               </Typography>
             </Box>
             <Box flex={1} sx={{ display: "flex", gap: 2 }}>
@@ -655,6 +657,7 @@ FormPreview.propTypes = {
     selectedHmoOrProviderName: PropTypes.string,
     enrolleeNo: PropTypes.string,
     organization: PropTypes.string,
+    loggedBy: PropTypes.string,
   }),
   complaintInfo: PropTypes.shape({
     files: PropTypes.arrayOf(

@@ -52,12 +52,13 @@ const Enrollee = () => {
         }),
       );
 
-      let finalDescription =
-        complaintInfo.otherDescription || complaintInfo.description;
-      if (
-        complaintInfo.description !== "Others" &&
-        complaintInfo.additional_information
-      ) {
+      // `description` carries the complainant's narrative; the issue they picked
+      // off the NHIA schedule is sent separately so reporting keeps both.
+      const isOther = complaintInfo.description === "Others";
+      let finalDescription = isOther
+        ? complaintInfo.otherDescription
+        : complaintInfo.description;
+      if (!isOther && complaintInfo.additional_information) {
         finalDescription += `\n\nAdditional Information:\n${complaintInfo.additional_information}`;
       }
 
@@ -78,12 +79,14 @@ const Enrollee = () => {
         nhia_programme: complaintInfo.programme,
         complaint_type: complaintInfo.complaint_type,
         complaint_category: complaintInfo.complaint_category,
+        complaint_issue: complaintInfo.description,
         enrolleeNo: complaintInfo.enrolleeNo,
         description: finalDescription,
         priority: complaintInfo.priority?.toLowerCase() || "medium",
         hmo: firstInfo.hmoId || "",
         provider: firstInfo.providerId || "",
         organization: firstInfo.organization || "",
+        complainant_organization_id: firstInfo.complainant_organization_id || "",
         evidences,
       };
 
@@ -170,6 +173,7 @@ const Enrollee = () => {
             complaintInfo={complaintInfo}
             setComplaintInfo={setComplaintInfo}
             firstInfo={firstInfo}
+            selectedAccountType={selectedComplainantType}
             onNext={handleNext}
             onBack={handleBack}
             btn={<StepButton />}

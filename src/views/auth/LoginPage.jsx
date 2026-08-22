@@ -128,13 +128,14 @@ const LoginPage = () => {
         handleError(errorMessage); // Provide a title for the error toast
       }
     } catch (err) {
-      if (
-        err.response &&
-        err.response.data &&
-        (err.response.data.message || err.response.data.detail)
-      ) {
-        handleError({}, err.response.data.message || err.response.data.detail);
-      }
+      const data = err?.response?.data;
+      handleError(
+        {},
+        data?.message ||
+          data?.detail ||
+          err?.message ||
+          "Unable to log in. Please try again.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -162,7 +163,7 @@ const LoginPage = () => {
       >
         <FormCardHeader title={cardTitle} subtitle={cardSubtitle} />
         <Box sx={{ textAlign: "center" }}>
-          <Box component="form" sx={{ mt: 3 }}>
+          <Box component="form" onSubmit={handleLogin} sx={{ mt: 3 }}>
             {/* Email Field */}
             <Box
               flex={1}
@@ -295,6 +296,7 @@ const LoginPage = () => {
                 px: "8px",
                 textTransform: "capitalize",
               }}
+              type="submit"
               disabled={!email || !password}
               loading={isSubmitting}
               onClick={handleLogin}

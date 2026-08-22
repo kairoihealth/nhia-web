@@ -4,18 +4,13 @@ import { BsCloudUpload } from "react-icons/bs";
 import { AiOutlineFile } from "react-icons/ai";
 import PropTypes from "prop-types";
 import ReactSelect from "react-select";
+import { complaintCategories, complaintType, nhiaProgram } from "../../../mock/type";
 import {
-  complaintCategories,
-  complaintType,
-  enrolleeComplaints,
-  hmoComplaints,
-  nhiaComplaints,
-  nhiaProgram,
-  providerComplaints,
-} from "../../../mock/type";
+  OTHERS_ISSUE,
+  useComplaintIssues,
+} from "../../../hooks/useComplaintIssues";
 import { selectStyles, textFieldStyles } from "../../../utils/style";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
-import { useMemo } from "react";
 import { useHandleError } from "../../../hooks/useToastHandler";
 import {
   Box,
@@ -33,6 +28,7 @@ const SecondForm = ({
   complaintInfo,
   setComplaintInfo,
   firstInfo,
+  selectedAccountType,
   onNext,
   onBack,
 }) => {
@@ -40,23 +36,13 @@ const SecondForm = ({
   const maxFiles = 5;
   const [errors, setErrors] = useState({});
 
-  const complaintOptions =
-    firstInfo.complaint_against === "Provider"
-      ? providerComplaints
-      : firstInfo.complaint_against === "HMO"
-        ? hmoComplaints
-        : firstInfo.complaint_against === "NHIA"
-          ? nhiaComplaints
-          : enrolleeComplaints;
-
-  const mappedComplaintOptions = useMemo(
-    () =>
-      complaintOptions?.map((option) => ({
-        value: option.description,
-        label: option.description,
-      })) || [],
-    [complaintOptions],
-  );
+  // The schedule of issues depends on who is complaining as well as who is
+  // being complained about, so both sides of the pair drive the lookup.
+  const {
+    issueOptions: mappedComplaintOptions,
+    findIssue,
+    isLoading: isLoadingIssues,
+  } = useComplaintIssues(selectedAccountType, firstInfo.complaint_against);
 
   const onDrop = (acceptedFiles) => {
     const currentFilesLength = complaintInfo.files?.length || 0;
@@ -142,19 +128,30 @@ const SecondForm = ({
     });
   };
   const handleComplaintDescriptionChange = (selectedOption) => {
-    if (selectedOption.value !== "Others") {
-      complaintInfo["otherDescription"] = "";
-      const complaint = complaintOptions.find(
-        (type) => type.description === selectedOption.value,
-      );
-      complaintInfo["complaint_type"] = complaint.complaint_type;
-      complaintInfo["complaint_category"] = complaint.complaint_category;
-      complaintInfo["priority"] = complaint.priority;
+    const description = selectedOption.value;
+
+    // A listed issue carries its own domain, category and priority rating; only
+    // "Others" leaves those to the complainant.
+    if (description === OTHERS_ISSUE) {
+      setComplaintInfo((prev) => ({
+        ...prev,
+        description,
+        complaint_type: "",
+        complaint_category: "",
+        priority: "Medium",
+      }));
+      return;
     }
-    setComplaintInfo({
-      ...complaintInfo,
-      description: selectedOption.value,
-    });
+
+    const issue = findIssue(description);
+    setComplaintInfo((prev) => ({
+      ...prev,
+      description,
+      otherDescription: "",
+      complaint_type: issue?.complaint_type || "",
+      complaint_category: issue?.complaint_category || "",
+      priority: issue?.priority || "medium",
+    }));
   };
 
   const handleProgramChange = (selectedOption) => {
@@ -180,7 +177,7 @@ const SecondForm = ({
     if (!complaintInfo.description?.trim())
       newErrors.description = "Description is required.";
     if (
-      complaintInfo.description?.trim() === "Others" &&
+      complaintInfo.description?.trim() === OTHERS_ISSUE &&
       !complaintInfo.otherDescription?.trim()
     )
       newErrors.otherDescription = "Description is required.";
@@ -345,13 +342,24 @@ const SecondForm = ({
               </Typography>
               <ReactSelect
                 styles={selectStyles}
-                value={mappedComplaintOptions.find(
-                  (el) => el.value === complaintInfo.description,
-                )}
+                value={
+                  mappedComplaintOptions.find(
+                    (el) => el.value === complaintInfo.description,
+                  ) || null
+                }
                 name="description"
                 onChange={handleComplaintDescriptionChange}
                 options={mappedComplaintOptions}
-                placeholder='Select the option that best describes your complaint. Select "Others" if your complaint is not there.'
+                isLoading={isLoadingIssues}
+                isDisabled={isLoadingIssues || !mappedComplaintOptions.length}
+                placeholder={
+                  isLoadingIssues
+                    ? "Loading complaint issues..."
+                    : 'Select the option that best describes your complaint. Select "Others" if your complaint is not there.'
+                }
+                noOptionsMessage={() =>
+                  "Go back and choose who your complaint is against first."
+                }
               />
               {errors.description && (
                 <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
@@ -360,7 +368,7 @@ const SecondForm = ({
               )}
             </Box>
             {complaintInfo.description &&
-              complaintInfo.description !== "Others" && (
+              complaintInfo.description !== OTHERS_ISSUE && (
                 <Box
                   sx={{
                     display: "flex",
@@ -392,7 +400,7 @@ const SecondForm = ({
                 </Box>
               )}
           </Box>
-          {complaintInfo.description === "Others" && (
+          {complaintInfo.description === OTHERS_ISSUE && (
             <Box
               sx={{
                 display: "flex",
@@ -452,24 +460,14 @@ const SecondForm = ({
               <ReactSelect
                 styles={selectStyles}
                 value={
-                  complaintInfo.description !== "Others"
-                    ? complaintOptions
-                        .filter(
-                          (type) =>
-                            type.description === complaintInfo.description,
-                        )
-                        ?.map((option) => ({
-                          value: option.complaint_type,
-                          label: option.complaint_type,
-                        }))
-                    : complaintType.find(
-                        (type) => type.value === complaintInfo.complaint_type,
-                      )
+                  complaintType.find(
+                    (type) => type.value === complaintInfo.complaint_type,
+                  ) || null
                 }
                 onChange={handleComplaintTypeChange}
                 options={complaintType}
                 placeholder="Select option"
-                isDisabled={complaintInfo.description !== "Others"}
+                isDisabled={complaintInfo.description !== OTHERS_ISSUE}
               />
               {errors.complaint_type && (
                 <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
@@ -495,24 +493,14 @@ const SecondForm = ({
               <ReactSelect
                 styles={selectStyles}
                 value={
-                  complaintInfo.description !== "Others"
-                    ? complaintOptions
-                        .filter(
-                          (cat) =>
-                            cat.description === complaintInfo.description,
-                        )
-                        ?.map((option) => ({
-                          value: option.complaint_category,
-                          label: option.complaint_category,
-                        }))
-                    : complaintCategories.find(
-                        (cat) => cat.value === complaintInfo.complaint_category,
-                      )
+                  complaintCategories.find(
+                    (cat) => cat.value === complaintInfo.complaint_category,
+                  ) || null
                 }
                 onChange={handleComplaintCategoryChange}
                 options={complaintCategories}
                 placeholder="Select option"
-                isDisabled={complaintInfo.description !== "Others"}
+                isDisabled={complaintInfo.description !== OTHERS_ISSUE}
               />
               {errors.complaint_category && (
                 <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
@@ -719,6 +707,7 @@ const SecondForm = ({
 export default SecondForm;
 
 SecondForm.propTypes = {
+  selectedAccountType: PropTypes.string,
   complaintInfo: PropTypes.shape({
     files: PropTypes.arrayOf(
       PropTypes.shape({

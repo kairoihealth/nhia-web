@@ -69,13 +69,24 @@ export const getSingleState = async (id) => {
   }
 };
 
-export const getAllHmo = async ({ ordering, page, pageSize, search }) => {
+export const getAllHmo = async ({
+  ordering,
+  page,
+  pageSize,
+  search,
+  state,
+  region,
+  category,
+} = {}) => {
   try {
     const params = new URLSearchParams();
     if (ordering) params.append("ordering", ordering);
     if (page) params.append("page", page.toString());
     if (pageSize) params.append("page_size", pageSize.toString());
     if (search) params.append("search", search);
+    if (state) params.append("state", state);
+    if (region) params.append("state__region", region);
+    if (category) params.append("category", category);
 
     const response = await Api.get(e.GET_ALL_HMO, { params });
     return response.data;
@@ -85,13 +96,24 @@ export const getAllHmo = async ({ ordering, page, pageSize, search }) => {
   }
 };
 
-export const getAllProviders = async ({ ordering, page, pageSize, search }) => {
+export const getAllProviders = async ({
+  ordering,
+  page,
+  pageSize,
+  search,
+  state,
+  region,
+  coverage,
+} = {}) => {
   try {
     const params = new URLSearchParams();
     if (ordering) params.append("ordering", ordering);
     if (page) params.append("page", page.toString());
     if (pageSize) params.append("page_size", pageSize.toString());
     if (search) params.append("search", search);
+    if (state) params.append("state", state);
+    if (region) params.append("state__region", region);
+    if (coverage) params.append("entity_coverage_types", coverage);
 
     const response = await Api.get(e.GET_ALL_PROVIDERS, { params });
     return response.data;
@@ -177,6 +199,33 @@ export const updateState = async (id, payload) => {
     return response.data;
   } catch (error) {
     console.error("Failed to update State:", error);
+    throw error;
+  }
+};
+
+// Bulk upload accepts a CSV or XLSX; the API answers with per-row counts and
+// the first few problems it hit, so admins can correct the sheet and re-upload.
+const bulkUpload = async (endpoint, file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  const response = await Api.post(endpoint, formData);
+  return response.data;
+};
+
+export const bulkUploadHmos = async (file) => {
+  try {
+    return await bulkUpload(e.BULK_UPLOAD_HMO, file);
+  } catch (error) {
+    console.error("Failed to bulk upload HMOs:", error);
+    throw error;
+  }
+};
+
+export const bulkUploadProviders = async (file) => {
+  try {
+    return await bulkUpload(e.BULK_UPLOAD_PROVIDER, file);
+  } catch (error) {
+    console.error("Failed to bulk upload facilities:", error);
     throw error;
   }
 };

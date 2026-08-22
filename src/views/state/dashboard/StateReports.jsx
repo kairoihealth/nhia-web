@@ -37,7 +37,7 @@ const textStyles = {
 };
 
 const campaignAgainstOptions = [
-  { value: "HMO", label: "Hmo" },
+  { value: "HMO", label: "HMO" },
   { value: "Provider", label: "Provider" },
   { value: "Enrollee", label: "Enrollee" },
 ];

@@ -20,7 +20,7 @@ import {
 } from "react-icons/fi";
 import Logo from "../assets/nhia-logo.png";
 import { TbReportAnalytics } from "react-icons/tb";
-import { LuCross } from "react-icons/lu";
+import { LuBuilding2, LuCross } from "react-icons/lu";
 import { FaRegComment } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -160,6 +160,12 @@ const menuData = {
       label: "Workload",
       icon: <TbReportAnalytics />,
       link: "/admin/workload",
+    },
+    {
+      id: 8,
+      label: "HMO & HCF Register",
+      icon: <LuBuilding2 />,
+      link: "/admin/register",
     },
     { id: 5, label: "Profile", icon: <FiUser />, link: "/admin/profile" },
     {
