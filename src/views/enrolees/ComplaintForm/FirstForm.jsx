@@ -15,19 +15,19 @@ import {
   selectStyles,
   textFieldStyles,
 } from "../../../utils/style";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getAllHmo, getAllProviders } from "../../../services/settings";
+import { getSingleHmo, getSingleProvider } from "../../../services/settings";
+import StakeholderSelect from "../../../shared/StakeholderSelect";
 import TwoColumnLayout from "./TwoColumnLayout";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import FormCardHeader from "./FormCardHeader";
+import useAuth from "../../../hooks/useAuth";
+import { useAllowedRespondents } from "../../../hooks/useComplaintIssues";
 
-const option = [
-  { value: "HMO", label: "HMO" },
-  { value: "Provider", label: "Provider" },
-  { value: "Enrollee", label: "Enrollee" },
-  { value: "NHIA", label: "NHIA" },
-];
+// Complainants who file from inside the portal rather than from the public
+// form: their organisation and their identity come from the signed-in account.
+const PORTAL_COMPLAINANTS = ["HMO", "Provider"];
 
 const FirstForm = ({
   firstInfo,
@@ -41,37 +41,72 @@ const FirstForm = ({
   const [selectedProvider, setSelectedProvider] = useState(null);
   const [selectedHmoOrProviderName, setSelectedHmoOrProviderName] =
     useState(null);
-  const [selectedOrganization, setSelectedOrganization] = useState(null);
 
-  const hmosQueryKey = useMemo(() => ["hmos"], []);
-  const { data: hmosData } = useQuery({
-    queryKey: hmosQueryKey,
-    queryFn: () => getAllHmo({ page: 1, pageSize: 100 }),
+  const { user, isLoggedIn } = useAuth();
+  const filesFromPortal = PORTAL_COMPLAINANTS.includes(selectedAccountType);
+
+  // Who a complainant may file against depends on their own category — an
+  // enrollee cannot complain about another enrollee, an HMO cannot complain
+  // about another HMO.
+  const { respondentOptions } = useAllowedRespondents(selectedAccountType);
+
+  // An HMO or HCF complainant is identified by the account they signed in
+  // with, so their organisation is read off that account rather than picked
+  // from a dropdown they could get wrong.
+  const signedInOrganizationId =
+    selectedAccountType === "HMO"
+      ? localStorage.getItem("hmoId")
+      : selectedAccountType === "Provider"
+        ? localStorage.getItem("providerId")
+        : null;
+
+  // The organisation the signed-in user belongs to, fetched by id rather than
+  // pulled out of a full list — the facility register has ~17,000 rows.
+  const { data: signedInOrganizationRecord } = useQuery({
+    queryKey: ["signed-in-organization", selectedAccountType, signedInOrganizationId],
+    queryFn: () =>
+      selectedAccountType === "HMO"
+        ? getSingleHmo(signedInOrganizationId)
+        : getSingleProvider(signedInOrganizationId),
+    enabled: filesFromPortal && Boolean(signedInOrganizationId),
   });
 
-  const hmos = useMemo(
+  const signedInOrganization = useMemo(
     () =>
-      hmosData?.results?.map((hmo) => ({
-        value: hmo.id,
-        label: hmo.name,
-      })) || [],
-    [hmosData],
+      signedInOrganizationRecord
+        ? { value: signedInOrganizationRecord.id, label: signedInOrganizationRecord.name }
+        : null,
+    [signedInOrganizationRecord],
   );
 
-  const providersQueryKey = useMemo(() => ["providers"], []);
-  const { data: providersData } = useQuery({
-    queryKey: providersQueryKey,
-    queryFn: () => getAllProviders({ page: 1, pageSize: 100 }),
-  });
+  const signedInName = [user?.name, user?.firstname, user?.lastname]
+    .filter((part) => part && part !== "None")
+    .join(" ")
+    .trim();
 
-  const providers = useMemo(
-    () =>
-      providersData?.results?.map((provider) => ({
-        value: provider.id,
-        label: provider.name,
-      })) || [],
-    [providersData],
-  );
+  useEffect(() => {
+    if (!filesFromPortal || !user) return;
+    // Contact details default to the signed-in account; the complaint is
+    // logged by a person but filed on behalf of their organisation.
+    setFirstInfo((prev) => ({
+      ...prev,
+      email: prev.email || user.email || "",
+      phone: prev.phone || user.phone || "",
+      organization: signedInOrganization?.label || prev.organization || "",
+      complainant_organization_id:
+        signedInOrganizationId || prev.complainant_organization_id || "",
+      // Shown on the preview so the person filing can see what will be
+      // recorded against their name; the API reads it from the token, not this.
+      loggedBy: signedInName || user.email || "",
+    }));
+  }, [
+    filesFromPortal,
+    user,
+    signedInName,
+    signedInOrganization,
+    signedInOrganizationId,
+    setFirstInfo,
+  ]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -101,30 +136,28 @@ const FirstForm = ({
 
   const handleHmoChange = (selectedOption) => {
     setSelectedHmo(selectedOption);
-    setSelectedHmoOrProviderName(selectedOption.label);
+    setSelectedHmoOrProviderName(selectedOption?.label || null);
   };
 
   const handleProviderChange = (selectedOption) => {
     setSelectedProvider(selectedOption);
-    setSelectedHmoOrProviderName(selectedOption.label);
-  };
-
-  const handleOrganizationChange = (selectedOption) => {
-    setSelectedOrganization(selectedOption);
-    setFirstInfo((prev) => ({
-      ...prev,
-      organization: selectedOption.label,
-    }));
+    setSelectedHmoOrProviderName(selectedOption?.label || null);
   };
 
   const validateFields = () => {
     const newErrors = {};
 
+    // Only an enrollee types their own name — an HMO or HCF complaint is
+    // filed by the organisation, with the signed-in user recorded for audit.
     if (selectedAccountType === "Enrollee") {
       if (!firstInfo.firstName?.trim())
         newErrors.firstName = "First name is required.";
       if (!firstInfo.lastName?.trim())
         newErrors.lastName = "Last name is required.";
+    }
+    if (filesFromPortal && !isLoggedIn) {
+      newErrors.organization =
+        "Log in with your organisation's portal account to file this complaint.";
     }
     if (
       selectedAccountType === "HMO" ||
@@ -180,6 +213,7 @@ const FirstForm = ({
         ...prev,
         hmoId: selectedHmo?.value || null,
         providerId: selectedProvider?.value || null,
+        complainant_organization_id: signedInOrganizationId || null,
         selectedHmoOrProviderName: selectedHmoOrProviderName || null,
         enrolleeNo:
           firstInfo.complaint_against === "Enrollee"
@@ -320,7 +354,11 @@ const FirstForm = ({
                 </Box>
               </Box>
             </>
-          ) : selectedAccountType === "HMO" ? (
+          ) : filesFromPortal ? (
+            /* An HMO or HCF files from inside the portal, so the organisation
+               and the person filing both come from the signed-in account.
+               Nothing here is typed — the individual is captured for audit,
+               and the complainant of record is the organisation. */
             <Box
               flex={1}
               sx={{
@@ -338,59 +376,39 @@ const FirstForm = ({
                   lineHeight: "24px",
                 }}
               >
-                HMO Name
-                <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
+                {selectedAccountType === "HMO"
+                  ? "HMO"
+                  : "Health Care Facility (HCF)"}
               </Typography>
-              <Box>
-                <ReactSelect
-                  styles={selectStyles}
-                  value={selectedOrganization}
-                  onChange={handleOrganizationChange}
-                  options={hmos}
-                  placeholder="Select HMO"
-                />
-                {errors.organization && (
-                  <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
-                    {errors.organization}
-                  </Typography>
-                )}
-              </Box>
-            </Box>
-          ) : selectedAccountType === "Provider" ? (
-            <Box
-              flex={1}
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 1,
-                my: 2,
-              }}
-            >
-              <Typography
+              <Box
                 sx={{
-                  color: "#595959",
-                  fontSize: "16px",
-                  fontWeight: 500,
-                  lineHeight: "24px",
+                  backgroundColor: "#F6F8F6",
+                  border: "1px solid #E0E0E0",
+                  borderRadius: "12px",
+                  p: 2,
                 }}
               >
-                Providers Name
-                <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
-              </Typography>
-              <Box>
-                <ReactSelect
-                  styles={selectStyles}
-                  value={selectedOrganization}
-                  onChange={handleOrganizationChange}
-                  options={providers}
-                  placeholder="Select Provider"
-                />
-                {errors.organization && (
-                  <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
-                    {errors.organization}
-                  </Typography>
-                )}
+                <Typography
+                  sx={{ fontSize: "16px", fontWeight: 600, color: "#1B1C1E" }}
+                >
+                  {signedInOrganization?.label ||
+                    firstInfo.organization ||
+                    "Organisation not linked to this account"}
+                </Typography>
+                <Typography sx={{ fontSize: "13px", color: "#6B6B6B", mt: 1 }}>
+                  Logged by {signedInName || "—"}
+                  {user?.email ? ` (${user.email})` : ""}
+                </Typography>
+                <Typography sx={{ fontSize: "12px", color: "#6B6B6B", mt: 0.5 }}>
+                  Recorded for audit. The complaint is filed on behalf of your
+                  organisation.
+                </Typography>
               </Box>
+              {errors.organization && (
+                <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
+                  {errors.organization}
+                </Typography>
+              )}
             </Box>
           ) : selectedAccountType === "Employer" ? (
             <Box
@@ -629,11 +647,13 @@ const FirstForm = ({
               <ReactSelect
                 name="complaint_against"
                 styles={selectStyles}
-                value={option.find(
-                  (opt) => opt.value === firstInfo.complaint_against,
-                )}
+                value={
+                  respondentOptions.find(
+                    (opt) => opt.value === firstInfo.complaint_against,
+                  ) || null
+                }
                 onChange={handleComplaintChange}
-                options={option}
+                options={respondentOptions}
                 placeholder="Select Option"
               />
               {errors.complaint_against && (
@@ -666,12 +686,11 @@ const FirstForm = ({
                 <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
               </Typography>
               <Box>
-                <ReactSelect
-                  styles={selectStyles}
+                <StakeholderSelect
+                  kind="HMO"
                   value={selectedHmo}
                   onChange={handleHmoChange}
-                  options={hmos}
-                  placeholder="Select HMO"
+                  error={errors.hmo}
                 />
                 {errors.hmo && (
                   <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
@@ -698,16 +717,15 @@ const FirstForm = ({
                   lineHeight: "24px",
                 }}
               >
-                Providers Name
+                Health Care Facility (HCF)
                 <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
               </Typography>
               <Box>
-                <ReactSelect
-                  styles={selectStyles}
+                <StakeholderSelect
+                  kind="Provider"
                   value={selectedProvider}
                   onChange={handleProviderChange}
-                  options={providers}
-                  placeholder="Select Provider"
+                  error={errors.provider}
                 />
                 {errors.provider && (
                   <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>

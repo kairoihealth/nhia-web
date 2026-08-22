@@ -435,3 +435,24 @@ export const markAllNotificationsAsRead = async () => {
     throw error;
   }
 };
+
+// Issues a complainant of a given category may raise against a given
+// respondent, straight from the NHIA complaint schedules. The pair drives the
+// list, so both parameters are needed before there is anything to show.
+export const getComplaintIssueOptions = async ({
+  complainant_category,
+  complaint_against,
+}) => {
+  try {
+    const params = new URLSearchParams();
+    if (complainant_category)
+      params.append("complainant_category", complainant_category);
+    if (complaint_against) params.append("complaint_against", complaint_against);
+
+    const response = await Api.get(e.GET_COMPLAINT_ISSUE_OPTIONS, { params });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch complaint issue options:", error);
+    throw error;
+  }
+};

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import PropTypes from "prop-types";
 import { Box, Typography, Card, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +8,12 @@ import WorkOutlineIcon from "@mui/icons-material/WorkOutline";
 import TwoColumnLayout from "./TwoColumnLayout";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import FormCardHeader from "./FormCardHeader";
+import useAuth from "../../../hooks/useAuth";
+
+// An HMO or HCF complaint is filed on behalf of an organisation, so it has to
+// come from that organisation's portal account — there is no way to establish
+// from a public form that the person filling it in speaks for the HMO.
+const PORTAL_COMPLAINANTS = ["HMO", "Provider"];
 
 const OptionCard = ({
   icon,
@@ -74,6 +79,9 @@ const ComplainantTypeSelection = ({
   onBack,
   btn,
 }) => {
+  const { isLoggedIn } = useAuth();
+  const navigate = useNavigate();
+
   const options = [
     {
       id: 1,
@@ -86,14 +94,18 @@ const ComplainantTypeSelection = ({
       id: 2,
       value: "HMO",
       title: "I am an HMO",
-      subtitle: "Health Maintenance Organisation",
+      subtitle: isLoggedIn
+        ? "Health Maintenance Organisation"
+        : "Health Maintenance Organisation — log in to continue",
       icon: <BusinessOutlinedIcon sx={{ fontSize: 40 }} />,
     },
     {
       id: 3,
       value: "Provider",
-      title: "I am a Provider",
-      subtitle: "Hospital, clinic, or pharmacy",
+      title: "I am an HCF",
+      subtitle: isLoggedIn
+        ? "Hospital, clinic, or pharmacy"
+        : "Hospital, clinic, or pharmacy — log in to continue",
       icon: <LocalHospitalOutlinedIcon sx={{ fontSize: 40 }} />,
     },
     {
@@ -105,7 +117,14 @@ const ComplainantTypeSelection = ({
     },
   ];
 
+  const requiresLogin = (value) =>
+    PORTAL_COMPLAINANTS.includes(value) && !isLoggedIn;
+
   const handleSelect = (value) => {
+    if (requiresLogin(value)) {
+      navigate("/login", { state: { from: value } });
+      return;
+    }
     setSelectedAccountType(value);
   };
 

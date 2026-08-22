@@ -13,7 +13,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AttachmentOutlinedIcon from "@mui/icons-material/AttachmentOutlined";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -27,18 +27,16 @@ import {
 import {
   complaintCategories,
   complaintType,
-  enrolleeComplaints,
-  hmoComplaints,
-  nhiaComplaints,
-  providerComplaints,
   nhiaProgram,
 } from "../../../mock/type";
-import { getSingleUser } from "../../../services/central";
+import StakeholderSelect from "../../../shared/StakeholderSelect";
 import {
-  getAllHmo,
-  getAllProviders,
-  getStates,
-} from "../../../services/settings";
+  OTHERS_ISSUE,
+  useAllowedRespondents,
+  useComplaintIssues,
+} from "../../../hooks/useComplaintIssues";
+import { getSingleUser } from "../../../services/central";
+import { getStates } from "../../../services/settings";
 
 const multiLineStyles = {
   "& .MuiOutlinedInput-root": {
@@ -98,17 +96,9 @@ const CreateComplaint = () => {
     enabled: !!userId,
   });
 
-  const { data: hmosData } = useQuery({
-    queryKey: ["hmos"],
-    queryFn: () => getAllHmo({ page: 1, pageSize: 1000 }),
-    enabled: formState.complaint_against === "HMO",
-  });
-
-  const { data: providersData } = useQuery({
-    queryKey: ["providers"],
-    queryFn: () => getAllProviders({ page: 1, pageSize: 1000 }),
-    enabled: formState.complaint_against === "Provider",
-  });
+  // The respondent is picked with a typeahead rather than a preloaded list —
+  // the facility register is far too large to pull into a dropdown.
+  const [selectedRespondent, setSelectedRespondent] = useState(null);
 
   useEffect(() => {
     if (user) {
@@ -119,45 +109,59 @@ const CreateComplaint = () => {
     }
   }, [user]);
 
-  const complaintOptions = useMemo(() => {
-    switch (formState.complaint_against) {
-      case "Provider":
-        return providerComplaints;
-      case "HMO":
-        return hmoComplaints;
-      case "Enrollee":
-        return enrolleeComplaints;
-      case "NHIA":
-        return nhiaComplaints;
-      default:
-        return [];
-    }
-  }, [formState.complaint_against]);
-
-  const mappedComplaintOptions = useMemo(
-    () =>
-      complaintOptions?.map((option) => ({
-        value: option.description,
-        label: option.description,
-      })) || [],
-    [complaintOptions],
+  // The issues on offer depend on the complainant/respondent pair, so they come
+  // from the same schedule the API validates the submission against.
+  const { issueOptions: mappedComplaintOptions, findIssue } = useComplaintIssues(
+    formState.complainant_category,
+    formState.complaint_against,
+  );
+  const { respondentOptions } = useAllowedRespondents(
+    formState.complainant_category,
   );
 
   const handleDescriptionChange = (e) => {
     const { value } = e.target;
     const newState = { ...formState, description: value };
-    if (value !== "Others") {
-      const complaint = complaintOptions.find((c) => c.description === value);
-      newState.complaint_type = complaint?.complaint_type || "";
-      newState.complaint_category = complaint?.complaint_category || "";
-      newState.priority = complaint?.priority || "medium";
+    // A listed issue carries its own domain, category and priority rating; only
+    // "Others" leaves those to the complainant.
+    if (value === OTHERS_ISSUE) {
+      newState.complaint_type = "";
+      newState.complaint_category = "";
+      newState.priority = "medium";
+    } else {
+      const issue = findIssue(value);
+      newState.complaint_type = issue?.complaint_type || "";
+      newState.complaint_category = issue?.complaint_category || "";
+      newState.priority = issue?.priority || "medium";
     }
     setFormState(newState);
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormState((prev) => ({ ...prev, [name]: value }));
+    setFormState((prev) => {
+      const next = { ...prev, [name]: value };
+      // Switching who the complaint is against invalidates both the chosen
+      // organisation and the issue picked from the old schedule.
+      if (name === "complaint_against") {
+        next.hmo = "";
+        next.provider = "";
+        next.description = "";
+        next.complaint_type = "";
+        next.complaint_category = "";
+        setSelectedRespondent(null);
+      }
+      return next;
+    });
+  };
+
+  const handleRespondentChange = (option) => {
+    setSelectedRespondent(option);
+    setFormState((prev) => ({
+      ...prev,
+      hmo: prev.complaint_against === "HMO" ? option?.value || "" : "",
+      provider: prev.complaint_against === "Provider" ? option?.value || "" : "",
+    }));
   };
 
   const handleFileChange = (event) => {
@@ -192,7 +196,7 @@ const CreateComplaint = () => {
     if (
       !formState.description ||
       !formState.complaint_type ||
-      (formState.description === "Others" && !formState.otherDescription)
+      (formState.description === OTHERS_ISSUE && !formState.otherDescription)
     ) {
       return handleError("Please fill all required fields.");
     }
@@ -207,13 +211,15 @@ const CreateComplaint = () => {
       );
 
       const finalDescription =
-        formState.description === "Others"
+        formState.description === OTHERS_ISSUE
           ? formState.otherDescription
           : formState.description;
 
       const payload = {
         ...formState,
         description: finalDescription,
+        // The narrative and the issue picked off the schedule are stored apart.
+        complaint_issue: formState.description,
         priority: formState.priority?.toLowerCase() || "medium",
         evidences: docs,
       };
@@ -320,41 +326,26 @@ const CreateComplaint = () => {
               value={formState.complaint_against}
               onChange={handleInputChange}
             >
-              <MenuItem value="HMO">HMO</MenuItem>
-              <MenuItem value="Provider">Provider</MenuItem>
-              <MenuItem value="NHIA">NHIA</MenuItem>
+              {respondentOptions.map((respondent) => (
+                <MenuItem key={respondent.value} value={respondent.value}>
+                  {respondent.label}
+                </MenuItem>
+              ))}
             </TextField>
-            {formState.complaint_against === "HMO" && (
-              <TextField
-                select
-                label="Select HMO"
-                name="hmo"
-                value={formState.hmo}
-                onChange={handleInputChange}
-                required
-              >
-                {hmosData?.results?.map((hmo) => (
-                  <MenuItem key={hmo.id} value={hmo.id}>
-                    {hmo.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-            )}
-            {formState.complaint_against === "Provider" && (
-              <TextField
-                select
-                label="Select Provider"
-                name="provider"
-                value={formState.provider}
-                onChange={handleInputChange}
-                required
-              >
-                {providersData?.results?.map((provider) => (
-                  <MenuItem key={provider.id} value={provider.id}>
-                    {provider.name}
-                  </MenuItem>
-                ))}
-              </TextField>
+            {(formState.complaint_against === "HMO" ||
+              formState.complaint_against === "Provider") && (
+              <Box>
+                <Typography sx={{ fontSize: "13px", color: "#595959", mb: 0.5 }}>
+                  {formState.complaint_against === "HMO"
+                    ? "Select HMO"
+                    : "Select Health Care Facility (HCF)"}
+                </Typography>
+                <StakeholderSelect
+                  kind={formState.complaint_against}
+                  value={selectedRespondent}
+                  onChange={handleRespondentChange}
+                />
+              </Box>
             )}
             <TextField
               label="Date of Incident"
@@ -452,7 +443,7 @@ const CreateComplaint = () => {
               ))}
             </TextField>
           </Box>
-          {formState.description === "Others" && (
+          {formState.description === OTHERS_ISSUE && (
             <TextField
               fullWidth
               multiline

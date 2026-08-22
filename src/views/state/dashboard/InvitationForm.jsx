@@ -12,7 +12,7 @@ import { getAdminStatuses } from "../../../services/adminSettings";
 import FormCardHeader from "../../enrolees/ComplaintForm/FormCardHeader";
 
 const accountType = [
-  { id: "HMO", label: "Hmo", value: "HMO" },
+  { id: "HMO", label: "HMO", value: "HMO" },
   { id: "Provider", label: "Provider", value: "Provider" },
 ];
 const InvitationForm = () => {
