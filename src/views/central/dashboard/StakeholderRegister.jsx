@@ -19,6 +19,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
 
 import ReusableTable from "../../../shared/Table";
 import FormCardHeader from "../../enrolees/ComplaintForm/FormCardHeader";
@@ -311,7 +312,12 @@ BulkUploadDialog.propTypes = {
 };
 
 const StakeholderRegister = () => {
-  const [kind, setKind] = useState("HMO");
+  // The register which tab opens is in the URL, so the dashboard's "View list"
+  // links can land on the right one and the page stays bookmarkable.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const requestedKind = searchParams.get("type");
+  const kind = REGISTERS[requestedKind] ? requestedKind : "HMO";
+
   const [page, setPage] = useState(1);
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
@@ -387,9 +393,11 @@ const StakeholderRegister = () => {
   );
 
   const switchRegister = (nextKind) => {
-    setKind(nextKind);
+    setSearchParams({ type: nextKind }, { replace: true });
     setPage(1);
     setExtra("");
+    // The extra filter is register-specific, so it cannot carry across.
+    setSearchInput("");
   };
 
   const resetFilters = () => {

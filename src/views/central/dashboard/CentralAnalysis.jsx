@@ -311,7 +311,7 @@ const CentralAnalysis = () => {
                 textDecoration: "underline",
               }}
               role="button"
-              onClick={() => navigate("/admin/state/invite")}
+              onClick={() => navigate("/admin/register?type=HMO")}
             >
               View list
             </Typography>
@@ -370,7 +370,7 @@ const CentralAnalysis = () => {
                 textDecoration: "underline",
               }}
               role="button"
-              onClick={() => navigate("/admin/state/invite")}
+              onClick={() => navigate("/admin/register?type=Provider")}
             >
               View list
             </Typography>
