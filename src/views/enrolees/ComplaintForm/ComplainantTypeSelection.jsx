@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import PropTypes from "prop-types";
 import { Box, Typography, Card, Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import BusinessOutlinedIcon from "@mui/icons-material/BusinessOutlined";
 import LocalHospitalOutlinedIcon from "@mui/icons-material/LocalHospitalOutlined";
@@ -9,6 +10,7 @@ import TwoColumnLayout from "./TwoColumnLayout";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import FormCardHeader from "./FormCardHeader";
 import useAuth from "../../../hooks/useAuth";
+import { useEffect } from "react";
 
 // An HMO or HCF complaint is filed on behalf of an organisation, so it has to
 // come from that organisation's portal account — there is no way to establish
@@ -77,10 +79,13 @@ const ComplainantTypeSelection = ({
   setSelectedAccountType,
   onNext,
   onBack,
+  step,
   btn,
 }) => {
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const val = searchParams.get("val");
 
   const options = [
     {
@@ -120,7 +125,14 @@ const ComplainantTypeSelection = ({
   const requiresLogin = (value) =>
     PORTAL_COMPLAINANTS.includes(value) && !isLoggedIn;
 
+  useEffect(() => {
+    if (val && options.some((option) => option.value === val)) {
+      setSelectedAccountType(val);
+    }
+  }, [val, setSelectedAccountType]);
+
   const handleSelect = (value) => {
+    console.log(value, "requestedKind");
     if (requiresLogin(value)) {
       navigate("/login", { state: { from: value } });
       return;
@@ -242,6 +254,7 @@ ComplainantTypeSelection.propTypes = {
   setSelectedAccountType: PropTypes.func.isRequired,
   onNext: PropTypes.func.isRequired,
   onBack: PropTypes.func, // Optional as it's the first step
+  step: PropTypes.number,
   btn: PropTypes.node,
 };
 

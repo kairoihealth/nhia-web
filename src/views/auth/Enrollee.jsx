@@ -9,7 +9,8 @@ import CircleIcon from "@mui/icons-material/Circle";
 import { useHandleError, useHandleSuccess } from "../../hooks/useToastHandler";
 import { addComplaint } from "../../services/general";
 import { convertToBase64 } from "../../utils/convertTobase64";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect } from "react";
 
 const steps = [
   "Complainant Type",
@@ -29,6 +30,21 @@ const Enrollee = () => {
   const [firstInfo, setFirstInfo] = useState({});
   const [complaintInfo, setComplaintInfo] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [searchParams] = useSearchParams();
+  const urlStep = searchParams.get("step");
+
+  useEffect(() => {
+    if (urlStep) {
+      const stepNumber = parseInt(urlStep, 10);
+      if (!isNaN(stepNumber) && stepNumber >= 1 && stepNumber <= 5) {
+        setStep(stepNumber);
+      }
+    }
+  }, [urlStep]);
+
+  // useEffect(() => {
+  //   setSearchParams({ step: step });
+  // }, [step, setSearchParams]);
 
   //   const handleNext = () => setStep(step + 1);
   //   const handleBack = () => setStep(step - 1);
@@ -86,7 +102,8 @@ const Enrollee = () => {
         hmo: firstInfo.hmoId || "",
         provider: firstInfo.providerId || "",
         organization: firstInfo.organization || "",
-        complainant_organization_id: firstInfo.complainant_organization_id || "",
+        complainant_organization_id:
+          firstInfo.complainant_organization_id || "",
         evidences,
       };
 
@@ -142,6 +159,7 @@ const Enrollee = () => {
             setSelectedAccountType={setSelectedComplainantType}
             onNext={handleNext}
             onBack={handleBack}
+            step={step}
             btn={<StepButton />}
           />
         );
