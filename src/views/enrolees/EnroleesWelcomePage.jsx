@@ -60,7 +60,7 @@ const EnroleesWelcomePage = () => {
     },
     {
       id: 3,
-      title: "Staff / HMO / Provider Login",
+      title: "Admin / HMO / Provider Login",
       subtitle: "Access for authorized personnel.",
       onClick: () => navigate("/login"),
     },

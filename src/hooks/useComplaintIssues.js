@@ -80,9 +80,22 @@ export const useAllowedRespondents = (complainantCategory) => {
     NHIA: "NHIA",
   };
 
+  const filteredRespondentOptions = useMemo(
+    () => {
+      if (complainantCategory === "Enrollee") {
+        return (data?.allowed_respondents || []).filter(
+          (value) => value !== "NHIA",
+        );
+      } else {
+        return data?.allowed_respondents || [];
+      }
+    },
+    [data], // eslint-disable-line react-hooks/exhaustive-deps
+  );
+
   const respondentOptions = useMemo(
     () =>
-      (data?.allowed_respondents || []).map((value) => ({
+      filteredRespondentOptions?.map((value) => ({
         value,
         label: respondentLabels[value] || value,
       })),
