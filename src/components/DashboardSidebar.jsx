@@ -272,7 +272,7 @@ const DashboardSidebar = ({ showMobileMenu, onMobileClose }) => {
           sx={{
             display: "flex",
             flexDirection: "column",
-            gap: 1.5,
+            gap: 1,
             mt: 3,
             flexGrow: 1,
             pl: 2,
