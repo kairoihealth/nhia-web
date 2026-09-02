@@ -41,9 +41,7 @@ const LoginPage = () => {
   const from = location.state?.from;
 
   const title =
-    from === "enrollee"
-      ? "Track and manage your complaints"
-      : "Admin Portal";
+    from === "enrollee" ? "Track and manage your complaints" : "Admin Portal";
 
   const subtitle =
     from === "enrollee"
@@ -119,7 +117,12 @@ const LoginPage = () => {
 
         Auth.setToken(accessToken);
 
-        navigate(`/${role.toLowerCase()}/dashboard`);
+        if (location.state?.from) {
+          navigate(`/create-complaint?val=${location.state.from}`);
+        } else {
+          navigate(`/${role.toLowerCase()}/dashboard`);
+        }
+        // navigate(`/${role.toLowerCase()}/dashboard`);
       } else if (response && response.detail) {
         console.log("Login Response Status:", response.detail);
         handleError(response); // Provide a title for the error toast
