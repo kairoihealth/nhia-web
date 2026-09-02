@@ -23,7 +23,10 @@ import { useSearchParams } from "react-router-dom";
 
 import ReusableTable from "../../../shared/Table";
 import FormCardHeader from "../../enrolees/ComplaintForm/FormCardHeader";
-import { useHandleError, useHandleSuccess } from "../../../hooks/useToastHandler";
+import {
+  useHandleError,
+  useHandleSuccess,
+} from "../../../hooks/useToastHandler";
 import { textFieldStyles } from "../../../utils/style";
 import {
   addHmo,
@@ -51,7 +54,7 @@ const REGISTERS = {
     columns: [
       { label: "Name", field: "name" },
       { label: "Code", field: "code" },
-      { label: "Category", field: "category" },
+      // { label: "Category", field: "category" },
       { label: "State", field: "stateName" },
       { label: "Official Email", field: "official_email" },
     ],
@@ -117,14 +120,17 @@ const AddDialog = ({ open, onClose, config, states }) => {
     onError: (error) =>
       handleError(
         error,
-        error?.response?.data?.detail || `Could not save the ${config.singular}.`,
+        error?.response?.data?.detail ||
+          `Could not save the ${config.singular}.`,
       ),
   });
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const payload = Object.fromEntries(
-      Object.entries(form).filter(([, value]) => String(value || "").trim() !== ""),
+      Object.entries(form).filter(
+        ([, value]) => String(value || "").trim() !== "",
+      ),
     );
     mutation.mutate(payload);
   };
@@ -146,7 +152,10 @@ const AddDialog = ({ open, onClose, config, states }) => {
               sx={textFieldStyles}
               value={form[field.name] || ""}
               onChange={(event) =>
-                setForm((prev) => ({ ...prev, [field.name]: event.target.value }))
+                setForm((prev) => ({
+                  ...prev,
+                  [field.name]: event.target.value,
+                }))
               }
             />
           ))}
@@ -244,7 +253,11 @@ const BulkUploadDialog = ({ open, onClose, config }) => {
           component="label"
           variant="outlined"
           startIcon={<UploadFileIcon />}
-          sx={{ textTransform: "none", borderColor: "#1B5E20", color: "#1B5E20" }}
+          sx={{
+            textTransform: "none",
+            borderColor: "#1B5E20",
+            color: "#1B5E20",
+          }}
         >
           {file ? file.name : "Choose a CSV or XLSX file"}
           <input
@@ -467,12 +480,18 @@ const StakeholderRegister = () => {
           <Tab
             value="HMO"
             label="HMOs"
-            sx={{ textTransform: "none", "&.Mui-selected": { color: "#1B5E20" } }}
+            sx={{
+              textTransform: "none",
+              "&.Mui-selected": { color: "#1B5E20" },
+            }}
           />
           <Tab
             value="Provider"
             label="Health Care Facilities"
-            sx={{ textTransform: "none", "&.Mui-selected": { color: "#1B5E20" } }}
+            sx={{
+              textTransform: "none",
+              "&.Mui-selected": { color: "#1B5E20" },
+            }}
           />
         </Tabs>
         <Divider sx={{ mb: 2 }} />
@@ -496,58 +515,62 @@ const StakeholderRegister = () => {
             value={searchInput}
             onChange={(event) => setSearchInput(event.target.value)}
           />
-          <TextField
-            select
-            size="small"
-            label="Region"
-            value={region}
-            onChange={(event) => {
-              setRegion(event.target.value);
-              setState("");
-              setPage(1);
-            }}
-          >
-            <MenuItem value="">All regions</MenuItem>
-            {(regions?.results || []).map((item) => (
-              <MenuItem key={item.id} value={item.id}>
-                {item.name}
-              </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            select
-            size="small"
-            label="State"
-            value={state}
-            onChange={(event) => {
-              setState(event.target.value);
-              setPage(1);
-            }}
-          >
-            <MenuItem value="">All states</MenuItem>
-            {stateOptions.map((item) => (
-              <MenuItem key={item.id} value={item.id}>
-                {item.name}
-              </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            select
-            size="small"
-            label={config.extraFilter.label}
-            value={extra}
-            onChange={(event) => {
-              setExtra(event.target.value);
-              setPage(1);
-            }}
-          >
-            <MenuItem value="">All</MenuItem>
-            {config.extraFilter.options.map((option) => (
-              <MenuItem key={option} value={option}>
-                {option}
-              </MenuItem>
-            ))}
-          </TextField>
+          {requestedKind === "Provider" && (
+            <>
+              <TextField
+                select
+                size="small"
+                label="Region"
+                value={region}
+                onChange={(event) => {
+                  setRegion(event.target.value);
+                  setState("");
+                  setPage(1);
+                }}
+              >
+                <MenuItem value="">All regions</MenuItem>
+                {(regions?.results || []).map((item) => (
+                  <MenuItem key={item.id} value={item.id}>
+                    {item.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                select
+                size="small"
+                label="State"
+                value={state}
+                onChange={(event) => {
+                  setState(event.target.value);
+                  setPage(1);
+                }}
+              >
+                <MenuItem value="">All states</MenuItem>
+                {stateOptions.map((item) => (
+                  <MenuItem key={item.id} value={item.id}>
+                    {item.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                select
+                size="small"
+                label={config.extraFilter.label}
+                value={extra}
+                onChange={(event) => {
+                  setExtra(event.target.value);
+                  setPage(1);
+                }}
+              >
+                <MenuItem value="">All</MenuItem>
+                {config.extraFilter.options.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </>
+          )}
           <Button
             onClick={resetFilters}
             sx={{ textTransform: "none", color: "#1B5E20" }}
