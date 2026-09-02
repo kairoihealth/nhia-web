@@ -43,7 +43,7 @@ const LoginPage = () => {
   const title =
     from === "enrollee"
       ? "Track and manage your complaints"
-      : "NHIA Staff Portal";
+      : "Admin Portal";
 
   const subtitle =
     from === "enrollee"
@@ -51,7 +51,7 @@ const LoginPage = () => {
       : "For NHIA officers, HMO representatives, and healthcare providers managing complaints.";
 
   const cardTitle =
-    from === "enrollee" ? "Enrollee Login" : "Staff & Partner Login";
+    from === "enrollee" ? "Enrollee Login" : "Admin & Partner Login";
   const cardSubtitle =
     from === "enrollee"
       ? "Enter your credentials to access your portal."

@@ -75,7 +75,7 @@ const Home = () => {
     },
     {
       id: 4,
-      title: "Staff / HMO / Provider Login",
+      title: "Admin / HMO / Provider Login",
       subtitle: "NHIA officers, HMOs, and healthcare providers",
       icon: <GroupsOutlinedIcon sx={{ fontSize: 28 }} />,
       onClick: () => navigate("/login", { state: { from: "staff" } }),

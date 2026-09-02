@@ -110,9 +110,9 @@ const ComplainantTypeSelection = ({
     },
     {
       id: 4,
-      value: "Employer",
-      title: "Employer / NGO",
-      subtitle: "Filing on behalf of an organisation",
+      value: "Whistleblower",
+      title: "Whistleblower",
+      subtitle: "Filing as a whistleblower",
       icon: <WorkOutlineIcon sx={{ fontSize: 40 }} />,
     },
   ];

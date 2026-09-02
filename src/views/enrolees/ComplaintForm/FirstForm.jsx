@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   Box,
   TextField,
@@ -5,6 +6,9 @@ import {
   FormControl,
   Typography,
   Card,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
 } from "@mui/material";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
@@ -63,7 +67,11 @@ const FirstForm = ({
   // The organisation the signed-in user belongs to, fetched by id rather than
   // pulled out of a full list — the facility register has ~17,000 rows.
   const { data: signedInOrganizationRecord } = useQuery({
-    queryKey: ["signed-in-organization", selectedAccountType, signedInOrganizationId],
+    queryKey: [
+      "signed-in-organization",
+      selectedAccountType,
+      signedInOrganizationId,
+    ],
     queryFn: () =>
       selectedAccountType === "HMO"
         ? getSingleHmo(signedInOrganizationId)
@@ -74,7 +82,10 @@ const FirstForm = ({
   const signedInOrganization = useMemo(
     () =>
       signedInOrganizationRecord
-        ? { value: signedInOrganizationRecord.id, label: signedInOrganizationRecord.name }
+        ? {
+            value: signedInOrganizationRecord.id,
+            label: signedInOrganizationRecord.name,
+          }
         : null,
     [signedInOrganizationRecord],
   );
@@ -85,7 +96,17 @@ const FirstForm = ({
     .trim();
 
   useEffect(() => {
-    if (!filesFromPortal || !user) return;
+    if (!filesFromPortal || !user) {
+      if (selectedAccountType === "Whistleblower") {
+        setFirstInfo((prev) => ({
+          ...prev,
+          isAnonymous: "false",
+        }));
+      } else {
+        delete firstInfo.isAnonymous;
+      }
+      return;
+    }
     // Contact details default to the signed-in account; the complaint is
     // logged by a person but filed on behalf of their organisation.
     setFirstInfo((prev) => ({
@@ -106,11 +127,21 @@ const FirstForm = ({
     signedInOrganization,
     signedInOrganizationId,
     setFirstInfo,
+    selectedAccountType,
   ]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFirstInfo({ ...firstInfo, [name]: value });
+    // console.log(name, value, checked, "checked");
+    let identity;
+    if (name === "isAnonymous" && value === "true") {
+      identity = {
+        firstName: null,
+        lastName: null,
+      };
+      // setFirstInfo({ ...firstInfo, firstName: "", lastName: "" });
+    }
+    setFirstInfo({ ...firstInfo, ...identity, [name]: value });
   };
 
   const handlePhoneChange = (value) => {
@@ -134,6 +165,8 @@ const FirstForm = ({
     setSelectedProvider(null);
   };
 
+  // const handleIsAnonymousChange =
+
   const handleHmoChange = (selectedOption) => {
     setSelectedHmo(selectedOption);
     setSelectedHmoOrProviderName(selectedOption?.label || null);
@@ -149,7 +182,11 @@ const FirstForm = ({
 
     // Only an enrollee types their own name — an HMO or HCF complaint is
     // filed by the organisation, with the signed-in user recorded for audit.
-    if (selectedAccountType === "Enrollee") {
+    if (
+      selectedAccountType === "Enrollee" ||
+      (selectedAccountType === "Whistleblower" &&
+        firstInfo?.isAnonymous === "false")
+    ) {
       if (!firstInfo.firstName?.trim())
         newErrors.firstName = "First name is required.";
       if (!firstInfo.lastName?.trim())
@@ -161,8 +198,8 @@ const FirstForm = ({
     }
     if (
       selectedAccountType === "HMO" ||
-      selectedAccountType === "Provider" ||
-      selectedAccountType === "Employer"
+      selectedAccountType === "Provider"
+      // || selectedAccountType === "Whistleblower"
     ) {
       if (!firstInfo.organization?.trim()) {
         newErrors.organization = "This field is required";
@@ -224,6 +261,8 @@ const FirstForm = ({
     }
   };
 
+  console.log(firstInfo, "firstInfo");
+
   return (
     <TwoColumnLayout
       title="Tell us about yourself"
@@ -252,7 +291,58 @@ const FirstForm = ({
           titleSx={{ fontSize: "20px", color: "#1B1C1E" }}
         />
         <form>
-          {selectedAccountType === "Enrollee" ? (
+          {selectedAccountType === "Whistleblower" && (
+            <Box
+              flex={1}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 0.6,
+                mb: 1.6,
+              }}
+            >
+              {/* <Typography
+              sx={{
+                color: "#595959",
+                fontSize: "16px",
+                fontWeight: 500,
+                lineHeight: "24px",
+              }}
+            >
+              
+              <span style={{ color: "#099243", marginLeft: "6px" }}>*</span>
+            </Typography> */}
+
+              <Box>
+                <RadioGroup
+                  name="isAnonymous"
+                  value={firstInfo.isAnonymous}
+                  onChange={handleInputChange}
+                >
+                  <FormControlLabel
+                    value="false"
+                    control={<Radio color="success" />}
+                    label="Identify Myself"
+                    checked={firstInfo.isAnonymous === "false"}
+                  />
+                  <FormControlLabel
+                    value="true"
+                    control={<Radio color="success" />}
+                    label="Remain Anonymous"
+                    checked={firstInfo.isAnonymous === "true"}
+                  />
+                </RadioGroup>
+              </Box>
+              {errors.isAnonymous && (
+                <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
+                  {errors.isAnonymous}
+                </Typography>
+              )}
+            </Box>
+          )}
+          {selectedAccountType === "Enrollee" ||
+          (selectedAccountType === "Whistleblower" &&
+            firstInfo?.isAnonymous === "false") ? (
             <>
               <Box
                 display="flex"
@@ -399,7 +489,9 @@ const FirstForm = ({
                   Logged by {signedInName || "—"}
                   {user?.email ? ` (${user.email})` : ""}
                 </Typography>
-                <Typography sx={{ fontSize: "12px", color: "#6B6B6B", mt: 0.5 }}>
+                <Typography
+                  sx={{ fontSize: "12px", color: "#6B6B6B", mt: 0.5 }}
+                >
                   Recorded for audit. The complaint is filed on behalf of your
                   organisation.
                 </Typography>
@@ -410,76 +502,79 @@ const FirstForm = ({
                 </Typography>
               )}
             </Box>
-          ) : selectedAccountType === "Employer" ? (
-            <Box
-              flex={1}
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 1,
-                my: 2,
-              }}
-            >
-              <Typography
-                sx={{
-                  color: "#595959",
-                  fontSize: "16px",
-                  fontWeight: 500,
-                  lineHeight: "24px",
-                }}
+          ) : // : selectedAccountType === "Whistleblower" ? (
+          //   <Box
+          //     flex={1}
+          //     sx={{
+          //       display: "flex",
+          //       flexDirection: "column",
+          //       gap: 1,
+          //       my: 2,
+          //     }}
+          //   >
+          //     <Typography
+          //       sx={{
+          //         color: "#595959",
+          //         fontSize: "16px",
+          //         fontWeight: 500,
+          //         lineHeight: "24px",
+          //       }}
+          //     >
+          //       Organization Name
+          //     </Typography>
+          //     <Box>
+          //       <TextField
+          //         name="organization"
+          //         fullWidth
+          //         variant="outlined"
+          //         required
+          //         placeholder="Organization Name"
+          //         sx={textFieldStyles}
+          //         value={firstInfo.organization}
+          //         onChange={handleInputChange}
+          //         error={!!errors.organization}
+          //         helperText={errors.organization}
+          //       />
+          //       {errors.organization && (
+          //         <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
+          //           {errors.organization}
+          //         </Typography>
+          //       )}
+          //     </Box>
+          //   </Box>
+          // )
+          null}
+          <Box mt={2}>
+            {selectedAccountType !== "Whistleblower" ? (
+              <Box
+                flex={1}
+                sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                mb={2}
               >
-                Organization Name
-              </Typography>
-              <Box>
+                <Typography
+                  sx={{
+                    color: "#595959",
+                    fontSize: "16px",
+                    fontWeight: 500,
+                    lineHeight: "24px",
+                  }}
+                >
+                  NHIA Number / Code
+                </Typography>
                 <TextField
-                  name="organization"
+                  name="nhiaNo"
                   fullWidth
                   variant="outlined"
                   required
-                  placeholder="Organization Name"
+                  placeholder="NHIA Number / Code"
                   sx={textFieldStyles}
-                  value={firstInfo.organization}
+                  value={firstInfo.nhiaNo}
                   onChange={handleInputChange}
-                  error={!!errors.organization}
-                  helperText={errors.organization}
+                  // error={!!errors.nhiaNo}
+                  // helperText={errors.nhiaNo}
                 />
-                {errors.organization && (
-                  <Typography sx={{ color: "red", fontSize: "13px", mt: 0.5 }}>
-                    {errors.organization}
-                  </Typography>
-                )}
               </Box>
-            </Box>
-          ) : null}
-          <Box mt={2}>
-            <Box
-              flex={1}
-              sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-              mb={2}
-            >
-              <Typography
-                sx={{
-                  color: "#595959",
-                  fontSize: "16px",
-                  fontWeight: 500,
-                  lineHeight: "24px",
-                }}
-              >
-                NHIA Number / Code
-              </Typography>
-              <TextField
-                name="nhiaNo"
-                fullWidth
-                variant="outlined"
-                required
-                placeholder="NHIA Number / Code"
-                sx={textFieldStyles}
-                value={firstInfo.nhiaNo}
-                onChange={handleInputChange}
-                // error={!!errors.nhiaNo}
-                // helperText={errors.nhiaNo}
-              />
-            </Box>
+            ) : null}
             <Box
               flex={1}
               sx={{ display: "flex", flexDirection: "column", gap: 1 }}
