@@ -117,7 +117,11 @@ const LoginPage = () => {
 
         Auth.setToken(accessToken);
 
-        if (location.state?.from) {
+        if (
+          location.state?.from &&
+          (location.state?.from !== "staff" ||
+            location.state?.from !== "enrollee")
+        ) {
           navigate(`/create-complaint?val=${location.state.from}`);
         } else {
           navigate(`/${role.toLowerCase()}/dashboard`);
