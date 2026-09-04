@@ -11,6 +11,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import FormCardHeader from "./FormCardHeader";
 import useAuth from "../../../hooks/useAuth";
 import { useEffect } from "react";
+import { useHandleError } from "../../../hooks/useToastHandler";
 
 // An HMO or HCF complaint is filed on behalf of an organisation, so it has to
 // come from that organisation's portal account — there is no way to establish
@@ -84,7 +85,8 @@ const ComplainantTypeSelection = ({
 }) => {
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const handleError = useHandleError();
+  const [searchParams, setSearchParams] = useSearchParams();
   const val = searchParams.get("val");
 
   const options = [
@@ -132,17 +134,23 @@ const ComplainantTypeSelection = ({
   }, [val, setSelectedAccountType]);
 
   const handleSelect = (value) => {
-    console.log(value, "requestedKind");
+    if (value === "Whistleblower" && isLoggedIn) {
+      handleError(
+        "You are currently logged in. You cannot complain as a whistleblower.",
+      );
+      return;
+    }
     if (requiresLogin(value)) {
       navigate("/login", { state: { from: value } });
       return;
     }
     setSelectedAccountType(value);
+    setSearchParams({ val: value });
   };
 
   const handleSubmit = () => {
     if (!selectedAccountType) {
-      alert("Please select a complainant type to proceed.");
+      handleError("Please select a complainant type to proceed.");
       return;
     }
     onNext();
