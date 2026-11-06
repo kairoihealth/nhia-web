@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import PropTypes from "prop-types";
-import { Box, Typography, Card, Button } from "@mui/material";
+import { Box, Typography, Card, Button, Tooltip } from "@mui/material";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import BusinessOutlinedIcon from "@mui/icons-material/BusinessOutlined";
 import LocalHospitalOutlinedIcon from "@mui/icons-material/LocalHospitalOutlined";
 import WorkOutlineIcon from "@mui/icons-material/WorkOutline";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import TwoColumnLayout from "./TwoColumnLayout";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import FormCardHeader from "./FormCardHeader";
@@ -25,45 +26,67 @@ const OptionCard = ({
   value,
   selected,
   onSelect,
+  disabled = false,
+  disabledReason,
   ...props
 }) => (
-  <Card
-    onClick={() => onSelect(value)}
-    sx={{
-      p: 1.7,
-      cursor: "pointer",
-      borderRadius: "12px",
-      boxShadow: "none",
-      "&:hover": {
-        borderColor: "#1B5E20",
-        boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.08)",
-      },
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      textAlign: "center",
-      backgroundColor: selected ? "#E8F5E9" : "#fff",
-      border: selected ? "2px solid #1B5E20" : "1.5px solid #E0E0E0",
-    }}
-    {...props}
-  >
-    <Box sx={{ color: "#1B5E20" }}>{icon}</Box>
-    <Typography
+  <Tooltip title={disabled ? disabledReason : ""} arrow placement="top">
+    <Card
+      onClick={() => onSelect(value)}
+      aria-disabled={disabled}
       sx={{
-        fontSize: "14px",
-        fontWeight: 700,
-        color: selected ? "#1B5E20" : "#3D3D3D",
-        lineHeight: "1.2",
-        mt: 1,
-        mb: 0.5,
+        position: "relative",
+        p: 1.7,
+        cursor: disabled ? "not-allowed" : "pointer",
+        borderRadius: "12px",
+        boxShadow: "none",
+        "&:hover": disabled
+          ? {}
+          : {
+              borderColor: "#1B5E20",
+              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.08)",
+            },
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        textAlign: "center",
+        opacity: disabled ? 0.55 : 1,
+        backgroundColor: disabled ? "#F5F5F5" : selected ? "#E8F5E9" : "#fff",
+        border: selected ? "2px solid #1B5E20" : "1.5px solid #E0E0E0",
       }}
+      {...props}
     >
-      {title}
-    </Typography>
-    <Typography sx={{ fontSize: "12px", color: "#6B6B6B", lineHeight: "1.2" }}>
-      {subtitle}
-    </Typography>
-  </Card>
+      {disabled && (
+        <LockOutlinedIcon
+          sx={{
+            position: "absolute",
+            top: 8,
+            right: 8,
+            fontSize: 16,
+            color: "#9E9E9E",
+          }}
+        />
+      )}
+      <Box sx={{ color: disabled ? "#9E9E9E" : "#1B5E20" }}>{icon}</Box>
+      <Typography
+        sx={{
+          fontSize: "14px",
+          fontWeight: 700,
+          color: selected ? "#1B5E20" : "#3D3D3D",
+          lineHeight: "1.2",
+          mt: 1,
+          mb: 0.5,
+        }}
+      >
+        {title}
+      </Typography>
+      <Typography
+        sx={{ fontSize: "12px", color: "#6B6B6B", lineHeight: "1.2" }}
+      >
+        {disabled ? disabledReason : subtitle}
+      </Typography>
+    </Card>
+  </Tooltip>
 );
 
 OptionCard.propTypes = {
@@ -73,6 +96,8 @@ OptionCard.propTypes = {
   value: PropTypes.string.isRequired,
   selected: PropTypes.bool.isRequired,
   onSelect: PropTypes.func.isRequired,
+  disabled: PropTypes.bool,
+  disabledReason: PropTypes.string,
 };
 
 const ComplainantTypeSelection = ({
@@ -83,7 +108,7 @@ const ComplainantTypeSelection = ({
   step,
   btn,
 }) => {
-  const { isLoggedIn } = useAuth();
+  const { user, isLoggedIn } = useAuth();
   const navigate = useNavigate();
   const handleError = useHandleError();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -127,8 +152,20 @@ const ComplainantTypeSelection = ({
   const requiresLogin = (value) =>
     PORTAL_COMPLAINANTS.includes(value) && !isLoggedIn;
 
+  // A signed-in user can only file on behalf of the organisation type their
+  // account belongs to. Logged-out users are still sent to log in instead.
+  const isRoleRestricted = (value) =>
+    PORTAL_COMPLAINANTS.includes(value) && isLoggedIn && user?.role !== value;
+
+  const restrictionMessage = (value) =>
+    `Only available to ${value === "HMO" ? "HMO" : "HCF"} accounts`;
+
   useEffect(() => {
-    if (val && options.some((option) => option.value === val)) {
+    if (
+      val &&
+      options.some((option) => option.value === val) &&
+      !isRoleRestricted(val)
+    ) {
       setSelectedAccountType(val);
     }
   }, [val, setSelectedAccountType]);
@@ -137,6 +174,14 @@ const ComplainantTypeSelection = ({
     if (value === "Whistleblower" && isLoggedIn) {
       handleError(
         "You are currently logged in. You cannot complain as a whistleblower.",
+      );
+      return;
+    }
+    if (isRoleRestricted(value)) {
+      handleError(
+        `${restrictionMessage(value)}. You cannot file a complaint as ${
+          value === "HMO" ? "an HMO" : "an HCF"
+        } with your current account.`,
       );
       return;
     }
@@ -199,6 +244,8 @@ const ComplainantTypeSelection = ({
               value={option.value}
               selected={selectedAccountType === option.value}
               onSelect={handleSelect}
+              disabled={isRoleRestricted(option.value)}
+              disabledReason={restrictionMessage(option.value)}
             />
           ))}
         </Box>
